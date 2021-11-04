@@ -1,6 +1,6 @@
 {
     "name": "@konghayao/cn-font-split",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "中文 web font 切割工具",
     "main": "src/index.js",
     "module": "src/index.js",
@@ -19,7 +19,7 @@
         "nanoid": "^3.1.30"
     },
     "devDependencies": {
-         "simplebig": "^0.0.3",
+        "simplebig": "^0.0.3",
         "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^13.0.5"
