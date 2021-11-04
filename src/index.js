@@ -6,6 +6,7 @@ import fse from "fs-extra";
 import path from "path";
 import CutTargetFont from "./CutTargetFont.js";
 import { CutFont, ReadFontDetail } from "./utils/FontUtils.js";
+import createTestHTML from "./createTestHTML.js";
 // process.setMaxListeners(0)
 export default async function ({
     FontPath,
@@ -106,7 +107,20 @@ export default async function ({
                     );
                 },
             ],
-            ["生成 Template.html 文件", () => {}],
+            [
+                "生成 Template.html 文件",
+                (charMap) => {
+                    if (testHTML) {
+                        const { fontFamily } = charMap.get("读取字体");
+
+                        return createTestHTML({
+                            fontFamily,
+                            cssFileName,
+                            destFold,
+                        });
+                    }
+                },
+            ],
         ]
             .map((i) => {
                 return [
