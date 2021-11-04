@@ -1,4 +1,4 @@
-import getUnicodeRange from "./getUnicodeRange.js";
+import getUnicodeRange from "./utils/getUnicodeRange.js";
 import { v4 } from "uuid";
 import Fontmin from "fontmin";
 export default function genFontFile({
@@ -16,7 +16,7 @@ export default function genFontFile({
             .src(FontPath)
             .use(
                 Fontmin.glyph({
-                    trim: false,
+                    trim: true,
                     hint: true,
                     text,
                 })

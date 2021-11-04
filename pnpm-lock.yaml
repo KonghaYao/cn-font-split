@@ -1,21 +1,25 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@konghayao/promise-transaction': ^1.2.1
+  '@konghayao/promise-transaction': ^1.4.0
   '@rollup/plugin-commonjs': ^21.0.0
   '@rollup/plugin-json': ^4.1.0
   '@rollup/plugin-node-resolve': ^13.0.5
   code-points: ^2.0.0-1
+  fonteditor-core: ^2.1.8
   fontmin: ^0.9.9
   fs-extra: ^10.0.0
+  nanoid: ^3.1.30
   simplebig: ^0.0.3
   uuid: ^8.3.2
 
 dependencies:
-  '@konghayao/promise-transaction': 1.2.1
+  '@konghayao/promise-transaction': 1.4.0
   code-points: 2.0.0-1
+  fonteditor-core: 2.1.8
   fontmin: 0.9.9
   fs-extra: 10.0.0
+  nanoid: 3.1.30
   simplebig: 0.0.3
   uuid: 8.3.2
 
@@ -51,8 +55,8 @@ packages:
     resolution: {integrity: sha512-82cpyJyKRoQoRi+14ibCeGPu0CwypgtBAdBhq1WfvagpCZNKqwXbKwXllYSMG91DhmG4jt9gN8eP6lGOtozuaw==}
     dev: false
 
-  /@konghayao/promise-transaction/1.2.1:
-    resolution: {integrity: sha512-qgjzDubaozl6T3unNd6ciNHRcvxzKc90h2mSlIFbe7N8O591glNF68wwTZ1RaJNgde6uO/AQqYodMBnZgqj5hQ==}
+  /@konghayao/promise-transaction/1.4.0:
+    resolution: {integrity: sha512-wgxcEeD4abMkN1M8TWsGZakveVcsC4avCUkAt8SFBB/z7S+tizctRK021MtSqcXjoY3GobAmMp1GQ6dGoD9OcQ==}
     dev: false
 
   /@npmcli/fs/1.0.0:
@@ -1115,6 +1119,12 @@ packages:
 
   /nan/2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
+    dev: false
+
+  /nanoid/3.1.30:
+    resolution: {integrity: sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
     dev: false
 
   /node-gyp/8.2.0:

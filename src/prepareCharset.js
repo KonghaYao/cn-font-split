@@ -1,7 +1,7 @@
 import fse from "fs-extra";
+import __dirname from "./__dirname.js";
 import { resolve } from "path";
-import { difference, intersection } from "lodash-es";
-
+import { getUnicodeRangeArray } from "./utils/getUnicodeRange.js";
 // {
 //     common: true, //简繁共有部分
 //     SC: true, // 简体
@@ -11,26 +11,25 @@ import { difference, intersection } from "lodash-es";
 // }
 function loadTC() {
     let TC = fse
-        .readFileSync(resolve("./src/charset/TCDiff.txt"), {
+        .readFileSync(resolve(__dirname, "./charset/TCDiff.txt"), {
             encoding: "utf-8",
         })
         .split("")
-        .filter((_, i) => !(i % 2));
+        .filter((_, i) => !(i % 2))
+        .join("");
     return TC;
 }
 export default function prepareCharset(config) {
     let charset = {
-        SC: [],
-        TC: [],
-        other: [],
+        SC: "",
+        TC: "",
+        other: "",
     };
     // 只要是 简体或者使用了 common 就先导入基本的文件
     if (config.SC) {
-        charset.SC = fse
-            .readFileSync(resolve("./src/charset/SC.txt"), {
-                encoding: "utf-8",
-            })
-            .split("");
+        charset.SC = fse.readFileSync(resolve(__dirname, "./charset/SC.txt"), {
+            encoding: "utf-8",
+        });
     }
 
     if (config.TC) {
@@ -38,12 +37,17 @@ export default function prepareCharset(config) {
     }
 
     if (config.other) {
-        charset.other = fse
-            .readFileSync(resolve("./src/charset/symbol.txt"), {
+        charset.other = fse.readFileSync(
+            resolve(__dirname, "./charset/symbol.txt"),
+            {
                 encoding: "utf-8",
-            })
-            .split("");
+            }
+        );
     }
 
-    return charset;
+    return {
+        SC: getUnicodeRangeArray(charset.SC),
+        TC: getUnicodeRangeArray(charset.TC),
+        other: getUnicodeRangeArray(charset.other),
+    };
 }

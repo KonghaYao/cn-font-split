@@ -1,4 +1,4 @@
-import fontSplit from "./dist/fontSplit.esm.js";
+import fontSplit from "./src/index.js";
 import fse from "fs-extra";
 
 // 需要先进行 npm run build 生成字体文件
@@ -17,5 +17,11 @@ fontSplit({
         other: true,
         TC: true,
         SC: true,
+    },
+
+    chunkOptions: {
+        TC: 10,
+        SC: 10,
+        other: 2,
     },
 });

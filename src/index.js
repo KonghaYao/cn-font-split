@@ -1,19 +1,26 @@
 import Transaction from "@konghayao/promise-transaction";
 import prepareCharset from "./prepareCharset.js";
-import { chunk } from "lodash-es";
-import genFontFile from "./genFontFile.js";
+import { nanoid } from "nanoid";
+import formatBytes from "./utils/formatBytes.js";
 import fse from "fs-extra";
 import path from "path";
+import CutTargetFont from "./CutTargetFont.js";
+import { CutFont, ReadFontDetail } from "./utils/FontUtils.js";
+// process.setMaxListeners(0)
 export default async function ({
     FontPath,
     destFold = "./build",
-    css = {},
+    css: {
+        fontFamily = "",
+        fontWeight = "",
+        fontStyle = "",
+        fontDisplay = "",
+    } = {},
     cssFileName = "result", // 生成 CSS 文件的名称
     chunkOptions = {}, //
     charset = {},
 }) {
     charset = {
-        common: true, //简繁共有部分
         SC: true, // 简体
         other: true, // 非中文及一些符号
         TC: false, // 繁体
@@ -29,70 +36,101 @@ export default async function ({
         [
             ["准备字符集", () => prepareCharset(charset)],
             [
-                "异步切割字符集",
-                (charMap) => {
-                    const { other, SC, TC } = charMap.get("准备字符集");
-                    charMap.delete("准备字符集");
+                "读取字体",
+                async () => {
+                    let stat = fse.statSync(FontPath);
+                    const file = await fse.readFile(FontPath);
 
-                    return {
-                        other: chunk(
-                            other,
-                            Math.ceil(other.length / chunkOptions.other)
-                        ),
-                        SC: chunk(SC, Math.ceil(SC.length / chunkOptions.SC)),
-                        TC: chunk(TC, Math.ceil(TC.length / chunkOptions.TC)),
-                    };
+                    const detail = ReadFontDetail(file);
+                    console.log(detail.fontFamily, formatBytes(stat.size));
+                    return { ...detail, ...stat, file };
                 },
             ],
             [
-                "生成 CSS 文件和 test 测试文件",
-                async (charMap) => {
-                    const { other, SC, TC } = charMap.get("异步切割字符集");
-                    console.log(other.length, SC.length, TC.length);
-                    charMap.delete("异步切割字符集");
-                    const promises = [other, SC, TC].map((i) =>
-                        Promise.all(
-                            i.map((charset) =>
-                                genFontFile({
-                                    text: charset.join(""),
-                                    FontPath,
-                                    css,
-                                })
-                            )
-                        )
+                "校对和切割目标字体",
+                (charMap) => {
+                    return CutTargetFont(
+                        charMap.get("读取字体"),
+                        charMap.get("准备字符集"),
+                        chunkOptions
                     );
+                },
+            ],
+            [
+                "开始切割分包",
+                async (charMap) => {
+                    charMap.delete("准备字符集");
+                    const {
+                        other = [],
+                        SC = [],
+                        TC = [],
+                    } = charMap.get("校对和切割目标字体");
+                    charMap.delete("校对和切割目标字体");
+                    const { file } = charMap.get("读取字体");
+                    const total = [...other, ...SC, ...TC];
+                    console.log("总分包数目：", total.length);
+                    process.setMaxListeners(total.length * 2);
+                    const promises = total.map(async (subset, index) => {
+                        const font = await CutFont(file, subset, index);
+                        return { font, subset };
+                    });
                     return Promise.all(promises);
                 },
             ],
             [
-                "输出文件",
+                "输出 woff2 文件",
                 async (charMap) => {
-                    const fileArray = charMap
-                        .get("生成 CSS 文件和 test 测试文件")
-                        .flat();
-                    charMap.delete("生成 CSS 文件和 test 测试文件");
-                    console.log("css 生成中");
-                    const fontFamily = fileArray[0].fontFamily;
-                    const cssFile = await fileArray.reduce(
-                        async (promise, { file, style, fileName }) => {
-                            await fse.outputFile(
-                                path.join(destFold, fileName + ".ttf"),
-                                file._contents
-                            );
-                            return promise.then((col) => col + style);
-                        },
-                        Promise.resolve("")
+                    const fileArray = charMap.get("开始切割分包");
+                    ["开始切割分包"].forEach((i) => {
+                        charMap.delete(i);
+                    });
+                    const tra = new Transaction(
+                        fileArray.map(({ font, subset }) => {
+                            const id = nanoid();
+                            const Path = path.join(destFold, id + ".woff2");
+                            return [
+                                id,
+                                async () => {
+                                    await fse.outputFile(Path, font);
+                                    console.log(
+                                        "生成文件:",
+                                        id,
+                                        formatBytes(font.length)
+                                    );
+                                    return subset;
+                                },
+                            ];
+                        })
                     );
-                    await fse.outputFile(
-                        path.join(destFold, `${cssFileName}.css`),
-                        cssFile
-                    );
-                    console.log("全部完成");
-                    return {
-                        fontFamily,
-                    };
+
+                    return tra.run().then((res) => {
+                        return [...res.entries()];
+                    });
                 },
             ],
+            [
+                "生成 CSS 文件",
+                async (charMap) => {
+                    const IDCollection = charMap.get("输出 woff2 文件");
+                    const { fontFamily: ff } = charMap.get("读取字体");
+                    const cssStyleSheet = IDCollection.map(([id, subset]) => {
+                        return `@font-face {
+    font-family: ${fontFamily || ff};
+    src: url("./${id}.woff2") format("woff2");
+    font-style: ${fontStyle};
+    font-weight: ${fontWeight};
+    font-display: ${fontDisplay};
+    unicode-range:${subset.map((i) => `U+${i.toString(16)}`).join(",")}
+}`;
+                    }).join("\n");
+                    return fse.outputFile(
+                        path.join(destFold, (cssFileName || "result") + ".css"),
+                        cssStyleSheet
+                    );
+                },
+            ],
+            ["生成 Template.html 文件", () => {}],
+            ["汇报数据大小", () => {}],
         ]
             .map((i) => {
                 return [
