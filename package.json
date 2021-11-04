@@ -2,8 +2,8 @@
     "name": "@konghayao/cn-font-split",
     "version": "1.2.1",
     "description": "中文 web font 切割工具",
-    "main": "dist/fontSplit.common.js",
-    "module": "dist/fontSplit.esm.js",
+    "main": "src/index.js",
+    "module": "src/index.js",
     "scripts": {
         "build": "rollup -c=rollup.config.js",
         "dev": "rollup -c=rollup.config.js -w"
@@ -15,13 +15,11 @@
         "@konghayao/promise-transaction": "^1.4.0",
         "code-points": "^2.0.0-1",
         "fonteditor-core": "^2.1.8",
-        "fontmin": "^0.9.9",
         "fs-extra": "^10.0.0",
-        "nanoid": "^3.1.30",
-        "simplebig": "^0.0.3",
-        "uuid": "^8.3.2"
+        "nanoid": "^3.1.30"
     },
     "devDependencies": {
+         "simplebig": "^0.0.3",
         "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^13.0.5"

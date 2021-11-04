@@ -34,22 +34,10 @@ export async function CutFont(file, subset, index) {
         hinting: true,
         compound2simple: true,
     });
-    font.optimize();
-    const fontObject = font.get();
-    const subFontSize = fontObject.glyf
-        .map((i) => i.unicode)
-        .flat()
-        .filter((i) => typeof i === "number").length;
+    // font.optimize();
 
     await woff2.init();
-    console.log(
-        "分包情况: ",
-        index,
-        " | 分字符集大小 | ",
-        subset.length,
-        " | 分包大小 | ",
-        subFontSize
-    );
+    console.log("分包情况: ", index, " | 分字符集大小 | ", subset.length);
     return font.write({
         type: "woff2",
         hinting: true,

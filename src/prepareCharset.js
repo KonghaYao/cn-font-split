@@ -15,7 +15,7 @@ function loadTC() {
             encoding: "utf-8",
         })
         .split("")
-        .filter((_, i) => !(i % 2))
+        .filter((_, i) => i % 2)
         .join("");
     return TC;
 }

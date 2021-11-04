@@ -19,6 +19,7 @@ export default async function ({
     cssFileName = "result", // 生成 CSS 文件的名称
     chunkOptions = {}, //
     charset = {},
+    testHTML = true,
 }) {
     charset = {
         SC: true, // 简体
@@ -27,9 +28,9 @@ export default async function ({
         ...charset,
     };
     chunkOptions = {
-        TC: 10,
-        SC: 10,
-        other: 2,
+        TC: 3,
+        SC: 6,
+        other: 1,
         ...chunkOptions,
     };
     const tra = new Transaction(
@@ -67,53 +68,29 @@ export default async function ({
                     } = charMap.get("校对和切割目标字体");
                     charMap.delete("校对和切割目标字体");
                     const { file } = charMap.get("读取字体");
-                    const total = [...other, ...SC, ...TC];
-                    console.log("总分包数目：", total.length);
-                    process.setMaxListeners(total.length * 2);
-                    const promises = total.map(async (subset, index) => {
-                        const font = await CutFont(file, subset, index);
-                        return { font, subset };
-                    });
-                    return Promise.all(promises);
-                },
-            ],
-            [
-                "输出 woff2 文件",
-                async (charMap) => {
-                    const fileArray = charMap.get("开始切割分包");
-                    ["开始切割分包"].forEach((i) => {
-                        charMap.delete(i);
-                    });
-                    const tra = new Transaction(
-                        fileArray.map(({ font, subset }) => {
-                            const id = nanoid();
-                            const Path = path.join(destFold, id + ".woff2");
-                            return [
-                                id,
-                                async () => {
-                                    await fse.outputFile(Path, font);
-                                    console.log(
-                                        "生成文件:",
-                                        id,
-                                        formatBytes(font.length)
-                                    );
-                                    return subset;
-                                },
-                            ];
-                        })
-                    );
 
-                    return tra.run().then((res) => {
-                        return [...res.entries()];
+                    const total = [...other, ...SC, ...TC];
+
+                    process.setMaxListeners(total.length * 6);
+                    const promises = total.map(async (subset, index) => {
+                        const id = nanoid();
+                        const font = await CutFont(file, subset, index);
+                        const Path = path.join(destFold, id + ".woff2");
+                        await fse.outputFile(Path, font);
+                        console.log("生成文件:", id, formatBytes(font.length));
+                        return { id, subset };
                     });
+                    console.log("总分包数目：", total.length);
+                    console.log("  已经开始分包了，请耐心等待。。。");
+                    return Promise.all(promises);
                 },
             ],
             [
                 "生成 CSS 文件",
                 async (charMap) => {
-                    const IDCollection = charMap.get("输出 woff2 文件");
+                    const IDCollection = charMap.get("开始切割分包");
                     const { fontFamily: ff } = charMap.get("读取字体");
-                    const cssStyleSheet = IDCollection.map(([id, subset]) => {
+                    const cssStyleSheet = IDCollection.map(({ id, subset }) => {
                         return `@font-face {
     font-family: ${fontFamily || ff};
     src: url("./${id}.woff2") format("woff2");
@@ -130,7 +107,6 @@ export default async function ({
                 },
             ],
             ["生成 Template.html 文件", () => {}],
-            ["汇报数据大小", () => {}],
         ]
             .map((i) => {
                 return [

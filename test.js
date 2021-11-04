@@ -5,7 +5,7 @@ import fse from "fs-extra";
 
 fse.emptyDirSync("./build");
 fontSplit({
-    FontPath: "./fonts/站酷庆科黄油体.ttf",
+    FontPath: "./fonts/SourceHanSerifCN-Bold.ttf",
     destFold: "./build",
     css: {
         fontStyle: "normal",
@@ -17,11 +17,5 @@ fontSplit({
         other: true,
         TC: true,
         SC: true,
-    },
-
-    chunkOptions: {
-        TC: 10,
-        SC: 10,
-        other: 2,
     },
 });
