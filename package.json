@@ -1,6 +1,6 @@
 {
     "name": "@konghayao/cn-font-split",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "中文 web font 切割工具",
     "main": "src/index.js",
     "module": "src/index.js",
