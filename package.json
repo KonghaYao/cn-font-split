@@ -16,12 +16,13 @@
         "code-points": "^2.0.0-1",
         "fonteditor-core": "^2.1.8",
         "fs-extra": "^10.0.0",
+        "lodash-es": "^4.17.21",
         "nanoid": "^3.1.30"
     },
     "devDependencies": {
-        "simplebig": "^0.0.3",
         "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-json": "^4.1.0",
-        "@rollup/plugin-node-resolve": "^13.0.5"
+        "@rollup/plugin-node-resolve": "^13.0.5",
+        "simplebig": "^0.0.3"
     }
 }
