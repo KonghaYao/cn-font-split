@@ -27,7 +27,7 @@ export function ReadFontUnicode(file) {
 // file: Buffer
 // subset: unicode Number Array
 // chunkSize: How many fonts every chunk contain
-export async function CutFont(file, subset, index) {
+export async function CutFont(file, subset) {
     const font = Font.create(file, {
         type: "ttf",
         subset,
@@ -37,7 +37,7 @@ export async function CutFont(file, subset, index) {
     // font.optimize();
 
     await woff2.init();
-    console.log("分包情况: ", index, " | 分字符集大小 | ", subset.length);
+
     return font.write({
         type: "woff2",
         hinting: true,

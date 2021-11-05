@@ -1,12 +1,14 @@
 import Transaction from "@konghayao/promise-transaction";
 import prepareCharset from "./prepareCharset.js";
-import { nanoid } from "nanoid";
+
 import formatBytes from "./utils/formatBytes.js";
 import fse from "fs-extra";
 import path from "path";
 import CutTargetFont from "./CutTargetFont.js";
-import { CutFont, ReadFontDetail } from "./utils/FontUtils.js";
+import { ReadFontDetail } from "./utils/FontUtils.js";
 import createTestHTML from "./createTestHTML.js";
+import { spawn, Thread, Worker, Transfer } from "threads";
+
 // process.setMaxListeners(0)
 export default async function ({
     FontPath,
@@ -68,18 +70,33 @@ export default async function ({
                         TC = [],
                     } = charMap.get("校对和切割目标字体");
                     charMap.delete("校对和切割目标字体");
-                    const { file } = charMap.get("读取字体");
-
+                    let { file } = charMap.get("读取字体");
                     const total = [...other, ...SC, ...TC];
 
                     process.setMaxListeners(total.length * 6);
                     const promises = total.map(async (subset, index) => {
-                        const id = nanoid();
-                        const font = await CutFont(file, subset, index);
-                        const Path = path.join(destFold, id + ".woff2");
-                        await fse.outputFile(Path, font);
-                        console.log("生成文件:", id, formatBytes(font.length));
-                        return { id, subset };
+                        const genFontFile = await spawn(
+                            new Worker("./genFontFile.js")
+                        );
+                        const label =
+                            "分包情况: " +
+                            index +
+                            " | 分字符集大小 | " +
+                            subset.length;
+                        console.time(label);
+                        const result = await genFontFile(
+                            file.buffer,
+                            subset,
+                            destFold
+                        );
+                        await Thread.terminate(genFontFile);
+                        console.timeEnd(label);
+                        console.log(
+                            "生成文件:",
+                            result.id,
+                            formatBytes(result.size)
+                        );
+                        return result;
                     });
                     console.log("总分包数目：", total.length);
                     console.log("  已经开始分包了，请耐心等待。。。");

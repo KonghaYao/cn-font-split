@@ -17,12 +17,14 @@
         "fonteditor-core": "^2.1.8",
         "fs-extra": "^10.0.0",
         "lodash-es": "^4.17.21",
-        "nanoid": "^3.1.30"
+        "nanoid": "^3.1.30",
+        "threads": "^1.7.0"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^13.0.5",
+        "fontmin": "^0.9.9",
         "simplebig": "^0.0.3"
     }
 }
