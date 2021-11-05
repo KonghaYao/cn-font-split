@@ -10,7 +10,7 @@
     },
     "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "dependencies": {
         "@konghayao/promise-transaction": "^1.4.0",
         "code-points": "^2.0.0-1",
