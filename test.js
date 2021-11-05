@@ -11,7 +11,7 @@ fontSplit({
         fontStyle: "normal",
         fontWeight: "normal",
         fontDisplay: "swap",
-        fontFamily: "testFontName", // 如果不设置的话将会使用默认的字体名称哦
+        fontFamily: "", // 如果不设置的话将会使用默认的字体名称哦
     },
     charset: {
         other: true,

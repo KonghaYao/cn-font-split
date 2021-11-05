@@ -10,6 +10,7 @@ const a = Font.create(file, {
     combinePath: false, // for svg path
 });
 const obj = a.get();
+console.log(Object.is(a.data, obj));
 const gly = a.find({
     unicode: [65, 66, 34, 938, 234],
 });

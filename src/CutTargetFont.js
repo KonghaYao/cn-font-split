@@ -1,13 +1,10 @@
-// import { ReadFontUnicode } from "./utils/FontUtils.js";
-import { intersection, chunk } from "lodash-es";
+import { chunk } from "lodash-es";
 
 // 分包系统
-export default async function ({ file }, { other, TC, SC }, chunkOptions = {}) {
-    // const allCode = await ReadFontUnicode(file);
+export default async function ({ other, TC, SC }, chunkOptions = {}) {
     const total = { other, TC, SC };
     const last = Object.entries(total).reduce((col, [key, value]) => {
         if (value.length) {
-            // const subset = intersection(value, allCode);
             const subset = value;
             const size = Math.ceil(subset.length / chunkOptions[key]);
             const result = chunk(subset, size);

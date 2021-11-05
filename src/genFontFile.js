@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 import { CutFont } from "./utils/FontUtils.js";
 import fse from "fs-extra";
 expose(async function genFontFile(file, subset, destFold) {
-    console.log(file.length);
     const id = nanoid();
     const font = await CutFont(file, subset);
 

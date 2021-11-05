@@ -7,7 +7,7 @@ import path from "path";
 import CutTargetFont from "./CutTargetFont.js";
 import { ReadFontDetail } from "./utils/FontUtils.js";
 import createTestHTML from "./createTestHTML.js";
-import { spawn, Thread, Worker, Transfer } from "threads";
+import { spawn, Thread, Worker } from "threads";
 
 // process.setMaxListeners(0)
 export default async function ({
@@ -45,16 +45,18 @@ export default async function ({
                     let stat = fse.statSync(FontPath);
                     const file = await fse.readFile(FontPath);
 
-                    const detail = ReadFontDetail(file);
-                    console.log(detail.fontFamily, formatBytes(stat.size));
-                    return { ...detail, ...stat, file };
+                    const Font = ReadFontDetail(file);
+                    console.log(
+                        Font.data.name.fontFamily,
+                        formatBytes(stat.size)
+                    );
+                    return { Font, ...Font.data.name, ...stat, file };
                 },
             ],
             [
                 "校对和切割目标字体",
                 (charMap) => {
                     return CutTargetFont(
-                        charMap.get("读取字体"),
                         charMap.get("准备字符集"),
                         chunkOptions
                     );
@@ -128,10 +130,10 @@ export default async function ({
                 "生成 Template.html 文件",
                 (charMap) => {
                     if (testHTML) {
-                        const { fontFamily } = charMap.get("读取字体");
+                        const { fontFamily: ff } = charMap.get("读取字体");
 
                         return createTestHTML({
-                            fontFamily,
+                            fontFamily: fontFamily || ff,
                             cssFileName,
                             destFold,
                         });

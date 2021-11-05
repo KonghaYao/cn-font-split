@@ -7,9 +7,9 @@ export function ReadFontDetail(file) {
         hinting: true,
         compound2simple: true,
     });
-    const fontObj = font.get();
+    font.get();
 
-    return fontObj.name;
+    return font;
 }
 export function ReadFontUnicode(file) {
     const font = Font.create(file, {
@@ -27,7 +27,7 @@ export function ReadFontUnicode(file) {
 // file: Buffer
 // subset: unicode Number Array
 // chunkSize: How many fonts every chunk contain
-export async function CutFont(file, subset) {
+export async function CutFont(file, subset, type = "woff2") {
     const font = Font.create(file, {
         type: "ttf",
         subset,
@@ -35,11 +35,9 @@ export async function CutFont(file, subset) {
         compound2simple: true,
     });
     // font.optimize();
-
-    await woff2.init();
-
+    if (type === "woff2") await woff2.init();
     return font.write({
-        type: "woff2",
+        type,
         hinting: true,
     });
 }
