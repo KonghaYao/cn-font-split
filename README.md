@@ -32,7 +32,7 @@
 
 [Gitee 字体库](http://dongzhongzhidong.gitee.io/chinese-free-web-font-storage)
 
-里面的字体都是可以免费商用的，我对其进行了切割并且放置在了 Github 和 Gitee 上，如果需要可以直接获取文件。
+里面的字体都是可以免费商用的，我对其进行了切割并且放置在了 [Github](https://github.com/KonghaYao/chinese-free-web-font-storage) 和 [Gitee](https://gitee.com/dongzhongzhidong/chinese-free-web-font-storage) 上，如果需要可以直接获取文件。
 
 ## 快速使用
 
