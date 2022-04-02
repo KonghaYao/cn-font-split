@@ -1,6 +1,5 @@
 import Transaction from "@konghayao/promise-transaction";
 import prepareCharset from "./prepareCharset.js";
-
 import formatBytes from "./utils/formatBytes.js";
 import fse from "fs-extra";
 import path from "path";
@@ -19,6 +18,7 @@ export default async function ({
         fontStyle = "",
         fontDisplay = "",
     } = {},
+    fontType = "ttf",
     cssFileName = "result", // 生成 CSS 文件的名称
     chunkOptions = {}, //
     charset = {},
@@ -45,7 +45,7 @@ export default async function ({
                     let stat = fse.statSync(FontPath);
                     const file = await fse.readFile(FontPath);
 
-                    const Font = ReadFontDetail(file);
+                    const Font = ReadFontDetail(file, fontType);
                     console.log(
                         Font.data.name.fontFamily,
                         formatBytes(stat.size)
@@ -89,7 +89,8 @@ export default async function ({
                         const result = await genFontFile(
                             file.buffer,
                             subset,
-                            destFold
+                            destFold,
+                            fontType
                         );
                         await Thread.terminate(genFontFile);
                         console.timeEnd(label);

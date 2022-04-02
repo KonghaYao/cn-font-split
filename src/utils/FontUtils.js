@@ -1,8 +1,8 @@
 import { Font, woff2 } from "fonteditor-core";
 
-export function ReadFontDetail(file) {
+export function ReadFontDetail(file, inputType = "ttf") {
     const font = Font.create(file, {
-        type: "ttf",
+        type: inputType,
         subset: [],
         hinting: true,
         compound2simple: true,
@@ -11,9 +11,9 @@ export function ReadFontDetail(file) {
 
     return font;
 }
-export function ReadFontUnicode(file) {
+export function ReadFontUnicode(file, inputType = "ttf") {
     const font = Font.create(file, {
-        type: "ttf",
+        type: inputType,
         subset: [],
         hinting: true,
         compound2simple: true,
@@ -24,20 +24,22 @@ export function ReadFontUnicode(file) {
     return result.map((i) => parseInt(i));
 }
 // 裁切一个 woff2 文件出来
-// file: Buffer
-// subset: unicode Number Array
-// chunkSize: How many fonts every chunk contain
-export async function CutFont(file, subset, type = "woff2") {
+export async function CutFont(
+    file,
+    subset,
+    inputType = "ttf",
+    targetType = "woff2"
+) {
     const font = Font.create(file, {
-        type: "ttf",
+        type: inputType,
         subset,
         hinting: true,
         compound2simple: true,
     });
     // font.optimize();
-    if (type === "woff2") await woff2.init();
+    if (targetType === "woff2") await woff2.init();
     return font.write({
-        type,
+        type: targetType,
         hinting: true,
     });
 }
