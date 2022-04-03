@@ -4,6 +4,7 @@ import { initWoff2, ReadFontDetail } from "./utils/FontUtils";
 import fs from "fs";
 import { formatBytes } from "./utils/formatBytes";
 import format from "pretty-format";
+import { CutTargetFont } from "./CutTargetFont";
 type InputTemplate = {
     FontPath: string;
     destFold: string;
@@ -58,10 +59,18 @@ export default async function ({
     const G = {} as Partial<
         {
             font: FontEditor.Font;
+            Charset: ReturnType<typeof prepareCharset>;
+            fontSlices: { [k: string]: number[][] };
         } & TTF.Name
     >;
     const tra = [
-        ["准备字符集", () => prepareCharset(charset)],
+        [
+            "准备字符集",
+            async () => {
+                const Charset = await prepareCharset(charset);
+                Object.assign(G, { Charset });
+            },
+        ],
         ["准备 woff2", () => initWoff2()],
         [
             "读取字体",
@@ -70,22 +79,17 @@ export default async function ({
                 const file = fs.readFileSync(FontPath);
 
                 const { font, data } = ReadFontDetail(file, fontType);
-                // console.log(
-                //     format(font, {
-                //         maxDepth: 2,
-                //     })
-                // );
-
                 console.log(data.name.fontFamily, formatBytes(stat.size));
                 Object.assign(G, { font, ...data.name });
             },
         ],
-        //         [
-        //             "校对和切割目标字体",
-        //             (charMap) => {
-        //                 return CutTargetFont(charMap.get("准备字符集"), chunkOptions);
-        //             },
-        //         ],
+        [
+            "校对和切割目标字体",
+            async () => {
+                const fontSlices = await CutTargetFont(G.Charset, chunkOptions);
+                Object.assign(G, { fontSlices });
+            },
+        ],
         //         [
         //             "开始切割分包",
         //             async (charMap) => {
