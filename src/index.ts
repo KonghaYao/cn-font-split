@@ -1,7 +1,9 @@
-import { FontEditor, woff2 } from "fonteditor-core";
+import { FontEditor, TTF, woff2 } from "fonteditor-core";
 import { prepareCharset } from "./prepareCharset";
 import { initWoff2, ReadFontDetail } from "./utils/FontUtils";
 import fs from "fs";
+import { formatBytes } from "./utils/formatBytes";
+import format from "pretty-format";
 type InputTemplate = {
     FontPath: string;
     destFold: string;
@@ -53,6 +55,11 @@ export default async function ({
         other: 1,
         ...chunkOptions,
     };
+    const G = {} as Partial<
+        {
+            font: FontEditor.Font;
+        } & TTF.Name
+    >;
     const tra = [
         ["准备字符集", () => prepareCharset(charset)],
         ["准备 woff2", () => initWoff2()],
@@ -62,9 +69,15 @@ export default async function ({
                 let stat = fs.statSync(FontPath);
                 const file = fs.readFileSync(FontPath);
 
-                const Font = ReadFontDetail(file, fontType);
-                // console.log(Font.data.name.fontFamily, formatBytes(stat.size));
-                // return { Font, ...Font.data.name, ...stat, file };
+                const { font, data } = ReadFontDetail(file, fontType);
+                // console.log(
+                //     format(font, {
+                //         maxDepth: 2,
+                //     })
+                // );
+
+                console.log(data.name.fontFamily, formatBytes(stat.size));
+                Object.assign(G, { font, ...data.name });
             },
         ],
         //         [

@@ -6,6 +6,7 @@ export function ReadFontDetail(
     file: FontEditor.FontInput,
     inputType: FontEditor.FontType = "ttf"
 ) {
+    console.time("获取font");
     const font = Font.create(file, {
         type: inputType,
         subset: [],
@@ -13,9 +14,12 @@ export function ReadFontDetail(
         compound2simple: true,
     });
 
-    const ttf = font.get();
+    console.timeEnd("获取font");
 
-    return font;
+    // 注意 font.data === data
+    const data = font.get();
+
+    return { font, data };
 }
 export function ReadFontUnicode(
     file: FontEditor.FontInput,
