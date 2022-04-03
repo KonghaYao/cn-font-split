@@ -1,6 +1,3 @@
-import fs from "fs";
-import __dirname from "./__dirname";
-import { resolve } from "path";
 import { getUnicodeRangeArray } from "./utils/getUnicodeRange";
 import words from "./charset/words.json";
 

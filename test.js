@@ -1,10 +1,10 @@
-import fontSplit from "./src/index.js";
-import fse from "fs-extra";
+const fontSplit = require("./dist/index.js");
+const fse = require("fs-extra");
 
 // 需要先进行 npm run build 生成字体文件
 
 fse.emptyDirSync("./build");
-fontSplit({
+fontSplit.default({
     FontPath: "./fonts/站酷庆科黄油体.ttf",
     destFold: "./build",
     css: {

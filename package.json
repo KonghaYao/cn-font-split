@@ -8,7 +8,6 @@
         "build": "rollup -c=rollup.config.js",
         "dev": "rollup -c=rollup.config.js -w"
     },
-    "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "dependencies": {

@@ -1,5 +1,7 @@
 import { Font, FontEditor, woff2 } from "fonteditor-core";
-await woff2.init("../../node_modules/fonteditor-core/woff2/woff2.wasm");
+export async function initWoff2() {
+    await woff2.init("../../node_modules/fonteditor-core/woff2/woff2.wasm");
+}
 export function ReadFontDetail(
     file: FontEditor.FontInput,
     inputType: FontEditor.FontType = "ttf"
