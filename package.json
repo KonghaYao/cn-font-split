@@ -2,8 +2,7 @@
     "name": "@konghayao/cn-font-split",
     "version": "2.0.4",
     "description": "中文 web font 切割工具",
-    "main": "src/index.ts",
-    "module": "src/index.ts",
+    "main": "dist/index.js",
     "scripts": {
         "build": "rollup -c=rollup.config.js",
         "dev": "rollup -c=rollup.config.js -w",
@@ -21,11 +20,7 @@
         "threads": "^1.7.0"
     },
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^21.0.3",
-        "@rollup/plugin-json": "^4.1.0",
-        "@rollup/plugin-node-resolve": "^13.1.3",
         "@types/fs-extra": "^9.0.13",
-        "fontmin": "^0.9.9",
         "pretty-format": "^27.5.1",
         "simplebig": "^0.0.3"
     }
