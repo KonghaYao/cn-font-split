@@ -1,4 +1,4 @@
-import { Font, FontEditor, woff2 } from "fonteditor-core";
+import { Font, FontEditor, TTF, woff2 } from "fonteditor-core";
 export async function initWoff2() {
     await woff2.init("../../node_modules/fonteditor-core/woff2/woff2.wasm");
 }
@@ -38,19 +38,18 @@ export function ReadFontUnicode(
 }
 // 裁切一个 woff2 文件出来
 export async function CutFont(
-    file: FontEditor.FontInput,
+    file: FontEditor.Font,
     subset: number[],
-    inputType: FontEditor.FontType = "ttf",
     targetType: FontEditor.FontType = "woff2"
 ) {
-    const font = Font.create(file, {
-        type: inputType,
-        subset,
-        hinting: true,
-        compound2simple: true,
-    });
-    // font.optimize();
-    return font.write({
+    const font = file.find({ unicode: subset });
+    const newFont = file.readEmpty();
+    const data = Object.assign(
+        Object.fromEntries(Object.entries(newFont.get()))
+    ) as TTF.TTFObject;
+    newFont.set(data);
+
+    return newFont.write({
         type: targetType,
         hinting: true,
     });

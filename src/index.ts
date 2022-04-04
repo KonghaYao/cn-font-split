@@ -4,7 +4,9 @@ import { initWoff2, ReadFontDetail } from "./utils/FontUtils";
 import fs from "fs";
 import { formatBytes } from "./utils/formatBytes";
 import format from "pretty-format";
+import { genFontFile } from "./genFontFile";
 import { CutTargetFont } from "./CutTargetFont";
+import { Pool, spawn, Thread, Transfer, Worker } from "threads";
 type InputTemplate = {
     FontPath: string;
     destFold: string;
@@ -60,7 +62,8 @@ export default async function ({
         {
             font: FontEditor.Font;
             Charset: ReturnType<typeof prepareCharset>;
-            fontSlices: { [k: string]: number[][] };
+            fontSlices: { [k: string]: string[][] };
+            file: Buffer;
         } & TTF.Name
     >;
     const tra = [
@@ -78,62 +81,69 @@ export default async function ({
                 let stat = fs.statSync(FontPath);
                 const file = fs.readFileSync(FontPath);
 
-                const { font, data } = ReadFontDetail(file, fontType);
-                console.log(data.name.fontFamily, formatBytes(stat.size));
-                Object.assign(G, { font, ...data.name });
+                // // const { font, data } = ReadFontDetail(file, fontType);
+                // console.log(data.name.fontFamily, formatBytes(stat.size));
+                // Object.assign(G, { font, ...data.name, file });
+                Object.assign(G, { file });
             },
         ],
         [
             "校对和切割目标字体",
             async () => {
-                const fontSlices = await CutTargetFont(G.Charset, chunkOptions);
+                const fontSlices = await CutTargetFont(
+                    G.Charset!,
+                    chunkOptions
+                );
                 Object.assign(G, { fontSlices });
             },
         ],
-        //         [
-        //             "开始切割分包",
-        //             async (charMap) => {
-        //                 charMap.delete("准备字符集");
-        //                 const {
-        //                     other = [],
-        //                     SC = [],
-        //                     TC = [],
-        //                 } = charMap.get("校对和切割目标字体");
-        //                 charMap.delete("校对和切割目标字体");
-        //                 let { file } = charMap.get("读取字体");
-        //                 const total = [...other, ...SC, ...TC];
+        [
+            "开始切割分包",
+            async () => {
+                Object.assign(G, { Charset: null });
+                const { other = [], SC = [], TC = [] } = G.fontSlices!;
+                const file = G.file!;
+                const total = [...other, ...SC, ...TC];
 
-        //                 process.setMaxListeners(total.length * 6);
-        //                 const promises = total.map(async (subset, index) => {
-        //                     const genFontFile = await spawn(
-        //                         new Worker("./genFontFile.js")
-        //                     );
-        //                     const label =
-        //                         "分包情况: " +
-        //                         index +
-        //                         " | 分字符集大小 | " +
-        //                         subset.length;
-        //                     console.time(label);
-        //                     const result = await genFontFile(
-        //                         file.buffer,
-        //                         subset,
-        //                         destFold,
-        //                         fontType
-        //                     );
-        //                     await Thread.terminate(genFontFile);
-        //                     console.timeEnd(label);
-        //                     console.log(
-        //                         "生成文件:",
-        //                         result.id,
-        //                         formatBytes(result.size)
-        //                     );
-        //                     return result;
-        //                 });
-        //                 console.log("总分包数目：", total.length);
-        //                 console.log("  已经开始分包了，请耐心等待。。。");
-        //                 return Promise.all(promises);
-        //             },
-        //         ],
+                process.setMaxListeners(total.length * 6);
+                console.log("总分包数目：", total.length);
+                console.log("  已经开始分包了，请耐心等待。。。");
+                const pool = Pool(
+                    () => spawn(new Worker("./worker/genFontFile")),
+                    8
+                );
+                console.time("切割总耗时");
+                total.forEach((subset, index) => {
+                    pool.queue(async (genFontFile) => {
+                        const label =
+                            "分包情况: " +
+                            index +
+                            " | 分字符集大小 | " +
+                            subset.length;
+                        console.time(label);
+                        const result = await genFontFile(
+                            file.buffer,
+                            subset,
+                            destFold,
+                            fontType
+                        );
+                        console.timeEnd(label);
+                        console.log(
+                            "生成文件:",
+                            result.id,
+                            formatBytes(result.size)
+                        );
+                        Thread.terminate(genFontFile);
+                        result;
+                        return;
+                    });
+                });
+                await pool.completed();
+                await pool.terminate();
+                console.timeEnd("切割总耗时");
+                return;
+            },
+        ],
         //         [
         //             "生成 CSS 文件",
         //             async (charMap) => {

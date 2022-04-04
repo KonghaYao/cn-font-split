@@ -20,8 +20,8 @@ export function prepareCharset(config: {
     other?: boolean;
 }) {
     return {
-        SC: config.SC ? getUnicodeRangeArray(SC) : [],
-        TC: config.TC ? getUnicodeRangeArray(TC) : [],
-        other: config.other ? getUnicodeRangeArray(symbol) : [],
+        SC: config.SC ? SC : "",
+        TC: config.TC ? TC : "",
+        other: config.other ? symbol : "",
     };
 }
