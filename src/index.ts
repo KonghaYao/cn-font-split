@@ -12,6 +12,7 @@ import { Pool, spawn, Thread, Transfer, Worker } from "threads";
 import codePoint from "code-point";
 import { createTestHTML } from "./createTestHTML";
 import path from "path";
+import chalk from "chalk";
 type InputTemplate = {
     FontPath: string;
     destFold: string;
@@ -124,11 +125,12 @@ export = async function ({
                 const IDCollection: ResultDetail[] = [];
                 total.forEach((subset, index) => {
                     pool.queue(async (genFontFile) => {
-                        const label =
+                        const label = chalk.cyan(
                             "分包情况: " +
-                            index +
-                            " | 分字符集大小 | " +
-                            subset.length;
+                                index +
+                                " | 分字符集大小 | " +
+                                chalk.cyanBright(subset.length)
+                        );
                         console.time(label);
                         const result = genFontFile(
                             file.buffer,
@@ -140,10 +142,12 @@ export = async function ({
                         return result;
                     }).then((result: ResultDetail) => {
                         console.log(
-                            "生成文件:",
-                            index,
-                            result.id,
-                            formatBytes(result.size)
+                            chalk.magenta(
+                                "生成文件:",
+                                index,
+                                result.id,
+                                formatBytes(result.size)
+                            )
                         );
                         IDCollection.push(result);
                     });
@@ -198,11 +202,11 @@ export = async function ({
     return tra.reduce((col, [name, func]) => {
         return col
             .then(() => {
-                console.time(name);
+                console.time(chalk.blue(name));
                 return func();
             })
             .then(() => {
-                console.timeEnd(name);
+                console.timeEnd(chalk.blue(name));
             });
     }, Promise.resolve());
 };
