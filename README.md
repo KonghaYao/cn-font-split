@@ -1,12 +1,14 @@
 # 中文 Web Font 切割工具
 
+| 更新时间： 2022/ 4 / 4 | 江夏尧 |
+
 ## 简介
 
 在工作中遇到了使用中文字体的烦恼，字体包动不动就 10 多 MB，没有办法在 Web 应用中使用，所以制作了这个字体切割的插件。通过插件将大的字体文件切割为多个小的字体文件，然后通过 CSS 文件的 `unicode-range` 按需加载，实现整个字符集的可用加载！
 
 ### 字符单个大小
 
-不同于服务器加载 HTML 时抽取需要字符然后返回字符文件的操作，浏览器依据 CSS 中的 `unicode-range` 按需加载需要的字体文件，**每个文件只有 150 - 400 KB**，非常的快速简洁。
+不同于服务器加载 HTML 时抽取需要字符然后返回字符文件的操作，浏览器依据 CSS 中的 `unicode-range` 按需加载需要的字体文件，**每个文件只有 150 - 300 KB**，非常的快速简洁。
 
 ### 使用率的考量
 
@@ -57,7 +59,7 @@ fontSplit({
         fontStyle: "normal",
         fontWeight: "normal",
         fontDisplay: "swap",
-        fontFamily: "", // 如果不设置的话将会使用默认的字体名称哦
+        fontFamily: "SourceHanSerifCN", // 新版本必须指定
     },
     charset: {
         // 字符集
@@ -79,43 +81,45 @@ fontSplit({
 
 命令行执行结果：
 
+测试文件为 站酷庆科黄油体 字体文件
+
 ```txt
-准备字符集：8.89ms
-zcoolqingkehuangyouti 9.29 MB
-读取字体：4.505s
-other | 总数：883 | 分包数目：1
-883
-TC | 总数：2328 | 分包数目：3
-776 776 776
+准备字符集：0.435ms
+准备 woff2: 35.844ms
+读取字体：6.49ms
 SC | 总数：6763 | 分包数目：6
 1128 1128 1128 1128 1128 1123
-校对和切割目标字体：1.996ms
+TC | 总数：2328 | 分包数目：3
+776 776 776
+other | 总数：883 | 分包数目：1
+883
+校对和切割目标字体：6.457ms
 总分包数目： 10
   已经开始分包了，请耐心等待。
-分包情况：0 | 分字符集大小 | 883: 2.844s
-    生成文件：LLnd8IAqFHEaqI9WATp1D 37.04 KB
-分包情况：7 | 分字符集大小 | 776: 8.584s
-    生成文件：Z0HJyZk6FM0vSFSxUKqhS 237.77 KB
-分包情况：1 | 分字符集大小 | 1128: 8.899s
-    生成文件：CZSaHxohYuQ5nuHPX2iJN 247.55 KB
-分包情况：8 | 分字符集大小 | 776: 9.201s
-    生成文件：M-0Go3MOhMllGlqbkllkK 262.91 KB
-分包情况：9 | 分字符集大小 | 776: 9.548s
-    生成文件：jZtejKYDbBR04AY1yy2Gt 276.25 KB
-分包情况：2 | 分字符集大小 | 1128: 9.853s
-    生成文件：5KHYdAJxVMTVrJLtt9ZPJ 305.65 KB
-分包情况：3 | 分字符集大小 | 1128: 10.130s
-    生成文件：TplO3e5igIVVj8QPrZWk5 330.84 KB
-分包情况：4 | 分字符集大小 | 1128: 10.468s
-    生成文件：bSK4BPtiiM9nZOWy5ofmw 340.88 KB
-分包情况：5 | 分字符集大小 | 1128: 10.521s
-    生成文件：V6cSjHfj-WtEkqbkVAkQR 347.13 KB
-分包情况：6 | 分字符集大小 | 1123: 10.553s
-    生成文件：eQEPT8ta71TGmkg2ocbdP 351.15 KB
-开始切割分包：11.209s
-生成 CSS 文件：5.174ms
-生成 Template.html 文件：5.291ms
-
+分包情况：3 | 分字符集大小 | 1128: 5.79ms
+分包情况：2 | 分字符集大小 | 1128: 4.991ms
+分包情况：1 | 分字符集大小 | 1128: 6.211ms
+分包情况：0 | 分字符集大小 | 883: 7.139ms
+分包情况：4 | 分字符集大小 | 1128: 7.793ms
+分包情况：5 | 分字符集大小 | 1128: 5.932ms
+分包情况：6 | 分字符集大小 | 1123: 7.205ms
+分包情况：7 | 分字符集大小 | 776: 6.956ms
+分包情况：8 | 分字符集大小 | 776: 7.412ms
+分包情况：9 | 分字符集大小 | 776: 7.75ms
+生成文件：0 qDDyc5qdwE1Z9wTjDr0Jt 23.23 KB
+生成文件：1 zPP-f05Z9fHHJ3YQiqwvM 155.53 KB
+生成文件：2 NepY84eyK4gDD8TPvW78- 191.58 KB
+生成文件：3 uBRZ3cb0wfYJZpzXZlmxG 206.52 KB
+生成文件：4 06FpWBo2suDp7MpcGJATQ 212.96 KB
+生成文件：7 HlGMPrQiT5gJoBrvLeCEH 134.99 KB
+生成文件：5 OX85gy-FUkMdgM5LMz2i3 216.75 KB
+生成文件：8 9sOrrDugkP2QhFWxci4FR 144.93 KB
+生成文件：6 6gGZ9FsKPb4FlkP6giQRV 217.5 KB
+生成文件：9 YpcAtyveFqEwY2yMrIqCT 152.38 KB
+切割总耗时：10.476s
+切割分包：10.496s
+生成 CSS 文件：8.102ms
+生成 Template.html 文件：3.656ms
 ```
 
 > 可以看到上面的分包结果均在 200-400 KB，属于比较合适的区间内。并且运行时间最长的部分只需要 11s。
@@ -128,13 +132,12 @@ SC | 总数：6763 | 分包数目：6
 
 ## 感谢相关插件
 
--   **@konghayao/promise-transaction** 基础任务管理插件，是整个程序的执行顺序框架。
 -   **fonteditor-core** 字体解析切割和制作的核心插件
 -   **nanoid** 生成独一无二的文件名的库
 -   **threads** Nodejs 多线程支持，强！字体的生成速度加快了非常多
--   **code-points** 解析文字为 Unicode 数字的插件
+-   **code-point** 解析文字为 Unicode 数字的插件
 -   **fs-extra** Nodejs fs 的升级版
--   **lodash-es** 强无敌的工具库
+-   **lodash** 强无敌的工具库
 
 ## 以后要做的加强
 
