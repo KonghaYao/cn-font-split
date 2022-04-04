@@ -91,6 +91,7 @@ export default async function ({
             "读取字体",
             async () => {
                 const file = fs.readFileSync(FontPath);
+
                 Object.assign(G, { file });
             },
         ],
@@ -117,37 +118,35 @@ export default async function ({
                 console.log("  已经开始分包了，请耐心等待。。。");
                 const pool = Pool(
                     () => spawn(new Worker("./worker/genFontFile")),
-                    8
+                    4
                 );
                 console.time("切割总耗时");
-                const IDCollection: any[] = [];
-                const promises = total.map((subset, index) => {
-                    return pool
-                        .queue(async (genFontFile) => {
-                            const label =
-                                "分包情况: " +
-                                index +
-                                " | 分字符集大小 | " +
-                                subset.length;
-                            console.time(label);
-                            const result = genFontFile(
-                                file.buffer,
-                                subset,
-                                destFold,
-                                fontType
-                            );
-                            console.timeEnd(label);
-                            return result;
-                        })
-                        .then((result: ResultDetail) => {
-                            console.log(
-                                "生成文件:",
-                                index,
-                                result.id,
-                                formatBytes(result.size)
-                            );
-                            IDCollection.push(result);
-                        });
+                const IDCollection: ResultDetail[] = [];
+                total.forEach((subset, index) => {
+                    pool.queue(async (genFontFile) => {
+                        const label =
+                            "分包情况: " +
+                            index +
+                            " | 分字符集大小 | " +
+                            subset.length;
+                        console.time(label);
+                        const result = genFontFile(
+                            file.buffer,
+                            subset,
+                            destFold,
+                            fontType
+                        );
+                        console.timeEnd(label);
+                        return result;
+                    }).then((result: ResultDetail) => {
+                        console.log(
+                            "生成文件:",
+                            index,
+                            result.id,
+                            formatBytes(result.size)
+                        );
+                        IDCollection.push(result);
+                    });
                 });
                 await pool.completed();
 
