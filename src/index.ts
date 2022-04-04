@@ -42,7 +42,7 @@ type InputTemplate = {
     testHTML: boolean;
 };
 
-export default async function ({
+export = async function ({
     FontPath,
     destFold = "./build",
     css: {
@@ -205,4 +205,4 @@ export default async function ({
                 console.timeEnd(name);
             });
     }, Promise.resolve());
-}
+};

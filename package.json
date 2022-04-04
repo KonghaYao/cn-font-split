@@ -12,16 +12,16 @@
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "dependencies": {
+        "chalk": "^5.0.1",
         "code-point": "^1.1.0",
-        "code-points": "^2.0.0-1",
         "fonteditor-core": "^2.1.8",
         "fs-extra": "^10.0.1",
         "lodash": "^4.17.21",
         "nanoid": "^3.3.2",
-        "pretty-format": "^27.5.1",
         "threads": "^1.7.0"
     },
     "devDependencies": {
+        "pretty-format": "^27.5.1",
         "@rollup/plugin-commonjs": "^21.0.3",
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^13.1.3",
