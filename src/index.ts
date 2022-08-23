@@ -65,6 +65,7 @@ async function fontSplit({
         name: string;
         type: FontEditor.FontType;
     }[];
+    let chunkCount = 0;
     const tra = [
         [
             "载入字体",
@@ -102,6 +103,7 @@ async function fontSplit({
                     if (indexA === -1 && indexB === -1) return 0;
                     if (indexA === -1) return 1;
                     if (indexB === -1) return -1;
+
                     return indexA - indexB;
                 });
 
@@ -159,7 +161,11 @@ async function fontSplit({
                     const size = i.buffer.length;
                     fs.writeFile(file, i.buffer, () => {
                         console.log(
-                            chalk.green("build", content, formatBytes(size))
+                            chalk.green(
+                                chunkCount++,
+                                content.slice(0, 10),
+                                formatBytes(size)
+                            )
                         );
                     });
 
@@ -203,6 +209,22 @@ async function fontSplit({
                         cssFileName,
                         destFold,
                     });
+                }
+            },
+        ],
+        [
+            "生成 reporter 文件",
+            () => {
+                if (testHTML) {
+                    const data = chunkMessage
+                        .map((i) => {
+                            return [
+                                i.name,
+                                String.fromCharCode(...i.unicodes),
+                            ].join("\n");
+                        })
+                        .join("\n\n");
+                    outputFile(path.join(destFold, "./reporter.txt"), data);
                 }
             },
         ],
