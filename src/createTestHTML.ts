@@ -1,5 +1,6 @@
 import path, { resolve } from "path";
 import fse from "fs-extra";
+import template from "./template.html";
 export async function createTestHTML({
     fontFamily,
     cssFileName,
@@ -9,9 +10,6 @@ export async function createTestHTML({
     cssFileName: string;
     destFold: string;
 }) {
-    const template = await fse.readFile(resolve(__dirname, "./template.html"), {
-        encoding: "utf-8",
-    });
     const indexHTML = template
         .replace("testFontName", fontFamily)
         .replace("FONTCSSNAME", cssFileName);

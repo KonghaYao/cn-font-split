@@ -1,18 +1,13 @@
 import { Font, FontEditor, TTF } from "fonteditor-core";
-import { prepareCharset } from "./prepareCharset";
 import { initWoff2 } from "./utils/FontUtils";
 import fs from "fs";
 import { formatBytes } from "./utils/formatBytes";
-import { ResultDetail } from "./genFontFile";
-import { CutTargetFont } from "./CutTargetFont";
 import { outputFile } from "fs-extra";
-import { Pool, spawn, Worker } from "threads";
 import crypto from "crypto";
-import codePoint from "code-point";
 import { createTestHTML } from "./createTestHTML";
-import path, { resolve } from "path";
+import path from "path";
 import chalk from "chalk";
-import { chunk, pick } from "lodash-es";
+import { chunk } from "lodash-es";
 type InputTemplate = {
     FontPath: string;
     destFold: string;
@@ -82,9 +77,11 @@ async function fontSplit({
                     compound2simple: false, // transform ttf compound glyf to simple
                     combinePath: false, // for svg path
                 });
-                chalk.red(
-                    "字体文件总大小 " + formatBytes(fileSize),
-                    "总字符个数 " + font.get().glyf.length
+                console.log(
+                    chalk.red(
+                        "字体文件总大小 " + formatBytes(fileSize),
+                        "总字符个数 " + font.get().glyf.length
+                    )
                 );
             },
         ],
@@ -113,16 +110,19 @@ async function fontSplit({
                 const singleChunkSize = Math.ceil(chunkSize / singleCharBytes);
                 allChunk = chunk(data, singleChunkSize);
 
-                chalk.green(
-                    Math.floor(singleCharBytes) + "B ",
-                    singleChunkSize + "个",
-                    allChunk.length + "组"
+                console.log(
+                    chalk.green(
+                        Math.floor(singleCharBytes) + "B ",
+                        singleChunkSize + "个",
+                        allChunk.length + "组"
+                    )
                 );
             },
         ],
         [
             "切割分包",
             async () => {
+                console.log(chalk.red("切割环节时间较长，请稍等"));
                 buffers = allChunk.map((glyf) => {
                     const buffer = font
                         .readEmpty()
@@ -158,7 +158,9 @@ async function fontSplit({
                     );
                     const size = i.buffer.length;
                     fs.writeFile(file, i.buffer, () => {
-                        chalk.green("build", file, formatBytes(size));
+                        console.log(
+                            chalk.green("build", content, formatBytes(size))
+                        );
                     });
 
                     return {
@@ -167,6 +169,41 @@ async function fontSplit({
                         unicodes: i.unicodes,
                     };
                 });
+            },
+        ],
+        [
+            "生成 CSS 文件",
+            async () => {
+                const cssStyleSheet = chunkMessage
+                    .map(({ name, unicodes }) => {
+                        return `@font-face {
+            font-family: ${fontFamily};
+            src: url("./${name}.${targetType}");
+            font-style: ${fontStyle};
+            font-weight: ${fontWeight};
+            font-display: ${fontDisplay};
+            unicode-range:${unicodes
+                .map((i) => `U+${i.toString(16).toUpperCase()}`)
+                .join(",")}
+        }`;
+                    })
+                    .join("\n");
+                return outputFile(
+                    path.join(destFold, (cssFileName || "result") + ".css"),
+                    cssStyleSheet
+                );
+            },
+        ],
+        [
+            "生成 html 文件",
+            () => {
+                if (testHTML) {
+                    return createTestHTML({
+                        fontFamily: fontFamily,
+                        cssFileName,
+                        destFold,
+                    });
+                }
             },
         ],
     ] as [string, Function][];

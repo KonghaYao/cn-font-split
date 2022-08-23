@@ -1,5 +1,5 @@
-declare module "code-point" {
-    const a: any;
+declare module "*.html" {
+    const a: string;
     export default a;
 }
 

@@ -16,7 +16,13 @@ export default {
     },
     plugins: [
         json(),
-
+        {
+            transform(code, id) {
+                if (id.endsWith(".html")) {
+                    return `export default \`${code}\``;
+                }
+            },
+        },
         babel({
             extensions: [".ts"],
             babelHelpers: "bundled",

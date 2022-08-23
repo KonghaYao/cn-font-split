@@ -13,4 +13,6 @@ fontSplit({
         fontWeight: 400,
     },
     fontType: "ttf",
+    targetType: "woff2",
+    chunkSize: 600 * 1024,
 });
