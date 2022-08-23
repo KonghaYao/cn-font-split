@@ -42,7 +42,7 @@ export async function CutFont(
     subset: number[],
     targetType: FontEditor.FontType = "woff2"
 ) {
-    const font = file.find({ unicode: subset });
+    const g = file.find({ unicode: subset });
     const newFont = file.readEmpty();
     const data = Object.assign(
         Object.fromEntries(Object.entries(newFont.get()))

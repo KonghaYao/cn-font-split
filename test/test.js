@@ -1,9 +1,10 @@
-const fontSplit = require("./dist/index.js");
-const fse = require("fs-extra");
+import { fontSplit } from "../dist/index.js";
+import { emptyDirSync } from "fs-extra";
 
 // 需要先进行 npm run build 生成字体文件
 
-fse.emptyDirSync("./build");
+emptyDirSync("./build");
+
 fontSplit({
     FontPath: "./fonts/站酷庆科黄油体.ttf",
     destFold: "./build",
@@ -11,4 +12,5 @@ fontSplit({
         fontFamily: "站酷庆科黄油体",
         fontWeight: 400,
     },
+    fontType: "ttf",
 });

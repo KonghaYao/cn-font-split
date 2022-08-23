@@ -4,23 +4,33 @@
     "description": "中文 web font 切割工具",
     "main": "dist/index.js",
     "scripts": {
-        "build": "rollup -c=rollup.config.js",
-        "dev": "rollup -c=rollup.config.js -w",
+        "build": "tsc",
         "live": "live-server ./build"
     },
+    "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "dependencies": {
+        
         "chalk": "4",
-        "code-point": "^1.1.0",
         "fonteditor-core": "^2.1.8",
         "fs-extra": "^10.0.1",
-        "lodash": "^4.17.21",
-        "nanoid": "^3.3.2",
-        "threads": "^1.7.0"
+        "lodash-es": "^4.17.21",
+     
+        "threads": "^1.7.0",
+        "uuid": "^8.3.2"
     },
-    "devDependencies": {
+    "devDependencies": {   "rollup": "^2.78.1",
+        "rollup-plugin-analyzer": "^4.0.0",
+        "@babel/core": "^7.18.13",
+        "@babel/preset-typescript": "^7.18.6",
+        "@rollup/plugin-babel": "^5.3.1",
+        "@rollup/plugin-json": "^4.1.0",
+        "@rollup/plugin-node-resolve": "^13.3.0",
         "@types/fs-extra": "^9.0.13",
+        "@types/lodash-es": "^4.17.6",
+        "@types/uuid": "^8.3.4",
+        "gulp": "^4.0.2",
         "pretty-format": "^27.5.1",
         "simplebig": "^0.0.3"
     }

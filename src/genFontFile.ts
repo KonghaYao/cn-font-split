@@ -1,5 +1,5 @@
 import path from "path";
-import { nanoid } from "nanoid";
+import { v4 } from "uuid";
 import { outputFile } from "fs-extra";
 import { Font, FontEditor } from "fonteditor-core";
 export type ResultDetail = {
@@ -14,7 +14,7 @@ export async function genFontFile(
     destFold: string,
     inputType: FontEditor.FontType = "ttf"
 ) {
-    const id = nanoid();
+    const id = v4();
     let font: Buffer = await genFont(file, subset);
 
     const Path = path.join(destFold, id + ".woff2");
@@ -34,7 +34,7 @@ async function genFont(file: ArrayBuffer, subset: string[]): Promise<Buffer> {
         type: "ttf",
         subset: subset.map((i) => codePoint(i)),
         hinting: true,
-        compound2simple: true,
+        compound2simple: false,
     });
     await initWoff2();
 

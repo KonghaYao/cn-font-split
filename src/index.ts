@@ -1,49 +1,43 @@
-import { FontEditor, TTF, woff2 } from "fonteditor-core";
+import { Font, FontEditor, TTF } from "fonteditor-core";
 import { prepareCharset } from "./prepareCharset";
-import { initWoff2, ReadFontDetail } from "./utils/FontUtils";
+import { initWoff2 } from "./utils/FontUtils";
 import fs from "fs";
 import { formatBytes } from "./utils/formatBytes";
-import format from "pretty-format";
 import { ResultDetail } from "./genFontFile";
 import { CutTargetFont } from "./CutTargetFont";
 import { outputFile } from "fs-extra";
-import { Pool, spawn, Thread, Transfer, Worker } from "threads";
-
+import { Pool, spawn, Worker } from "threads";
+import crypto from "crypto";
 import codePoint from "code-point";
 import { createTestHTML } from "./createTestHTML";
-import path from "path";
+import path, { resolve } from "path";
 import chalk from "chalk";
+import { chunk, pick } from "lodash-es";
 type InputTemplate = {
     FontPath: string;
     destFold: string;
-    css: Partial<{
+    css?: Partial<{
         fontFamily: string;
         fontWeight: number;
         fontStyle: string;
         fontDisplay: string;
     }>;
-    fontType: FontEditor.FontType;
-    cssFileName: string;
-    /** 字体分包数目 */
-    chunkOptions: {
-        /** 中文繁体分包数目 */
-        TC?: number;
-        /** 中文简体分包数目 */
-        SC?: number;
-        /** 其他分包数目 */
-        other?: number;
-    };
-    charset: {
+    fontType?: FontEditor.FontType;
+    targetType?: FontEditor.FontType;
+    cssFileName?: string;
+
+    charset?: {
         /** 简体 */
         SC?: boolean; // 简体
-        other?: boolean; // 非中文及一些符号
+        symbol?: boolean; // 非中文及一些符号
         /** 中文繁体分包数目 */
         TC?: boolean; // 繁体
     };
-    testHTML: boolean;
+    testHTML?: boolean;
+    chunkSize?: number;
 };
-
-export = async function ({
+import charList from "./charset/words.json";
+async function fontSplit({
     FontPath,
     destFold = "./build",
     css: {
@@ -53,148 +47,126 @@ export = async function ({
         fontDisplay = "swap",
     } = {},
     fontType = "ttf",
+    targetType = "ttf",
     cssFileName = "result", // 生成 CSS 文件的名称
-    chunkOptions = {}, //
+    chunkSize = 200 * 1024,
     charset = {},
     testHTML = true,
 }: InputTemplate) {
     charset = {
         SC: true,
-        other: true,
+        symbol: true,
         TC: true,
         ...charset,
     };
-    chunkOptions = {
-        TC: 3,
-        SC: 6,
-        other: 1,
-        ...chunkOptions,
-    };
-    const G = {} as Partial<
-        {
-            font: FontEditor.Font;
-            Charset: ReturnType<typeof prepareCharset>;
-            fontSlices: { [k: string]: string[][] };
-            file: Buffer;
-            IDCollection: ResultDetail[];
-        } & TTF.Name
-    >;
+
+    let fileSize: number;
+    let font: FontEditor.Font;
+    let allChunk: TTF.Glyph[][];
+    let buffers: { unicodes: number[]; buffer: Buffer }[];
+    /** 每个 chunk 的信息，但是没有 chunk 的 buffer */
+    let chunkMessage: {
+        unicodes: number[];
+        name: string;
+        type: FontEditor.FontType;
+    }[];
     const tra = [
         [
-            "准备字符集",
+            "载入字体",
             async () => {
-                const Charset = await prepareCharset(charset);
-                Object.assign(G, { Charset });
+                const fileBuffer = fs.readFileSync(FontPath);
+                fileSize = fileBuffer.length;
+                font = Font.create(fileBuffer, {
+                    type: fontType, // support ttf, woff, woff2, eot, otf, svg
+                    hinting: true, // save font hinting
+                    compound2simple: false, // transform ttf compound glyf to simple
+                    combinePath: false, // for svg path
+                });
+                chalk.red(
+                    "字体文件总大小 " + formatBytes(fileSize),
+                    "总字符个数 " + font.get().glyf.length
+                );
             },
         ],
         ["准备 woff2", () => initWoff2()],
         [
-            "读取字体",
+            "排序、重构文件",
             async () => {
-                const file = fs.readFileSync(FontPath);
+                const list = charList as any as number[];
 
-                Object.assign(G, { file });
-            },
-        ],
-        [
-            "校对和切割目标字体",
-            async () => {
-                const fontSlices = await CutTargetFont(
-                    G.Charset!,
-                    chunkOptions
+                // 重新排序这个 glyf 数组
+                const data = [...font.get().glyf].sort((a, b) => {
+                    const indexA: number = a?.unicode?.length
+                        ? list.indexOf(a.unicode[0])
+                        : -1;
+                    const indexB: number = b?.unicode?.length
+                        ? list.indexOf(b.unicode[0])
+                        : -1;
+                    if (indexA === -1 && indexB === -1) return 0;
+                    if (indexA === -1) return 1;
+                    if (indexB === -1) return -1;
+                    return indexA - indexB;
+                });
+
+                // 重新划分分包
+                const singleCharBytes = fileSize / data.length;
+                const singleChunkSize = Math.ceil(chunkSize / singleCharBytes);
+                allChunk = chunk(data, singleChunkSize);
+
+                chalk.green(
+                    Math.floor(singleCharBytes) + "B ",
+                    singleChunkSize + "个",
+                    allChunk.length + "组"
                 );
-                Object.assign(G, { fontSlices });
             },
         ],
         [
             "切割分包",
             async () => {
-                Object.assign(G, { Charset: null });
-                const { other = [], SC = [], TC = [] } = G.fontSlices!;
-                const file = G.file!;
-                const total = [...other, ...SC, ...TC];
-
-                process.setMaxListeners(total.length * 6);
-                console.log("总分包数目：", total.length);
-                console.log("  已经开始分包了，请耐心等待。。。");
-                const pool = Pool(
-                    () => spawn(new Worker("./worker/genFontFile")),
-                    4
-                );
-                console.time("切割总耗时");
-                const IDCollection: ResultDetail[] = [];
-                total.forEach((subset, index) => {
-                    pool.queue(async (genFontFile) => {
-                        const label = chalk.cyan(
-                            "分包情况: " +
-                                index +
-                                " | 分字符集大小 | " +
-                                chalk.cyanBright(subset.length)
-                        );
-                        console.time(label);
-                        const result = genFontFile(
-                            file.buffer,
-                            subset,
-                            destFold,
-                            fontType
-                        );
-                        console.timeEnd(label);
-                        return result;
-                    }).then((result: ResultDetail) => {
-                        console.log(
-                            chalk.magenta(
-                                "生成文件:",
-                                index,
-                                result.id,
-                                formatBytes(result.size)
-                            )
-                        );
-                        IDCollection.push(result);
-                    });
+                buffers = allChunk.map((glyf) => {
+                    const buffer = font
+                        .readEmpty()
+                        .set({
+                            ...font.get(),
+                            glyf,
+                        })
+                        .write({
+                            type: targetType,
+                            toBuffer: true,
+                        }) as Buffer;
+                    return {
+                        unicodes: glyf.flatMap((i) => i.unicode || []),
+                        buffer,
+                    };
                 });
-                await pool.completed();
 
-                await pool.terminate();
-                Object.assign(G, { IDCollection });
-                console.timeEnd("切割总耗时");
-                return;
+                allChunk.length = 0;
             },
         ],
         [
-            "生成 CSS 文件",
+            "整合并写入数据",
             async () => {
-                const IDCollection = G.IDCollection!;
-                const ff = fontFamily;
-                const cssStyleSheet = IDCollection.map(({ id, subset }) => {
-                    return `@font-face {
-            font-family: ${fontFamily || ff};
-            src: url("./${id}.woff2") format("woff2");
-            font-style: ${fontStyle};
-            font-weight: ${fontWeight};
-            font-display: ${fontDisplay};
-            unicode-range:${subset
-                .map((i) => `U+${codePoint(i).toString(16)}`)
-                .join(",")}
-        }`;
-                }).join("\n");
-                return outputFile(
-                    path.join(destFold, (cssFileName || "result") + ".css"),
-                    cssStyleSheet
-                );
-            },
-        ],
-        [
-            "生成 Template.html 文件",
-            () => {
-                if (testHTML) {
-                    const ff = fontFamily;
-
-                    return createTestHTML({
-                        fontFamily: fontFamily || ff,
-                        cssFileName,
+                chunkMessage = buffers.map((i) => {
+                    let sf = crypto.createHash("md5");
+                    // 对字符串进行加密
+                    sf.update(i.buffer);
+                    // 加密的二进制数据以字符串形式返回
+                    let content = sf.digest("hex");
+                    const file = path.join(
                         destFold,
+                        `${content}.${targetType}`
+                    );
+                    const size = i.buffer.length;
+                    fs.writeFile(file, i.buffer, () => {
+                        chalk.green("build", file, formatBytes(size));
                     });
-                }
+
+                    return {
+                        name: content,
+                        type: targetType,
+                        unicodes: i.unicodes,
+                    };
+                });
             },
         ],
     ] as [string, Function][];
@@ -209,4 +181,6 @@ export = async function ({
                 console.timeEnd(chalk.blue(name));
             });
     }, Promise.resolve());
-};
+}
+export { fontSplit };
+export default fontSplit;
