@@ -67,6 +67,7 @@ async function fontSplit({
         [
             "载入字体",
             async () => {
+                console.log("读取字体中");
                 const fileBuffer = fse.readFileSync(FontPath);
                 fileSize = fileBuffer.length;
                 font = Font.create(fileBuffer, {
@@ -77,8 +78,20 @@ async function fontSplit({
                 });
                 const fontFile = font.get();
                 fontData = fontFile.name;
-                console.table(fontFile.name);
                 fontFamily = fontFamily || fontFile.name.uniqueSubFamily;
+                console.table(
+                    // 只输出简单结果即可
+                    Object.fromEntries(
+                        Object.entries(fontFile.name).map((i) => {
+                            return [
+                                i[0],
+                                i[1].length > 50
+                                    ? i[1].slice(0, 50) + "..."
+                                    : i[1],
+                            ];
+                        })
+                    )
+                );
                 console.log(
                     chalk.red(
                         "字体文件总大小 " + formatBytes(fileSize),
