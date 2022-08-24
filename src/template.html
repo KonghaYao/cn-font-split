@@ -9,7 +9,7 @@
     </head>
     <style>
         body {
-            font-family: testFontName;
+            font-family: "testFontName";
             overflow-wrap: break-word;
             font-size: 18px;
         }
@@ -60,75 +60,84 @@
             const total = data.reduce((col, cur) => col + cur.size, 0);
             console.log(total);
             onMount(() => {
-                let chartDom = document.getElementById("echarts");
-                let myChart = echarts.init(chartDom);
-                let option = {
-                    tooltip: {
-                        trigger: "item",
-                        formatter(data) {
-                            return (
-                                `第 ${data.dataIndex + 1} 分包\n` +
-                                data.data.name +
-                                "\n" +
-                                _formatBytes(data.data.value)
-                            );
-                        },
-                    },
-
-                    title: {
-                        text: message.uniqueSubFamily,
-                        subtext: `总共 ${data.length} 分包; 点击跳转查看；`,
-                        left: "center",
-                    },
-                    series: [
-                        {
-                            name: "分包信息",
-                            type: "pie",
-                            radius: ["40%", "70%"],
-                            avoidLabelOverlap: false,
-                            itemStyle: {
-                                borderRadius: 10,
-                                borderColor: "#fff",
-                                borderWidth: 2,
+                // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
+                setTimeout(() => {
+                    let chartDom = document.getElementById("echarts");
+                    let myChart = echarts.init(chartDom);
+                    let option = {
+                        tooltip: {
+                            trigger: "item",
+                            formatter(data) {
+                                return (
+                                    `第 ${data.dataIndex + 1} 分包\n` +
+                                    data.data.name +
+                                    "\n" +
+                                    _formatBytes(data.data.value)
+                                );
                             },
+                        },
 
-                            emphasis: {
+                        title: {
+                            text: message.uniqueSubFamily,
+                            subtext: `总共 ${
+                                data.length
+                            } 分包; 总大小 ${_formatBytes(
+                                total
+                            )} 点击跳转查看；`,
+                            left: "center",
+                        },
+                        series: [
+                            {
+                                name: "分包信息",
+                                type: "pie",
+                                radius: ["40%", "70%"],
+                                avoidLabelOverlap: false,
+                                itemStyle: {
+                                    borderRadius: 10,
+                                    borderColor: "#fff",
+                                    borderWidth: 2,
+                                },
+
+                                emphasis: {
+                                    label: {
+                                        show: true,
+                                        fontSize: "18",
+                                        fontWeight: "bold",
+                                    },
+                                },
+                                labelLine: {
+                                    show: true,
+                                },
                                 label: {
                                     show: true,
-                                    fontSize: "18",
-                                    fontWeight: "bold",
+                                    minMargin: 5,
+                                    edgeDistance: 10,
+                                    lineHeight: 15,
+                                    formatter(data) {
+                                        return (
+                                            (
+                                                (data.data.value * 100) /
+                                                total
+                                            ).toFixed(2) + "%"
+                                        );
+                                    },
                                 },
+                                data: data.map((i) => ({
+                                    value: i.size,
+                                    name: i.name.slice(0, 7),
+                                    hash: i.name,
+                                })),
                             },
-                            labelLine: {
-                                show: true,
-                            },
-                            label: {
-                                show: true,
-                                minMargin: 5,
-                                edgeDistance: 10,
-                                lineHeight: 15,
-                                formatter(data) {
-                                    return (
-                                        (
-                                            (data.data.value * 100) /
-                                            total
-                                        ).toFixed(2) + "%"
-                                    );
-                                },
-                            },
-                            data: data.map((i) => ({
-                                value: i.size,
-                                name: i.name.slice(0, 7),
-                                hash: i.name,
-                            })),
-                        },
-                    ],
-                };
+                        ],
+                    };
 
-                option && myChart.setOption(option);
-                myChart.on("click", (data) => {
-                    document.getElementById(data.data.hash).scrollIntoView();
-                });
+                    option && myChart.setOption(option);
+                    myChart.on("click", (data) => {
+                        document
+                            .getElementById(data.data.hash)
+                            .scrollIntoView();
+                    });
+                }, 1000);
             });
             return html`<div
                 id="echarts"
@@ -164,7 +173,7 @@
                 fetch("./reporter.json").then((res) => res.json())
             );
             const content = () =>
-                html` <div style="display:flex">
+                html` <div>
                         ${DataAnalyze(
                             data().data,
                             data().message

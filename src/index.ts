@@ -43,9 +43,12 @@ async function fontSplit({
 }: InputTemplate) {
     let fileSize: number;
     let font: FontEditor.Font;
+    /** 字体的作者，名称等信息对象 */
     let fontData: TTF.Name;
 
+    /** 字符集 */
     let glyf: TTF.Glyph[];
+    /** 第一个字符是空字符，必须以这个为开头 */
     let voidGlyf: TTF.Glyph;
 
     let allChunk: TTF.Glyph[][];
@@ -207,7 +210,7 @@ async function fontSplit({
                 const cssStyleSheet = chunkMessage
                     .map(({ name, unicodes }) => {
                         return `@font-face {
-            font-family: ${fontFamily};
+            font-family: "${fontFamily};
             src: url("./${name}.${targetType}");
             font-style: ${fontStyle};
             font-weight: ${fontWeight || fontData.fontSubFamily.toLowerCase()};
