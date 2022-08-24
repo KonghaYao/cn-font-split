@@ -1,7 +1,7 @@
 import { Font, FontEditor, TTF } from "fonteditor-core";
 import { initWoff2 } from "./utils/FontUtils";
 import fs from "fs";
-import { formatBytes } from "./utils/formatBytes";
+import { formatBytes, _formatBytes } from "./utils/formatBytes";
 import { outputFile } from "fs-extra";
 import crypto from "crypto";
 import { createTestHTML } from "./createTestHTML";
@@ -21,13 +21,6 @@ type InputTemplate = {
     targetType?: FontEditor.FontType;
     cssFileName?: string;
 
-    charset?: {
-        /** 简体 */
-        SC?: boolean; // 简体
-        symbol?: boolean; // 非中文及一些符号
-        /** 中文繁体分包数目 */
-        TC?: boolean; // 繁体
-    };
     testHTML?: boolean;
     chunkSize?: number;
 };
@@ -45,25 +38,22 @@ async function fontSplit({
     targetType = "ttf",
     cssFileName = "result", // 生成 CSS 文件的名称
     chunkSize = 200 * 1024,
-    charset = {},
+
     testHTML = true,
 }: InputTemplate) {
-    charset = {
-        SC: true,
-        symbol: true,
-        TC: true,
-        ...charset,
-    };
-
     let fileSize: number;
     let font: FontEditor.Font;
+
+    let glyf: TTF.Glyph[];
     let allChunk: TTF.Glyph[][];
+    /* 准备保存的文件信息 */
     let buffers: { unicodes: number[]; buffer: Buffer }[];
     /** 每个 chunk 的信息，但是没有 chunk 的 buffer */
     let chunkMessage: {
         unicodes: number[];
         name: string;
         type: FontEditor.FontType;
+        size: number;
     }[];
     let chunkCount = 0;
     const tra = [
@@ -86,14 +76,20 @@ async function fontSplit({
                 );
             },
         ],
-        ["准备 woff2", () => initWoff2()],
+
         [
-            "排序、重构文件",
+            "初始化字体生产插件",
+            () => {
+                if (targetType === "woff2") initWoff2();
+            },
+        ],
+        [
+            "排序字体图形",
             async () => {
                 const list: number[] = (charList as any).default.flat();
 
                 // 重新排序这个 glyf 数组
-                const data = [...font.get().glyf].sort((a, b) => {
+                glyf = [...font.get().glyf].sort((a, b) => {
                     const indexA: number = a?.unicode?.length
                         ? list.indexOf(a.unicode[0])
                         : -1;
@@ -106,13 +102,36 @@ async function fontSplit({
 
                     return indexA - indexB;
                 });
-                console.log(data.length);
-
+            },
+        ],
+        [
+            "构建分包",
+            async () => {
                 // 重新划分分包
-                const singleCharBytes = fileSize / data.length;
+                const singleCharBytes = fileSize / glyf.length;
                 const singleChunkSize = Math.ceil(chunkSize / singleCharBytes);
-                allChunk = chunk(data, singleChunkSize);
 
+                // 尝试分包大小
+                const testSize = Math.floor(singleChunkSize / 3);
+                const midStart = Math.floor(glyf.length / 2 - testSize / 2);
+                const testChunk = new Set([
+                    ...glyf.slice(midStart, midStart + testSize * 2),
+                ]);
+                const buffer = font
+                    .readEmpty()
+                    .set({
+                        ...font.get(),
+                        glyf: [...testChunk.values()],
+                    })
+                    .write({
+                        type: targetType,
+                        toBuffer: true,
+                    }) as Buffer;
+                console.log("测试分包大小", testChunk.size, buffer.length);
+                allChunk = chunk(
+                    glyf,
+                    testChunk.size * (chunkSize / buffer.length)
+                );
                 console.log(
                     chalk.green(
                         Math.floor(singleCharBytes) + " B/个文件",
@@ -174,8 +193,10 @@ async function fontSplit({
                         name: content,
                         type: targetType,
                         unicodes: i.unicodes,
+                        size: i.buffer.length,
                     };
                 });
+                buffers = [];
             },
         ],
         [
@@ -220,12 +241,13 @@ async function fontSplit({
                     const data = chunkMessage
                         .map((i) => {
                             return [
-                                i.name,
+                                "ChunkName: " + i.name,
+                                "ChunkSize: " + _formatBytes(i.size),
                                 String.fromCharCode(...i.unicodes),
                             ].join("\n");
                         })
                         .join("\n\n");
-                    outputFile(path.join(destFold, "./reporter.txt"), data);
+                    outputFile(path.join(destFold, "./reporter.text"), data);
                 }
             },
         ],
@@ -239,9 +261,6 @@ async function fontSplit({
             })
             .then(() => {
                 console.timeEnd(chalk.blue(name));
-            })
-            .catch((e: Error) => {
-                console.log("错误", e.message);
             });
     }, Promise.resolve());
 }
