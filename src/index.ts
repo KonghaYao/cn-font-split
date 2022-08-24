@@ -46,6 +46,8 @@ async function fontSplit({
     let fontData: TTF.Name;
 
     let glyf: TTF.Glyph[];
+    let voidGlyf: TTF.Glyph;
+
     let allChunk: TTF.Glyph[][];
     /**  准备保存的文件信息 */
     let buffers: { unicodes: number[]; buffer: Buffer }[];
@@ -95,19 +97,23 @@ async function fontSplit({
                 const list: number[] = (charList as any).default.flat();
 
                 // 重新排序这个 glyf 数组
-                glyf = [...font.get().glyf].sort((a, b) => {
-                    const indexA: number = a?.unicode?.length
-                        ? list.indexOf(a.unicode[0])
-                        : -1;
-                    const indexB: number = b?.unicode?.length
-                        ? list.indexOf(b.unicode[0])
-                        : -1;
-                    if (indexA === -1 && indexB === -1) return 0;
-                    if (indexA === -1) return 1;
-                    if (indexB === -1) return -1;
+                voidGlyf = font.get().glyf[0];
+                glyf = font
+                    .get()
+                    .glyf.slice(1)
+                    .sort((a, b) => {
+                        const indexA: number = a?.unicode?.length
+                            ? list.indexOf(a.unicode[0])
+                            : -1;
+                        const indexB: number = b?.unicode?.length
+                            ? list.indexOf(b.unicode[0])
+                            : -1;
+                        if (indexA === -1 && indexB === -1) return 0;
+                        if (indexA === -1) return 1;
+                        if (indexB === -1) return -1;
 
-                    return indexA - indexB;
-                });
+                        return indexA - indexB;
+                    });
             },
         ],
         [
@@ -141,12 +147,13 @@ async function fontSplit({
             "切割分包",
             async () => {
                 console.log(chalk.red("切割环节时间较长，请稍等"));
-                buffers = allChunk.map((glyf) => {
+                buffers = allChunk.map((g) => {
                     const buffer = font
                         .readEmpty()
                         .set({
                             ...font.get(),
-                            glyf,
+                            // fixed: 好像 glyf 的第一个值是空值
+                            glyf: [voidGlyf, ...g],
                         })
                         .write({
                             type: targetType,
@@ -154,7 +161,7 @@ async function fontSplit({
                         }) as Buffer;
                     return {
                         unicodes: [
-                            ...new Set(glyf.flatMap((i) => i.unicode || [])),
+                            ...new Set(g.flatMap((i) => i.unicode || [])),
                         ],
                         buffer,
                     };

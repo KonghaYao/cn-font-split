@@ -132,7 +132,7 @@
             });
             return html`<div
                 id="echarts"
-                style="width: 600px;height:400px;margin:auto"
+                style="width: 600px;height:600px;margin:auto"
             ></div>`;
         };
         const CharList = (data) => {
@@ -164,9 +164,13 @@
                 fetch("./reporter.json").then((res) => res.json())
             );
             const content = () =>
-                html`${DataAnalyze(data().data, data().message)}${BaseMessage(
-                    data().message
-                )}${CharList(data().data)}`;
+                html` <div style="display:flex">
+                        ${DataAnalyze(
+                            data().data,
+                            data().message
+                        )}${BaseMessage(data().message)}
+                    </div>
+                    ${CharList(data().data)}`;
             return html`<div>
                 ${() => (data.loading ? `<div>加载中</div>` : content())}
             </div>`;
