@@ -31,7 +31,7 @@ type InputTemplate = {
     testHTML?: boolean;
     chunkSize?: number;
 };
-import charList from "./charset/words.json";
+import * as charList from "./charset/words.json";
 async function fontSplit({
     FontPath,
     destFold = "./build",
@@ -90,7 +90,7 @@ async function fontSplit({
         [
             "排序、重构文件",
             async () => {
-                const list = charList as any as number[];
+                const list: number[] = (charList as any).default.flat();
 
                 // 重新排序这个 glyf 数组
                 const data = [...font.get().glyf].sort((a, b) => {
@@ -106,6 +106,7 @@ async function fontSplit({
 
                     return indexA - indexB;
                 });
+                console.log(data.length);
 
                 // 重新划分分包
                 const singleCharBytes = fileSize / data.length;
@@ -114,7 +115,7 @@ async function fontSplit({
 
                 console.log(
                     chalk.green(
-                        Math.floor(singleCharBytes) + "B ",
+                        Math.floor(singleCharBytes) + " B/个文件",
                         singleChunkSize + "个",
                         allChunk.length + "组"
                     )
@@ -238,6 +239,9 @@ async function fontSplit({
             })
             .then(() => {
                 console.timeEnd(chalk.blue(name));
+            })
+            .catch((e: Error) => {
+                console.log("错误", e.message);
             });
     }, Promise.resolve());
 }

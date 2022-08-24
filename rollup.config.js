@@ -15,7 +15,9 @@ export default {
         paths: {},
     },
     plugins: [
-        json(),
+        json({
+            namedExports: false,
+        }),
         {
             transform(code, id) {
                 if (id.endsWith(".html")) {
