@@ -9,10 +9,10 @@ fontSplit({
     FontPath: "./fonts/站酷庆科黄油体.ttf",
     destFold: "./build",
     css: {
-        fontFamily: "站酷庆科黄油体",
-        fontWeight: 400,
+        // fontFamily: "站酷庆科黄油体", // 不建议使用，我们已经有内置的解析模块了
+        // fontWeight: 400,
     },
     fontType: "ttf",
     targetType: "ttf",
-    chunkSize: 200 * 1024,
+    // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
 });

@@ -10,8 +10,9 @@ export async function createTestHTML({
     cssFileName: string;
     destFold: string;
 }) {
-    const indexHTML = template
+    const indexHTML = Buffer.from(template, "base64")
+        .toString("utf-8")
         .replace("testFontName", fontFamily)
-        .replace("FONTCSSNAME", cssFileName);
+        .replace(/FONTCSSNAME/g, cssFileName);
     return fse.outputFile(path.join(destFold, "index.html"), indexHTML);
 }

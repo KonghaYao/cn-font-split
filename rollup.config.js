@@ -21,7 +21,9 @@ export default {
         {
             transform(code, id) {
                 if (id.endsWith(".html")) {
-                    return `export default \`${code}\``;
+                    return `export default \`${Buffer.from(code).toString(
+                        "base64"
+                    )}\``;
                 }
             },
         },

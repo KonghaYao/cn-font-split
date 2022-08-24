@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>FONTCSSNAME</title>
         <link rel="stylesheet" href="./FONTCSSNAME.css" />
     </head>
     <style>
@@ -15,42 +15,164 @@
         }
     </style>
 
-    <body>
-        <h1>其他字符</h1>
-        <div id="Symbol"></div>
+    <style>
+        h3 {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                "Helvetica Neue", sans-serif;
+            font-weight: normal;
+        }
+    </style>
 
-        <h1>简体字符</h1>
-        <div id="SC"></div>
+    <body></body>
+    <script type="module">
+        import {
+            createSignal,
+            createResource,
+            onMount,
+        } from "https://cdn.skypack.dev/solid-js";
 
-        <h1>繁体字符</h1>
-        <div id="TC"></div>
-    </body>
-    <script>
-        fetch(
-            "https://fastly.jsdelivr.net/npm/@konghayao/cn-font-split@2/src/charset/symbol.txt"
-        )
-            .then((res) => res.text())
-            .then((res) => {
-                document.getElementById("Symbol").innerText = res;
+        import html from "https://cdn.skypack.dev/solid-js/html";
+        import * as echarts from "https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.esm.min.js";
+        function _formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = [
+                "Bytes",
+                "KB",
+                "MB",
+                "GB",
+                "TB",
+                "PB",
+                "EB",
+                "ZB",
+                "YB",
+            ];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (
+                parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) +
+                " " +
+                sizes[i]
+            );
+        }
+        const DataAnalyze = (data, message) => {
+            const total = data.reduce((col, cur) => col + cur.size, 0);
+            console.log(total);
+            onMount(() => {
+                let chartDom = document.getElementById("echarts");
+                let myChart = echarts.init(chartDom);
+                let option = {
+                    tooltip: {
+                        trigger: "item",
+                        formatter(data) {
+                            return (
+                                `第 ${data.dataIndex + 1} 分包\n` +
+                                data.data.name +
+                                "\n" +
+                                _formatBytes(data.data.value)
+                            );
+                        },
+                    },
+
+                    title: {
+                        text: message.uniqueSubFamily,
+                        subtext: `总共 ${data.length} 分包; 点击跳转查看；`,
+                        left: "center",
+                    },
+                    series: [
+                        {
+                            name: "分包信息",
+                            type: "pie",
+                            radius: ["40%", "70%"],
+                            avoidLabelOverlap: false,
+                            itemStyle: {
+                                borderRadius: 10,
+                                borderColor: "#fff",
+                                borderWidth: 2,
+                            },
+
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: "18",
+                                    fontWeight: "bold",
+                                },
+                            },
+                            labelLine: {
+                                show: true,
+                            },
+                            label: {
+                                show: true,
+                                minMargin: 5,
+                                edgeDistance: 10,
+                                lineHeight: 15,
+                                formatter(data) {
+                                    return (
+                                        (
+                                            (data.data.value * 100) /
+                                            total
+                                        ).toFixed(2) + "%"
+                                    );
+                                },
+                            },
+                            data: data.map((i) => ({
+                                value: i.size,
+                                name: i.name.slice(0, 7),
+                                hash: i.name,
+                            })),
+                        },
+                    ],
+                };
+
+                option && myChart.setOption(option);
+                myChart.on("click", (data) => {
+                    document.getElementById(data.data.hash).scrollIntoView();
+                });
             });
-        fetch(
-            "https://fastly.jsdelivr.net/npm/@konghayao/cn-font-split@2/src/charset/SC.txt"
-        )
-            .then((res) => res.text())
-            .then((res) => {
-                window.SC = res;
-                document.getElementById("SC").innerText = res;
+            return html`<div
+                id="echarts"
+                style="width: 600px;height:400px;margin:auto"
+            ></div>`;
+        };
+        const CharList = (data) => {
+            return data.map((i) => {
+                return html`<div>
+                    <h3 id="${i.name}">
+                        分片名称 ${i.name} | 分片大小 ${_formatBytes(i.size)}
+                    </h3>
+                    <p>${i.chars}</p>
+                </div>`;
             });
-        fetch(
-            "https://fastly.jsdelivr.net/npm/@konghayao/cn-font-split@2/src/charset/TCDiff.txt"
-        )
-            .then((res) => res.text())
-            .then((res) => {
-                window.TCDiff = res;
-                document.getElementById("TC").innerText = res
-                    .split("")
-                    .filter((_, i) => i % 2)
-                    .join("");
-            });
+        };
+        const BaseMessage = (message) => {
+            return html`
+                <table style="margin:auto">
+                    ${Object.entries(message).map((i) => {
+                        return html`
+                            <tr>
+                                <td>${i[0]}</td>
+                                <td>${i[1]}</td>
+                            </tr>
+                        `;
+                    })}
+                </table>
+            `;
+        };
+        const App = () => {
+            const [data] = createResource(() =>
+                fetch("./reporter.json").then((res) => res.json())
+            );
+            const content = () =>
+                html`${DataAnalyze(data().data, data().message)}${BaseMessage(
+                    data().message
+                )}${CharList(data().data)}`;
+            return html`<div>
+                ${() => (data.loading ? `<div>加载中</div>` : content())}
+            </div>`;
+        };
+
+        import { render } from "https://cdn.skypack.dev/solid-js/web";
+        render(App, document.body);
     </script>
 </html>
