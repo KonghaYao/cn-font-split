@@ -28,12 +28,7 @@ import { md5 } from "./utils/md5";
 async function fontSplit({
     FontPath,
     destFold = "./build",
-    css: {
-        fontFamily = "",
-        fontWeight = 0,
-        fontStyle = "normal",
-        fontDisplay = "swap",
-    } = {},
+    css = {},
     fontType = "ttf",
     targetType = "ttf",
     cssFileName = "result", // 生成 CSS 文件的名称
@@ -78,7 +73,9 @@ async function fontSplit({
                 });
                 const fontFile = font.get();
                 fontData = fontFile.name;
-                fontFamily = fontFamily || fontFile.name.uniqueSubFamily;
+                css.fontFamily =
+                    css.fontFamily || fontFile.name.uniqueSubFamily;
+
                 console.table(
                     // 只输出简单结果即可
                     Object.fromEntries(
@@ -222,12 +219,15 @@ async function fontSplit({
             async () => {
                 const cssStyleSheet = chunkMessage
                     .map(({ name, unicodes }) => {
+                        if (unicodes.length === 0) return "";
                         return `@font-face {
-            font-family: "${fontFamily};
+            font-family: "${css.fontFamily}";
             src: url("./${name}.${targetType}");
-            font-style: ${fontStyle};
-            font-weight: ${fontWeight || fontData.fontSubFamily.toLowerCase()};
-            font-display: ${fontDisplay};
+            font-style: ${css.fontStyle || "normal"};
+            font-weight: ${
+                css.fontWeight || fontData.fontSubFamily.toLowerCase()
+            };
+            font-display: ${css.fontDisplay || "swap"};
             unicode-range:${unicodes
                 .map((i) => `U+${i.toString(16).toUpperCase()}`)
                 .join(",")}
@@ -251,8 +251,6 @@ async function fontSplit({
             () => {
                 if (testHTML) {
                     return createTestHTML({
-                        fontFamily: fontFamily,
-                        cssFileName,
                         destFold,
                     });
                 }
