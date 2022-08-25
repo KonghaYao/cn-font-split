@@ -11,17 +11,14 @@
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "dependencies": {
-        
         "chalk": "4",
         "fonteditor-core": "^2.1.8",
         "fs-extra": "^10.0.1",
         "lodash-es": "^4.17.21",
-     
         "threads": "^1.7.0",
         "uuid": "^8.3.2"
     },
-    "devDependencies": {   "rollup": "^2.78.1",
-        "rollup-plugin-analyzer": "^4.0.0",
+    "devDependencies": {
         "@babel/core": "^7.18.13",
         "@babel/preset-typescript": "^7.18.6",
         "@rollup/plugin-babel": "^5.3.1",
@@ -30,8 +27,7 @@
         "@types/fs-extra": "^9.0.13",
         "@types/lodash-es": "^4.17.6",
         "@types/uuid": "^8.3.4",
-        "gulp": "^4.0.2",
-        "pretty-format": "^27.5.1",
-        "simplebig": "^0.0.3"
+        "rollup": "^2.78.1",
+        "rollup-plugin-analyzer": "^4.0.0"
     }
 }

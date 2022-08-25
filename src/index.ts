@@ -11,7 +11,7 @@ export type InputTemplate = {
     destFold: string;
     css?: Partial<{
         fontFamily: string;
-        fontWeight: number;
+        fontWeight: number | string;
         fontStyle: string;
         fontDisplay: string;
     }>;
@@ -29,13 +29,15 @@ async function fontSplit({
     FontPath,
     destFold = "./build",
     css = {},
-    fontType = "ttf",
+    fontType,
     targetType = "ttf",
     cssFileName = "result", // 生成 CSS 文件的名称
     chunkSize = 200 * 1024,
     testHTML = true,
     reporter = true,
 }: InputTemplate) {
+    fontType = path.extname(FontPath).slice(1).toLowerCase() as any;
+    console.log("输入文件类型识别", fontType);
     let fileSize: number;
     let font: FontEditor.Font;
     /** 字体的作者，名称等信息对象 */
@@ -66,7 +68,7 @@ async function fontSplit({
                 const fileBuffer = fse.readFileSync(FontPath);
                 fileSize = fileBuffer.length;
                 font = Font.create(fileBuffer, {
-                    type: fontType, // support ttf, woff, woff2, eot, otf, svg
+                    type: fontType!, // support ttf, woff, woff2, eot, otf, svg
                     hinting: true, // save font hinting
                     compound2simple: false, // transform ttf compound glyf to simple
                     combinePath: false, // for svg path
@@ -75,7 +77,7 @@ async function fontSplit({
                 fontData = fontFile.name;
                 css.fontFamily =
                     css.fontFamily || fontFile.name.uniqueSubFamily;
-
+                css.fontWeight = fontFile.name.fontSubFamily;
                 console.table(
                     // 只输出简单结果即可
                     Object.fromEntries(
