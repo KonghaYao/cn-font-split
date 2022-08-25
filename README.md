@@ -131,7 +131,7 @@ other | 总数：883 | 分包数目：1
 
 ## 已经知道的 BUG
 
-1. otf 读取失败，这个是 fonteditor-core 的 bug
+1. 部分 otf 读取失败，这个可能是 otf 文件的问题
 
 ## 开源许可证
 
