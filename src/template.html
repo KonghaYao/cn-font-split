@@ -53,13 +53,77 @@
                 sizes[i]
             );
         }
-        const DataAnalyze = (data, message) => {
-            const total = data.reduce((col, cur) => col + cur.size, 0);
-            console.log(total);
+        const TimeAnalyze = (record, message) => {
+            record.pop(); // 最后一个记录是没有用的
+            const total = record.reduce(
+                (col, cur) => col + cur.end - cur.start,
+                0
+            );
+            let chartDom;
+            // console.log(record, total);
+
             onMount(() => {
                 // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
                 setTimeout(() => {
-                    let chartDom = document.getElementById("echarts");
+                    let myChart = echarts.init(chartDom);
+                    let option = {
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: {
+                                type: "shadow",
+                            },
+                        },
+                        title: {
+                            text: "打包时间分布图",
+                            subtext: `时间为 ms; 总时间 ${total} ms;\n${message.uniqueSubFamily}`,
+                        },
+                        legend: {
+                            top: "15%",
+                        },
+                        grid: {
+                            left: "10%",
+                            right: "10%",
+                            bottom: "30%",
+                            top: "30%",
+                        },
+                        xAxis: {
+                            type: "value",
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: ["时间轴"],
+                        },
+                        series: record.map((i) => {
+                            return {
+                                name: i.name,
+                                type: "bar",
+                                stack: "total",
+                                label: {
+                                    show: true,
+                                },
+                                emphasis: {
+                                    focus: "series",
+                                },
+                                data: [i.end - i.start],
+                            };
+                        }),
+                    };
+
+                    option && myChart.setOption(option);
+                }, 1500);
+            });
+            return html`<div
+                ref=${(dom) => (chartDom = dom)}
+                style="width: 600px;height:400px;margin:auto"
+            ></div>`;
+        };
+        const DataAnalyze = (data, message) => {
+            const total = data.reduce((col, cur) => col + cur.size, 0);
+            // console.log(data, total);
+            let chartDom;
+            onMount(() => {
+                // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
+                setTimeout(() => {
                     let myChart = echarts.init(chartDom);
                     let option = {
                         tooltip: {
@@ -134,10 +198,10 @@
                             .getElementById(data.data.hash)
                             .scrollIntoView();
                     });
-                }, 1000);
+                }, 300);
             });
             return html`<div
-                id="echarts"
+                ref=${(dom) => (chartDom = dom)}
                 style="width: 600px;height:600px;margin:auto"
             ></div>`;
         };
@@ -187,10 +251,9 @@
             });
             const content = () =>
                 html` <div>
-                        ${DataAnalyze(
-                            data().data,
-                            data().message
-                        )}${BaseMessage(data().message)}
+                        ${DataAnalyze(data().data, data().message)}
+                        ${TimeAnalyze(data().record, data().message)}
+                        ${BaseMessage(data().message)}
                     </div>
                     ${CharList(data().data)}`;
             return html`<div>
