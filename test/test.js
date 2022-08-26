@@ -1,4 +1,4 @@
-import { fontSplit } from ".";
+import { fontSplit } from "../dist/index.js";
 import { emptyDirSync } from "fs-extra";
 
 // 需要先进行 npm run build 生成字体文件
