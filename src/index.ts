@@ -37,6 +37,12 @@ async function fontSplit({
     reporter = true,
 }: InputTemplate) {
     fontType = path.extname(FontPath).slice(1).toLowerCase() as any;
+    /** record 是记录时间信息的字段 */
+    const record: {
+        name: string;
+        start: number;
+        end: number;
+    }[] = [];
     console.log("输入文件类型识别", fontType);
     let fileSize: number;
     let font: FontEditor.Font;
@@ -273,20 +279,29 @@ async function fontSplit({
                         config: arguments[0],
                         message: fontData,
                         data,
+                        record,
                     });
                 }
             },
         ],
     ] as [string, Function][];
 
+    let temp_stage = {
+        name: "",
+        start: 0,
+        end: 0,
+    };
     return tra.reduce((col, [name, func]) => {
         return col
             .then(() => {
+                temp_stage = { name, start: Date.now(), end: 0 };
+                record.push(temp_stage);
                 console.time(chalk.blue(name));
                 return func();
             })
             .then(() => {
                 console.timeEnd(chalk.blue(name));
+                temp_stage.end = Date.now();
             });
     }, Promise.resolve());
 }
