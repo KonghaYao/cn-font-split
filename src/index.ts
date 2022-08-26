@@ -7,21 +7,30 @@ import path from "path";
 import chalk from "chalk";
 import { chunk } from "lodash-es";
 export type InputTemplate = {
+    /** 字体文件的相对地址 */
     FontPath: string;
+    /** 切割后字体 */
     destFold: string;
+    /** 生成后的 CSS 文件的信息 */
     css?: Partial<{
         fontFamily: string;
         fontWeight: number | string;
         fontStyle: string;
         fontDisplay: string;
     }>;
+    /** 输入的字体类型 */
     fontType?: FontEditor.FontType;
+    /** 输出的字体类型，默认 ttf；woff，woff2 也可以*/
     targetType?: FontEditor.FontType;
+    /** 预计每个包的大小，插件会尽量打包到这个大小  */
+    chunkSize?: number;
+    /** 输出的 css 文件的名称  */
     cssFileName?: string;
 
+    /** 是否输出 HTML 测试文件  */
     testHTML?: boolean;
+    /** 是否输出报告文件  */
     reporter?: boolean;
-    chunkSize?: number;
 };
 import * as charList from "./charset/words.json";
 import { md5 } from "./utils/md5";
@@ -83,7 +92,7 @@ async function fontSplit({
                 const fontFile = font.get();
                 fontData = fontFile.name;
                 css.fontFamily =
-                    css.fontFamily || fontFile.name.uniqueSubFamily;
+                    css.fontFamily || fontFile.name.uniqueSubFamily.trim();
                 css.fontWeight = fontFile.name.fontSubFamily;
                 console.table(
                     // 只输出简单结果即可

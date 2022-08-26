@@ -1,6 +1,6 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2022/ 8 / 26 | 江夏尧 |
+| 更新时间： 2022/ 8 / 26 | 江夏尧 | Version 3.0.0 |
 
 ## 简介
 
@@ -40,15 +40,13 @@ npm install @konghayao/cn-font-split
 import { fontSplit } from "@konghayao/cn-font-split";
 
 fontSplit({
-    FontPath: "./fonts/站酷庆科黄油体。ttf",
     FontPath: "./fonts/SourceHanSerifCN-Bold.ttf",
-    // FontPath: "./fonts/DottedSongtiDiamondRegular.otf",
     destFold: "./build",
     css: {
         // fontFamily: "站酷庆科黄油体", // 不建议使用，我们已经有内置的解析模块了
         // fontWeight: 400,
     },
-    targetType: "ttf",
+    targetType: "ttf", // ttf woff woff2；注意 eot 文件在浏览器中的支持度非常低，所以不进行支持
     // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
 });
 ```
@@ -56,7 +54,7 @@ fontSplit({
 ## 已经知道的 BUG
 
 1. 部分 otf 读取失败，这个可能是 otf 文件的问题
-2. eot 文件在浏览器中的支持度非常低，所以没有必要
+2. eot 文件在浏览器中的支持度非常低，所以没有必要使用这种字体格式作为目标格式
 
 ## 开源许可证
 
