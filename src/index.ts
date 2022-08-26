@@ -266,7 +266,7 @@ async function fontSplit({
         ],
         [
             "生成 reporter 文件",
-            () => {
+            async () => {
                 if (reporter) {
                     const data = chunkMessage.map((i) => {
                         return {
@@ -275,12 +275,15 @@ async function fontSplit({
                             chars: String.fromCharCode(...i.unicodes),
                         };
                     });
-                    fse.outputJSON(path.join(destFold, "./reporter.json"), {
-                        config: arguments[0],
-                        message: fontData,
-                        data,
-                        record,
-                    });
+                    await fse.outputJSON(
+                        path.join(destFold, "./reporter.json"),
+                        {
+                            config: arguments[0],
+                            message: fontData,
+                            data,
+                            record,
+                        }
+                    );
                 }
             },
         ],
