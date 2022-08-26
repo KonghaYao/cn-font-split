@@ -11,6 +11,10 @@
         body {
             overflow-wrap: break-word;
             font-size: 18px;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
         }
         h3 {
             font-family: system-ui, -apple-system, BlinkMacSystemFont,
@@ -53,15 +57,20 @@
                 sizes[i]
             );
         }
+        const toolbox = {
+            feature: {
+                saveAsImage: {},
+            },
+        };
         const TimeAnalyze = (records) => {
             let chartDom;
-            // console.log(record, total);
 
             onMount(() => {
                 // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
                 setTimeout(() => {
                     let myChart = echarts.init(chartDom);
                     let option = {
+                        toolbox,
                         tooltip: {
                             trigger: "axis",
                             axisPointer: {
@@ -70,7 +79,7 @@
                         },
                         title: {
                             text: "打包时间分布图",
-                            subtext: `时间为 ms; `,
+                            subtext: `${location.href}`,
                         },
                         legend: {
                             top: "15%",
@@ -83,11 +92,17 @@
                         },
                         xAxis: {
                             type: "value",
+                            axisLabel: {
+                                formatter(data) {
+                                    return data / 1000 + "s";
+                                },
+                            },
                         },
                         yAxis: {
                             type: "category",
                             data: records.map((i) => i[0]),
                         },
+
                         series: records[0][1].record.map((i, index) => {
                             return {
                                 name: i.name,
@@ -95,6 +110,10 @@
                                 stack: "total",
                                 label: {
                                     show: true,
+                                    formatter({ data }) {
+                                        if (data / 1000 < 1) return "";
+                                        return (data / 1000).toFixed(0) + "s";
+                                    },
                                 },
                                 emphasis: {
                                     focus: "series",
@@ -102,7 +121,6 @@
                                 data: records.map(([_, { record }]) => {
                                     if (index === record.length - 1) return 0;
                                     let rec = record[index];
-                                    console.log(record);
                                     return rec.end - rec.start;
                                 }),
                             };
@@ -117,6 +135,87 @@
                     chartDom = dom;
                 }}
                 style="width: 600px;height:400px;margin:auto"
+            ></div>`;
+        };
+        const SizeAnalyze = (records) => {
+            let chartDom;
+
+            onMount(() => {
+                setTimeout(() => {
+                    let myChart = echarts.init(chartDom);
+                    let option = {
+                        toolbox,
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: {
+                                type: "shadow",
+                            },
+                        },
+                        title: {
+                            text: "打包大小比较",
+                            subtext: `上层为打包大小，下层为分包次数 \n${location.href}`,
+                        },
+
+                        grid: {
+                            left: "10%",
+                            right: "10%",
+                            bottom: "30%",
+                        },
+                        xAxis: {
+                            type: "value",
+                            boundaryGap: [0, 0.01],
+                            axisLabel: {
+                                formatter(data) {
+                                    return _formatBytes(data);
+                                },
+                            },
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: records.map((i) => i[0]),
+                        },
+
+                        series: [
+                            {
+                                name,
+                                type: "bar",
+                                label: {
+                                    show: true,
+                                    formatter({ data }) {
+                                        return _formatBytes(data);
+                                    },
+                                },
+                                data: records.map((i) => {
+                                    return i[1].data.reduce(
+                                        (col, cur) => col + cur.size,
+                                        0
+                                    );
+                                }),
+                            },
+                            {
+                                name,
+                                type: "bar",
+                                label: {
+                                    show: true,
+                                    formatter({ data }) {
+                                        return (data >> 17) + " 包";
+                                    },
+                                },
+                                data: records.map((i) => {
+                                    return i[1].data.length << 17;
+                                }),
+                            },
+                        ],
+                    };
+
+                    option && myChart.setOption(option);
+                }, 1500);
+            });
+            return html`<div
+                ref=${function (dom) {
+                    chartDom = dom;
+                }}
+                style="width: 600px;height:300px;margin:auto"
             ></div>`;
         };
 
@@ -136,7 +235,13 @@
                 ];
             });
             createEffect(() => {});
-            const content = () => html` <div>${TimeAnalyze(data())}</div> `;
+            const content = () =>
+                html`
+                    <h2>@konghayao/cn-font-split 切割测试</h2>
+                    <p>测试字体文件 Source Han Serif CN Bold:Version 1.00</p>
+                    <p>@konghayao/cn-font-split 版本 3.0.0</p>
+                    <div>${SizeAnalyze(data())} ${TimeAnalyze(data())}</div>
+                `;
             return html`<div>
                 ${() => (data.loading ? `<div>加载中</div>` : content())}
             </div>`;

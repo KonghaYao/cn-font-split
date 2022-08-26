@@ -2,7 +2,6 @@ import { fontSplit } from "../dist/index.js";
 import { emptyDirSync, move } from "fs-extra";
 
 const types = ["ttf", "woff", "woff2"];
-emptyDirSync("./benchmark");
 
 for (let i = 0; i < types.length; i++) {
     emptyDirSync("./build");
