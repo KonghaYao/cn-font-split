@@ -16,5 +16,7 @@ for (let i = 0; i < types.length; i++) {
         targetType: types[i],
         // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
     });
-    await move("./build/reporter.json", `./benchmark/${types[i]}.json`);
+    await move("./build/reporter.json", `./benchmark/${types[i]}.json`, {
+        overwrite: true,
+    });
 }

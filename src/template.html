@@ -75,7 +75,7 @@
                         },
                         title: {
                             text: "打包时间分布图",
-                            subtext: `时间为 ms; 总时间 ${total} ms;\n${message.uniqueSubFamily}`,
+                            subtext: `时间为 ms; 总时间 ${total} ms;\n${message.fontFamily}`,
                         },
                         legend: {
                             top: "15%",
@@ -141,7 +141,7 @@
                         },
 
                         title: {
-                            text: message.uniqueSubFamily,
+                            text: message.fontFamily,
                             subtext: `总共 ${
                                 data.length
                             } 分包; 总大小 ${_formatBytes(
@@ -240,12 +240,12 @@
             createEffect(() => {
                 if (data()) {
                     document.body.style.fontFamily = `"${
-                        data().message.uniqueSubFamily
+                        data().message.fontFamily
                     }"`;
                     document.body.style.fontWeight =
                         data().message.fontSubFamily.toLowerCase();
                     document.querySelector("title").textContent =
-                        data().message.uniqueSubFamily;
+                        data().message.fontFamily;
                     const link = document.createElement("link");
                     link.rel = "stylesheet";
                     link.href =

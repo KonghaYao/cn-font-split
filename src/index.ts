@@ -92,7 +92,7 @@ async function fontSplit({
                 const fontFile = font.get();
                 fontData = fontFile.name;
                 css.fontFamily =
-                    css.fontFamily || fontFile.name.uniqueSubFamily.trim();
+                    css.fontFamily || fontFile.name.fontFamily.trim();
                 css.fontWeight = fontFile.name.fontSubFamily;
                 console.table(
                     // 只输出简单结果即可
