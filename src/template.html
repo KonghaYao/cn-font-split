@@ -113,7 +113,9 @@
                 }, 1500);
             });
             return html`<div
-                ref=${(dom) => (chartDom = dom)}
+                ref=${function (dom) {
+                    chartDom = dom;
+                }}
                 style="width: 600px;height:400px;margin:auto"
             ></div>`;
         };
@@ -201,7 +203,9 @@
                 }, 300);
             });
             return html`<div
-                ref=${(dom) => (chartDom = dom)}
+                ref=${function (dom) {
+                    chartDom = dom;
+                }}
                 style="width: 600px;height:600px;margin:auto"
             ></div>`;
         };

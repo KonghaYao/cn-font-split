@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+    </head>
+
+    <style>
+        body {
+            overflow-wrap: break-word;
+            font-size: 18px;
+        }
+        h3 {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                "Helvetica Neue", sans-serif;
+            font-weight: normal;
+        }
+    </style>
+
+    <body></body>
+    <script type="module">
+        import {
+            createSignal,
+            createResource,
+            onMount,
+            createEffect,
+        } from "https://cdn.skypack.dev/solid-js";
+
+        import html from "https://cdn.skypack.dev/solid-js/html";
+        import * as echarts from "https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.esm.min.js";
+        function _formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = [
+                "Bytes",
+                "KB",
+                "MB",
+                "GB",
+                "TB",
+                "PB",
+                "EB",
+                "ZB",
+                "YB",
+            ];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (
+                parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) +
+                " " +
+                sizes[i]
+            );
+        }
+        const TimeAnalyze = (records) => {
+            let chartDom;
+            // console.log(record, total);
+
+            onMount(() => {
+                // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
+                setTimeout(() => {
+                    let myChart = echarts.init(chartDom);
+                    let option = {
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: {
+                                type: "shadow",
+                            },
+                        },
+                        title: {
+                            text: "打包时间分布图",
+                            subtext: `时间为 ms; `,
+                        },
+                        legend: {
+                            top: "15%",
+                        },
+                        grid: {
+                            left: "10%",
+                            right: "10%",
+                            bottom: "30%",
+                            top: "30%",
+                        },
+                        xAxis: {
+                            type: "value",
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: records.map((i) => i[0]),
+                        },
+                        series: records[0][1].record.map((i, index) => {
+                            return {
+                                name: i.name,
+                                type: "bar",
+                                stack: "total",
+                                label: {
+                                    show: true,
+                                },
+                                emphasis: {
+                                    focus: "series",
+                                },
+                                data: records.map(([_, { record }]) => {
+                                    if (index === record.length - 1) return 0;
+                                    let rec = record[index];
+                                    console.log(record);
+                                    return rec.end - rec.start;
+                                }),
+                            };
+                        }),
+                    };
+
+                    option && myChart.setOption(option);
+                }, 1500);
+            });
+            return html`<div
+                ref=${function (dom) {
+                    chartDom = dom;
+                }}
+                style="width: 600px;height:400px;margin:auto"
+            ></div>`;
+        };
+
+        const App = () => {
+            const [data] = createResource(async () => {
+                const ttf = await fetch("./ttf.json").then((res) => res.json());
+                const woff = await fetch("./woff.json").then((res) =>
+                    res.json()
+                );
+                const woff2 = await fetch("./woff2.json").then((res) =>
+                    res.json()
+                );
+                return [
+                    ["ttf", ttf],
+                    ["woff", woff],
+                    ["woff2", woff2],
+                ];
+            });
+            createEffect(() => {});
+            const content = () => html` <div>${TimeAnalyze(data())}</div> `;
+            return html`<div>
+                ${() => (data.loading ? `<div>加载中</div>` : content())}
+            </div>`;
+        };
+
+        import { render } from "https://cdn.skypack.dev/solid-js/web";
+        render(App, document.body);
+    </script>
+</html>

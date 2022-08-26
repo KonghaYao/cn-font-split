@@ -36,7 +36,8 @@ async function fontSplit({
     testHTML = true,
     reporter = true,
 }: InputTemplate) {
-    fontType = path.extname(FontPath).slice(1).toLowerCase() as any;
+    fontType =
+        fontType || (path.extname(FontPath).slice(1).toLowerCase() as any);
     /** record 是记录时间信息的字段 */
     const record: {
         name: string;
@@ -109,7 +110,13 @@ async function fontSplit({
         [
             "初始化字体生产插件",
             () => {
-                if (targetType === "woff2") initWoff2();
+                if (
+                    targetType === "woff2" ||
+                    fontType === "woff2" ||
+                    targetType === "woff" ||
+                    fontType === "woff"
+                )
+                    return initWoff2();
             },
         ],
         [
@@ -275,7 +282,7 @@ async function fontSplit({
                             chars: String.fromCharCode(...i.unicodes),
                         };
                     });
-                    await fse.outputJSON(
+                    return fse.outputJSON(
                         path.join(destFold, "./reporter.json"),
                         {
                             config: arguments[0],

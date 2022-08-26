@@ -1,11 +1,11 @@
 import { fontSplit } from "../dist/index.js";
 import { emptyDirSync, move } from "fs-extra";
 
-const types = ["ttf", "woff", "woff2", "eof"];
-emptyDirSync("./build");
+const types = ["ttf", "woff", "woff2"];
 emptyDirSync("./benchmark");
 
 for (let i = 0; i < types.length; i++) {
+    emptyDirSync("./build");
     await fontSplit({
         FontPath: "./fonts/SourceHanSerifCN-Bold.ttf",
         // FontPath: "./fonts/猫啃网故障黑.otf",
@@ -17,5 +17,5 @@ for (let i = 0; i < types.length; i++) {
         targetType: types[i],
         // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
     });
-    move("./build/reporter.json", `./benchmark/${types[i]}.json`);
+    await move("./build/reporter.json", `./benchmark/${types[i]}.json`);
 }
