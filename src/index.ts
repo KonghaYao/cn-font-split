@@ -86,14 +86,14 @@ async function fontSplit({
                 font = Font.create(fileBuffer, {
                     type: fontType!, // support ttf, woff, woff2, eot, otf, svg
                     hinting: true, // save font hinting
-                    compound2simple: false, // transform ttf compound glyf to simple
+                    compound2simple: true, // transform ttf compound glyf to simple
                     combinePath: false, // for svg path
                 });
                 const fontFile = font.get();
                 fontData = fontFile.name;
                 css.fontFamily =
                     css.fontFamily || fontFile.name.fontFamily.trim();
-                css.fontWeight = fontFile.name.fontSubFamily;
+                css.fontWeight = fontFile.name.fontSubFamily.toLowerCase();
                 console.table(
                     // 只输出简单结果即可
                     Object.fromEntries(
@@ -211,7 +211,7 @@ async function fontSplit({
         [
             "整合并写入数据",
             async () => {
-                chunkMessage = buffers.map((i) => {
+                chunkMessage = buffers.map((i, index) => {
                     let content = md5(i.buffer);
                     const file = path.join(
                         destFold,
@@ -221,7 +221,7 @@ async function fontSplit({
                     fse.writeFile(file, i.buffer, () => {
                         console.log(
                             chalk.green(
-                                chunkCount++,
+                                index,
                                 content.slice(0, 10),
                                 formatBytes(size)
                             )
@@ -254,7 +254,7 @@ async function fontSplit({
             font-display: ${css.fontDisplay || "swap"};
             unicode-range:${unicodes
                 .map((i) => `U+${i.toString(16).toUpperCase()}`)
-                .join(",")}
+                .join(",")};
         }`;
                     })
                     .join("\n");

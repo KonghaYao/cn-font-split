@@ -6,8 +6,9 @@ import { emptyDirSync } from "fs-extra";
 emptyDirSync("./build");
 
 fontSplit({
-    FontPath: "./fonts/站酷庆科黄油体.ttf",
     FontPath: "./fonts/SourceHanSerifCN-Bold.ttf",
+    FontPath: "./fonts/站酷庆科黄油体.ttf",
+    FontPath: "./fonts/LXGWWenKai-Bold.ttf",
     destFold: "./build",
     css: {
         // fontFamily: "站酷庆科黄油体", // 不建议使用，我们已经有内置的解析模块了
