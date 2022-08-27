@@ -30,11 +30,13 @@
 
 Nodejs 版本需要支持 es module，如果版本不够的话运行不了。
 
+### 安装
+
 ```bash
 npm install @konghayao/cn-font-split
 ```
 
-配置程序
+### 写打包代码
 
 ```js
 import { fontSplit } from "@konghayao/cn-font-split";
@@ -52,6 +54,29 @@ fontSplit({
     reporter: true, // 输出 json 报告
 });
 ```
+
+### 成品目录
+
+```
+- YourDist
+    ... // 很多字体分包
+    - index.html // 用于展示打包分析报告
+    - reporter.json // 打包信息
+    - result.css // css 入口，引入这个 css 文件即可使用字体包
+```
+
+### 分析报告
+
+1. 汉字囊括分析
+   ![](./assets/HanCheck.png)
+2. 打包切片密集度分析
+   ![](./assets/PackageSize.png)
+3. 打包时间分析
+   ![](./assets/Time.png)
+4. 字体头部信息展示
+   ![](./assets/PackageSize.png)
+5. 全字体展示
+   ![](./assets/Slices.png)
 
 ## 已经知道的 BUG
 
