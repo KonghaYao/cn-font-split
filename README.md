@@ -1,6 +1,6 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2022/ 8 / 26 | 江夏尧 | Version 3.0.0 |
+| 更新时间： 2022/ 8 / 26 | 江夏尧 | Version 3.1 |
 
 ## 简介
 
@@ -48,6 +48,8 @@ fontSplit({
     },
     targetType: "ttf", // ttf woff woff2；注意 eot 文件在浏览器中的支持度非常低，所以不进行支持
     // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
+    testHTML: true, // 输出一份 html 报告文件
+    reporter: true, // 输出 json 报告
 });
 ```
 
@@ -58,8 +60,7 @@ fontSplit({
 
 ## TODO
 
-1. GB 2312 范围字体囊括检测
-2. 重复字形问题
+1. 重复字形问题
 
 ## 开源许可证
 

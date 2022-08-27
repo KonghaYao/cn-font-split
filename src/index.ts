@@ -45,6 +45,8 @@ async function fontSplit({
     testHTML = true,
     reporter = true,
 }: InputTemplate) {
+    // testHTML 必须要 reporter 进行支持
+    if (testHTML) reporter = true;
     fontType =
         fontType || (path.extname(FontPath).slice(1).toLowerCase() as any);
     /** record 是记录时间信息的字段 */
@@ -74,8 +76,7 @@ async function fontSplit({
         type: FontEditor.FontType;
         size: number;
     }[];
-    /** chunk 的递增序号 */
-    let chunkCount = 0;
+
     const tra = [
         [
             "载入字体",
