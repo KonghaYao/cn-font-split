@@ -79,6 +79,18 @@ async function fontSplit({
 
     const tra = [
         [
+            "初始化字体生产插件",
+            () => {
+                if (
+                    targetType === "woff2" ||
+                    fontType === "woff2" ||
+                    targetType === "woff" ||
+                    fontType === "woff"
+                )
+                    return initWoff2();
+            },
+        ],
+        [
             "载入字体",
             async () => {
                 console.log("读取字体中");
@@ -117,18 +129,6 @@ async function fontSplit({
             },
         ],
 
-        [
-            "初始化字体生产插件",
-            () => {
-                if (
-                    targetType === "woff2" ||
-                    fontType === "woff2" ||
-                    targetType === "woff" ||
-                    fontType === "woff"
-                )
-                    return initWoff2();
-            },
-        ],
         [
             "排序字体图形",
             async () => {
