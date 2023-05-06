@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "module": "dist/index.js",
     "scripts": {
-        "build": "rollup -c && tsc",
+        "build": "rollup -c ",
         "dev": "rollup -c -w",
         "prepublish": "pnpm build",
         "live": "live-server ./build"
@@ -15,7 +15,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "chalk": "4",
-        "fonteditor-core": "^2.1.8",
+        "fonteditor-core": "^2.1.11",
         "fs-extra": "^10.0.1",
         "lodash-es": "^4.17.21",
         "threads": "^1.7.0",
