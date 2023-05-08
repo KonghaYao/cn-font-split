@@ -65,8 +65,10 @@ async function fontSplit({
     let glyf: TTF.Glyph[];
     /** 第一个字符是空字符，必须以这个为开头 */
     let voidGlyf: TTF.Glyph;
+    
 
     let allChunk: TTF.Glyph[][];
+    let _config:TTF.TTFObject
     /**  准备保存的文件信息 */
     let buffers: { unicodes: number[]; buffer: Buffer }[];
     /** 每个 chunk 的信息，但是没有 chunk 的 buffer */
@@ -99,7 +101,7 @@ async function fontSplit({
                 font = Font.create(fileBuffer, {
                     type: fontType!, // support ttf, woff, woff2, eot, otf, svg
                     hinting: true, // save font hinting
-                    compound2simple: true, // transform ttf compound glyf to simple
+                    compound2simple: false, // transform ttf compound glyf to simple
                     combinePath: false, // for svg path
                 });
                 const fontFile = font.get();
@@ -133,12 +135,14 @@ async function fontSplit({
             "排序字体图形",
             async () => {
                 const list: number[] = (charList as any).default.flat();
-
+                   
+                _config = JSON.parse(JSON.stringify(font.get()))
                 // 重新排序这个 glyf 数组
                 voidGlyf = font.get().glyf[0];
-                glyf = font
-                    .get()
-                    .glyf.slice(1)
+              
+                glyf = font.get()
+                    .glyf
+                    .slice(1)
                     .sort((a, b) => {
                         const indexA: number = a?.unicode?.length
                             ? list.indexOf(a.unicode[0])
@@ -169,7 +173,7 @@ async function fontSplit({
                 const buffer = font
                     .readEmpty()
                     .set({
-                        ...font.get(),
+                        ..._config,
                         glyf: [...testChunk.values()],
                     })
                     .write({
@@ -187,6 +191,7 @@ async function fontSplit({
                 console.log(chalk.red("切割环节时间较长，请稍等"));
 
                 buffers = allChunk.map((g) => {
+<<<<<<< HEAD
                     const config = {
                         ...font.get(),
                         // fixed: 好像 glyf 的第一个值是空值
@@ -197,6 +202,28 @@ async function fontSplit({
                         type: targetType,
                         toBuffer: true,
                     }) as Buffer;
+=======
+                    // const a = {...font.get()}
+                    // a.cmap = font.get().cmap
+                    // delete a.glyf
+                    // fse.outputJSONSync('./inpo.json',a)
+                    // throw ''
+                    const config = {
+                        ..._config,
+                       
+                        // fixed: 好像 glyf 的第一个值是空值
+                        glyf: [voidGlyf, ...g],
+                    }
+
+
+                    const buffer = font
+                        .readEmpty()
+                        .set(config)
+                        .write({
+                            type: targetType,
+                            toBuffer: true,
+                        }) as Buffer;
+>>>>>>> 59f97d590ea4567b1ffbf8fe1eb57fcb3fd8d7b6
                     return {
                         unicodes: [
                             ...new Set(g.flatMap((i) => i.unicode || [])),
@@ -249,13 +276,12 @@ async function fontSplit({
             font-family: "${css.fontFamily}";
             src: url("./${name}.${targetType}");
             font-style: ${css.fontStyle || "normal"};
-            font-weight: ${
-                css.fontWeight || fontData.fontSubFamily.toLowerCase()
-            };
+            font-weight: ${css.fontWeight || fontData.fontSubFamily.toLowerCase()
+                            };
             font-display: ${css.fontDisplay || "swap"};
             unicode-range:${unicodes
-                .map((i) => `U+${i.toString(16).toUpperCase()}`)
-                .join(",")};
+                                .map((i) => `U+${i.toString(16).toUpperCase()}`)
+                                .join(",")};
         }`;
                     })
                     .join("\n");
