@@ -24,6 +24,8 @@
 
 [字体库](https://chinese-font.netlify.app/#/home)
 
+![中文网字计划](./assets/chinese-fonts.png)
+
 里面的字体都是可以免费商用的，我对其进行了切割并且放置在了 [Github](https://github.com/KonghaYao/chinese-free-web-font-storage) 和 [Gitee](https://gitee.com/dongzhongzhidong/chinese-free-web-font-storage) 上，如果需要可以直接获取文件。
 
 ## 快速使用
@@ -45,20 +47,21 @@ fontSplit({
     FontPath: "./fonts/SourceHanSerifCN-Bold.ttf",
     destFold: "./build",
     css: {
-        // fontFamily: "站酷庆科黄油体", // 不建议使用，我们已经有内置的解析模块了
+        // 覆盖默认的 css 设置
+        // fontFamily: "站酷庆科黄油体",
         // fontWeight: 400,
     },
     targetType: "ttf", // ttf woff woff2；注意 eot 文件在浏览器中的支持度非常低，所以不进行支持
     // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
     testHTML: true, // 输出一份 html 报告文件
-    reporter: true, // 输出 json 报告
+    reporter: true, // 输出 json 格式报告
 });
 ```
 
-### 成品目录
+### 打包成品目录
 
 ```
-- YourDist
+- build
     ... // 很多字体分包
     - index.html // 用于展示打包分析报告
     - reporter.json // 打包信息
@@ -82,6 +85,7 @@ fontSplit({
 
 1. 部分 otf 读取失败，这个可能是 otf 文件的问题
 2. eot 文件在浏览器中的支持度非常低，所以没有必要使用这种字体格式作为目标格式
+3. 3.0.4 及以下版本打包结果缺失非常重要的字体配置文件！
 
 ## 开源许可证
 
