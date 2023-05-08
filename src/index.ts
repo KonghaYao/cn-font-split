@@ -185,18 +185,18 @@ async function fontSplit({
             "切割分包",
             async () => {
                 console.log(chalk.red("切割环节时间较长，请稍等"));
+
                 buffers = allChunk.map((g) => {
-                    const buffer = font
-                        .readEmpty()
-                        .set({
-                            ...font.get(),
-                            // fixed: 好像 glyf 的第一个值是空值
-                            glyf: [voidGlyf, ...g],
-                        })
-                        .write({
-                            type: targetType,
-                            toBuffer: true,
-                        }) as Buffer;
+                    const config = {
+                        ...font.get(),
+                        // fixed: 好像 glyf 的第一个值是空值
+                        glyf: [voidGlyf, ...g],
+                    };
+
+                    const buffer = font.readEmpty().set(config).write({
+                        type: targetType,
+                        toBuffer: true,
+                    }) as Buffer;
                     return {
                         unicodes: [
                             ...new Set(g.flatMap((i) => i.unicode || [])),
