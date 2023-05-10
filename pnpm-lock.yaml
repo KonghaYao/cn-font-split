@@ -1,65 +1,68 @@
 lockfileVersion: '6.0'
 
-dependencies:
-  '@woff2/woff2-rs':
-    specifier: ^1.0.0
-    version: 1.0.0
-  chalk:
-    specifier: '4'
-    version: 4.1.2
-  fonteditor-core:
-    specifier: ^2.1.11
-    version: 2.1.11
-  fs-extra:
-    specifier: ^10.0.1
-    version: 10.0.1
-  imagescript:
-    specifier: ^1.2.16
-    version: 1.2.16
-  lodash-es:
-    specifier: ^4.17.21
-    version: 4.17.21
-  threads:
-    specifier: ^1.7.0
-    version: 1.7.0
-  uuid:
-    specifier: ^8.3.2
-    version: 8.3.2
+importers:
 
-devDependencies:
-  '@babel/core':
-    specifier: ^7.18.13
-    version: 7.18.13
-  '@babel/preset-typescript':
-    specifier: ^7.18.6
-    version: 7.18.6(@babel/core@7.18.13)
-  '@rollup/plugin-babel':
-    specifier: ^5.3.1
-    version: 5.3.1(@babel/core@7.18.13)(rollup@2.78.1)
-  '@rollup/plugin-json':
-    specifier: ^4.1.0
-    version: 4.1.0(rollup@2.78.1)
-  '@rollup/plugin-node-resolve':
-    specifier: ^13.3.0
-    version: 13.3.0(rollup@2.78.1)
-  '@types/fs-extra':
-    specifier: ^9.0.13
-    version: 9.0.13
-  '@types/lodash-es':
-    specifier: ^4.17.6
-    version: 4.17.6
-  '@types/uuid':
-    specifier: ^8.3.4
-    version: 8.3.4
-  '@woff2/woff2-rs-win32-x64-msvc':
-    specifier: ^1.0.0
-    version: 1.0.0
-  rollup:
-    specifier: ^2.78.1
-    version: 2.78.1
-  rollup-plugin-analyzer:
-    specifier: ^4.0.0
-    version: 4.0.0
+  .:
+    dependencies:
+      '@konghayao/image-text':
+        specifier: 'workspace:'
+        version: link:packages/image-text
+      chalk:
+        specifier: '4'
+        version: 4.1.2
+      fonteditor-core:
+        specifier: ^2.1.11
+        version: 2.1.11
+      fs-extra:
+        specifier: ^10.0.1
+        version: 10.0.1
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
+      threads:
+        specifier: ^1.7.0
+        version: 1.7.0
+    devDependencies:
+      '@babel/core':
+        specifier: ^7.18.13
+        version: 7.18.13
+      '@babel/preset-typescript':
+        specifier: ^7.18.6
+        version: 7.18.6(@babel/core@7.18.13)
+      '@rollup/plugin-babel':
+        specifier: ^5.3.1
+        version: 5.3.1(@babel/core@7.18.13)(rollup@2.78.1)
+      '@rollup/plugin-json':
+        specifier: ^4.1.0
+        version: 4.1.0(rollup@2.78.1)
+      '@rollup/plugin-node-resolve':
+        specifier: ^13.3.0
+        version: 13.3.0(rollup@2.78.1)
+      '@types/fs-extra':
+        specifier: ^9.0.13
+        version: 9.0.13
+      '@types/lodash-es':
+        specifier: ^4.17.6
+        version: 4.17.6
+      rollup:
+        specifier: ^2.78.1
+        version: 2.78.1
+      rollup-plugin-analyzer:
+        specifier: ^4.0.0
+        version: 4.0.0
+
+  packages/image-text:
+    dependencies:
+      '@woff2/woff2-rs':
+        specifier: ^1.0.1
+        version: 1.0.1
+      imagescript:
+        specifier: ^1.2.16
+        version: 1.2.16
+    devDependencies:
+      '@woff2/woff2-rs-win32-x64-msvc':
+        specifier: ^1.0.1
+        version: 1.0.1
 
 packages:
 
@@ -480,12 +483,8 @@ packages:
       '@types/node': 17.0.23
     dev: true
 
-  /@types/uuid@8.3.4:
-    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
-    dev: true
-
-  /@woff2/woff2-rs-android-arm-eabi@1.0.0:
-    resolution: {integrity: sha512-oTVQmIwsgDtWFcyUhfxqrY7oYf8pn/CIQM5xft1DvcSE15KYZVCqLII9WV1S6GYWW07ObSHf1jzBdl2KZ2J1TQ==}
+  /@woff2/woff2-rs-android-arm-eabi@1.0.1:
+    resolution: {integrity: sha512-OWlTiogzbt9T7U0izS3DTB5uVZ6DzZbTMoZGMPexp6v+b+l+O+3lpAKp3PRkwWSHwVc10unZ7CKPci+cK6QHTg==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [android]
@@ -493,8 +492,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-android-arm64@1.0.0:
-    resolution: {integrity: sha512-wlsHY8su/u2ziLw1uw+ChWT7XCvLHBJZP/KWhZrjTiTAC9nLbLJgZxfOWknDWAD8hxMDQl5MRsuU0LXa9Lje5Q==}
+  /@woff2/woff2-rs-android-arm64@1.0.1:
+    resolution: {integrity: sha512-8y0RE+K9PZECtkcQ6PzuN840qmgl8ovk/DBYYkvDiYjStzmbjPNcNc1O8WIZeXJGNND3wRqQDSM3mrw6HAFe5Q==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [android]
@@ -502,8 +501,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-darwin-arm64@1.0.0:
-    resolution: {integrity: sha512-JMdCJhliCgS80BOrmlHV1/LINV5DBs7J4fHVcVwESOmb0Fl9yZfwAT26OsNCelw6AWCL6XzS2V6gnZPM6co2nw==}
+  /@woff2/woff2-rs-darwin-arm64@1.0.1:
+    resolution: {integrity: sha512-VLR7ZktOcE4JDxn/wdOEQlBDSGFk+xd/Zk/LHxlq6vUwmCXdLcCDJ7AjoNS6b8hVb3orAYTbpaSjAT1ZxpCrgA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -511,8 +510,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-darwin-x64@1.0.0:
-    resolution: {integrity: sha512-Y87jGPQW3Jtr31DVYSwz1LLCuQCfCqdJkbwme1vA1FGNq0xR8jknvSt9yO7DwF5OAohl9hK6nyvMF3Z95aajVA==}
+  /@woff2/woff2-rs-darwin-x64@1.0.1:
+    resolution: {integrity: sha512-UvufxQwlP51wNGqeu/i3ArV9ZyQcz7b2QP7zna9QbRbRLqoXj8dbtTpNQuz3IWEtcDjeKH6FPTWuuM5DCa3thw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -520,8 +519,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-freebsd-x64@1.0.0:
-    resolution: {integrity: sha512-t47v3LyOP+xvoJk+QwX7SVmW0j/4DtDqcfiCZfsRSULnVriKz6OpNe5QAVqXxCUtoNZf9guBgdwFiF8hEkD0FA==}
+  /@woff2/woff2-rs-freebsd-x64@1.0.1:
+    resolution: {integrity: sha512-ZginxtyA2IE1EwT8k8m8KrPBC5eqkLWd0/BSS64/J8qYxDThpXIn7MZeloUcr6lNu70bhl7cMWfdOAGwU8nLuw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [freebsd]
@@ -529,8 +528,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-linux-arm-gnueabihf@1.0.0:
-    resolution: {integrity: sha512-ChO0rH2lQlgJd/QXZBsr2KzfeCGiovOjxI52tk6hLUc37Ru8bCXG4bSWpVWE3kFNKD2ugZt3UF20l840ZvdZ4A==}
+  /@woff2/woff2-rs-linux-arm-gnueabihf@1.0.1:
+    resolution: {integrity: sha512-VX0DAcEMogpwBk8bFO1U7843o0BV9hkcfDaQ26CsVf8/Ek3KTty3fn+KDBIufk7Ir6kG737jTQr88nuiUOvHsA==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
@@ -538,8 +537,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-linux-arm64-gnu@1.0.0:
-    resolution: {integrity: sha512-19MM3qyTPN5CAkkwxVB1wgE9+YkL2gieFRvC1Xd3aG00UTB8ZfkOa4BiPdKDgyEUKKEW6NQYqWRMohR+jB5w7A==}
+  /@woff2/woff2-rs-linux-arm64-gnu@1.0.1:
+    resolution: {integrity: sha512-8WAchULadTLX1nJFzH0X3Y18eLJG0PafAU2MCz6YHuHVPdR4seg97YVCEUg4aymb/6arkGDiFpZy2HGnFOQhgQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -547,8 +546,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-linux-arm64-musl@1.0.0:
-    resolution: {integrity: sha512-n1vGKJAS9vtBVpNpLCRGt5GdWeI70xc3msLpRHD0HkKhAWt7cyqOvLvVyH8Q6MuGFddxNa0uFkV4h55NR0NRtA==}
+  /@woff2/woff2-rs-linux-arm64-musl@1.0.1:
+    resolution: {integrity: sha512-+gd5jtmzigiAGL+bqFTx/1sIPoiOhfDj4Gh8AEYVqa21GCVVGl0t3HL/FZ2qt48REBxT1oaTE6oMTcS+z+5T2w==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -556,8 +555,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-linux-x64-gnu@1.0.0:
-    resolution: {integrity: sha512-pom7SED9m+owshIn1jd3nED0KB4vFEp65cgVJui7Lf7qlxkMnJrhbexSJ5k78QDcaa4FTe5yGSP7EYwbxl1WSw==}
+  /@woff2/woff2-rs-linux-x64-gnu@1.0.1:
+    resolution: {integrity: sha512-eQBkP5jiV5kQki0Kk/2s2t5pgoN1NFUkEhIupMT0sJ87DhAw8kKpFJzGDkNFvgzdq+LwEEXKYpDHZjXrkIxJEg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -565,8 +564,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-linux-x64-musl@1.0.0:
-    resolution: {integrity: sha512-cDomt6rdagZokUmGP3sa762ai5gXCrwdlTDJxAcqceV2CiT10wUtGKQZM1Qe9g3j6qQqc0ku2jxPH/ObkiJP9w==}
+  /@woff2/woff2-rs-linux-x64-musl@1.0.1:
+    resolution: {integrity: sha512-bVWh5/hFwaSkpf8Y9FH/WSECUoa2+W2ymX0cHcJICUtgeI1QwsMoBUmXOeLLE0f4VSjNi3pEKbG1aLnlcepAwA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -574,8 +573,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-win32-arm64-msvc@1.0.0:
-    resolution: {integrity: sha512-7yJw6IOPgtwipMHwAJW12DitICyDAs/A/My2QV5mMpJ+klkYu5MLO/l3VYjHkjyvLJjS8LiwNx130vgsfSFicg==}
+  /@woff2/woff2-rs-win32-arm64-msvc@1.0.1:
+    resolution: {integrity: sha512-i15UUes8lmEylaD8DHeTSEKmCN4zJnzX8SMbnaNcfSPJB6VKOraSnmNBHdGbTOl3D+NluufcFrxeb8Cg3+KWTg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -583,8 +582,8 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-win32-ia32-msvc@1.0.0:
-    resolution: {integrity: sha512-oi0bCy3jg+i5+JulC9MkQEa+3Y/ZgEhWRK5cSaZu6+Ulvh/8PX9Ftq4kurV3Zu8Sb5iugDRtiOMuwfKOTGw8Vw==}
+  /@woff2/woff2-rs-win32-ia32-msvc@1.0.1:
+    resolution: {integrity: sha512-nOmEPEeaL8bHS7IjBHjEvnrOZfAI8CljGAH1bh7Xsvsy3dUObWfpkICIQscOqC1Mq3XbnE/TbLArgTU8vUdPfQ==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
@@ -592,30 +591,30 @@ packages:
     dev: false
     optional: true
 
-  /@woff2/woff2-rs-win32-x64-msvc@1.0.0:
-    resolution: {integrity: sha512-W+sc7KvwIhhOu0VAkXYX/vY5u/yMBGoTk6FwDsmAnObVaG33tptOpBuw/jbtZZHvQWu47IklxnMvMAuqvu6yzQ==}
+  /@woff2/woff2-rs-win32-x64-msvc@1.0.1:
+    resolution: {integrity: sha512-3DnoruAC1+76kvA0Xjy03YhpsYAAp0vM+5IWxjsh8XTMRhQbhMa8thkctyD1uwlS1E+qbVbfZCs4EytDy98tEA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
 
-  /@woff2/woff2-rs@1.0.0:
-    resolution: {integrity: sha512-4uQYVfDDQ4eZoiuOcaNqlua0LogjOACbZ3/w1vkl+1FrK1UNBQ/AtyJmmy1cOyRs4T4QJ38wf+d1nUKuiz1p2Q==}
+  /@woff2/woff2-rs@1.0.1:
+    resolution: {integrity: sha512-lRg8kRVdxRPDsAtUlOsJ/kkTtMeXik4h7HayNldSxbO7upQ9YcvXe2KpnQMBI2hBhESA0my8Tn2QWE9r5ebzKg==}
     engines: {node: '>= 10'}
     optionalDependencies:
-      '@woff2/woff2-rs-android-arm-eabi': 1.0.0
-      '@woff2/woff2-rs-android-arm64': 1.0.0
-      '@woff2/woff2-rs-darwin-arm64': 1.0.0
-      '@woff2/woff2-rs-darwin-x64': 1.0.0
-      '@woff2/woff2-rs-freebsd-x64': 1.0.0
-      '@woff2/woff2-rs-linux-arm-gnueabihf': 1.0.0
-      '@woff2/woff2-rs-linux-arm64-gnu': 1.0.0
-      '@woff2/woff2-rs-linux-arm64-musl': 1.0.0
-      '@woff2/woff2-rs-linux-x64-gnu': 1.0.0
-      '@woff2/woff2-rs-linux-x64-musl': 1.0.0
-      '@woff2/woff2-rs-win32-arm64-msvc': 1.0.0
-      '@woff2/woff2-rs-win32-ia32-msvc': 1.0.0
-      '@woff2/woff2-rs-win32-x64-msvc': 1.0.0
+      '@woff2/woff2-rs-android-arm-eabi': 1.0.1
+      '@woff2/woff2-rs-android-arm64': 1.0.1
+      '@woff2/woff2-rs-darwin-arm64': 1.0.1
+      '@woff2/woff2-rs-darwin-x64': 1.0.1
+      '@woff2/woff2-rs-freebsd-x64': 1.0.1
+      '@woff2/woff2-rs-linux-arm-gnueabihf': 1.0.1
+      '@woff2/woff2-rs-linux-arm64-gnu': 1.0.1
+      '@woff2/woff2-rs-linux-arm64-musl': 1.0.1
+      '@woff2/woff2-rs-linux-x64-gnu': 1.0.1
+      '@woff2/woff2-rs-linux-x64-musl': 1.0.1
+      '@woff2/woff2-rs-win32-arm64-msvc': 1.0.1
+      '@woff2/woff2-rs-win32-ia32-msvc': 1.0.1
+      '@woff2/woff2-rs-win32-x64-msvc': 1.0.1
     dev: false
 
   /@xmldom/xmldom@0.8.7:
@@ -974,8 +973,3 @@ packages:
       escalade: 3.1.1
       picocolors: 1.0.0
     dev: true
-
-  /uuid@8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
-    dev: false

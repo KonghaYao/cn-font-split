@@ -6,7 +6,7 @@ import { createTestHTML } from "./createTestHTML";
 import path from "path";
 import chalk from "chalk";
 import { chunk } from "lodash-es";
-import { createImageForFont } from "./createImageForFont";
+import { createImageForFont } from "@konghayao/image-text";
 
 export type InputTemplate = {
     /** 字体文件的相对地址 */
@@ -158,7 +158,6 @@ async function fontSplit({
 
                 await createImageForFont(
                     fileBuffer,
-                    font,
                     fontType!,
                     destFold,
                     previewImage

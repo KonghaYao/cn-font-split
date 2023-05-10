@@ -1,16 +1,14 @@
 import fse from "fs-extra";
 import path from "path";
 import { Image } from "imagescript";
-import { FontEditor, Font } from "fonteditor-core";
 
 export const woff2ToTTF = async (font: Buffer) => {
-    const { default: woff2Rs } = await import("./woff2-rs/index");
+    const { default: woff2Rs } = await import("@woff2/woff2-rs");
     return woff2Rs.decode(font); // output TTF buffer
 };
 
 export const createImageForFont = async (
     buffer: Buffer,
-    font: FontEditor.Font,
     type: string,
     destFold: string,
     {
