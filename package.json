@@ -19,7 +19,6 @@
         "fonteditor-core": "^2.1.11",
         "fs-extra": "^10.0.1",
         "lodash-es": "^4.17.21",
-        "threads": "^1.7.0",
         "@konghayao/image-text": "workspace:"
     },
     "devDependencies": {
