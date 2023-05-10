@@ -1,16 +1,29 @@
 import fse from "fs-extra";
 import path from "path";
 import { Image } from "imagescript";
+import { FontEditor, Font } from "fonteditor-core";
+
+export const woff2ToTTF = async (font: Buffer) => {
+    const { default: woff2Rs } = await import("./woff2-rs/index");
+    return woff2Rs.decode(font); // output TTF buffer
+};
+
 export const createImageForFont = async (
     buffer: Buffer,
+    font: FontEditor.Font,
+    type: string,
     destFold: string,
     {
         text = "中文网字计划\nThe Project For Web",
         name = "preview",
     }: { text?: string; name?: string }
 ) => {
-    const font = await Image.renderText(buffer, 128, text);
-    const encoded = await font.encode(1, {
+    if (type !== "ttf") {
+        buffer = await woff2ToTTF(buffer);
+    }
+
+    const Font = await Image.renderText(buffer, 128, text);
+    const encoded = await Font.encode(1, {
         creationTime: Date.now(),
         software: "中文网字计划",
         author: "江夏尧",

@@ -113,14 +113,7 @@ async function fontSplit({
                 fileSize = fileBuffer.length;
             },
         ],
-        previewImage && [
-            "生成预览图",
-            async () => {
-                // 创建预览图
 
-                await createImageForFont(fileBuffer, destFold, previewImage);
-            },
-        ],
         [
             "载入字体",
             async () => {
@@ -150,8 +143,6 @@ async function fontSplit({
                     )
                 );
 
-                /**@ts-ignore */
-                fileBuffer = null;
                 console.log(
                     chalk.red(
                         "字体文件总大小 " + formatBytes(fileSize),
@@ -160,10 +151,25 @@ async function fontSplit({
                 );
             },
         ],
+        previewImage && [
+            "生成预览图",
+            async () => {
+                // 创建预览图
 
+                await createImageForFont(
+                    fileBuffer,
+                    font,
+                    fontType!,
+                    destFold,
+                    previewImage
+                );
+            },
+        ],
         [
             "排序字体图形",
             async () => {
+                /**@ts-ignore */
+                fileBuffer = null;
                 const list: number[] = (charList as any).default.flat();
 
                 _config = JSON.parse(JSON.stringify(font.get()));

@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@woff2/woff2-rs':
+    specifier: ^1.0.0
+    version: 1.0.0
   chalk:
     specifier: '4'
     version: 4.1.2
@@ -48,6 +51,9 @@ devDependencies:
   '@types/uuid':
     specifier: ^8.3.4
     version: 8.3.4
+  '@woff2/woff2-rs-win32-x64-msvc':
+    specifier: ^1.0.0
+    version: 1.0.0
   rollup:
     specifier: ^2.78.1
     version: 2.78.1
@@ -477,6 +483,140 @@ packages:
   /@types/uuid@8.3.4:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: true
+
+  /@woff2/woff2-rs-android-arm-eabi@1.0.0:
+    resolution: {integrity: sha512-oTVQmIwsgDtWFcyUhfxqrY7oYf8pn/CIQM5xft1DvcSE15KYZVCqLII9WV1S6GYWW07ObSHf1jzBdl2KZ2J1TQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-android-arm64@1.0.0:
+    resolution: {integrity: sha512-wlsHY8su/u2ziLw1uw+ChWT7XCvLHBJZP/KWhZrjTiTAC9nLbLJgZxfOWknDWAD8hxMDQl5MRsuU0LXa9Lje5Q==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-darwin-arm64@1.0.0:
+    resolution: {integrity: sha512-JMdCJhliCgS80BOrmlHV1/LINV5DBs7J4fHVcVwESOmb0Fl9yZfwAT26OsNCelw6AWCL6XzS2V6gnZPM6co2nw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-darwin-x64@1.0.0:
+    resolution: {integrity: sha512-Y87jGPQW3Jtr31DVYSwz1LLCuQCfCqdJkbwme1vA1FGNq0xR8jknvSt9yO7DwF5OAohl9hK6nyvMF3Z95aajVA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-freebsd-x64@1.0.0:
+    resolution: {integrity: sha512-t47v3LyOP+xvoJk+QwX7SVmW0j/4DtDqcfiCZfsRSULnVriKz6OpNe5QAVqXxCUtoNZf9guBgdwFiF8hEkD0FA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-linux-arm-gnueabihf@1.0.0:
+    resolution: {integrity: sha512-ChO0rH2lQlgJd/QXZBsr2KzfeCGiovOjxI52tk6hLUc37Ru8bCXG4bSWpVWE3kFNKD2ugZt3UF20l840ZvdZ4A==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-linux-arm64-gnu@1.0.0:
+    resolution: {integrity: sha512-19MM3qyTPN5CAkkwxVB1wgE9+YkL2gieFRvC1Xd3aG00UTB8ZfkOa4BiPdKDgyEUKKEW6NQYqWRMohR+jB5w7A==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-linux-arm64-musl@1.0.0:
+    resolution: {integrity: sha512-n1vGKJAS9vtBVpNpLCRGt5GdWeI70xc3msLpRHD0HkKhAWt7cyqOvLvVyH8Q6MuGFddxNa0uFkV4h55NR0NRtA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-linux-x64-gnu@1.0.0:
+    resolution: {integrity: sha512-pom7SED9m+owshIn1jd3nED0KB4vFEp65cgVJui7Lf7qlxkMnJrhbexSJ5k78QDcaa4FTe5yGSP7EYwbxl1WSw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-linux-x64-musl@1.0.0:
+    resolution: {integrity: sha512-cDomt6rdagZokUmGP3sa762ai5gXCrwdlTDJxAcqceV2CiT10wUtGKQZM1Qe9g3j6qQqc0ku2jxPH/ObkiJP9w==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-win32-arm64-msvc@1.0.0:
+    resolution: {integrity: sha512-7yJw6IOPgtwipMHwAJW12DitICyDAs/A/My2QV5mMpJ+klkYu5MLO/l3VYjHkjyvLJjS8LiwNx130vgsfSFicg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-win32-ia32-msvc@1.0.0:
+    resolution: {integrity: sha512-oi0bCy3jg+i5+JulC9MkQEa+3Y/ZgEhWRK5cSaZu6+Ulvh/8PX9Ftq4kurV3Zu8Sb5iugDRtiOMuwfKOTGw8Vw==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@woff2/woff2-rs-win32-x64-msvc@1.0.0:
+    resolution: {integrity: sha512-W+sc7KvwIhhOu0VAkXYX/vY5u/yMBGoTk6FwDsmAnObVaG33tptOpBuw/jbtZZHvQWu47IklxnMvMAuqvu6yzQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+
+  /@woff2/woff2-rs@1.0.0:
+    resolution: {integrity: sha512-4uQYVfDDQ4eZoiuOcaNqlua0LogjOACbZ3/w1vkl+1FrK1UNBQ/AtyJmmy1cOyRs4T4QJ38wf+d1nUKuiz1p2Q==}
+    engines: {node: '>= 10'}
+    optionalDependencies:
+      '@woff2/woff2-rs-android-arm-eabi': 1.0.0
+      '@woff2/woff2-rs-android-arm64': 1.0.0
+      '@woff2/woff2-rs-darwin-arm64': 1.0.0
+      '@woff2/woff2-rs-darwin-x64': 1.0.0
+      '@woff2/woff2-rs-freebsd-x64': 1.0.0
+      '@woff2/woff2-rs-linux-arm-gnueabihf': 1.0.0
+      '@woff2/woff2-rs-linux-arm64-gnu': 1.0.0
+      '@woff2/woff2-rs-linux-arm64-musl': 1.0.0
+      '@woff2/woff2-rs-linux-x64-gnu': 1.0.0
+      '@woff2/woff2-rs-linux-x64-musl': 1.0.0
+      '@woff2/woff2-rs-win32-arm64-msvc': 1.0.0
+      '@woff2/woff2-rs-win32-ia32-msvc': 1.0.0
+      '@woff2/woff2-rs-win32-x64-msvc': 1.0.0
+    dev: false
 
   /@xmldom/xmldom@0.8.7:
     resolution: {integrity: sha512-sI1Ly2cODlWStkINzqGrZ8K6n+MTSbAeQnAipGyL+KZCXuHaRlj2gyyy8B/9MvsFFqN7XHryQnB2QwhzvJXovg==}

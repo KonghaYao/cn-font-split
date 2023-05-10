@@ -60,6 +60,7 @@ fontSplit({
     testHTML: true, // 输出一份 html 报告文件
     reporter: true, // 输出 json 格式报告
     // previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成
+    // 注意： woff2 源文件生成预览图时，需要转化成 ttf，故会报告你没有安装一个依赖，npm 搜索并安装它即可
 });
 ```
 
