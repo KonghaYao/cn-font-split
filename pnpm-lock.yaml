@@ -59,10 +59,6 @@ importers:
       imagescript:
         specifier: ^1.2.16
         version: 1.2.16
-    devDependencies:
-      '@woff2/woff2-rs-win32-x64-msvc':
-        specifier: ^1.0.1
-        version: 1.0.1
 
 packages:
 
@@ -597,6 +593,8 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: false
+    optional: true
 
   /@woff2/woff2-rs@1.0.1:
     resolution: {integrity: sha512-lRg8kRVdxRPDsAtUlOsJ/kkTtMeXik4h7HayNldSxbO7upQ9YcvXe2KpnQMBI2hBhESA0my8Tn2QWE9r5ebzKg==}

@@ -1,11 +1,11 @@
 {
     "name": "@konghayao/image-text",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
-        "postinstall": "node scripts/install.mjs",
-        "build": "tsc"
+        "build": "tsc",
+        "prepublish": "pnpm build"
     },
     "keywords": [],
     "author": "",
@@ -13,8 +13,5 @@
     "dependencies": {
         "@woff2/woff2-rs": "^1.0.1",
         "imagescript": "^1.2.16"
-    },
-    "devDependencies": {
-        "@woff2/woff2-rs-win32-x64-msvc": "^1.0.1"
     }
 }
