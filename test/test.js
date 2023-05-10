@@ -7,9 +7,10 @@ emptyDirSync("./build");
 
 fontSplit({
     FontPath: "./fonts/鸿雷行书简体.ttf",
+    FontPath: "./fonts/SmileySans-Oblique.woff2",
     destFold: "./build",
     css: {
-        // fontFamily: "站酷庆科黄油体", // 不建议使用，我们已经有内置的解析模块了
+        // fontFamily: "站酷庆科黄油体",
         // fontWeight: 400,
     },
     targetType: "woff2",

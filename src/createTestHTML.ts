@@ -1,4 +1,4 @@
-import path, { resolve } from "path";
+import path from "path";
 import fse from "fs-extra";
 import template from "./template.html";
 export async function createTestHTML({ destFold }: { destFold: string }) {
