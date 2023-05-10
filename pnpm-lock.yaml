@@ -10,6 +10,9 @@ dependencies:
   fs-extra:
     specifier: ^10.0.1
     version: 10.0.1
+  imagescript:
+    specifier: ^1.2.16
+    version: 1.2.16
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
@@ -660,6 +663,11 @@ packages:
     dependencies:
       function-bind: 1.1.1
     dev: true
+
+  /imagescript@1.2.16:
+    resolution: {integrity: sha512-hhy8OVNymU+cYYj8IwCbdNlXJRoMr4HRd7+efkH32eBVfybVU/5SbzDYf3ZSiiF9ye/ghfBrI/ujec/nwl+fOQ==}
+    engines: {node: '>=14.0.0'}
+    dev: false
 
   /is-builtin-module@3.2.0:
     resolution: {integrity: sha512-phDA4oSGt7vl1n5tJvTWooWWAsXLY+2xCnxNqvKhGEzujg+A43wPlPOyDg3C8XQHN+6k/JTQWJ/j0dQh/qr+Hw==}

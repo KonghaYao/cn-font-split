@@ -6,6 +6,8 @@ import { createTestHTML } from "./createTestHTML";
 import path from "path";
 import chalk from "chalk";
 import { chunk } from "lodash-es";
+import { createImageForFont } from "./createImageForFont";
+
 export type InputTemplate = {
     /** 字体文件的相对地址 */
     FontPath: string;
@@ -31,6 +33,13 @@ export type InputTemplate = {
     testHTML?: boolean;
     /** 是否输出报告文件  */
     reporter?: boolean;
+    /** 是否输出预览图 */
+    previewImage?: {
+        /** 图中需要显示的文本 */
+        text?: string;
+        /** 预览图的文件名，不用带后缀名 */
+        name?: string;
+    };
 };
 import * as charList from "./charset/words.json";
 import { md5 } from "./utils/md5";
@@ -44,11 +53,15 @@ async function fontSplit({
     chunkSize = 200 * 1024,
     testHTML = true,
     reporter = true,
+    previewImage,
 }: InputTemplate) {
     // testHTML 必须要 reporter 进行支持
     if (testHTML) reporter = true;
+
+    /** 格式化 字体类型 */
     fontType =
         fontType || (path.extname(FontPath).slice(1).toLowerCase() as any);
+
     /** record 是记录时间信息的字段 */
     const record: {
         name: string;
@@ -77,32 +90,47 @@ async function fontSplit({
         type: FontEditor.FontType;
         size: number;
     }[];
-
+    let fileBuffer: Buffer;
     const tra = [
         [
             "初始化字体生产插件",
-            () => {
+            async () => {
                 if (
                     targetType === "woff2" ||
                     fontType === "woff2" ||
                     targetType === "woff" ||
                     fontType === "woff"
-                )
-                    return initWoff2();
+                ) {
+                    await initWoff2();
+                }
+            },
+        ],
+        [
+            "读取字体",
+            async () => {
+                console.log("读取字体中");
+                fileBuffer = await fse.readFile(FontPath);
+                fileSize = fileBuffer.length;
+            },
+        ],
+        previewImage && [
+            "生成预览图",
+            async () => {
+                // 创建预览图
+
+                await createImageForFont(fileBuffer, destFold, previewImage);
             },
         ],
         [
             "载入字体",
             async () => {
-                console.log("读取字体中");
-                const fileBuffer = fse.readFileSync(FontPath);
-                fileSize = fileBuffer.length;
                 font = Font.create(fileBuffer, {
                     type: fontType!, // support ttf, woff, woff2, eot, otf, svg
                     hinting: true, // save font hinting
                     compound2simple: false, // transform ttf compound glyf to simple
                     combinePath: false, // for svg path
                 });
+
                 const fontFile = font.get();
                 fontData = fontFile.name;
                 css.fontFamily =
@@ -121,6 +149,9 @@ async function fontSplit({
                         })
                     )
                 );
+
+                /**@ts-ignore */
+                fileBuffer = null;
                 console.log(
                     chalk.red(
                         "字体文件总大小 " + formatBytes(fileSize),
@@ -320,19 +351,21 @@ async function fontSplit({
         start: 0,
         end: 0,
     };
-    return tra.reduce((col, [name, func]) => {
-        return col
-            .then(() => {
-                temp_stage = { name, start: Date.now(), end: 0 };
-                record.push(temp_stage);
-                console.time(chalk.blue(name));
-                return func();
-            })
-            .then(() => {
-                console.timeEnd(chalk.blue(name));
-                temp_stage.end = Date.now();
-            });
-    }, Promise.resolve());
+    return tra
+        .filter((i) => i)
+        .reduce((col, [name, func]) => {
+            return col
+                .then((last) => {
+                    temp_stage = { name, start: Date.now(), end: 0 };
+                    record.push(temp_stage);
+                    console.time(chalk.blue(name));
+                    return func(last);
+                })
+                .then(() => {
+                    console.timeEnd(chalk.blue(name));
+                    temp_stage.end = Date.now();
+                });
+        }, Promise.resolve());
 }
 export { fontSplit };
 export default fontSplit;
