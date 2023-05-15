@@ -8,6 +8,18 @@ import chalk from "chalk";
 import { chunk } from "lodash-es";
 import { createImageForFont } from "@konghayao/image-text";
 
+const defaultLog = (...args: any[]) => {
+    console.log(...args);
+};
+
+const defaultOutputFile = (
+    file: string,
+    data: any,
+    options?: string | fse.WriteFileOptions | undefined
+) => {
+    return fse.outputFile(file, data, options);
+};
+
 export type InputTemplate = {
     /** 字体文件的相对地址 */
     FontPath: string;
@@ -40,6 +52,14 @@ export type InputTemplate = {
         /** 预览图的文件名，不用带后缀名 */
         name?: string;
     };
+    /** 日志输出 */
+    log?: (...args: any[]) => void;
+    /** 输出文件的方式 */
+    outputFile?: (
+        file: string,
+        data: any,
+        options?: string | fse.WriteFileOptions | undefined
+    ) => Promise<void>;
 };
 import * as charList from "./charset/words.json";
 import { md5 } from "./utils/md5";
@@ -54,6 +74,8 @@ async function fontSplit({
     testHTML = true,
     reporter = true,
     previewImage,
+    log = defaultLog,
+    outputFile = defaultOutputFile,
 }: InputTemplate) {
     // testHTML 必须要 reporter 进行支持
     if (testHTML) reporter = true;
@@ -68,7 +90,7 @@ async function fontSplit({
         start: number;
         end: number;
     }[] = [];
-    console.log("输入文件类型识别", fontType);
+    log("输入文件类型识别", fontType);
     let fileSize: number;
     let font: FontEditor.Font;
     /** 字体的作者，名称等信息对象 */
@@ -108,7 +130,7 @@ async function fontSplit({
         [
             "读取字体",
             async () => {
-                console.log("读取字体中");
+                log("读取字体中");
                 fileBuffer = await fse.readFile(FontPath);
                 fileSize = fileBuffer.length;
             },
@@ -143,7 +165,7 @@ async function fontSplit({
                     )
                 );
 
-                console.log(
+                log(
                     chalk.red(
                         "字体文件总大小 " + formatBytes(fileSize),
                         "总字符个数 " + fontFile.glyf.length
@@ -215,7 +237,7 @@ async function fontSplit({
                         type: targetType,
                         toBuffer: true,
                     }) as Buffer;
-                console.log("测试分包大小", testChunk.size, buffer.length);
+                log("测试分包大小", testChunk.size, buffer.length);
                 const singleSize = testChunk.size * (chunkSize / buffer.length);
                 allChunk = chunk(glyf, singleSize);
             },
@@ -223,14 +245,9 @@ async function fontSplit({
         [
             "切割分包",
             async () => {
-                console.log(chalk.red("切割环节时间较长，请稍等"));
+                log(chalk.red("切割环节时间较长，请稍等"));
 
                 buffers = allChunk.map((g) => {
-                    // const a = {...font.get()}
-                    // a.cmap = font.get().cmap
-                    // delete a.glyf
-                    // fse.outputJSONSync('./inpo.json',a)
-                    // throw ''
                     const config = {
                         ..._config,
 
@@ -264,8 +281,8 @@ async function fontSplit({
                         `${content}.${targetType}`
                     );
                     const size = i.buffer.length;
-                    fse.writeFile(file, i.buffer, () => {
-                        console.log(
+                    outputFile(file, i.buffer).then(() => {
+                        log(
                             chalk.green(
                                 index,
                                 content.slice(0, 10),
@@ -310,7 +327,7 @@ async function fontSplit({
                         .map((i) => i.join(": "))
                         .join("\n") +
                     "\n */\n\n";
-                return fse.outputFile(
+                return outputFile(
                     path.join(destFold, (cssFileName || "result") + ".css"),
                     header + cssStyleSheet
                 );
@@ -322,6 +339,7 @@ async function fontSplit({
                 if (testHTML) {
                     return createTestHTML({
                         destFold,
+                        outputFile,
                     });
                 }
             },
@@ -337,14 +355,14 @@ async function fontSplit({
                             chars: String.fromCharCode(...i.unicodes),
                         };
                     });
-                    return fse.outputJSON(
+                    return outputFile(
                         path.join(destFold, "./reporter.json"),
-                        {
+                        JSON.stringify({
                             config: arguments[0],
                             message: fontData,
                             data,
                             record,
-                        }
+                        })
                     );
                 }
             },

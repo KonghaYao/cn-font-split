@@ -4,7 +4,9 @@ import babel from "@rollup/plugin-babel";
 import { outputFileSync } from "fs-extra";
 import { emptyDirSync } from "fs-extra";
 import resolve from "@rollup/plugin-node-resolve";
-emptyDirSync("./dist/");
+
+// 防止打包时删除 ts 的类型注解
+// emptyDirSync("./dist/");
 
 export default {
     external: [],

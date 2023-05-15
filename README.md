@@ -48,19 +48,18 @@ npm install @konghayao/cn-font-split
 import { fontSplit } from "@konghayao/cn-font-split";
 
 fontSplit({
-    FontPath: "./fonts/SourceHanSerifCN-Bold.ttf",
+    FontPath: "./fonts/SourceHanSerifCN-Bold.ttf", // 部分 otf 文件会报错，最好使用 ttf 版本的字体
     destFold: "./build",
     css: {
         // 覆盖默认的 css 设置
         // fontFamily: "站酷庆科黄油体",
         // fontWeight: 400,
     },
-    targetType: "ttf", // ttf woff woff2；注意 eot 文件在浏览器中的支持度非常低，所以不进行支持
+    targetType: "woff2", // ttf woff2；注意 eot 文件在浏览器中的支持度非常低，所以不进行支持
     // chunkSize: 200 * 1024, // 如果需要的话，自己定制吧
     testHTML: true, // 输出一份 html 报告文件
     reporter: true, // 输出 json 格式报告
     // previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成
-    // 注意： woff2 源文件生成预览图时，需要转化成 ttf，故会报告你没有安装一个依赖，npm 搜索并安装它即可
 });
 ```
 

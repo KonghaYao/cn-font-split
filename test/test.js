@@ -7,6 +7,7 @@ emptyDirSync("./build");
 
 fontSplit({
     FontPath: "./fonts/鸿雷行书简体.ttf",
+    FontPath: "./fonts/SourceHanSerifCN-Light.otf",
     FontPath: "./fonts/SmileySans-Oblique.woff2",
     destFold: "./build",
     css: {
@@ -16,4 +17,6 @@ fontSplit({
     targetType: "woff2",
     chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
     previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成
+    log: () => {},
+    outputFile: async () => {},
 });
