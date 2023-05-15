@@ -8,18 +8,6 @@ import chalk from "chalk";
 import { chunk } from "lodash-es";
 import { createImageForFont } from "@konghayao/image-text";
 
-const defaultLog = (...args: any[]) => {
-    console.log(...args);
-};
-
-const defaultOutputFile = (
-    file: string,
-    data: any,
-    options?: string | fse.WriteFileOptions | undefined
-) => {
-    return fse.outputFile(file, data, options);
-};
-
 export type InputTemplate = {
     /** 字体文件的相对地址 */
     FontPath: string;
@@ -63,6 +51,7 @@ export type InputTemplate = {
 };
 import * as charList from "./charset/words.json";
 import { md5 } from "./utils/md5";
+import { defaultLog, defaultOutputFile } from "./default";
 async function fontSplit({
     FontPath,
     destFold = "./build",
@@ -178,12 +167,10 @@ async function fontSplit({
             async () => {
                 // 创建预览图
 
-                await createImageForFont(
-                    fileBuffer,
-                    fontType!,
-                    destFold,
-                    previewImage
-                );
+                await createImageForFont(fileBuffer, fontType!, destFold, {
+                    ...previewImage,
+                    outputFile,
+                });
             },
         ],
         [
