@@ -243,7 +243,7 @@ async function fontSplit({
                             // ! 一级 BUG： 当 i.contours 不存在时，会导致打包结果错误
                             // ! 预计为 fonteditor-core 对此有点问题
                             if (!(i.contours instanceof Array)) {
-                                console.log(i);
+                                // console.log(i);
                                 return false;
                             }
                             return true;
