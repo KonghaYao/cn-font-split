@@ -136,6 +136,8 @@ async function fontSplit({
                 });
 
                 const fontFile = font.get();
+
+                // process.abort();
                 fontData = fontFile.name;
                 css.fontFamily =
                     css.fontFamily || fontFile.name.fontFamily.trim();
@@ -235,11 +237,23 @@ async function fontSplit({
                 log(chalk.red("切割环节时间较长，请稍等"));
 
                 buffers = allChunk.map((g) => {
+                    const glyf = [
+                        voidGlyf,
+                        ...g.filter((i) => {
+                            // ! 一级 BUG： 当 i.contours 不存在时，会导致打包结果错误
+                            // ! 预计为 fonteditor-core 对此有点问题
+                            if (!(i.contours instanceof Array)) {
+                                console.log(i);
+                                return false;
+                            }
+                            return true;
+                        }),
+                    ];
+
                     const config = {
                         ..._config,
-
                         // fixed: 好像 glyf 的第一个值是空值
-                        glyf: [voidGlyf, ...g],
+                        glyf,
                     };
 
                     const buffer = font.readEmpty().set(config).write({
@@ -248,7 +262,9 @@ async function fontSplit({
                     }) as Buffer;
                     return {
                         unicodes: [
-                            ...new Set(g.flatMap((i) => i.unicode || [])),
+                            ...new Set(
+                                config.glyf.flatMap((i) => i.unicode || [])
+                            ),
                         ],
                         buffer,
                     };
