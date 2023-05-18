@@ -207,28 +207,30 @@ async function fontSplit({
         [
             "构建分包",
             async () => {
-                // 重新划分分包
-                const singleCharBytes = fileSize / glyf.length;
-                const testSize = Math.ceil(chunkSize / singleCharBytes);
-
-                // 尝试分包大小
-                const midStart = Math.floor(glyf.length / 2 - testSize / 2);
-                const testChunk = new Set(
-                    glyf.slice(midStart, midStart + testSize)
+                // 算法为计算单个轮廓的大小，计算完成之后进行遍历统计，累计数达到指定大小时进行隔断分包
+                const glfyLength = font
+                    .get()
+                    .glyf.reduce(
+                        (col, res) =>
+                            col + (res.contours ? res.contours.length : 0),
+                        0
+                    );
+                const oneContourCount = (chunkSize * glfyLength) / fileSize;
+                let counter = 0;
+                allChunk = glyf.reduce(
+                    (col, cur) => {
+                        if (counter >= oneContourCount) {
+                            col.push([cur]);
+                            counter = 0;
+                        } else {
+                            const last = col[col.length - 1];
+                            last.push(cur);
+                        }
+                        counter += cur.contours ? cur.contours.length : 0;
+                        return col;
+                    },
+                    [[]] as TTF.Glyph[][]
                 );
-                const buffer = font
-                    .readEmpty()
-                    .set({
-                        ..._config,
-                        glyf: [...testChunk.values()],
-                    })
-                    .write({
-                        type: targetType,
-                        toBuffer: true,
-                    }) as Buffer;
-                log("测试分包大小", testChunk.size, buffer.length);
-                const singleSize = testChunk.size * (chunkSize / buffer.length);
-                allChunk = chunk(glyf, singleSize);
             },
         ],
         [
