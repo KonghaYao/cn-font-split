@@ -18,8 +18,7 @@
         "@konghayao/image-text": "workspace:",
         "chalk": "4",
         "fonteditor-core": "^2.1.11",
-        "fs-extra": "^10.0.1",
-        "lodash-es": "^4.17.21"
+        "fs-extra": "^10.0.1"
     },
     "devDependencies": {
         "@babel/core": "^7.18.13",
@@ -28,7 +27,6 @@
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
         "@types/fs-extra": "^9.0.13",
-        "@types/lodash-es": "^4.17.6",
         "rollup": "^2.78.1",
         "rollup-plugin-analyzer": "^4.0.0",
         "zod": "^3.21.4"

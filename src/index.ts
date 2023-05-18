@@ -5,7 +5,6 @@ import fse from "fs-extra";
 import { createTestHTML } from "./createTestHTML";
 import path from "path";
 import chalk from "chalk";
-import { chunk } from "lodash-es";
 import { createImageForFont } from "@konghayao/image-text";
 
 export type InputTemplate = {
@@ -112,6 +111,10 @@ async function fontSplit({
                     targetType === "woff" ||
                     fontType === "woff"
                 ) {
+                    if ((globalThis as any).fetch)
+                        console.warn(
+                            "警告： 全局变量中包含 fetch 可能发生错误！！！"
+                        );
                     await initWoff2();
                 }
             },
