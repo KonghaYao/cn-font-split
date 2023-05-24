@@ -5,7 +5,6 @@ import fse from "fs-extra";
 import { createTestHTML } from "./createTestHTML";
 import path from "path";
 import chalk from "chalk";
-import { createImageForFont } from "@konghayao/image-text";
 
 export type InputTemplate = {
     /** 字体文件的相对地址 */
@@ -171,7 +170,10 @@ async function fontSplit({
             "生成预览图",
             async () => {
                 // 创建预览图
-
+                // 动态载入绘图库，以免绘图不行，直接 BUG 退出
+                const { createImageForFont } = await import(
+                    "@konghayao/image-text"
+                );
                 await createImageForFont(fileBuffer, fontType!, destFold, {
                     ...previewImage,
                     outputFile,
