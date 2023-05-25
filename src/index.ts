@@ -133,7 +133,7 @@ async function fontSplit({
                 font = Font.create(fileBuffer, {
                     type: fontType!, // support ttf, woff, woff2, eot, otf, svg
                     hinting: true, // save font hinting
-                    compound2simple: false, // transform ttf compound glyf to simple
+                    compound2simple: true, // 这个选项可以避免下面的复合字符错误
                     combinePath: false, // for svg path
                 });
 
@@ -242,14 +242,15 @@ async function fontSplit({
             "切割分包",
             async () => {
                 log(chalk.red("切割环节时间较长，请稍等"));
-
+                let errorCount = 0;
                 buffers = allChunk.map((g) => {
                     const glyf = [
                         voidGlyf,
                         ...g.filter((i) => {
                             // ! 一级 BUG： 当 i.contours 不存在时，会导致打包结果错误
-                            // ! 预计为 fonteditor-core 对此有点问题
+                            // ! fonteditor-core 认为不存在时为复合字符，需要 compound2simple
                             if (!(i.contours instanceof Array)) {
+                                errorCount++;
                                 // console.log(i);
                                 return false;
                             }
@@ -276,6 +277,7 @@ async function fontSplit({
                         buffer,
                     };
                 });
+                errorCount && log(chalk.red("因错误忽略字符数：", errorCount));
 
                 font = null as any; // 抹除对象先
                 allChunk.length = 0;
