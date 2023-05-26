@@ -1,0 +1,18 @@
+{
+    "name": "@konghayao/image-text",
+    "version": "1.0.4",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "prepublish": "pnpm build",
+        "test": "node ./test/index.mjs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "fonteditor-core": "^2.1.11",
+        "fs-extra": "^10.0.1"
+    }
+}

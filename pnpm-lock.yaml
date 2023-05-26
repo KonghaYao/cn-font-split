@@ -45,6 +45,15 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
 
+  packages/font-analyze:
+    dependencies:
+      fonteditor-core:
+        specifier: ^2.1.11
+        version: 2.1.11
+      fs-extra:
+        specifier: ^10.0.1
+        version: 10.0.1
+
   packages/image-text:
     dependencies:
       '@woff2/woff2-rs':
