@@ -19,8 +19,8 @@ const folder = (arr) => {
         );
 };
 import fs from "fs-extra";
-import { i } from "./b.mjs";
 let count = 0;
-const a = folder(i);
+const i = fs.readJSONSync("./map_U-gbk.json");
+const a = folder([...new Set(Object.keys(i))].map((i) => parseInt(i)));
 
-fs.outputJSONSync("./gb2312.json", a);
+fs.outputJSONSync("./gbk.json", a);
