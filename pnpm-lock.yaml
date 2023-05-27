@@ -50,9 +50,6 @@ importers:
       fonteditor-core:
         specifier: ^2.1.11
         version: 2.1.11
-      fs-extra:
-        specifier: ^10.0.1
-        version: 10.0.1
 
   packages/image-text:
     dependencies:

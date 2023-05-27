@@ -14,7 +14,10 @@ export interface CharsetReporter {
     in_set_rate: string;
 }
 
-export const FontAnalyze = async (input: Buffer, type: FontEditor.FontType) => {
+export const FontAnalyze = async (
+    input: FontEditor.FontInput,
+    type: FontEditor.FontType
+) => {
     const font = Font.create(input, {
         type, // support ttf, woff, woff2, eot, otf, svg
         hinting: true, // save font hinting
@@ -26,11 +29,15 @@ export const FontAnalyze = async (input: Buffer, type: FontEditor.FontType) => {
     const headers = FontHeaders(font, meta);
     console.table(headers);
 
+    // 软件需要在浏览器运行，所以按需加载比较合适
+
     const { default: gb2312Set } = await import("../data/gb2312.json");
     const gb2312 = FontSetMatch(font, meta, gb2312Set as Charset, "GB2312");
     console.table(gb2312);
 
-    const unicodeReport = UnicodeMatch(font, meta);
+    const { default: Unicode } = await import("../data/unicodes.json");
+    const unicodeReport = UnicodeMatch(font, meta, Unicode);
+    // 太长了，不进行打印
     // console.table(areas, ["cn", "coverage", "support_count", "area_count"]);
 
     return { headers, unicode: unicodeReport, gb2312 };

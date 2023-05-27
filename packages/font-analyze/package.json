@@ -1,6 +1,6 @@
 {
-    "name": "@konghayao/image-text",
-    "version": "1.0.4",
+    "name": "font-analyze",
+    "version": "1.0.0",
     "description": "",
     "main": "dist/src/index.js",
     "scripts": {
@@ -8,11 +8,13 @@
         "prepublish": "pnpm build",
         "test": "node ./test/index.mjs"
     },
-    "keywords": [],
+    "keywords": [
+        "font",
+        "analyze"
+    ],
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "fonteditor-core": "^2.1.11",
-        "fs-extra": "^10.0.1"
+        "fonteditor-core": "^2.1.11"
     }
 }

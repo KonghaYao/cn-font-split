@@ -1,10 +1,11 @@
 import { FontEditor, TTF } from "fonteditor-core";
-import Unicode from "../data/unicodes.json";
-import { CharsetReporter } from "src";
+
+import { CharsetReporter } from "./index";
 /** 字符集判断 */
 export const UnicodeMatch = (
     font: FontEditor.Font,
-    meta: TTF.TTFObject
+    meta: TTF.TTFObject,
+    Unicode: { start: number; name: string; end: number; cn: string }[]
 ): CharsetReporter[] => {
     const items = new Set(Object.keys(meta.cmap).map((i) => parseInt(i)));
     return Unicode.map((i) => {

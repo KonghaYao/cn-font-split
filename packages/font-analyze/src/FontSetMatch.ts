@@ -1,5 +1,5 @@
 import { FontEditor, TTF } from "fonteditor-core";
-import { CharsetReporter } from "src";
+import { CharsetReporter } from "./index";
 
 export type Charset = ([number, number] | [number])[];
 export const calcCharset = (charset: Charset) => {
