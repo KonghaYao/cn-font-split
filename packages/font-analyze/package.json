@@ -2,7 +2,7 @@
     "name": "@konghayao/image-text",
     "version": "1.0.4",
     "description": "",
-    "main": "dist/index.js",
+    "main": "dist/src/index.js",
     "scripts": {
         "build": "tsc",
         "prepublish": "pnpm build",

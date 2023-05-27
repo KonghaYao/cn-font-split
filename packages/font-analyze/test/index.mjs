@@ -1,4 +1,4 @@
-import { FontAnalyze } from "../dist/index.js";
+import { FontAnalyze } from "../dist/src/index.js";
 import fse from "fs-extra";
 const file = await fse.readFile("../../fonts/SmileySans-Oblique.ttf");
 const data = FontAnalyze(file, "ttf");

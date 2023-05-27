@@ -20,7 +20,7 @@ const folder = (arr) => {
 };
 import fs from "fs-extra";
 let count = 0;
-const i = fs.readJSONSync("./map_U-gbk.json");
-const a = folder([...new Set(Object.keys(i))].map((i) => parseInt(i)));
+const i = fs.readJSONSync("./a.json");
+const a = folder(i);
 
 fs.outputJSONSync("./gbk.json", a);
