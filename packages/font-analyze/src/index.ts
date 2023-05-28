@@ -5,6 +5,8 @@ import { FontHeaders } from "./FontHeaders";
 export interface CharsetReporter {
     name: string;
     cn?: string;
+    start?: string;
+    end?: string;
     support_count: number;
     area_count: number;
     coverage: string;
@@ -59,7 +61,7 @@ export const FontAnalyze = async (
             return FontSetMatch(font, meta, set as Charset, name);
         })
     );
-    console.table(standard);
+    // console.table(standard);
 
     const Unicode = await charsetLoader("unicodes.json");
     const unicodeReport = UnicodeMatch(font, meta, Unicode as UnicodeCharset);
