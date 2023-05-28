@@ -5,8 +5,8 @@ import { FontHeaders } from "./FontHeaders";
 export interface CharsetReporter {
     name: string;
     cn?: string;
-    start?: string;
-    end?: string;
+    start?: number;
+    end?: number;
     support_count: number;
     area_count: number;
     coverage: string;
