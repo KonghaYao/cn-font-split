@@ -2,7 +2,7 @@
     "name": "font-analyze",
     "version": "1.0.0",
     "description": "",
-    "main": "dist/src/index.js",
+    "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
         "prepublish": "pnpm build",
@@ -16,5 +16,8 @@
     "license": "ISC",
     "dependencies": {
         "fonteditor-core": "^2.1.11"
+    },
+    "devDependencies": {
+        "compressing": "^1.9.0"
     }
 }
