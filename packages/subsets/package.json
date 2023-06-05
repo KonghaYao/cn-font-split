@@ -15,8 +15,7 @@
         "@konghayao/harfbuzzjs": "^0.3.6",
         "harfbuzzjs": "^0.3.3",
         "p-limit": "^4.0.0",
-        "wawoff2": "^2.0.1",
-        "woff2sfnt-sfnt2woff": "^1.0.0"
+        "wawoff2": "^2.0.1"
     },
     "devDependencies": {
         "@types/wawoff2": "^1.0.0"

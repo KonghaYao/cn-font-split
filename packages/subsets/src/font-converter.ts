@@ -1,5 +1,5 @@
 import wawoff2 from "wawoff2";
-import woffTool from "woff2sfnt-sfnt2woff";
+// import woffTool from "woff2sfnt-sfnt2woff";
 import { Buffer } from "buffer";
 const supportedFormats = new Set(["sfnt", "woff", "woff2"]);
 
@@ -48,13 +48,12 @@ export const convert = async function (
         return buffer;
     }
     if (fromFormat === "woff") {
-        buffer = woffTool.toSfnt(buffer);
+        // buffer = woffTool.toSfnt(buffer);
+        throw new Error("Unsupported source format: woff");
     } else if (fromFormat === "woff2") {
         buffer = Buffer.from(await wawoff2.decompress(buffer));
     }
-    if (toFormat === "woff") {
-        buffer = woffTool.toWoff(buffer);
-    } else if (toFormat === "woff2") {
+    if (toFormat === "woff2") {
         buffer = Buffer.from(await wawoff2.compress(buffer));
     }
     return buffer;

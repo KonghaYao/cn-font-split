@@ -84,9 +84,6 @@ importers:
       wawoff2:
         specifier: ^2.0.1
         version: 2.0.1
-      woff2sfnt-sfnt2woff:
-        specifier: ^1.0.0
-        version: 1.0.0
     devDependencies:
       '@types/wawoff2':
         specifier: ^1.0.0
@@ -1004,10 +1001,6 @@ packages:
       yocto-queue: 1.0.0
     dev: false
 
-  /pako@1.0.11:
-    resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
-    dev: false
-
   /path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
     dev: true
@@ -1160,12 +1153,6 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
-    dev: false
-
-  /woff2sfnt-sfnt2woff@1.0.0:
-    resolution: {integrity: sha512-edK4COc1c1EpRfMqCZO1xJOvdUtM5dbVb9iz97rScvnTevqEB3GllnLWCmMVp1MfQBdF1DFg/11I0rSyAdS4qQ==}
-    dependencies:
-      pako: 1.0.11
     dev: false
 
   /wrappy@1.0.2:

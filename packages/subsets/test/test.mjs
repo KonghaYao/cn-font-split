@@ -1,12 +1,12 @@
 import fs from "fs/promises";
-import { convert, hbjs, loadHarfbuzz, subsetFont } from "../dist/index.js";
+import { convert, hbjs, subsetFont } from "../dist/index.js";
 
 const buffer = await fs.readFile(
     "./node_modules/@konghayao/harfbuzzjs/hb-subset.wasm"
 );
 const fontBuffer = await fs.readFile("../../fonts/SourceHanSerifCN-Light.otf");
-const source = await loadHarfbuzz(buffer);
-console.log(source.instance);
+const source = await WebAssembly.instantiate(buffer);
+
 const Buffer = await subsetFont(
     await convert(fontBuffer, "truetype"),
     "hello中国",

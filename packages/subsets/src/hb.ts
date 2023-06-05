@@ -577,8 +577,8 @@ export function hbjs(instance: any) {
     /** 附加 API */
     function createSubset(
         face: ReturnType<typeof createFace>,
-        preserveNameIds?: string,
-        variationAxes?: string
+        preserveNameIds?: number[],
+        variationAxes?: Record<number, number>
     ) {
         const ptr = exports.hb_subset_input_create_or_fail();
         if (ptr === 0) {
