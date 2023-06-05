@@ -5,7 +5,8 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "vitest",
+        "coverage": "vitest run --coverage"
     },
     "keywords": [],
     "author": "",
@@ -13,12 +14,12 @@
     "dependencies": {
         "@japont/unicode-range": "^1.0.0",
         "@konghayao/harfbuzzjs": "^0.3.6",
-        "harfbuzzjs": "^0.3.3",
         "p-limit": "^4.0.0",
         "tslog": "^4.8.2",
         "wawoff2": "^2.0.1"
     },
     "devDependencies": {
-        "@types/wawoff2": "^1.0.0"
+        "@types/wawoff2": "^1.0.0",
+        "vitest": "^0.31.4"
     }
 }

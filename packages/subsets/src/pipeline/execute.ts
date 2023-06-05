@@ -1,4 +1,3 @@
-import { Logger } from "tslog";
 import { Context } from "./context";
 
 // ctx = new Context<{}>(
@@ -7,7 +6,7 @@ import { Context } from "./context";
 // );
 
 export class Executor<
-    T extends Record<string, Function>,
+    T extends Record<string, (ctx: CTX) => void | Promise<void>>,
     K extends keyof T,
     CTX extends Context<unknown>
 > {
@@ -21,6 +20,7 @@ export class Executor<
     order: K[];
     defineOrder(keys: K[]) {
         if (this.ptr === -1) this.order = keys;
+        return this;
     }
     /**
      * state of class
@@ -38,11 +38,34 @@ export class Executor<
         }
     }
     /** 步进机制，可以添加事件响应，或者 debugger */
-    nextStep() {
+    async nextStep() {
         const ptr = this.setPtr(this.ptr + 1);
-        const task = this.order[ptr];
-        if (task instanceof Function) {
-            return this.steps[task](this.context);
+        const taskName = this.order[ptr];
+        if (taskName) {
+            const start = performance.now();
+            await this.steps[taskName](this.context);
+            const end = performance.now();
+            this.context.info(taskName, end - start);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    async run(
+        /**
+         * 当任务执行次数超过这个倍数时将会跳出循环并且报错 */
+        maxStepsOver = 1.5
+    ) {
+        if (!this.order)
+            throw new Error("run: Please defineOrder for the tasks");
+        let max = this.order.length * maxStepsOver;
+        let count = 0;
+        let keep = true;
+        while (keep) {
+            keep = await this.nextStep();
+            count++;
+            if (count >= max)
+                throw new Error("Executor run: too many times task to run!");
         }
     }
 }
