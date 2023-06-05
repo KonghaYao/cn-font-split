@@ -67,6 +67,31 @@ importers:
         specifier: ^1.2.16
         version: 1.2.16
 
+  packages/subsets:
+    dependencies:
+      '@japont/unicode-range':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@konghayao/harfbuzzjs':
+        specifier: ^0.3.6
+        version: 0.3.6
+      harfbuzzjs:
+        specifier: ^0.3.3
+        version: 0.3.3
+      p-limit:
+        specifier: ^4.0.0
+        version: 4.0.0
+      wawoff2:
+        specifier: ^2.0.1
+        version: 2.0.1
+      woff2sfnt-sfnt2woff:
+        specifier: ^1.0.0
+        version: 1.0.0
+    devDependencies:
+      '@types/wawoff2':
+        specifier: ^1.0.0
+        version: 1.0.0
+
 packages:
 
   /@ampproject/remapping@2.2.0:
@@ -372,6 +397,10 @@ packages:
       fd-slicer2: 1.2.0
     dev: true
 
+  /@japont/unicode-range@1.0.0:
+    resolution: {integrity: sha512-BckHvA2XdjRBVAWe2uceNuRf78lBeI28kyWEbfr/Q2pE17POkwuZ6WWY/UMv8FL9iBxhW4xfDoNLM9UVZaTeUQ==}
+    dev: false
+
   /@jridgewell/gen-mapping@0.1.1:
     resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}
     engines: {node: '>=6.0.0'}
@@ -409,6 +438,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@konghayao/harfbuzzjs@0.3.6:
+    resolution: {integrity: sha512-lBOG2RK02wQI2+twpJi7z1WFO/I2wWC4jwjiQNc+aYsMsT4nacllrLOBjze2HJmlN4/hT950YTdG1nmmIS4X+Q==}
+    dev: false
 
   /@rollup/plugin-babel@5.3.1(@babel/core@7.18.13)(rollup@2.78.1):
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -479,6 +512,12 @@ packages:
 
   /@types/resolve@1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
+    dependencies:
+      '@types/node': 17.0.23
+    dev: true
+
+  /@types/wawoff2@1.0.0:
+    resolution: {integrity: sha512-UvCfTrfjYZUw2OokkEmy0tB8dZeoWc1hSSZfHa9L5uHTsd6e3KwCNDJq1yHdcOhCLT+Zmvwgds1Lr/gQzJwDAw==}
     dependencies:
       '@types/node': 17.0.23
     dev: true
@@ -636,6 +675,10 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       color-convert: 2.0.1
+    dev: false
+
+  /argparse@2.0.1:
+    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: false
 
   /bl@1.2.3:
@@ -847,6 +890,10 @@ packages:
     resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
     dev: false
 
+  /harfbuzzjs@0.3.3:
+    resolution: {integrity: sha512-48C/LOUweD//LTqaQAS9VMOBNPh7DhyJEmdzh5/1GgjNA8kGZMVZKTzkvarBDtiKKaKG5whx7qXU8OeSNLmWcA==}
+    dev: false
+
   /has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -949,6 +996,17 @@ packages:
     dependencies:
       wrappy: 1.0.2
     dev: true
+
+  /p-limit@4.0.0:
+    resolution: {integrity: sha512-5b0R4txpzjPWVw/cXXUResoD4hb6U/x9BH08L7nw+GN1sezDzPdxeRvpc9c433fZhBan/wusjbCsqwqm4EIBIQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      yocto-queue: 1.0.0
+    dev: false
+
+  /pako@1.0.11:
+    resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
+    dev: false
 
   /path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
@@ -1097,6 +1155,19 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
 
+  /wawoff2@2.0.1:
+    resolution: {integrity: sha512-r0CEmvpH63r4T15ebFqeOjGqU4+EgTx4I510NtK35EMciSdcTxCw3Byy3JnBonz7iyIFZ0AbVo0bbFpEVuhCYA==}
+    hasBin: true
+    dependencies:
+      argparse: 2.0.1
+    dev: false
+
+  /woff2sfnt-sfnt2woff@1.0.0:
+    resolution: {integrity: sha512-edK4COc1c1EpRfMqCZO1xJOvdUtM5dbVb9iz97rScvnTevqEB3GllnLWCmMVp1MfQBdF1DFg/11I0rSyAdS4qQ==}
+    dependencies:
+      pako: 1.0.11
+    dev: false
+
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: true
@@ -1111,6 +1182,11 @@ packages:
     dependencies:
       buffer-crc32: 0.2.13
     dev: true
+
+  /yocto-queue@1.0.0:
+    resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
+    engines: {node: '>=12.20'}
+    dev: false
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
