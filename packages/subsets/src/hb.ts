@@ -6,6 +6,11 @@ function hb_tag(s: string) {
         ((s.charCodeAt(3) & 0xff) << 0)
     );
 }
+function HB_TAG(str: string) {
+    return str.split("").reduce(function (a, ch) {
+        return (a << 8) + ch.charCodeAt(0);
+    }, 0);
+}
 function _hb_untag(tag: number) {
     return [
         String.fromCharCode((tag >> 24) & 0xff),
@@ -33,6 +38,8 @@ function _buffer_flag(s: BufferFlag) {
     };
     return flagMap[s] || 0x0;
 }
+
+/**  harfbuzz 的函数 */
 export function hbjs(instance: any) {
     "use strict";
 
@@ -567,7 +574,103 @@ export function hbjs(instance: any) {
         return JSON.parse(trace);
     }
 
+    /** 附加 API */
+    function createSubset(
+        face: ReturnType<typeof createFace>,
+        preserveNameIds?: string,
+        variationAxes?: string
+    ) {
+        const ptr = exports.hb_subset_input_create_or_fail();
+        if (ptr === 0) {
+            throw new Error(
+                "hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure"
+            );
+        }
+
+        let resultPtr: number;
+        return {
+            ptr,
+            adjustLayout() {
+                // Do the equivalent of --font-features=*
+                const layoutFeatures = exports.hb_subset_input_set(
+                    ptr,
+                    6 // HB_SUBSET_SETS_LAYOUT_FEATURE_TAG
+                );
+                exports.hb_set_clear(layoutFeatures);
+                exports.hb_set_invert(layoutFeatures);
+                if (preserveNameIds) {
+                    const inputNameIds = exports.hb_subset_input_set(
+                        ptr,
+                        4 // HB_SUBSET_SETS_NAME_ID
+                    );
+                    for (const nameId of preserveNameIds) {
+                        exports.hb_set_add(inputNameIds, nameId);
+                    }
+                }
+                if (variationAxes) {
+                    for (const [axisName, value] of Object.entries(
+                        variationAxes
+                    )) {
+                        exports.hb_subset_input_pin_axis_location(
+                            ptr,
+                            face.ptr,
+                            HB_TAG(axisName),
+                            value
+                        );
+                    }
+                }
+            },
+            addChars(arr: number[]) {
+                const inputUnicodePtr =
+                    exports.hb_subset_input_unicode_set(ptr);
+                for (const c of arr) {
+                    exports.hb_set_add(inputUnicodePtr, c);
+                }
+            },
+            getResult() {
+                return resultPtr;
+            },
+            runSubset() {
+                resultPtr = exports.hb_subset_or_fail(face.ptr, ptr);
+                if (resultPtr === 0) {
+                    throw new Error(
+                        "hb_subset_or_fail (harfbuzz) returned zero, indicating failure. Maybe the input file is corrupted?"
+                    );
+                }
+                return resultPtr;
+            },
+            destroy() {
+                if (resultPtr && typeof resultPtr === "number")
+                    exports.hb_face_destroy(resultPtr);
+                exports.hb_subset_input_destroy(ptr);
+            },
+
+            toArray() {
+                console.log(resultPtr);
+                // Get result blob
+                const blobPtr = exports.hb_face_reference_blob(resultPtr);
+                const offset = exports.hb_blob_get_data(blobPtr, 0);
+                const subsetByteLength = exports.hb_blob_get_length(blobPtr);
+                if (subsetByteLength === 0) {
+                    exports.hb_blob_destroy(blobPtr);
+                    throw new Error(
+                        "Failed to create subset font, maybe the input file is corrupted?"
+                    );
+                }
+
+                console.log(subsetByteLength);
+                return {
+                    destroy() {
+                        exports.hb_blob_destroy(blobPtr);
+                    },
+                    data: heapu8.subarray(offset, offset + subsetByteLength),
+                };
+            },
+        };
+    }
+
     return {
+        createSubset,
         createBlob,
         createFace,
         createFont,
