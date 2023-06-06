@@ -1,9 +1,11 @@
 import { hbjs } from "./hb.js";
 import { Buffer } from "buffer";
+import { timeRecordFormat } from "./utils/timeCount.js";
 import { IOutputFile } from "./main.js";
 import { FontType, convert } from "./font-converter.js";
-import { md5 } from "hash-wasm";
-
+import md5 from "md5";
+import { Logger } from "tslog";
+import byteSize from "byte-size";
 export interface Options {
     variationAxes?: Record<number, number>;
     preserveNameIds?: number[];
@@ -16,6 +18,14 @@ export const Extensions = {
     woff: "woff",
     woff2: "woff2",
 } as const;
+
+export const countSubsetChars = (subset: (number | [number, number])[]) => {
+    return subset.reduce((col: number, cur) => {
+        col += 1;
+        return typeof cur === "number" ? col : col + (cur[1] - cur[0]);
+    }, 0);
+};
+
 export const subsetAll = async (
     TTFBuffer: Uint8Array,
     hb: ReturnType<typeof hbjs>,
@@ -29,7 +39,8 @@ export const subsetAll = async (
      */
     subsets: (number | [number, number])[][],
     outputFile: IOutputFile,
-    targetType: FontType
+    targetType: FontType,
+    log: Logger<unknown>
 ) => {
     const blob = hb.createBlob(TTFBuffer);
 
@@ -37,14 +48,29 @@ export const subsetAll = async (
     blob.destroy();
     const ext = Extensions[targetType];
 
-    await Promise.all(
-        subsets.map(async (subset) => {
-            const buffer = subsetFont(face, subset, hb);
-            const transferred = await convert(buffer, targetType);
-            const hashName = await md5(transferred);
-            outputFile(hashName + "." + ext, transferred);
-        })
-    );
+    log.trace("id \t分包时间及速度 \t转换时间及速度\t分包最终情况");
+    for (let index = 0; index < subsets.length; index++) {
+        const subset = subsets[index];
+        const start = performance.now();
+        const buffer = subsetFont(face, subset, hb);
+        const middle = performance.now();
+        const transferred = await convert(buffer, targetType);
+        const end = performance.now();
+        const count = countSubsetChars(subset);
+        log.trace(
+            [
+                index,
+                timeRecordFormat(start, middle),
+                (count / (middle - start)).toFixed(2) + "字符/ms",
+                timeRecordFormat(middle, end),
+                (count / (end - middle)).toFixed(2) + "字符/ms",
+                byteSize(buffer.byteLength) + "/" + count,
+            ].join(" \t")
+        );
+        const hashName = md5(transferred);
+        // 不进行 promise 限制
+        outputFile(hashName + "." + ext, transferred);
+    }
 
     face.destroy();
     blob.free();

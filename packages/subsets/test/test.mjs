@@ -8,4 +8,5 @@ import { fontSplit } from "../dist/index.js";
 fontSplit({
     destFold: "./temp",
     FontPath: "../../fonts/SourceHanSerifCN-Light.otf",
+    targetType: "woff2",
 });

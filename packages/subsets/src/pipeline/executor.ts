@@ -42,10 +42,17 @@ export class Executor<
         const ptr = this.setPtr(this.ptr + 1);
         const taskName = this.order[ptr];
         if (taskName) {
+            this.context.info("-->\t" + (taskName as string) + " Start");
             const start = performance.now();
             await this.steps[taskName](this.context);
             const end = performance.now();
-            this.context.info(taskName, end - start);
+            this.context.info(
+                "<--\t" +
+                    (taskName as string) +
+                    " Done\t" +
+                    (end - start).toFixed(0) +
+                    "ms\t"
+            );
             return true;
         } else {
             return false;

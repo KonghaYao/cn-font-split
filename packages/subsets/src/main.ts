@@ -6,6 +6,7 @@ import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz.js";
 import { isBrowser, isNode } from "./utils/env.js";
 import { subsetAll } from "./subset.js";
 import path from "path";
+import byteSize from "byte-size";
 export const TransFontsToTTF = (buffer: Buffer) => {
     return convert(buffer, "truetype");
 };
@@ -58,11 +59,12 @@ export type InputTemplate = {
     outputFile?: IOutputFile;
 };
 export const fontSplit = async (opt: InputTemplate) => {
+    let shortLog = true;
     const exec = new Executor(
         {
             async LoadFile(ctx) {
                 const { input } = ctx.pick("input");
-                let res: ArrayBuffer;
+                let res!: ArrayBuffer;
                 const defaultFunc = async () => {
                     // 视为本地地址
                     res = await import("fs/promises").then((res) => {
@@ -71,18 +73,17 @@ export const fontSplit = async (opt: InputTemplate) => {
                 };
                 if (typeof input.FontPath === "string") {
                     if (isBrowser) {
-                        ctx.info("environment: Browser");
+                        ctx.trace("Runtime Detect: Browser");
                         // 视为 url
-
                         res = await fetch(input.FontPath).then((res) =>
                             res.arrayBuffer()
                         );
                     } else if (isNode) {
-                        ctx.info("environment: Node");
+                        ctx.trace("Runtime Detect: Node");
                         await defaultFunc();
                     } else {
-                        ctx.info(
-                            "environment: Unknown (Guess Node;May encounter some bugs)"
+                        ctx.trace(
+                            "Runtime Detect: Unknown (Guess Node;May encounter some bugs)"
                         );
                         await defaultFunc();
                     }
@@ -90,7 +91,8 @@ export const fontSplit = async (opt: InputTemplate) => {
                     // 视为二进制数据
                     res = input.FontPath;
                 }
-                ctx.set("originFile", new Uint8Array(res!));
+                ctx.set("originFile", new Uint8Array(res));
+                ctx.trace("input font size: " + byteSize(res.byteLength));
             },
             async transferFontType(ctx) {
                 const { input, originFile } = ctx.pick("input", "originFile");
@@ -116,14 +118,15 @@ export const fontSplit = async (opt: InputTemplate) => {
                 await subsetAll(
                     ttfFile,
                     hb,
-                    [[[30, 100]], []],
+                    [[[30, 100]], [[0x4e00, 0x5000]], [[0x4e00, 0x9000]]],
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
                             buffer
                         );
                     },
-                    input.targetType ?? "woff2"
+                    input.targetType ?? "woff2",
+                    ctx
                 );
             },
         },
@@ -132,7 +135,21 @@ export const fontSplit = async (opt: InputTemplate) => {
             originFile: Uint8Array;
             ttfFile: Uint8Array;
             hb: HB.Handle;
-        }>({ input: opt })
+        }>(
+            { input: opt },
+            {
+                log: {
+                    settings: {
+                        prettyLogTimeZone: "local",
+                        prettyLogTemplate:
+                            (shortLog
+                                ? ""
+                                : "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}} {{ms}}\t ") +
+                            "{{logLevelName}}\t",
+                    },
+                },
+            }
+        )
     );
     const ctx = await exec
         .defineOrder([

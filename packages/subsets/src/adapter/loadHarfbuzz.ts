@@ -1,5 +1,6 @@
 import { isNode } from "../utils/env.js";
 
+/** 当检查到为 node 环境时，使用此功能 */
 const NodeLoad = async (input?: string) => {
     const { readFile } = await import("fs/promises");
     /**@ts-ignore */
@@ -8,11 +9,12 @@ const NodeLoad = async (input?: string) => {
 
     const path = require.resolve("@konghayao/harfbuzzjs/hb-subset.wasm");
 
-    console.log(path);
     return WebAssembly.instantiate(await readFile(input || path));
 };
+
+/** 无视平台加载 */
 export const loadHarbuzzAdapter = async (
-    input?: string | Response | Buffer
+    input?: string | Response | ArrayBuffer
 ) => {
     if (isNode) {
         if (typeof input === "string") {
@@ -21,9 +23,11 @@ export const loadHarbuzzAdapter = async (
             return NodeLoad();
         }
     }
-    if (input instanceof Response) {
+    if (typeof input === "string") {
+        return WebAssembly.instantiateStreaming(fetch(input));
+    } else if (input instanceof Response) {
         return WebAssembly.instantiateStreaming(input);
-    } else if (input instanceof Buffer) {
+    } else if (input instanceof ArrayBuffer) {
         return WebAssembly.instantiate(input);
     }
 

@@ -30,6 +30,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
     set<K extends keyof T>(key: K, value: T[K]) {
         this._originData[key] = value;
     }
+
     free(key: keyof T) {
         delete this._originData[key];
     }

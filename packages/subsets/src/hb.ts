@@ -659,7 +659,6 @@ export function hbjs(instance: any) {
             },
 
             toArray() {
-                console.log(resultPtr);
                 // Get result blob
                 const blobPtr = exports.hb_face_reference_blob(resultPtr);
                 const offset = exports.hb_blob_get_data(blobPtr, 0);
@@ -671,7 +670,6 @@ export function hbjs(instance: any) {
                     );
                 }
 
-                console.log(subsetByteLength);
                 return {
                     destroy() {
                         exports.hb_blob_destroy(blobPtr);
