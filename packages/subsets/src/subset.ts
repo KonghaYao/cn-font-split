@@ -1,13 +1,23 @@
 import { hbjs } from "./hb.js";
 import { Buffer } from "buffer";
+import { IOutputFile } from "./main.js";
+import { FontType, convert } from "./font-converter.js";
+import { md5 } from "hash-wasm";
 
 export interface Options {
     variationAxes?: Record<number, number>;
     preserveNameIds?: number[];
 }
-
-export const subsetAll = (
-    TTFBuffer: Buffer,
+export const Extensions = {
+    otf: "otf",
+    ttf: "ttf",
+    sfnt: "otf",
+    truetype: "ttf",
+    woff: "woff",
+    woff2: "woff2",
+} as const;
+export const subsetAll = async (
+    TTFBuffer: Uint8Array,
     hb: ReturnType<typeof hbjs>,
     /**
      * @example
@@ -17,15 +27,24 @@ export const subsetAll = (
      * ]
      *
      */
-    subsets: (number | [number, number])[][]
+    subsets: (number | [number, number])[][],
+    outputFile: IOutputFile,
+    targetType: FontType
 ) => {
     const blob = hb.createBlob(TTFBuffer);
 
     const face = hb.createFace(blob, 0);
     blob.destroy();
-    subsets.forEach((subset) => {
-        const buffer = subsetFont(face, subset, hb);
-    });
+    const ext = Extensions[targetType];
+
+    await Promise.all(
+        subsets.map(async (subset) => {
+            const buffer = subsetFont(face, subset, hb);
+            const transferred = await convert(buffer, targetType);
+            const hashName = await md5(transferred);
+            outputFile(hashName + "." + ext, transferred);
+        })
+    );
 
     face.destroy();
     blob.free();

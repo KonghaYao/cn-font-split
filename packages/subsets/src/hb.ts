@@ -39,6 +39,12 @@ function _buffer_flag(s: BufferFlag) {
     return flagMap[s] || 0x0;
 }
 
+export namespace HB {
+    export type Handle = ReturnType<typeof hbjs>;
+    export type Face = ReturnType<ReturnType<typeof hbjs>["createFace"]>;
+    export type Blob = ReturnType<ReturnType<typeof hbjs>["createBlob"]>;
+}
+
 /**  harfbuzz 的函数 */
 export function hbjs(instance: any) {
     "use strict";
@@ -59,10 +65,10 @@ export function hbjs(instance: any) {
      **/
     function createBlob(
         /** A blob of binary data (usually the contents of a font file). */
-        blob: Buffer
+        blob: Uint8Array
     ) {
         let blobPtr = exports.malloc(blob.byteLength);
-        heapu8.set(new Uint8Array(blob), blobPtr);
+        heapu8.set(blob, blobPtr);
         let ptr = exports.hb_blob_create(
             blobPtr,
             blob.byteLength,

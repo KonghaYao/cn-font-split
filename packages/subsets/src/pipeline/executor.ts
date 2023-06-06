@@ -17,7 +17,7 @@ export class Executor<
     ) {}
 
     /** step 函数将会根据这个来运行 */
-    order: K[];
+    order!: K[];
     defineOrder(keys: K[]) {
         if (this.ptr === -1) this.order = keys;
         return this;

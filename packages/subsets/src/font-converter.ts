@@ -1,11 +1,10 @@
 import wawoff2 from "wawoff2";
 // import woffTool from "woff2sfnt-sfnt2woff";
-import { Buffer } from "buffer";
 const supportedFormats = new Set(["sfnt", "woff", "woff2"]);
 
 /** 检测字体类型 */
-export const detectFormat = function (buffer: Buffer) {
-    const signature = buffer.toString("ascii", 0, 4);
+export const detectFormat = function (buffer: Uint8Array) {
+    const signature = String.fromCharCode(...buffer.subarray(0, 4));
     if (signature === "wOFF") {
         return "woff";
     } else if (signature === "wOF2") {
@@ -20,18 +19,19 @@ export const detectFormat = function (buffer: Buffer) {
         throw new Error(`Unrecognized font signature: ${signature}`);
     }
 };
-export type FontType = "truetype" | "sfnt" | "woff" | "woff2";
+export type FontType = "otf" | "ttf" | "truetype" | "sfnt" | "woff" | "woff2";
 
 /** 字体格式转化 */
 export const convert = async function (
-    buffer: Buffer,
+    buffer: Uint8Array,
     toFormat: FontType,
     fromFormat?: FontType
 ) {
-    if (toFormat === "truetype") {
+    const snft = ["truetype", "ttf", "otf"];
+    if (snft.includes(toFormat)) {
         toFormat = "sfnt";
     }
-    if (fromFormat === "truetype") {
+    if (snft.includes(fromFormat!)) {
         fromFormat = "sfnt";
     }
     if (!supportedFormats.has(toFormat)) {
@@ -51,10 +51,10 @@ export const convert = async function (
         // buffer = woffTool.toSfnt(buffer);
         throw new Error("Unsupported source format: woff");
     } else if (fromFormat === "woff2") {
-        buffer = Buffer.from(await wawoff2.decompress(buffer));
+        buffer = await wawoff2.decompress(buffer);
     }
     if (toFormat === "woff2") {
-        buffer = Buffer.from(await wawoff2.compress(buffer));
+        buffer = await wawoff2.compress(buffer);
     }
     return buffer;
 };
