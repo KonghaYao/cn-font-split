@@ -580,7 +580,7 @@ export function hbjs(instance: any) {
         preserveNameIds?: number[],
         variationAxes?: Record<number, number>
     ) {
-        const ptr = exports.hb_subset_input_create_or_fail();
+        let ptr = exports.hb_subset_input_create_or_fail();
         if (ptr === 0) {
             throw new Error(
                 "hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure"
@@ -620,11 +620,18 @@ export function hbjs(instance: any) {
                     }
                 }
             },
-            addChars(arr: number[]) {
+            addChars(arr: (number | [number, number])[]) {
                 const inputUnicodePtr =
                     exports.hb_subset_input_unicode_set(ptr);
                 for (const c of arr) {
-                    exports.hb_set_add(inputUnicodePtr, c);
+                    if (c instanceof Array) {
+                        const [start, end] = c;
+                        for (let ptr = start; ptr <= end; ptr++) {
+                            exports.hb_set_add(inputUnicodePtr, ptr);
+                        }
+                    } else {
+                        exports.hb_set_add(inputUnicodePtr, c);
+                    }
                 }
             },
             getResult() {

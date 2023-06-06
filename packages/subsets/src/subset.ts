@@ -6,10 +6,18 @@ export interface Options {
     preserveNameIds?: number[];
 }
 
-export const fontSplit = (
+export const subsetAll = (
     TTFBuffer: Buffer,
     hb: ReturnType<typeof hbjs>,
-    subsets: number[][]
+    /**
+     * @example
+     * [
+     *   [1,2,3,4],  // single package
+     *   [ [5,10] ]   //unicode 5-10 to a single package
+     * ]
+     *
+     */
+    subsets: (number | [number, number])[][]
 ) => {
     const blob = hb.createBlob(TTFBuffer);
 
@@ -25,7 +33,7 @@ export const fontSplit = (
 
 export function subsetFont(
     face: ReturnType<ReturnType<typeof hbjs>["createFace"]>,
-    subsetUnicode: number[],
+    subsetUnicode: (number | [number, number])[],
     hb: ReturnType<typeof hbjs>,
     { preserveNameIds, variationAxes }: Options = {}
 ) {

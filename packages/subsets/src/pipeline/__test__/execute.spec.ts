@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Executor } from "../execute";
+import { Executor } from "../executor";
 import { Context } from "../context";
 
 test("Executor ", async () => {

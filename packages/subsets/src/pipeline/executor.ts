@@ -67,5 +67,6 @@ export class Executor<
             if (count >= max)
                 throw new Error("Executor run: too many times task to run!");
         }
+        return this.context;
     }
 }

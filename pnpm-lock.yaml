@@ -75,6 +75,9 @@ importers:
       '@konghayao/harfbuzzjs':
         specifier: ^0.3.6
         version: 0.3.6
+      is-in-browser:
+        specifier: ^2.0.0
+        version: 2.0.0
       p-limit:
         specifier: ^4.0.0
         version: 4.0.0
@@ -1304,6 +1307,10 @@ packages:
     dependencies:
       has: 1.0.3
     dev: true
+
+  /is-in-browser@2.0.0:
+    resolution: {integrity: sha512-/NUv5pqj+krUJalhGpj0lyy+x7vrD9jt1PlAfkoIDEXqE+xZgFJ4FU8e9m99WuHbCqsBZVf+nzvAjNso+SO80A==}
+    dev: false
 
   /is-module@1.0.0:
     resolution: {integrity: sha512-51ypPSPCoTEIN9dy5Oy+h4pShgJmPCygKfyRCISBI+JoWT/2oJvK8QPxmwv7b/p239jXrm9M1mlQbyKJ5A152g==}
