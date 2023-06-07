@@ -14,6 +14,10 @@ export type WASMLoadOpt = Record<
     "harfbuzz",
     string | Response | (() => Promise<string | Response>)
 >;
+export interface SubsetResult {
+    name: string;
+    subsets: { hash: string; unicodeRange: string; path: string }[];
+}
 export type IOutputFile = (
     file: string,
     data: any,
@@ -115,6 +119,11 @@ export const fontSplit = async (opt: InputTemplate) => {
                     "ttfFile",
                     "hb"
                 );
+
+                const subsetResult: SubsetResult = {
+                    name: "",
+                    subsets: [],
+                };
                 await subsetAll(
                     ttfFile,
                     hb,
@@ -128,13 +137,16 @@ export const fontSplit = async (opt: InputTemplate) => {
                     input.targetType ?? "woff2",
                     ctx
                 );
+                ctx.set("subsetResult", subsetResult);
             },
+            async outputCSS(ctx) {},
         },
         new Context<{
             input: InputTemplate;
             originFile: Uint8Array;
             ttfFile: Uint8Array;
             hb: HB.Handle;
+            subsetResult: SubsetResult;
         }>(
             { input: opt },
             {
@@ -157,6 +169,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             "transferFontType",
             "loadHarbuzz",
             "subsetFonts",
+            "outputCSS",
         ])
         .run();
 };
