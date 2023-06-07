@@ -1,7 +1,7 @@
-import { hbjs } from "./hb.js";
+import { HB, hbjs } from "./hb.js";
 import { Buffer } from "buffer";
 import { timeRecordFormat } from "./utils/timeCount.js";
-import { IOutputFile, SubsetResult } from "./main.js";
+import { IOutputFile, SubsetResult } from "./interface.js";
 import { FontType, convert } from "./font-converter.js";
 import md5 from "md5";
 import { Logger } from "tslog";
@@ -38,7 +38,7 @@ export const subsetToUnicodeRange = (subset: (number | [number, number])[]) => {
 };
 
 export const subsetAll = async (
-    TTFBuffer: Uint8Array,
+    face: HB.Face,
     hb: ReturnType<typeof hbjs>,
     /**
      * @example
@@ -53,13 +53,9 @@ export const subsetAll = async (
     targetType: FontType,
     log: Logger<unknown>
 ): Promise<SubsetResult> => {
-    const blob = hb.createBlob(TTFBuffer);
-
-    const face = hb.createFace(blob, 0);
-    blob.destroy();
     const ext = "." + Extensions[targetType];
 
-    const subsetMessage: SubsetResult["subsets"] = [];
+    const subsetMessage: SubsetResult = [];
     log.trace("id \t分包时间及速度 \t转换时间及速度\t分包最终情况");
     for (let index = 0; index < subsets.length; index++) {
         const subset = subsets[index];
@@ -89,12 +85,7 @@ export const subsetAll = async (
         });
     }
 
-    face.destroy();
-    blob.free();
-    return {
-        name: "",
-        subsets: [],
-    };
+    return subsetMessage;
 };
 
 export function subsetFont(

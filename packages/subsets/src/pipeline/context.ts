@@ -31,8 +31,10 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
         this._originData[key] = value;
     }
 
-    free(key: keyof T) {
-        delete this._originData[key];
+    free(...keys: (keyof T)[]) {
+        for (const key of keys) {
+            delete this._originData[key];
+        }
     }
     check<K extends keyof T>(key: K) {
         return key in this._originData;
