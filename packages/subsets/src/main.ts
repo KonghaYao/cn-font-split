@@ -124,12 +124,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("nameTable", nameTable);
             },
             async function combineSubsets(ctx) {
-                const { input, face, blob } = ctx.pick("input", "face", "blob");
+                const { input, face } = ctx.pick("input", "face");
                 const subsets = input.subsets ?? [];
 
                 const set = subsetsToSet(subsets);
 
                 const arr = face.collectUnicodes();
+                ctx.trace("总字符数", arr.length);
                 const codes: number[] = [];
                 for (let index = 0; index < arr.length; index++) {
                     const element = arr[index];
@@ -138,7 +139,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     }
                 }
 
-                // autoChunk 算法
+                // autoChunk 算法, 暂定
                 const chunks = autoChunk(codes);
                 subsets.push(...chunks);
                 ctx.set("subsets", subsets);

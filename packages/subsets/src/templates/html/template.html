@@ -181,7 +181,9 @@
                                 emphasis: {
                                     focus: "series",
                                 },
-                                data: [i.end - i.start],
+                                data: [
+                                    parseFloat((i.end - i.start).toFixed(1)),
+                                ],
                             };
                         }),
                     };
