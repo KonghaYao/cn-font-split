@@ -131,6 +131,23 @@ export const fontSplit = async (opt: InputTemplate) => {
                     css
                 );
             },
+            async function outputHTML(ctx) {
+                const { nameTable, subsetResult, input } = ctx.pick(
+                    "input",
+                    "nameTable",
+                    "subsetResult"
+                );
+                if (input.testHTML !== false) {
+                    const { createTestHTML } = await import(
+                        "./templates/html/index.js"
+                    );
+                    const reporter = createTestHTML();
+                    outputFile(
+                        path.join(input.destFold, "index.html"),
+                        reporter
+                    );
+                }
+            },
             async function outputReporter(ctx) {
                 const { nameTable, subsetResult, input } = ctx.pick(
                     "input",

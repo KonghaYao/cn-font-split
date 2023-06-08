@@ -5,6 +5,8 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
+        "build": "rollup -c ",
+        "dev": "rollup -c -w",
         "test": "vitest",
         "coverage": "vitest run --coverage"
     },
@@ -14,8 +16,8 @@
     "dependencies": {
         "@japont/unicode-range": "^1.0.0",
         "@konghayao/harfbuzzjs": "^0.3.6",
+        "@rollup/plugin-typescript": "^11.1.1",
         "byte-size": "^8.1.1",
-        "file-size": "^1.0.0",
         "is-in-browser": "^2.0.0",
         "md5": "^2.3.0",
         "p-limit": "^4.0.0",
@@ -24,7 +26,6 @@
     },
     "devDependencies": {
         "@types/byte-size": "^8.1.0",
-        "@types/file-size": "^1.0.1",
         "@types/md5": "^2.3.2",
         "@types/wawoff2": "^1.0.0",
         "vitest": "^0.31.4"

@@ -64,6 +64,7 @@ export const subsetAll = async (
         const start = performance.now();
         const buffer = subsetFont(face, subset, hb);
         const middle = performance.now();
+        // const transferred = buffer
         const transferred = await convert(buffer, targetType);
         const end = performance.now();
         const count = countSubsetChars(subset);
@@ -78,8 +79,7 @@ export const subsetAll = async (
             ].join(" \t")
         );
         const hashName = md5(transferred);
-        // 不进行 promise 限制
-        outputFile(hashName + ext, transferred);
+        await outputFile(hashName + ext, transferred);
         subsetMessage.push({
             hash: hashName,
             path: hashName + ext,
