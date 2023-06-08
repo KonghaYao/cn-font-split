@@ -18,6 +18,7 @@
         "@konghayao/harfbuzzjs": "^0.3.6",
         "@rollup/plugin-typescript": "^11.1.1",
         "byte-size": "^8.1.1",
+        "imagescript": "^1.2.16",
         "is-in-browser": "^2.0.0",
         "md5": "^2.3.0",
         "p-limit": "^4.0.0",

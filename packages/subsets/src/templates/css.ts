@@ -1,11 +1,18 @@
 import { InputTemplate, SubsetResult } from "../interface";
 
 const trans: Record<string, number> = {
-    thin: 100,
+    "extra light": 200,
+    "ultra light": 200,
     light: 300,
+    normal: 400,
     regular: 400,
     medium: 500,
+    "semi bold": 600,
+    "demi bold": 600,
     bold: 700,
+    "extra bold": 800,
+    "ultra bold": 800,
+    heavy: 900,
     black: 900,
 };
 

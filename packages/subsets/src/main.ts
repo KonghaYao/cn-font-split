@@ -8,11 +8,28 @@ import { subsetAll } from "./subset.js";
 import { createContext, IContext } from "./fontSplit/context.js";
 import path from "path";
 import byteSize from "byte-size";
-import { InputTemplate } from "./interface.js";
+import { InputTemplate, Subsets } from "./interface.js";
 import { decodeNameTableFromUint8Array } from "./reader/decodeNameTableFromUint8Array.js";
 
 import { createReporter } from "./templates/reporter.js";
 import { createCSS } from "./templates/css.js";
+import { subsetsToSet } from "./utils/subsetsToSet.js";
+import { foldLinearArray } from "./utils/foldLinearArray.js";
+
+const autoChunk = (codes: number[]): Subsets => {
+    const number = 1000;
+    const linearCodes = codes.sort((a, b) => a - b);
+    const max = Math.ceil(codes.length / number);
+    const res = [];
+    for (let index = 0; index < max; index++) {
+        res.push(
+            foldLinearArray(
+                linearCodes.slice(0 + index * number, number + index * number)
+            )
+        );
+    }
+    return res;
+};
 
 export const fontSplit = async (opt: InputTemplate) => {
     const exec = new Executor(
@@ -55,6 +72,31 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("ttfFile", ttfFile);
                 ctx.free("originFile");
             },
+            async function createImage(ctx) {
+                const { ttfFile, input } = ctx.pick("ttfFile", "input");
+                if (input.previewImage) {
+                    const { Image } = await import("imagescript");
+                    const Font = await Image.renderText(
+                        ttfFile,
+                        128,
+                        input.previewImage?.text ??
+                            "中文网字计划\nThe Project For Web"
+                    );
+                    const encoded = await Font.encode(
+                        input.previewImage.compressLevel ?? 9,
+                        {
+                            creationTime: Date.now(),
+                            software: "cn-font-split",
+                            author: "江夏尧",
+                            description: "cn-font-split 切割字体预览图",
+                        }
+                    );
+                    await outputFile(
+                        path.join(input.destFold, "preview" + ".png"),
+                        encoded
+                    );
+                }
+            },
 
             async function loadHarbuzz(ctx) {
                 const { input, ttfFile } = ctx.pick("input", "ttfFile");
@@ -81,24 +123,39 @@ export const fontSplit = async (opt: InputTemplate) => {
                 console.table(nameTable);
                 ctx.set("nameTable", nameTable);
             },
+            async function combineSubsets(ctx) {
+                const { input, face, blob } = ctx.pick("input", "face", "blob");
+                const subsets = input.subsets ?? [];
+
+                const set = subsetsToSet(subsets);
+
+                const arr = face.collectUnicodes();
+                const codes: number[] = [];
+                for (let index = 0; index < arr.length; index++) {
+                    const element = arr[index];
+                    if (!set.has(element)) {
+                        codes.push(element);
+                    }
+                }
+
+                // autoChunk 算法
+                const chunks = autoChunk(codes);
+                subsets.push(...chunks);
+                ctx.set("subsets", subsets);
+            },
             async function subsetFonts(ctx) {
-                const { input, hb, face, blob } = ctx.pick(
+                const { input, hb, face, blob, subsets } = ctx.pick(
                     "input",
                     "face",
                     "hb",
-                    "blob"
+                    "blob",
+                    "subsets"
                 );
 
                 const subsetResult = await subsetAll(
                     face,
                     hb,
-                    [
-                        [
-                            [30, 100],
-                            [0x4e00, 0x5000],
-                        ],
-                        [[0x5000, 0x5500]],
-                    ],
+                    subsets,
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -123,7 +180,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     css: input.css,
                     compress: false,
                 });
-                outputFile(
+                await outputFile(
                     path.join(
                         input.destFold,
                         input.cssFileName ?? "result.css"
@@ -142,7 +199,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         "./templates/html/index.js"
                     );
                     const reporter = createTestHTML();
-                    outputFile(
+                    await outputFile(
                         path.join(input.destFold, "index.html"),
                         reporter
                     );
@@ -161,7 +218,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         input,
                         exec.records
                     );
-                    outputFile(
+                    await outputFile(
                         path.join(input.destFold, "reporter.json"),
                         reporter
                     );

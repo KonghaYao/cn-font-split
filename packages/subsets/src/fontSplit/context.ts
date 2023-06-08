@@ -11,6 +11,7 @@ export const createContext = (opt: InputTemplate) =>
         subsetResult: SubsetResult;
         face: HB.Face;
         blob: HB.Blob;
+        subsets: (number | [number, number])[][];
         nameTable: Record<string, string>;
     }>(
         { input: opt },

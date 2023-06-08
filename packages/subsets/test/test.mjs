@@ -7,6 +7,7 @@ import { fontSplit } from "../dist/index.js";
 
 fontSplit({
     destFold: "./temp",
-    FontPath: "../../fonts/SourceHanSerifCN-Light.otf",
+    FontPath: "../../fonts/SmileySans-Oblique.ttf",
     targetType: "woff2",
+    // previewImage: {},
 });
