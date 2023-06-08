@@ -11,6 +11,8 @@ import byteSize from "byte-size";
 import { InputTemplate } from "./interface.js";
 import { decodeNameTableFromUint8Array } from "./reader/decodeNameTableFromUint8Array.js";
 
+import { createCSS } from "./templates/css.js";
+
 export const fontSplit = async (opt: InputTemplate) => {
     const exec = new Executor(
         [
@@ -74,9 +76,9 @@ export const fontSplit = async (opt: InputTemplate) => {
             async function getBasicMessage(ctx) {
                 const { face } = ctx.pick("face");
                 const buffer = face.reference_table("name");
-                const name_table = decodeNameTableFromUint8Array(buffer!);
-                console.table(name_table);
-                ctx.set("name_table", name_table);
+                const nameTable = decodeNameTableFromUint8Array(buffer!);
+                console.table(nameTable);
+                ctx.set("nameTable", nameTable);
             },
             async function subsetFonts(ctx) {
                 const { input, hb, face, blob } = ctx.pick(
@@ -89,7 +91,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const subsetResult = await subsetAll(
                     face,
                     hb,
-                    [[[30, 100]], [[0x4e00, 0x5000]], [[0x4e00, 0x5000]]],
+                    [[[30, 100]], [[0x4e00, 0x5000]], [[0x5000, 0x5500]]],
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -104,7 +106,24 @@ export const fontSplit = async (opt: InputTemplate) => {
                 blob.free();
                 ctx.free("blob", "face", "hb");
             },
-            async function outputCSS(ctx) {},
+            async function outputCSS(ctx) {
+                const { nameTable, subsetResult, input } = ctx.pick(
+                    "input",
+                    "nameTable",
+                    "subsetResult"
+                );
+                const css = createCSS(subsetResult, nameTable, {
+                    css: input.css,
+                    compress: false,
+                });
+                outputFile(
+                    path.join(
+                        input.destFold,
+                        input.cssFileName ?? "result.css"
+                    ),
+                    css
+                );
+            },
         ],
         createContext(opt)
     );

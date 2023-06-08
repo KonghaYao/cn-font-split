@@ -11,7 +11,7 @@ export const createContext = (opt: InputTemplate) =>
         subsetResult: SubsetResult;
         face: HB.Face;
         blob: HB.Blob;
-        name_table: Record<string, string>;
+        nameTable: Record<string, string>;
     }>(
         { input: opt },
         {
