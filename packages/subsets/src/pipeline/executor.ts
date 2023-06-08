@@ -1,5 +1,9 @@
 import { Context } from "./context";
-
+export interface PerformanceRecord {
+    name: string;
+    start: number;
+    end: number;
+}
 // ctx = new Context<{}>(
 //     {},
 //     { log: { settings: { name: "executor", type: "pretty" } } }
@@ -30,6 +34,7 @@ export class Executor<
             throw new Error("setPtr: Array boundary number error: " + newPtr);
         }
     }
+    public records: PerformanceRecord[] = [];
     /** 步进机制，可以添加事件响应，或者 debugger */
     async nextStep() {
         const ptr = this.setPtr(this.ptr + 1);
@@ -46,6 +51,9 @@ export class Executor<
                     (end - start).toFixed(0) +
                     "ms\t"
             );
+
+            const record: PerformanceRecord = { name: task.name, start, end };
+            this.records.push(record);
             return true;
         } else {
             return false;

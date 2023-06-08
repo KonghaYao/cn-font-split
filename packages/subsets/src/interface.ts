@@ -10,6 +10,7 @@ export type SubsetResult = {
     hash: string;
     unicodeRange: string;
     path: string;
+    size: number;
 }[];
 
 /** 替换系统内部的文件输出方式 */

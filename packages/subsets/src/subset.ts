@@ -83,6 +83,7 @@ export const subsetAll = async (
         subsetMessage.push({
             hash: hashName,
             path: hashName + ext,
+            size: transferred.byteLength,
             unicodeRange: subsetToUnicodeRange(subset),
         });
     }

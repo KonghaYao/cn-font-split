@@ -11,6 +11,7 @@ import byteSize from "byte-size";
 import { InputTemplate } from "./interface.js";
 import { decodeNameTableFromUint8Array } from "./reader/decodeNameTableFromUint8Array.js";
 
+import { createReporter } from "./templates/reporter.js";
 import { createCSS } from "./templates/css.js";
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -91,7 +92,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const subsetResult = await subsetAll(
                     face,
                     hb,
-                    [[[30, 100]], [[0x4e00, 0x5000]], [[0x5000, 0x5500]]],
+                    [
+                        [
+                            [30, 100],
+                            [0x4e00, 0x5000],
+                        ],
+                        [[0x5000, 0x5500]],
+                    ],
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -123,6 +130,25 @@ export const fontSplit = async (opt: InputTemplate) => {
                     ),
                     css
                 );
+            },
+            async function outputReporter(ctx) {
+                const { nameTable, subsetResult, input } = ctx.pick(
+                    "input",
+                    "nameTable",
+                    "subsetResult"
+                );
+                if (!(input.testHTML === false && input.reporter === false)) {
+                    const reporter = createReporter(
+                        subsetResult,
+                        nameTable,
+                        input,
+                        exec.records
+                    );
+                    outputFile(
+                        path.join(input.destFold, "reporter.json"),
+                        reporter
+                    );
+                }
             },
         ],
         createContext(opt)
