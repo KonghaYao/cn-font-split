@@ -140,6 +140,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
 
                 // autoChunk 算法, 暂定
+                ctx.info("参与自动分包：", codes.length);
                 const chunks = autoChunk(codes);
                 subsets.push(...chunks);
                 ctx.set("subsets", subsets);

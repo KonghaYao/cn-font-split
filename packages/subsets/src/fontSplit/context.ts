@@ -20,7 +20,7 @@ export const createContext = (opt: InputTemplate) =>
                 settings: {
                     prettyLogTimeZone: "local",
                     prettyLogTemplate:
-                        (false
+                        (true
                             ? ""
                             : "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}} {{ms}}\t ") +
                         "{{logLevelName}}\t",

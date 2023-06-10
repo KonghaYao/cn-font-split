@@ -140,6 +140,16 @@ export function hbjs(instance: any) {
     }
 
     /**
+     * Return unicodes the face supports
+     */
+    function collectUnicodes(ptr?: number) {
+        let unicodeSetPtr = exports.hb_set_create();
+        exports.hb_face_collect_unicodes(ptr, unicodeSetPtr);
+        let result = typedArrayFromSet(unicodeSetPtr, Uint32Array);
+        exports.hb_set_destroy(unicodeSetPtr);
+        return result;
+    }
+    /**
      * Create an object representing a Harfbuzz face.
      * @param blob An object returned from `createBlob`.
      * @param index The index of the font in the blob. (0 for most files,
@@ -165,6 +175,9 @@ export function hbjs(instance: any) {
                 let table_string = heapu8.subarray(blobptr, blobptr + length);
                 return table_string;
             },
+            collectUnicodes() {
+                return collectUnicodes(ptr);
+            },
             /**
              * Return letiation axis infos
              */
@@ -188,16 +201,7 @@ export function hbjs(instance: any) {
                 exports.free(axis);
                 return result;
             },
-            /**
-             * Return unicodes the face supports
-             */
-            collectUnicodes() {
-                let unicodeSetPtr = exports.hb_set_create();
-                exports.hb_face_collect_unicodes(ptr, unicodeSetPtr);
-                let result = typedArrayFromSet(unicodeSetPtr, Uint32Array);
-                exports.hb_set_destroy(unicodeSetPtr);
-                return result;
-            },
+
             /**
              * Free the object.
              */
@@ -693,5 +697,7 @@ export function hbjs(instance: any) {
         heapf32,
         heapi32,
         heapu32,
+        typedArrayFromSet,
+        collectUnicodes,
     };
 }

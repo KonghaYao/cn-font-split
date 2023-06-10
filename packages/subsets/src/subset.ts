@@ -6,6 +6,7 @@ import { FontType, convert } from "./font-converter.js";
 import md5 from "md5";
 import { Logger } from "tslog";
 import byteSize from "byte-size";
+import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange.js";
 export interface Options {
     variationAxes?: Record<number, number>;
     preserveNameIds?: number[];
@@ -24,19 +25,6 @@ export const countSubsetChars = (subset: (number | [number, number])[]) => {
         col += 1;
         return typeof cur === "number" ? col : col + (cur[1] - cur[0]);
     }, 0);
-};
-
-export const subsetToUnicodeRange = (subset: (number | [number, number])[]) => {
-    return subset
-        .reduce((col, cur) => {
-            if (typeof cur === "number") {
-                col.push("U+" + cur.toString(16));
-            } else {
-                col.push(`U+${cur[0].toString(16)}-${cur[1].toString(16)}`);
-            }
-            return col;
-        }, [] as string[])
-        .join(",");
 };
 
 export const subsetAll = async (
@@ -62,30 +50,35 @@ export const subsetAll = async (
     for (let index = 0; index < subsets.length; index++) {
         const subset = subsets[index];
         const start = performance.now();
-        const buffer = subsetFont(face, subset, hb);
+        const [buffer, arr] = subsetFont(face, subset, hb);
         const middle = performance.now();
+
         // const transferred = buffer
-        const transferred = await convert(buffer, targetType);
-        const end = performance.now();
-        const count = countSubsetChars(subset);
-        log.trace(
-            [
-                index,
-                timeRecordFormat(start, middle),
-                (count / (middle - start)).toFixed(2) + "字符/ms",
-                timeRecordFormat(middle, end),
-                (count / (end - middle)).toFixed(2) + "字符/ms",
-                byteSize(transferred.byteLength) + "/" + count,
-            ].join(" \t")
-        );
-        const hashName = md5(transferred);
-        await outputFile(hashName + ext, transferred);
-        subsetMessage.push({
-            hash: hashName,
-            path: hashName + ext,
-            size: transferred.byteLength,
-            unicodeRange: subsetToUnicodeRange(subset),
-        });
+        if (buffer) {
+            const transferred = await convert(buffer, targetType);
+            const end = performance.now();
+            const count = countSubsetChars(subset);
+            log.trace(
+                [
+                    index,
+                    timeRecordFormat(start, middle),
+                    (arr.length / (middle - start)).toFixed(2) + "字符/ms",
+                    timeRecordFormat(middle, end),
+                    (arr.length / (end - middle)).toFixed(2) + "字符/ms",
+                    byteSize(transferred.byteLength) + "/" + count,
+                ].join(" \t")
+            );
+            const hashName = md5(transferred);
+            await outputFile(hashName + ext, transferred);
+            subsetMessage.push({
+                hash: hashName,
+                path: hashName + ext,
+                size: transferred.byteLength,
+                unicodeRange: subsetToUnicodeRange(subset),
+            });
+        } else {
+            log.warn([index, "未发现字符", "取消分包"].join("\t"));
+        }
     }
 
     return subsetMessage;
@@ -101,12 +94,18 @@ export function subsetFont(
     Subset.adjustLayout();
 
     Subset.addChars(subsetUnicode);
-    Subset.runSubset();
+    const facePtr = Subset.runSubset();
+    const arr = hb.collectUnicodes(facePtr);
 
-    const binarySubset = Subset.toArray();
-    const buffer = Buffer.from(binarySubset.data);
-    binarySubset.destroy();
+    let buffer: Buffer | null;
+    if (arr.length) {
+        const binarySubset = Subset.toArray();
+        buffer = Buffer.from(binarySubset.data);
+        binarySubset.destroy();
+    } else {
+        buffer = null;
+    }
     Subset.destroy();
 
-    return buffer;
+    return [buffer, arr] as const;
 }
