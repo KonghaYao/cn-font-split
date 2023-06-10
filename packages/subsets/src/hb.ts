@@ -598,6 +598,7 @@ export function hbjs(instance: any) {
         }
 
         let resultPtr: number;
+        const inputUnicodePtr = exports.hb_subset_input_unicode_set(ptr);
         return {
             ptr,
             adjustLayout() {
@@ -630,9 +631,12 @@ export function hbjs(instance: any) {
                     }
                 }
             },
+            deleteChar(arr: number[]) {
+                for (const c of arr) {
+                    exports.hb_set_del(inputUnicodePtr, c);
+                }
+            },
             addChars(arr: (number | [number, number])[]) {
-                const inputUnicodePtr =
-                    exports.hb_subset_input_unicode_set(ptr);
                 for (const c of arr) {
                     if (c instanceof Array) {
                         const [start, end] = c;
@@ -662,11 +666,11 @@ export function hbjs(instance: any) {
                 exports.hb_subset_input_destroy(ptr);
             },
 
-            toArray() {
-                // Get result blob
+            toBinary() {
                 const blobPtr = exports.hb_face_reference_blob(resultPtr);
                 const offset = exports.hb_blob_get_data(blobPtr, 0);
                 const subsetByteLength = exports.hb_blob_get_length(blobPtr);
+
                 if (subsetByteLength === 0) {
                     exports.hb_blob_destroy(blobPtr);
                     throw new Error(
@@ -678,7 +682,11 @@ export function hbjs(instance: any) {
                     destroy() {
                         exports.hb_blob_destroy(blobPtr);
                     },
-                    data: heapu8.subarray(offset, offset + subsetByteLength),
+                    offset,
+                    subsetByteLength,
+                    blobPtr,
+                    data: () =>
+                        heapu8.subarray(offset, offset + subsetByteLength),
                 };
             },
         };

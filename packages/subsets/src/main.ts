@@ -68,6 +68,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             async function transferFontType(ctx) {
                 const { input, originFile } = ctx.pick("input", "originFile");
+
                 const ttfFile = await convert(originFile, "truetype");
                 ctx.set("ttfFile", ttfFile);
                 ctx.free("originFile");
