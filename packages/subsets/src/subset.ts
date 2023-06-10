@@ -75,7 +75,7 @@ export const subsetAll = async (
                 (count / (middle - start)).toFixed(2) + "字符/ms",
                 timeRecordFormat(middle, end),
                 (count / (end - middle)).toFixed(2) + "字符/ms",
-                byteSize(buffer.byteLength) + "/" + count,
+                byteSize(transferred.byteLength) + "/" + count,
             ].join(" \t")
         );
         const hashName = md5(transferred);

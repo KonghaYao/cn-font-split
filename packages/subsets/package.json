@@ -5,7 +5,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "build": "rollup -c ",
+        "build": "tsc&rollup -c ",
         "dev": "rollup -c -w",
         "test": "vitest",
         "coverage": "vitest run --coverage"

@@ -17,7 +17,7 @@ import { subsetsToSet } from "./utils/subsetsToSet.js";
 import { foldLinearArray } from "./utils/foldLinearArray.js";
 
 const autoChunk = (codes: number[]): Subsets => {
-    const number = 1000;
+    const number = 700;
     const linearCodes = codes.sort((a, b) => a - b);
     const max = Math.ceil(codes.length / number);
     const res = [];
