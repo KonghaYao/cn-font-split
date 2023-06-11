@@ -1,7 +1,7 @@
 import analyze from "rollup-plugin-analyzer";
 import json from "@rollup/plugin-json";
 import babel from "@rollup/plugin-babel";
-import { outputFileSync } from "fs-extra";
+import fse from "fs-extra";
 import { emptyDirSync } from "fs-extra";
 import resolve from "@rollup/plugin-node-resolve";
 
@@ -39,7 +39,7 @@ export default {
         }),
         analyze({
             summaryOnly: true,
-            writeTo: (str) => outputFileSync("dist/index.analyze.txt", str),
+            writeTo: (str) => fse.outputFileSync("dist/index.analyze.txt", str),
         }),
     ],
 };
