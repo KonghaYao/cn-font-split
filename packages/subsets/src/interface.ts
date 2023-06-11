@@ -9,10 +9,12 @@ export type WASMLoadOpt = Record<
 export type SubsetResult = {
     hash: string;
     unicodeRange: string;
+    subset: Subset;
     path: string;
     size: number;
 }[];
-export type Subsets = (number | [number, number])[][];
+export type Subset = (number | [number, number])[];
+export type Subsets = Subset[];
 /** 替换系统内部的文件输出方式 */
 export type IOutputFile = (
     file: string,

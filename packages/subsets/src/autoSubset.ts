@@ -1,29 +1,35 @@
 import { HB } from "./hb.js";
 import { Buffer } from "buffer";
 import { timeRecordFormat } from "./utils/timeCount.js";
-import { IOutputFile, SubsetResult, Subsets } from "./interface.js";
+import { IOutputFile, Subset, SubsetResult, Subsets } from "./interface.js";
 import { FontType, convert } from "./font-converter.js";
 import md5 from "md5";
 import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange.js";
 import { IContext } from "./fontSplit/context.js";
+import { getExtensionsByFontType } from "./utils/getExtensionsByFontType.js";
 
-/** 可以实现较为准确的数值切割，但是计算时间可能会 x2 */
-export const autoSubset = (
+/** 可以实现较为准确的数值切割，但是计算时间可能会 x2, 非常差的一种算法 */
+export const autoSubset = async (
     face: HB.Face,
-    subsetUnicode: number[],
     hb: HB.Handle,
+    subsetUnicode: number[],
+    outputFile: IOutputFile,
+    targetType: FontType,
+    ctx: IContext,
     maxSize = 70 * 1024
 ) => {
+    const ext = getExtensionsByFontType(targetType);
     let startCount = 300;
     let sample = [...subsetUnicode];
 
     const tolerance = 0.1 * maxSize;
     let head!: number[];
 
-    const subsets: { binary: Uint8Array; subset: Uint32Array }[] = [];
-
+    const subsetMessage: SubsetResult = [];
+    let index = 0;
     while (sample.length) {
+        const start = performance.now();
         head = sample.splice(0, startCount);
         // console.log("猜测切割 ", startCount);
         const Subset = hb.createSubset(face);
@@ -35,20 +41,38 @@ export const autoSubset = (
         let buffer: Uint8Array | null;
         if (arr.length) {
             const binarySubset = Subset.toBinary();
-
+            buffer = binarySubset.data();
+            const transferred = await convert(buffer, targetType);
             // 计算分包误差值
-            const diff = binarySubset.subsetByteLength - maxSize;
+            const diff = transferred.byteLength - maxSize;
             if (Math.abs(diff) < tolerance) {
-                buffer = binarySubset.data();
-                subsets.push({ binary: buffer, subset: arr });
-                console.log("bc count ", arr.length, buffer.byteLength);
+                // 允许通过
+                const outputMessage = await combine(
+                    outputFile,
+                    ext,
+                    transferred,
+                    Array.from(arr)
+                );
+                subsetMessage.push(outputMessage);
+                const end = performance.now();
+                record(
+                    ctx,
+                    transferred,
+                    start,
+                    end,
+                    arr,
+                    index,
+                    outputMessage.hash
+                );
+                index++;
+
                 binarySubset.destroy();
             } else {
                 // 猜测下一个分包数字
-                const singleSize = binarySubset.subsetByteLength / startCount;
+                const singleSize = transferred.byteLength / startCount;
                 binarySubset.destroy();
                 const changeCount = Math.floor(Math.abs(diff / singleSize));
-                console.log(diff, changeCount);
+
                 if (diff > 0) {
                     // 字符数分多了，退回 sample
                     startCount -= changeCount;
@@ -69,12 +93,74 @@ export const autoSubset = (
                 const arr = hb.collectUnicodes(facePtr);
                 const { data } = Subset.toBinary();
                 const binary = data();
-                subsets.push({ binary, subset: arr });
+                const transferred_ = await convert(binary, targetType);
+                const outputMessage = await combine(
+                    outputFile,
+                    ext,
+
+                    transferred_,
+                    Array.from(arr)
+                );
+                subsetMessage.push(outputMessage);
+                const end = performance.now();
+                record(
+                    ctx,
+                    transferred_,
+                    start,
+                    end,
+                    arr,
+                    index,
+                    outputMessage.hash,
+                    true
+                );
+                index++;
             }
         } else {
             buffer = null;
         }
         Subset.destroy();
     }
-    return subsets;
+    return subsetMessage;
 };
+
+async function combine(
+    outputFile: IOutputFile,
+    ext: string,
+    transferred: Uint8Array,
+    subset: Subset
+) {
+    const hashName = md5(transferred);
+    await outputFile(hashName + ext, transferred);
+
+    return {
+        size: transferred.byteLength,
+        hash: hashName,
+        path: hashName + ext,
+        unicodeRange: subsetToUnicodeRange(subset),
+        subset,
+    };
+}
+
+async function record(
+    ctx: IContext,
+
+    transferred: Uint8Array,
+    start: number,
+    end: number,
+    unicodeInFont: Uint32Array,
+    index: number,
+    hash: string,
+    isTwice = false
+) {
+    const finalChars = unicodeInFont.length;
+    ctx.trace(
+        [
+            index,
+            timeRecordFormat(start, end),
+            (finalChars / (end - start)).toFixed(2) + "字符/ms",
+            byteSize(transferred.byteLength) + "/" + finalChars,
+            hash.slice(0, 7),
+            isTwice,
+        ].join(" \t")
+    );
+}

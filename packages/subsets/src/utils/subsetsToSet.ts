@@ -1,4 +1,6 @@
-export const subsetsToSet = (subsets: (number | [number, number])[][]) => {
+import { Subsets } from "../interface";
+
+export const subsetsToSet = (subsets: Subsets) => {
     const set = new Set<number>();
     subsets.forEach((arr) => {
         arr.forEach((range) => {

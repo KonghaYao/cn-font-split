@@ -1,6 +1,6 @@
 import { HB } from "src/hb.js";
 import { Context, Executor } from "../pipeline/index.js";
-import { InputTemplate, SubsetResult } from "../interface.js";
+import { InputTemplate, SubsetResult, Subsets } from "../interface.js";
 export type IContext = ReturnType<typeof createContext>;
 export const createContext = (opt: InputTemplate) =>
     new Context<{
@@ -11,7 +11,7 @@ export const createContext = (opt: InputTemplate) =>
         subsetResult: SubsetResult;
         face: HB.Face;
         blob: HB.Blob;
-        subsets: (number | [number, number])[][];
+        subsets: Subsets;
         nameTable: Record<string, string>;
     }>(
         { input: opt },

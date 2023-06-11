@@ -15,6 +15,7 @@ import { createReporter } from "./templates/reporter.js";
 import { createCSS } from "./templates/css.js";
 import { subsetsToSet } from "./utils/subsetsToSet.js";
 import { foldLinearArray } from "./utils/foldLinearArray.js";
+import { autoSubset } from "./autoSubset.js";
 
 const autoChunk = (codes: number[]): Subsets => {
     const number = 700;
@@ -124,41 +125,19 @@ export const fontSplit = async (opt: InputTemplate) => {
                 console.table(nameTable);
                 ctx.set("nameTable", nameTable);
             },
-            async function combineSubsets(ctx) {
-                const { input, face } = ctx.pick("input", "face");
-                const subsets = input.subsets ?? [];
 
-                const set = subsetsToSet(subsets);
-
-                const arr = face.collectUnicodes();
-                ctx.trace("总字符数", arr.length);
-                const codes: number[] = [];
-                for (let index = 0; index < arr.length; index++) {
-                    const element = arr[index];
-                    if (!set.has(element)) {
-                        codes.push(element);
-                    }
-                }
-
-                // autoChunk 算法, 暂定
-                ctx.info("参与自动分包：", codes.length);
-                const chunks = autoChunk(codes);
-                subsets.push(...chunks);
-                ctx.set("subsets", subsets);
-            },
             async function subsetFonts(ctx) {
-                const { input, hb, face, blob, subsets } = ctx.pick(
+                const { input, hb, face } = ctx.pick(
                     "input",
                     "face",
                     "hb",
-                    "blob",
-                    "subsets"
+                    "blob"
                 );
 
                 const subsetResult = await subsetAll(
                     face,
                     hb,
-                    subsets,
+                    opt.subsets ?? [],
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -169,6 +148,49 @@ export const fontSplit = async (opt: InputTemplate) => {
                     ctx
                 );
                 ctx.set("subsetResult", subsetResult);
+            },
+            async function useAutoSubsets(ctx) {
+                const { input, face, blob, subsetResult, hb } = ctx.pick(
+                    "input",
+                    "face",
+                    "blob",
+                    "hb",
+                    "subsetResult"
+                );
+
+                const bundleChars = subsetsToSet(
+                    subsetResult.map((i) => i.subset)
+                );
+
+                const totalChars = face.collectUnicodes();
+                ctx.trace("总字符数", totalChars.length);
+
+                // 两者 set 减法
+                const codes: number[] = [];
+                for (let index = 0; index < totalChars.length; index++) {
+                    const element = totalChars[index];
+                    if (!bundleChars.has(element)) {
+                        codes.push(element);
+                    }
+                }
+
+                // autoChunk 算法, 暂定
+                ctx.info("参与自动分包：", codes.length);
+                const chunks = await autoSubset(
+                    face,
+                    hb,
+                    codes,
+                    async (filename, buffer) => {
+                        return outputFile(
+                            path.join(input.destFold, filename),
+                            buffer
+                        );
+                    },
+                    input.targetType ?? "woff2",
+                    ctx,
+                    opt.chunkSize
+                );
+                subsetResult.push(...chunks);
                 face.destroy();
                 blob.free();
                 ctx.free("blob", "face", "hb");

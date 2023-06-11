@@ -6,7 +6,7 @@ import { fontSplit } from "../dist/index.js";
 fs.emptyDirSync("./temp");
 fontSplit({
     destFold: "./temp",
-    FontPath: "../../fonts/SourceHanSerifCN-Light.otf",
+    FontPath: "../../fonts/SmileySans-Oblique.ttf",
     targetType: "woff2",
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     // previewImage: {},

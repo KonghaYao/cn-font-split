@@ -6,19 +6,11 @@ import md5 from "md5";
 import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange.js";
 import { IContext } from "./fontSplit/context.js";
+import { getExtensionsByFontType } from "./utils/getExtensionsByFontType.js";
 export interface Options {
     variationAxes?: Record<number, number>;
     preserveNameIds?: number[];
 }
-export const Extensions = {
-    otf: "otf",
-    ttf: "ttf",
-    sfnt: "otf",
-    truetype: "ttf",
-    woff: "woff",
-    woff2: "woff2",
-} as const;
-
 export const countSubsetChars = (subset: (number | [number, number])[]) => {
     return subset.reduce((col: number, cur) => {
         col += 1;
@@ -34,7 +26,7 @@ export const subsetAll = async (
     targetType: FontType,
     ctx: IContext
 ): Promise<SubsetResult> => {
-    const ext = "." + Extensions[targetType];
+    const ext = getExtensionsByFontType(targetType);
 
     const subsetMessage: SubsetResult = [];
     ctx.trace("id \t分包时间及速度 \t转换时间及速度\t分包最终情况");
@@ -46,7 +38,6 @@ export const subsetAll = async (
         if (buffer) {
             const transferred = await convert(buffer, targetType);
             const end = performance.now();
-            const count = countSubsetChars(subset);
             ctx.trace(
                 [
                     index,
@@ -54,7 +45,7 @@ export const subsetAll = async (
                     (arr.length / (middle - start)).toFixed(2) + "字符/ms",
                     timeRecordFormat(middle, end),
                     (arr.length / (end - middle)).toFixed(2) + "字符/ms",
-                    byteSize(transferred.byteLength) + "/" + count,
+                    byteSize(transferred.byteLength) + "/" + arr.length,
                 ].join(" \t")
             );
             const hashName = md5(transferred);
@@ -63,6 +54,7 @@ export const subsetAll = async (
                 hash: hashName,
                 path: hashName + ext,
                 size: transferred.byteLength,
+                subset,
                 unicodeRange: subsetToUnicodeRange(subset),
             });
         } else {
