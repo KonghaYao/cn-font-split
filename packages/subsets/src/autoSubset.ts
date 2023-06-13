@@ -8,13 +8,12 @@ import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange.js";
 import { IContext } from "./fontSplit/context.js";
 import { getExtensionsByFontType } from "./utils/getExtensionsByFontType.js";
 import { subsetFont } from "./subset.js";
+import { loadData } from "./adapter/loadData.js";
 
 /** 构建轮廓数据库，存储方式为桶存储 */
 const createContoursMap = async () => {
-    // TODO 等待适配
-    const fs = await import("fs/promises");
-    const buffer = await fs.readFile(
-        "./node_modules/@chinese-fonts/font-contours/data/unicodes_contours.dat"
+    const buffer = await loadData(
+        "node_modules/@chinese-fonts/font-contours/data/unicodes_contours.dat"
     );
     const a = new Uint8Array(buffer.buffer);
     const map = new Map<number, number>();
@@ -42,7 +41,7 @@ export const autoSubset = async (
 
     const contoursMap = await createContoursMap();
 
-    // 模拟分包，计算单个分包包含 contours 数目
+    // 采样估值法，计算单个分包包含 contours 数目
     const contoursBorder = await calcContoursBorder(
         hb,
         face,
@@ -54,17 +53,17 @@ export const autoSubset = async (
     let count = 0;
     let cache: number[] = [];
     const totalChunk: number[][] = [];
-    for (const iterator of sample) {
-        count += contoursMap.get(iterator) ?? contoursMap.get(0)!;
+    for (const unicode of sample) {
+        count += contoursMap.get(unicode) ?? contoursMap.get(0)!;
+        cache.push(unicode);
         if (count >= contoursBorder) {
             totalChunk.push(cache);
             cache = [];
             count = 0;
-        } else {
-            cache.push(iterator);
         }
     }
-    console.log(totalChunk.map((i) => i.length));
+    totalChunk.push(cache);
+    // console.log(totalChunk.flat().length);
 
     let index = 0;
     for (const chunk of totalChunk) {
@@ -113,7 +112,7 @@ async function calcContoursBorder(
         const element = sample[index];
         sampleUnicode.push(element);
     }
-    console.log(sampleUnicode.length);
+    // console.log(sampleUnicode.length);
     const [buffer, arr] = subsetFont(face, sampleUnicode, hb);
     const transferred = await convert(
         new Uint8Array(buffer!.buffer),
@@ -124,7 +123,7 @@ async function calcContoursBorder(
         return col + (contoursMap.get(cur) ?? contoursMap.get(0)!);
     }, 0);
     const ContoursPerByte = totalContours / transferred.byteLength;
-    console.log(totalContours, transferred.byteLength);
+    // console.log(totalContours, transferred.byteLength);
     return maxSize * ContoursPerByte;
 }
 

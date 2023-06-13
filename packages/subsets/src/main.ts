@@ -5,32 +5,17 @@ import { Executor } from "./pipeline/index.js";
 import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz.js";
 import { isBrowser, isNode } from "./utils/env.js";
 import { subsetAll } from "./subset.js";
-import { createContext, IContext } from "./fontSplit/context.js";
+import { createContext } from "./fontSplit/context.js";
 import path from "path";
 import byteSize from "byte-size";
-import { InputTemplate, Subsets } from "./interface.js";
+import { InputTemplate } from "./interface.js";
 import { decodeNameTableFromUint8Array } from "./reader/decodeNameTableFromUint8Array.js";
-
 import { createReporter } from "./templates/reporter.js";
 import { createCSS } from "./templates/css.js";
 import { subsetsToSet } from "./utils/subsetsToSet.js";
-import { foldLinearArray } from "./utils/foldLinearArray.js";
 import { autoSubset } from "./autoSubset.js";
-
-const autoChunk = (codes: number[]): Subsets => {
-    const number = 700;
-    const linearCodes = codes.sort((a, b) => a - b);
-    const max = Math.ceil(codes.length / number);
-    const res = [];
-    for (let index = 0; index < max; index++) {
-        res.push(
-            foldLinearArray(
-                linearCodes.slice(0 + index * number, number + index * number)
-            )
-        );
-    }
-    return res;
-};
+import { resortByRank } from "./utils/resortByRank.js";
+import { loadData } from "./adapter/loadData.js";
 
 export const fontSplit = async (opt: InputTemplate) => {
     const exec = new Executor(
@@ -174,12 +159,20 @@ export const fontSplit = async (opt: InputTemplate) => {
                     }
                 }
 
-                // autoChunk 算法, 暂定
                 ctx.info("参与自动分包：", codes.length);
+                const codesAfterRank = resortByRank(
+                    codes,
+                    opt.unicodeRank ?? [
+                        ...new Uint16Array(
+                            (await loadData("data/cn_char_rank.dat")).buffer
+                        ),
+                    ]
+                );
+                // console.log(codesAfterRank);
                 const chunks = await autoSubset(
                     face,
                     hb,
-                    codes,
+                    codesAfterRank,
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),

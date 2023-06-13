@@ -1,15 +1,13 @@
 import { isNode } from "../utils/env.js";
+import { loadData } from "./loadData.js";
 
 /** 当检查到为 node 环境时，使用此功能 */
 const NodeLoad = async (input?: string) => {
-    const { readFile } = await import("fs/promises");
-    /**@ts-ignore */
-    const { createRequire } = await import("module");
-    const require = createRequire(import.meta.url);
+    const buffer = await loadData(
+        input ?? "node_modules/@konghayao/harfbuzzjs/hb-subset.wasm"
+    );
 
-    const path = require.resolve("@konghayao/harfbuzzjs/hb-subset.wasm");
-
-    return WebAssembly.instantiate(await readFile(input || path));
+    return WebAssembly.instantiate(buffer);
 };
 
 /** 无视平台加载 */

@@ -49,6 +49,8 @@ export type InputTemplate = {
 
     /** 自动分包，如果固定使用了 subsets ，那么将会自动分包剩下的 Unicode 字符 */
     autoChunk?: boolean;
+    /* TODO 自动分包时使用，优先分包这些字符 */
+    unicodeRank?: number[];
     /** 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小  */
     chunkSize?: number;
 
