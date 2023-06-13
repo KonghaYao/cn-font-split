@@ -79,7 +79,7 @@ export function subsetFont(
     const facePtr = Subset.runSubset();
     const arr = hb.collectUnicodes(facePtr);
 
-    let buffer: Uint8Array | null;
+    let buffer: Buffer | null;
     if (arr.length) {
         const binarySubset = Subset.toBinary();
         // 不是 buffer 会导致错误

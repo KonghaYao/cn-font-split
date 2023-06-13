@@ -14,6 +14,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@chinese-fonts/font-contours": "^1.0.0",
         "@japont/unicode-range": "^1.0.0",
         "@konghayao/harfbuzzjs": "^0.3.6",
         "@rollup/plugin-typescript": "^11.1.1",

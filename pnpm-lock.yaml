@@ -72,6 +72,9 @@ importers:
 
   packages/subsets:
     dependencies:
+      '@chinese-fonts/font-contours':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@japont/unicode-range':
         specifier: ^1.0.0
         version: 1.0.0
@@ -452,6 +455,10 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
     dev: true
+
+  /@chinese-fonts/font-contours@1.0.0:
+    resolution: {integrity: sha512-KJx2DuJEJ24horFEEXhmkxaBbDFEU6kdI5/eFQ6PJd2LJMEYV6/6/Rl9APS0UTA+KLTnZUG/IJleZ5f5fSA00g==}
+    dev: false
 
   /@eggjs/yauzl@2.11.0:
     resolution: {integrity: sha512-Jq+k2fCZJ3i3HShb0nxLUiAgq5pwo8JTT1TrH22JoehZQ0Nm2dvByGIja1NYfNyuE4Tx5/Dns5nVsBN/mlC8yg==}
