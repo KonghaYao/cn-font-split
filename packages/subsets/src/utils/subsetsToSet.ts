@@ -1,5 +1,6 @@
 import { Subsets } from "../interface";
 
+/** 提取 subsets 中的文本 */
 export const subsetsToSet = (subsets: Subsets) => {
     const set = new Set<number>();
     subsets.forEach((arr) => {

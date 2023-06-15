@@ -1,4 +1,7 @@
-export const subsetToUnicodeRange = (subset: (number | [number, number])[]) => {
+import { Subset } from "src/interface";
+
+/** subset 由数字模式转化为字符串模式 */
+export const subsetToUnicodeRange = (subset: Subset) => {
     return subset
         .reduce((col, cur) => {
             if (typeof cur === "number") {
