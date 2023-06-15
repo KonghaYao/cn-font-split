@@ -75,6 +75,9 @@ importers:
       '@chinese-fonts/font-contours':
         specifier: ^1.0.0
         version: 1.0.0
+      '@chinese-fonts/wawoff2':
+        specifier: ^2.0.1
+        version: 2.0.1
       '@japont/unicode-range':
         specifier: ^1.0.0
         version: 1.0.0
@@ -96,9 +99,6 @@ importers:
       tslog:
         specifier: ^4.8.2
         version: 4.8.2
-      wawoff2:
-        specifier: ^2.0.1
-        version: 2.0.1
     devDependencies:
       '@types/byte-size':
         specifier: ^8.1.0
@@ -452,6 +452,13 @@ packages:
 
   /@chinese-fonts/font-contours@1.0.0:
     resolution: {integrity: sha512-KJx2DuJEJ24horFEEXhmkxaBbDFEU6kdI5/eFQ6PJd2LJMEYV6/6/Rl9APS0UTA+KLTnZUG/IJleZ5f5fSA00g==}
+    dev: false
+
+  /@chinese-fonts/wawoff2@2.0.1:
+    resolution: {integrity: sha512-gC0V5f696ClQ8eDIQWFqCDqtmR3Q1k140TgJ1pPK+GhoO6vt/zQ7z4/npnjvn5J+8Wz8vOF7HaNi3RdSJYsijA==}
+    hasBin: true
+    dependencies:
+      argparse: 2.0.1
     dev: false
 
   /@eggjs/yauzl@2.11.0:

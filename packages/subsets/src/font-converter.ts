@@ -1,4 +1,4 @@
-import wawoff2 from "wawoff2";
+import { decompress, compress } from "@chinese-fonts/wawoff2";
 // import woffTool from "woff2sfnt-sfnt2woff";
 const supportedFormats = new Set(["sfnt", "woff", "woff2"]);
 
@@ -51,10 +51,10 @@ export const convert = async function (
         // buffer = woffTool.toSfnt(buffer);
         throw new Error("Unsupported source format: woff");
     } else if (fromFormat === "woff2") {
-        buffer = await wawoff2.decompress(buffer);
+        buffer = await decompress(buffer);
     }
     if (toFormat === "woff2") {
-        buffer = await wawoff2.compress(buffer);
+        buffer = await compress(buffer);
     }
     return buffer;
 };

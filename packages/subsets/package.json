@@ -15,14 +15,14 @@
     "license": "ISC",
     "dependencies": {
         "@chinese-fonts/font-contours": "^1.0.0",
+        "@chinese-fonts/wawoff2": "^2.0.1",
         "@japont/unicode-range": "^1.0.0",
         "@konghayao/harfbuzzjs": "^0.3.6",
         "byte-size": "^8.1.1",
         "imagescript": "^1.2.16",
         "md5": "^2.3.0",
         "p-limit": "^4.0.0",
-        "tslog": "^4.8.2",
-        "wawoff2": "^2.0.1"
+        "tslog": "^4.8.2"
     },
     "devDependencies": {
         "@types/byte-size": "^8.1.0",
