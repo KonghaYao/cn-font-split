@@ -2,10 +2,8 @@ import { isNode } from "../utils/env";
 import { loadData } from "./loadData";
 
 /** 当检查到为 node 环境时，使用此功能 */
-const NodeLoad = async (input?: string) => {
-    const buffer = await loadData(
-        input ?? "node_modules/@konghayao/harfbuzzjs/hb-subset.wasm"
-    );
+const NodeLoader = async (input?: string) => {
+    const buffer = await loadData(input ?? "hb-subset.wasm");
 
     return WebAssembly.instantiate(buffer);
 };
@@ -16,9 +14,9 @@ export const loadHarbuzzAdapter = async (
 ) => {
     if (isNode) {
         if (typeof input === "string") {
-            return NodeLoad(input);
+            return NodeLoader(input);
         } else if (input === undefined) {
-            return NodeLoad();
+            return NodeLoader();
         }
     }
     if (typeof input === "string") {

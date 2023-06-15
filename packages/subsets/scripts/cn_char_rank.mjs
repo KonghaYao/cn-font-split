@@ -1,5 +1,6 @@
 /** 
-@link copy from https://github.com/sxei/pinyinjs/blob/master/other/%E5%B8%B8%E7%94%A86763%E4%B8%AA%E6%B1%89%E5%AD%97%E4%BD%BF%E7%94%A8%E9%A2%91%E7%8E%87%E8%A1%A8.txt,modify by konghayao
+ * @author modified by konghayao
+@link  https://github.com/sxei/pinyinjs/blob/master/other/%E5%B8%B8%E7%94%A86763%E4%B8%AA%E6%B1%89%E5%AD%97%E4%BD%BF%E7%94%A8%E9%A2%91%E7%8E%87%E8%A1%A8.txt,modify by konghayao
 
 常用6763个汉字使用频率表
 

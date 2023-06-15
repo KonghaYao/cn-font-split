@@ -3,9 +3,7 @@ import { cacheResult } from "../utils/cacheResult";
 
 /** 构建轮廓数据库，存储方式为桶存储 */
 export const createContoursMap = cacheResult(async () => {
-    const buffer = await loadData(
-        "node_modules/@chinese-fonts/font-contours/data/unicodes_contours.dat"
-    );
+    const buffer = await loadData("unicodes_contours.dat");
     const a = new Uint8Array(buffer.buffer);
     const map = new Map<number, number>();
     let wasted = 0;

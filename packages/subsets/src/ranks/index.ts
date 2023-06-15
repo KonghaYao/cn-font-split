@@ -46,6 +46,7 @@ export const Latin = [
         ],
     ]),
 ];
+/** 获取中文字符序列信息 */
 export const getCN_SC_Rank = async () => [
-    ...new Uint16Array((await loadData("data/cn_char_rank.dat")).buffer),
+    ...new Uint16Array((await loadData("cn_char_rank.dat")).buffer),
 ];
