@@ -14,8 +14,7 @@ import { createReporter } from "./templates/reporter.js";
 import { createCSS } from "./templates/css.js";
 import { subsetsToSet } from "./utils/subsetsToSet.js";
 import { autoSubset } from "./autoSubset.js";
-import { resortByRank } from "./utils/resortByRank.js";
-import { loadData } from "./adapter/loadData.js";
+import { Latin, getCN_SC_Rank } from "./ranks/index";
 
 export const fontSplit = async (opt: InputTemplate) => {
     const exec = new Executor(
@@ -150,7 +149,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const totalChars = face.collectUnicodes();
                 ctx.trace("总字符数", totalChars.length);
 
-                // 两者 set 减法
+                // subsets 分割结果和总字符做 set 减法得到未分割字符数
                 const codes: number[] = [];
                 for (let index = 0; index < totalChars.length; index++) {
                     const element = totalChars[index];
@@ -160,30 +159,35 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
 
                 ctx.info("参与自动分包：", codes.length);
-                const codesAfterRank = resortByRank(
-                    codes,
-                    opt.unicodeRank ?? [
-                        ...new Uint16Array(
-                            (await loadData("data/cn_char_rank.dat")).buffer
-                        ),
-                    ]
+                const unicodeRank: number[][] = opt.unicodeRank ?? [
+                    Latin,
+                    await getCN_SC_Rank(),
+                ];
+
+                // 把末尾的东西，额外分成一部分
+                const finalChunk = codes.filter(
+                    (i) => !unicodeRank.some((rank) => rank.includes(i))
                 );
-                // console.log(codesAfterRank);
-                const chunks = await autoSubset(
-                    face,
-                    hb,
-                    codesAfterRank,
-                    async (filename, buffer) => {
-                        return outputFile(
-                            path.join(input.destFold, filename),
-                            buffer
-                        );
-                    },
-                    input.targetType ?? "woff2",
-                    ctx,
-                    opt.chunkSize
-                );
-                subsetResult.push(...chunks);
+
+                unicodeRank.push(finalChunk);
+                for (const rank of unicodeRank) {
+                    const chunks = await autoSubset(
+                        face,
+                        hb,
+                        rank,
+                        async (filename, buffer) => {
+                            return outputFile(
+                                path.join(input.destFold, filename),
+                                buffer
+                            );
+                        },
+                        input.targetType ?? "woff2",
+                        ctx,
+                        opt.chunkSize
+                    );
+                    subsetResult.push(...chunks);
+                }
+
                 face.destroy();
                 blob.free();
                 ctx.free("blob", "face", "hb");

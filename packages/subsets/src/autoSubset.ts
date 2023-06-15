@@ -1,17 +1,18 @@
-import { HB } from "./hb.js";
-import { timeRecordFormat } from "./utils/timeCount.js";
-import { IOutputFile, Subset, SubsetResult } from "./interface.js";
-import { FontType, convert } from "./font-converter.js";
+import { HB } from "./hb";
+import { timeRecordFormat } from "./utils/timeCount";
+import { IOutputFile, Subset, SubsetResult } from "./interface";
+import { FontType, convert } from "./font-converter";
 import md5 from "md5";
 import byteSize from "byte-size";
-import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange.js";
-import { IContext } from "./fontSplit/context.js";
-import { getExtensionsByFontType } from "./utils/getExtensionsByFontType.js";
-import { subsetFont } from "./subset.js";
-import { loadData } from "./adapter/loadData.js";
+import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";
+import { IContext } from "./fontSplit/context";
+import { getExtensionsByFontType } from "./utils/getExtensionsByFontType";
+import { subsetFont } from "./subset";
+import { loadData } from "./adapter/loadData";
+import { cacheResult } from "./utils/cacheResult";
 
 /** 构建轮廓数据库，存储方式为桶存储 */
-const createContoursMap = async () => {
+const createContoursMap = cacheResult(async () => {
     const buffer = await loadData(
         "node_modules/@chinese-fonts/font-contours/data/unicodes_contours.dat"
     );
@@ -23,7 +24,7 @@ const createContoursMap = async () => {
         element !== 0 ? map.set(index, element) : wasted++;
     }
     return map;
-};
+});
 
 /** 可以实现较为准确的数值切割，偏差大致在 10 kb 左右 */
 export const autoSubset = async (
@@ -50,6 +51,7 @@ export const autoSubset = async (
         maxSize
     );
 
+    ctx.trace("开始分包");
     let count = 0;
     let cache: number[] = [];
     const totalChunk: number[][] = [];
@@ -94,10 +96,11 @@ export const autoSubset = async (
         );
         index++;
     }
-
+    ctx.trace("结束分包");
     return subsetMessage;
 };
 
+/** 计算分包时，单个包内可以容纳的最大轮廓 */
 async function calcContoursBorder(
     hb: HB.Handle,
     face: HB.Face,
@@ -123,7 +126,6 @@ async function calcContoursBorder(
         return col + (contoursMap.get(cur) ?? contoursMap.get(0)!);
     }, 0);
     const ContoursPerByte = totalContours / transferred.byteLength;
-    // console.log(totalContours, transferred.byteLength);
     return maxSize * ContoursPerByte;
 }
 
