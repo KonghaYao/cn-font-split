@@ -1,14 +1,13 @@
 /**
  * @file name表解析操作
- * @author mengke01(kekee000@gmail.com) KonghaYao
- * @modifiedBy KonghaYao
+ * @author mengke01(kekee000@gmail.com) modified by KonghaYao KonghaYao
  * harfbuzz 没有给解析的函数，那就只能自己来了。。。
  */
 
-import { mac, win, platformTbl } from "./enum/platform.js";
-import { nameIdTbl } from "./nameIdTbl.js";
-import string from "./utils/string.js";
-import { Reader } from "./reader.js";
+import { mac, win, platformTbl } from "./enum/platform";
+import { nameIdTbl } from "./nameIdTbl";
+import string from "./utils/string";
+import { Reader } from "./reader";
 
 type NameRecord = {
     name: number[];

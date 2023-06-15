@@ -7,8 +7,8 @@
  * 1. svg2ttf @ github
  */
 
-import unicodeName from "../enum/unicodeName.js";
-import postName from "../enum/postName.js";
+import unicodeName from "../enum/unicodeName";
+import postName from "../enum/postName";
 
 /**
  * 将unicode编码转换成js内部编码，

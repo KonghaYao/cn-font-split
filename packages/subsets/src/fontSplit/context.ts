@@ -1,7 +1,11 @@
-import { HB } from "src/hb.js";
-import { Context, Executor } from "../pipeline/index.js";
-import { InputTemplate, SubsetResult, Subsets } from "../interface.js";
+import { HB } from "../hb";
+import { Context } from "../pipeline/index";
+import { InputTemplate, SubsetResult, Subsets } from "../interface";
+
+/** 全局 Context 的类型，用于在分步函数中定义类型 */
 export type IContext = ReturnType<typeof createContext>;
+
+/** 创建全局 Context，任何一处都可以调用 */
 export const createContext = (opt: InputTemplate) =>
     new Context<{
         input: InputTemplate;

@@ -1,5 +1,5 @@
-import { isNode } from "../utils/env.js";
-import { loadData } from "./loadData.js";
+import { isNode } from "../utils/env";
+import { loadData } from "./loadData";
 
 /** 当检查到为 node 环境时，使用此功能 */
 const NodeLoad = async (input?: string) => {

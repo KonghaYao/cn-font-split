@@ -1,6 +1,7 @@
 import path from "path";
 import fse from "fs-extra";
 import template from "./template.html";
+import { Buffer } from "buffer";
 export async function createTestHTML({
     destFold,
     outputFile,

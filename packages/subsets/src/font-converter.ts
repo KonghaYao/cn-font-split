@@ -1,5 +1,4 @@
 import { decompress, compress } from "@chinese-fonts/wawoff2";
-// import woffTool from "woff2sfnt-sfnt2woff";
 const supportedFormats = new Set(["sfnt", "woff", "woff2"]);
 
 /** 检测字体类型 */

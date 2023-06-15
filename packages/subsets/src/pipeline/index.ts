@@ -1,2 +1,2 @@
-export * from "./context.js";
-export * from "./executor.js";
+export * from "./context";
+export * from "./executor";

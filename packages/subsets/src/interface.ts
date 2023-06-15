@@ -1,4 +1,4 @@
-import { FontType } from "./font-converter.js";
+import { FontType } from "./font-converter";
 import { WriteFileOptions } from "fs-extra";
 
 export type WASMLoadOpt = Record<

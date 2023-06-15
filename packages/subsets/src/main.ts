@@ -1,19 +1,19 @@
-import { convert } from "./font-converter.js";
+import { convert } from "./font-converter";
 import { outputFile } from "fs-extra";
-import { hbjs } from "./hb.js";
-import { Executor } from "./pipeline/index.js";
-import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz.js";
-import { isBrowser, isNode } from "./utils/env.js";
-import { subsetAll } from "./subset.js";
-import { createContext } from "./fontSplit/context.js";
+import { hbjs } from "./hb";
+import { Executor } from "./pipeline/index";
+import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz";
+import { isBrowser, isNode } from "./utils/env";
+import { subsetAll } from "./subset";
+import { createContext } from "./fontSplit/context";
 import path from "path";
 import byteSize from "byte-size";
-import { InputTemplate } from "./interface.js";
-import { decodeNameTableFromUint8Array } from "./reader/decodeNameTableFromUint8Array.js";
-import { createReporter } from "./templates/reporter.js";
-import { createCSS } from "./templates/css.js";
-import { subsetsToSet } from "./utils/subsetsToSet.js";
-import { autoSubset } from "./autoSubset.js";
+import { InputTemplate } from "./interface";
+import { decodeNameTableFromUint8Array } from "./reader/decodeNameTableFromUint8Array";
+import { createReporter } from "./templates/reporter";
+import { createCSS } from "./templates/css";
+import { subsetsToSet } from "./utils/subsetsToSet";
+import { autoSubset } from "./autoSubset/index";
 import { Latin, getCN_SC_Rank } from "./ranks/index";
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -218,7 +218,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 );
                 if (input.testHTML !== false) {
                     const { createTestHTML } = await import(
-                        "./templates/html/index.js"
+                        "./templates/html/index"
                     );
                     const reporter = createTestHTML();
                     await outputFile(
@@ -241,7 +241,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         exec.records
                     );
                     await outputFile(
-                        path.join(input.destFold, "reporter.json"),
+                        path.join(input.destFold, "reporteron"),
                         reporter
                     );
                 }

@@ -1,5 +1,5 @@
-import { InputTemplate, SubsetResult } from "../interface.js";
-import { PerformanceRecord } from "../pipeline/executor.js";
+import { InputTemplate, SubsetResult } from "../interface";
+import { PerformanceRecord } from "../pipeline/executor";
 export const createReporter = (
     subsetResult: SubsetResult,
     fontData: Record<string, string>,

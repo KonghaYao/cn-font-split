@@ -45,7 +45,11 @@ export namespace HB {
     export type Blob = ReturnType<ReturnType<typeof hbjs>["createBlob"]>;
 }
 
-/**  harfbuzz 的函数 */
+/**
+ * harfbuzz 的函数
+ * @message copided from https://github.com/harfbuzz/harfbuzzjs/blob/main/hbjs.js
+ * @author modify by konghayao
+ */
 export function hbjs(instance: any) {
     "use strict";
 

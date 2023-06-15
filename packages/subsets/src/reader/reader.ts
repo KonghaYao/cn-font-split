@@ -1,13 +1,11 @@
 /**
  * @file 数据读取器
- * @author mengke01(kekee000@gmail.com) konghayao
- * @modifyBy konghayao
- *
+ * @author mengke01(kekee000@gmail.com) modified by  konghayao
  * thanks to：
  * ynakajima/ttf.js
  * https://github.com/ynakajima/ttf.js
  */
-import { dataType } from "./dataType.js";
+import { dataType } from "./dataType";
 
 export class Reader {
     offset: number;

@@ -1,12 +1,13 @@
-import { HB } from "./hb.js";
-import { timeRecordFormat } from "./utils/timeCount.js";
-import { IOutputFile, SubsetResult, Subsets } from "./interface.js";
-import { FontType, convert } from "./font-converter.js";
+import { HB } from "./hb";
+import { timeRecordFormat } from "./utils/timeCount";
+import { IOutputFile, SubsetResult, Subsets } from "./interface";
+import { FontType, convert } from "./font-converter";
 import md5 from "md5";
 import byteSize from "byte-size";
-import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange.js";
-import { IContext } from "./fontSplit/context.js";
-import { getExtensionsByFontType } from "./utils/getExtensionsByFontType.js";
+import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";
+import { IContext } from "./fontSplit/context";
+import { getExtensionsByFontType } from "./utils/getExtensionsByFontType";
+import { Buffer } from "buffer";
 export interface Options {
     variationAxes?: Record<number, number>;
     preserveNameIds?: number[];
