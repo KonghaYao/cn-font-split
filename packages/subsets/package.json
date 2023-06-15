@@ -15,7 +15,7 @@
     "license": "ISC",
     "dependencies": {
         "@chinese-fonts/font-contours": "^1.0.0",
-        "@chinese-fonts/wawoff2": "^2.0.1",
+        "@chinese-fonts/wawoff2": "^2.0.3",
         "@japont/unicode-range": "^1.0.0",
         "@konghayao/harfbuzzjs": "^0.3.6",
         "byte-size": "^8.1.1",
