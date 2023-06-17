@@ -1,4 +1,4 @@
-import { isNode } from "src/utils/env";
+import { isNode } from "../utils/env";
 
 export const AssetsMap = {
     "hb-subset.wasm": "node_modules/@konghayao/harfbuzzjs/hb-subset.wasm",

@@ -1,5 +1,5 @@
 {
-    "name": "@konghayao/cn-font-split",
+    "name": "@konghayao/global",
     "version": "3.4.2",
     "description": "中文 web font 切割工具",
     "main": "dist/index.js",

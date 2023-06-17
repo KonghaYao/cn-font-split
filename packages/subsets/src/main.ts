@@ -1,5 +1,5 @@
 import { convert } from "./font-converter";
-import { outputFile } from "fs-extra";
+
 import { hbjs } from "./hb";
 import { Executor } from "./pipeline/index";
 import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz";
@@ -17,6 +17,7 @@ import { autoSubset } from "./autoSubset/index";
 import { Latin, getCN_SC_Rank } from "./ranks/index";
 
 export const fontSplit = async (opt: InputTemplate) => {
+    const outputFile = opt.outputFile ?? (await import("fs-extra")).outputFile;
     const exec = new Executor(
         [
             async function LoadFile(ctx) {

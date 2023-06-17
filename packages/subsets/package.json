@@ -1,8 +1,8 @@
 {
-    "name": "subsets",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "name": "@konghayao/cn-font-split",
+    "version": "4.0.0",
+    "description": "中文 web font 切割工具",
+    "main": "dist/index.js",
     "type": "module",
     "scripts": {
         "build": "tsc&rollup -c ",
@@ -12,8 +12,8 @@
         "prepublish": "pnpm build"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "KonghaYao<dongzhongzhidong@qq.com>",
+    "license": "Apache-2.0",
     "dependencies": {
         "@chinese-fonts/font-contours": "^1.0.0",
         "@chinese-fonts/wawoff2": "^2.0.3",
@@ -26,9 +26,12 @@
         "tslog": "^4.8.2"
     },
     "devDependencies": {
+        "@rollup/plugin-commonjs": "^25.0.1",
         "@types/byte-size": "^8.1.0",
         "@types/md5": "^2.3.2",
         "@types/wawoff2": "^1.0.0",
+        "buffer": "^6.0.3",
+        "path": "^0.12.7",
         "vitest": "^0.31.4"
     }
 }
