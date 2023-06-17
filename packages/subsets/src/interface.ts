@@ -49,7 +49,7 @@ export type InputTemplate = {
 
     /** 自动分包，如果固定使用了 subsets ，那么将会自动分包剩下的 Unicode 字符 */
     autoChunk?: boolean;
-    /* TODO 自动分包时使用，优先分包这些字符 */
+    /*  自动分包时使用，优先分包这些字符 */
     unicodeRank?: number[][];
     /** 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小  */
     chunkSize?: number;
@@ -69,7 +69,7 @@ export type InputTemplate = {
         name?: string;
         compressLevel?: number;
     };
-    /** 日志输出<副作用> */
+    /* TODO 日志输出<副作用> */
     log?: (...args: any[]) => void;
     /** 输出文件的方式，如果你需要在特定的平台使用，那么需要适配这个函数 */
     outputFile?: IOutputFile;
