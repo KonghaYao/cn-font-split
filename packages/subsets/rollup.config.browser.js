@@ -46,7 +46,6 @@ export default {
         format: "es",
         paths: {
             imagescript: "https://esm.sh/imagescript",
-            "@chinese-fonts/wawoff2": "https://esm.sh/@chinese-fonts/wawoff2",
         },
     },
 

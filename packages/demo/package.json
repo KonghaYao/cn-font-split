@@ -8,6 +8,9 @@
         "test": "vitest",
         "coverage": "vitest run --coverage"
     },
+    "dependencies": {
+        "@konghayao/cn-font-split": "workspace:"
+    },
     "devDependencies": {
         "@headlessui/vue": "^1.7.14",
         "@nuxtjs/color-mode": "^3.2.0",

@@ -1,5 +1,7 @@
 import type { ReadStream } from "fs-extra";
 import { resolveNodeModule } from "../utils/resolveNodeModule";
+import { isNode } from "../utils/env";
+import { Buffer } from "buffer";
 export class AssetsMap<K extends string> extends Map<K, string> {
     constructor(input: { [key in K]: string } | [K, string][]) {
         if (input instanceof Array) {
@@ -17,8 +19,14 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     }
     /** 异步地导入本地数据 */
     async loadFileAsync(token: K | string): Promise<Buffer> {
-        const { readFile } = await import("node:fs/promises");
-        return readFile(await resolveNodeModule(this.ensureGet(token)));
+        if (isNode) {
+            const { readFile } = await import("node:fs/promises");
+            return readFile(await resolveNodeModule(this.ensureGet(token)));
+        } else {
+            return this.loadFileResponse(token)
+                .then((res) => res.arrayBuffer())
+                .then((res) => Buffer.from(res));
+        }
     }
 
     async loadFileStream(
@@ -29,6 +37,6 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     }
     /** 以 fetch 的方式进行数据传递 */
     async loadFileResponse(token: K | string): Promise<Response> {
-        return fetch(this.ensureGet(token));
+        return fetch(new URL(this.ensureGet(token), import.meta.url));
     }
 }
