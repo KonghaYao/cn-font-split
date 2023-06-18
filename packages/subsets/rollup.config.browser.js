@@ -13,6 +13,7 @@ const require = createRequire(import.meta.url);
 // 防止打包时删除 ts 的类型注解
 // emptyDirSync("./dist/browser/");
 
+// 传递一次静态文件
 await Promise.all(
     [
         ...Object.values(nodeAssets)
@@ -38,7 +39,9 @@ await Promise.all(
         return fse.copy(i, "./dist/browser/" + path.basename(i));
     })
 );
+import { createTypeForBrowser } from "./scripts/createTypeForBrowser.mjs";
 
+createTypeForBrowser();
 export default {
     input: "./src/index.ts",
     output: {
