@@ -1,0 +1,34 @@
+{
+    /* Tailwindcss */
+    "css.validate": false,
+    "editor.quickSuggestions": {
+        "strings": true
+    },
+    "tailwindCSS.includeLanguages": {
+        "plaintext": "html"
+    },
+    /* eslint */
+    "prettier.enable": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "*.css": "postcss"
+    },
+    "cSpell.words": [
+        "antfu",
+        "composables",
+        "headlessui",
+        "heroicons",
+        "Iconify",
+        "nuxi",
+        "nuxt",
+        "nuxtjs",
+        "pinia",
+        "tailwindcss",
+        "Unplugin",
+        "vite",
+        "vueuse"
+    ],
+}
