@@ -1,23 +1,13 @@
 import { isNode } from "../utils/env";
 import { Assets } from "./assets";
-/** 当检查到为 node 环境时，使用此功能 */
-const NodeLoader = async (input?: string) => {
-    const buffer = await Assets.loadFileAsync(input ?? "hb-subset.wasm");
-    return WebAssembly.instantiate(buffer);
-};
-
-/** 无视平台加载 */
+/** 无视平台加载 harfbuzz */
 export const loadHarbuzzAdapter = async (
-    input?: string | Response | ArrayBuffer
+    input: string | Response | ArrayBuffer = "hb-subset.wasm"
 ) => {
-    if (isNode) {
-        if (typeof input === "string") {
-            return NodeLoader(input);
-        } else if (input === undefined) {
-            return NodeLoader();
-        }
-    }
     if (typeof input === "string") {
+        if (isNode) {
+            return WebAssembly.instantiate(await Assets.loadFileAsync(input));
+        }
         return WebAssembly.instantiateStreaming(Assets.loadFileResponse(input));
     } else if (input instanceof Response) {
         return WebAssembly.instantiateStreaming(input);

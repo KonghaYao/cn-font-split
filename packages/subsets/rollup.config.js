@@ -16,9 +16,9 @@ export default {
         paths: {},
     },
     plugins: [
-        // json({
-        //     namedExports: false,
-        // }),
+        json({
+            namedExports: false,
+        }),
         {
             name: "html",
             load: {

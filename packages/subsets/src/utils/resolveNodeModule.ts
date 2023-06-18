@@ -8,7 +8,7 @@ export const resolveNodeModule = async (path: string) => {
         // ** 因为 @ 可以被作为第一个符号，故不适用
         case "&":
             const { resolve, dirname } = await import("path");
-            const { fileURLToPath } = await import("url");
+            const { fileURLToPath } = await import("node:url");
             const absolutePath = resolve(
                 dirname(fileURLToPath(import.meta.url)),
                 path.slice(1)

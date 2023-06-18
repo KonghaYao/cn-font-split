@@ -7,6 +7,8 @@
     "scripts": {
         "build": "tsc&rollup -c ",
         "dev": "rollup -c -w",
+        "build:browser": "tsc&rollup -c rollup.config.browser.js ",
+        "dev:browser": "rollup -c rollup.config.browser.js -w",
         "test": "vitest",
         "coverage": "vitest run --coverage",
         "prepublish": "pnpm build"
