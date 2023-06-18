@@ -172,6 +172,9 @@ importers:
       path:
         specifier: ^0.12.7
         version: 0.12.7
+      resolve:
+        specifier: ^1.22.2
+        version: 1.22.2
       vitest:
         specifier: ^0.31.4
         version: 0.31.4

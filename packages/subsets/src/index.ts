@@ -6,4 +6,3 @@ export * from "./main";
 export * from "./utils/getSubsetsFromCSS";
 export * from "buffer";
 export * from "./ranks/index";
-export * from "./adapter/loadData";
