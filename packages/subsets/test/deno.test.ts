@@ -3,6 +3,7 @@ import "https://deno.land/x/xhr@0.3.0/mod.ts";
 import { fileURLToPath } from "https://deno.land/std@0.170.0/node/url.ts";
 import { fontSplit, Assets, mockXHR } from "../dist/browser/index.js";
 // 让 XHR 在访问 fileURI 的时候转化为本地文件
+const cache = new Map<string, Uint8Array>();
 mockXHR({
     // 所有的 fetch 函数都会发送到这里
     proxy({ headers, body, method, url }) {
@@ -12,7 +13,11 @@ mockXHR({
                 const path = fileURLToPath(
                     decodeURIComponent(url.hash.slice(1))
                 );
-                const item = await Deno.readFile(path);
+
+                const item = cache.has(path)
+                    ? cache.get(path)
+                    : await Deno.readFile(path);
+                cache.set(path, item);
                 // console.log(path, item);
                 // console.log(item);
                 return new Response(item, {

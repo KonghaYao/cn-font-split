@@ -1,17 +1,11 @@
 import { FontType, supportedFormats, detectFormat } from "./detectFormat";
 import { cacheResult } from "./utils/cacheResult";
 
-const loadDecompress = cacheResult(
-    async () =>
-        await import("@chinese-fonts/wawoff2/decompress.js").then(
-            (res) => res.decompress
-        )
+const loadDecompress = cacheResult(() =>
+    import("@chinese-fonts/wawoff2/decompress.js").then((res) => res.decompress)
 );
-const loadCompress = cacheResult(
-    async () =>
-        await import("@chinese-fonts/wawoff2/compress.js").then(
-            (res) => res.compress
-        )
+const loadCompress = cacheResult(async () =>
+    import("@chinese-fonts/wawoff2/compress.js").then((res) => res.compress)
 );
 
 /** 字体格式转化 */

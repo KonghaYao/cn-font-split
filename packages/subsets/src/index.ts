@@ -8,5 +8,6 @@ export * from "./utils/getSubsetsFromCSS";
 export * from "buffer";
 export * from "./ranks/index";
 export * from "./adapter/assets";
+export * from "./utils/cacheResult";
 
 export * from "./utils/XHR/mockXHR";

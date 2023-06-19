@@ -3,6 +3,8 @@
  * Copyright 2021 KonghaYao 江夏尧 <dongzhongzhidong@qq.com>
  * SPDX-License-Identifier: Apache-2.0
  */
+// 用于 deno 环境中模仿 browser 情况
+
 // 使用不完全覆盖的方式，使用继承方式继承所有的属性
 // 只在 send 方式调用的时候对其进行数据返回
 import { defineGetAndSet } from "./defineGetterAndSetter.js";
