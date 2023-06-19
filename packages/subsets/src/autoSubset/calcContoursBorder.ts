@@ -1,5 +1,6 @@
 import { HB } from "../hb";
-import { FontType, convert } from "../font-converter";
+import { convert } from "../font-converter";
+import { FontType } from "../detectFormat";
 import { subsetFont } from "../subset";
 
 /** 计算分包时，单个包内可以容纳的最大轮廓 */

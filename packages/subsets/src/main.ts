@@ -15,36 +15,18 @@ import { createCSS } from "./templates/css";
 import { subsetsToSet } from "./utils/subsetsToSet";
 import { autoSubset } from "./autoSubset/index";
 import { Latin, getCN_SC_Rank } from "./ranks/index";
+import { Assets } from "./adapter/assets";
 
 export const fontSplit = async (opt: InputTemplate) => {
-    const outputFile = opt.outputFile ?? (await import("fs-extra")).outputFile;
+    const outputFile = opt.outputFile ?? Assets.outputFile;
     const exec = new Executor(
         [
             async function LoadFile(ctx) {
                 const { input } = ctx.pick("input");
                 let res!: ArrayBuffer;
-                const defaultFunc = async () => {
-                    // 视为本地地址
-                    res = await import("fs/promises").then((res) => {
-                        return res.readFile(input.FontPath as string);
-                    });
-                };
+
                 if (typeof input.FontPath === "string") {
-                    if (isBrowser) {
-                        ctx.trace("Runtime Detect: Browser");
-                        // 视为 url
-                        res = await fetch(input.FontPath).then((res) =>
-                            res.arrayBuffer()
-                        );
-                    } else if (isNode) {
-                        ctx.trace("Runtime Detect: Node");
-                        await defaultFunc();
-                    } else {
-                        ctx.trace(
-                            "Runtime Detect: Unknown (Guess Node;May encounter some bugs)"
-                        );
-                        await defaultFunc();
-                    }
+                    res = await Assets.loadFileAsync(input.FontPath);
                 } else {
                     // 视为二进制数据
                     res = input.FontPath;
@@ -87,12 +69,8 @@ export const fontSplit = async (opt: InputTemplate) => {
 
             async function loadHarbuzz(ctx) {
                 const { input, ttfFile } = ctx.pick("input", "ttfFile");
-                let loader = input.wasm?.harfbuzz;
 
-                if (typeof loader === "function") {
-                    loader = await loader();
-                }
-                let wasm = await loadHarbuzzAdapter(loader);
+                let wasm = await loadHarbuzzAdapter();
                 const hb = hbjs(wasm!.instance);
                 const blob = hb.createBlob(ttfFile);
 

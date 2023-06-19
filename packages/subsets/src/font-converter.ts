@@ -1,24 +1,18 @@
-import { decompress, compress } from "@chinese-fonts/wawoff2";
-const supportedFormats = new Set(["sfnt", "woff", "woff2"]);
+import { FontType, supportedFormats, detectFormat } from "./detectFormat";
+import { cacheResult } from "./utils/cacheResult";
 
-/** 检测字体类型 */
-export const detectFormat = function (buffer: Uint8Array) {
-    const signature = String.fromCharCode(...buffer.subarray(0, 4));
-    if (signature === "wOFF") {
-        return "woff";
-    } else if (signature === "wOF2") {
-        return "woff2";
-    } else if (
-        signature === "true" ||
-        signature === "OTTO" ||
-        signature === "\x00\x01\x00\x00"
-    ) {
-        return "sfnt";
-    } else {
-        throw new Error(`Unrecognized font signature: ${signature}`);
-    }
-};
-export type FontType = "otf" | "ttf" | "truetype" | "sfnt" | "woff" | "woff2";
+const loadDecompress = cacheResult(
+    async () =>
+        await import("@chinese-fonts/wawoff2/decompress.js").then(
+            (res) => res.decompress
+        )
+);
+const loadCompress = cacheResult(
+    async () =>
+        await import("@chinese-fonts/wawoff2/compress.js").then(
+            (res) => res.compress
+        )
+);
 
 /** 字体格式转化 */
 export const convert = async function (
@@ -50,9 +44,11 @@ export const convert = async function (
         // buffer = woffTool.toSfnt(buffer);
         throw new Error("Unsupported source format: woff");
     } else if (fromFormat === "woff2") {
+        const decompress = await loadDecompress();
         buffer = await decompress(buffer);
     }
     if (toFormat === "woff2") {
+        const compress = await loadCompress();
         buffer = await compress(buffer);
     }
     return buffer;

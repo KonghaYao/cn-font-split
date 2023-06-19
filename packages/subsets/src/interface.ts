@@ -1,10 +1,6 @@
-import { FontType } from "./font-converter";
+import { FontType } from "./detectFormat";
 import { WriteFileOptions } from "fs-extra";
 
-export type WASMLoadOpt = Record<
-    "harfbuzz",
-    string | Response | (() => Promise<string | Response>)
->;
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     hash: string;
@@ -18,13 +14,11 @@ export type Subsets = Subset[];
 /** 替换系统内部的文件输出方式 */
 export type IOutputFile = (
     file: string,
-    data: any,
+    data: Uint8Array | string,
     options?: string | WriteFileOptions | undefined
 ) => Promise<void>;
 
 export type InputTemplate = {
-    /** wasm 替换 */
-    wasm?: Partial<WASMLoadOpt>;
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | ArrayBuffer | Uint8Array;
     /** 切割后放置文件的文件夹 */

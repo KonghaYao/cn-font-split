@@ -1,6 +1,7 @@
 import { HB } from "../hb";
 import { IOutputFile, SubsetResult } from "../interface";
-import { FontType, convert } from "../font-converter";
+import { convert } from "../font-converter";
+import type { FontType } from "../detectFormat";
 import { IContext } from "../fontSplit/context";
 import { getExtensionsByFontType } from "../utils/getExtensionsByFontType";
 import { subsetFont } from "../subset";

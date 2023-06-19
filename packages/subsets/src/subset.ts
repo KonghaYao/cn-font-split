@@ -1,7 +1,8 @@
 import { HB } from "./hb";
 import { timeRecordFormat } from "./utils/timeCount";
 import { IOutputFile, SubsetResult, Subsets } from "./interface";
-import { FontType, convert } from "./font-converter";
+import { convert } from "./font-converter";
+import { FontType } from "./detectFormat";
 import md5 from "md5";
 import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";

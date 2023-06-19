@@ -6,6 +6,7 @@ import fse from "fs-extra";
 import resolve from "@rollup/plugin-node-resolve";
 import { createRequire } from "node:module";
 import path from "node:path";
+import alias from "@rollup/plugin-alias";
 const nodeAssets = await fse.readJson("./src/adapter/nodeAssets.json");
 
 const require = createRequire(import.meta.url);
@@ -50,9 +51,15 @@ export default {
         paths: {
             imagescript: "https://esm.sh/imagescript",
         },
+        globals: {
+            process: "globalThis.process",
+        },
     },
 
     plugins: [
+        alias({
+            entries: [{ find: "path", replacement: "path-browserify" }],
+        }),
         json({
             namedExports: false,
         }),
@@ -95,7 +102,9 @@ export default {
             browser: true,
             extensions: [".ts", ".html"],
             // moduleDirectories: [],
-
+            alias: {
+                path: "path-browserify",
+            },
             preferBuiltins: false,
         }),
         babel({
