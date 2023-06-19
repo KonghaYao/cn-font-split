@@ -3,6 +3,7 @@
     "version": "4.0.0",
     "description": "中文 web font 切割工具",
     "main": "dist/index.js",
+    "browser": "dist/browser/index.js",
     "type": "module",
     "scripts": {
         "build": "tsc&rollup -c ",
@@ -28,8 +29,10 @@
         "tslog": "^4.8.2"
     },
     "devDependencies": {
+        "@forsee/rollup-plugin-conditional": "^1.0.2",
         "@rollup/plugin-alias": "^5.0.0",
         "@rollup/plugin-commonjs": "^25.0.1",
+        "@rollup/plugin-replace": "^5.0.2",
         "@types/byte-size": "^8.1.0",
         "@types/md5": "^2.3.2",
         "@types/wawoff2": "^1.0.0",

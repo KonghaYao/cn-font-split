@@ -220,7 +220,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         exec.records
                     );
                     await outputFile(
-                        path.join(input.destFold, "reporteron"),
+                        path.join(input.destFold, "reporter.json"),
                         reporter
                     );
                 }

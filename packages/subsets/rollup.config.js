@@ -3,7 +3,7 @@ import json from "@rollup/plugin-json";
 import babel from "@rollup/plugin-babel";
 import fse from "fs-extra";
 import resolve from "@rollup/plugin-node-resolve";
-
+import condition from "@forsee/rollup-plugin-conditional";
 // 防止打包时删除 ts 的类型注解
 // emptyDirSync("./dist/");
 
@@ -16,6 +16,7 @@ export default {
         paths: {},
     },
     plugins: [
+        condition({ env: "node" }),
         json({
             namedExports: false,
         }),

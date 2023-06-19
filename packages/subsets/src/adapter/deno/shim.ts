@@ -1,4 +1,4 @@
-import { isDeno } from "./utils/env";
+import { isDeno } from "../../utils/env";
 
 isDeno &&
     /** @ts-ignore */

@@ -7,6 +7,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import { createRequire } from "node:module";
 import path from "node:path";
 import alias from "@rollup/plugin-alias";
+import condition from "@forsee/rollup-plugin-conditional";
 const nodeAssets = await fse.readJson("./src/adapter/nodeAssets.json");
 
 const require = createRequire(import.meta.url);
@@ -57,6 +58,7 @@ export default {
     },
 
     plugins: [
+        condition({ env: "browser" }),
         alias({
             entries: [{ find: "path", replacement: "path-browserify" }],
         }),

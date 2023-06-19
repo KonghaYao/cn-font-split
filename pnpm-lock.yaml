@@ -158,12 +158,18 @@ importers:
         specifier: ^4.8.2
         version: 4.8.2
     devDependencies:
+      '@forsee/rollup-plugin-conditional':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@rollup/plugin-alias':
         specifier: ^5.0.0
         version: 5.0.0(rollup@3.24.0)
       '@rollup/plugin-commonjs':
         specifier: ^25.0.1
         version: 25.0.1(rollup@3.24.0)
+      '@rollup/plugin-replace':
+        specifier: ^5.0.2
+        version: 5.0.2(rollup@3.24.0)
       '@types/byte-size':
         specifier: ^8.1.0
         version: 8.1.0
@@ -794,6 +800,12 @@ packages:
   /@eslint/js@8.42.0:
     resolution: {integrity: sha512-6SWlXpWU5AvId8Ac7zjzmIOqMOba/JWY8XZ4A7q7Gn1Vlfg/SFFIlrtHXt9nPn4op9ZPAkl91Jao+QQv3r/ukw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: true
+
+  /@forsee/rollup-plugin-conditional@1.0.2:
+    resolution: {integrity: sha512-NmtRD7/pu+nIdylZfWnxf6d5If1te/W7swaBMJ30GLcjjC2qYZ468E8QUM8KACvTpuumZSypEogXmyCwEyArfQ==}
+    dependencies:
+      '@rollup/pluginutils': 4.2.1
     dev: true
 
   /@headlessui/vue@1.7.14(vue@3.3.4):

@@ -65,14 +65,9 @@ export class AssetsMap<K extends string> extends Map<K, string> {
             const outputFile = (await import("fs-extra")).outputFile;
             await outputFile(file, data, options);
         }
-
-        isDeno &&
-            (await Deno.writeFile(
-                file,
-                typeof data === "string"
-                    ? new Uint8Array(await new Blob([data]).arrayBuffer())
-                    : data,
-                { create: true }
-            ));
+        if (isDeno) {
+            const { outputFile } = await import("./deno/fs-extra");
+            await outputFile(file, data);
+        }
     };
 }
