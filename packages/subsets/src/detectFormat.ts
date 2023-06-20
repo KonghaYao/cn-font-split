@@ -1,6 +1,6 @@
 export const supportedFormats = new Set(["sfnt", "woff", "woff2"]);
-/** 检测字体类型 */
 
+/** 检测字体类型 */
 export const detectFormat = function (buffer: Uint8Array) {
     const signature = String.fromCharCode(...buffer.subarray(0, 4));
     if (signature === "wOFF") {

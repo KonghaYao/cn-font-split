@@ -1,6 +1,6 @@
 import { FontType } from "./detectFormat";
 import { WriteFileOptions } from "fs-extra";
-
+import { Buffer } from "buffer";
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     hash: string;
@@ -24,7 +24,7 @@ export type IOutputFile = (
 
 export type InputTemplate = {
     /** 字体文件的相对地址，或者直接输入 buffer */
-    FontPath: string | ArrayBuffer | Uint8Array;
+    FontPath: string | Buffer | ArrayBuffer | Uint8Array;
     /** 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数 */
     destFold: string;
     /** 替换生成后的 CSS 文件的信息 */

@@ -1,12 +1,5 @@
 import { FontType, supportedFormats, detectFormat } from "./detectFormat";
-import { cacheResult } from "./utils/cacheResult";
-
-const loadDecompress = cacheResult(() =>
-    import("@chinese-fonts/wawoff2/decompress.js").then((res) => res.decompress)
-);
-const loadCompress = cacheResult(async () =>
-    import("@chinese-fonts/wawoff2/compress.js").then((res) => res.compress)
-);
+import { compress, decompress } from "@chinese-fonts/wawoff2";
 
 /** 字体格式转化 */
 export const convert = async function (
@@ -38,11 +31,9 @@ export const convert = async function (
         // buffer = woffTool.toSfnt(buffer);
         throw new Error("Unsupported source format: woff");
     } else if (fromFormat === "woff2") {
-        const decompress = await loadDecompress();
         buffer = await decompress(buffer);
     }
     if (toFormat === "woff2") {
-        const compress = await loadCompress();
         buffer = await compress(buffer);
     }
     return buffer;

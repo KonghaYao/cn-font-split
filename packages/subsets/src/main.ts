@@ -3,7 +3,6 @@ import { convert } from "./font-converter";
 import { hbjs } from "./hb";
 import { Executor } from "./pipeline/index";
 import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz";
-import { isBrowser, isNode } from "./utils/env";
 import { subsetAll } from "./subset";
 import { createContext } from "./fontSplit/context";
 import path from "path";
@@ -21,6 +20,7 @@ export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
     const exec = new Executor(
         [
+            /** 从路径或者二进制数据获取原始字体文件 */
             async function LoadFile(ctx) {
                 const { input } = ctx.pick("input");
                 let res!: ArrayBuffer;
@@ -34,6 +34,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.trace("输入文件大小：" + byteSize(res.byteLength));
                 ctx.set("originFile", new Uint8Array(res));
             },
+            /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {
                 const { input, originFile } = ctx.pick("input", "originFile");
 
@@ -41,6 +42,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("ttfFile", ttfFile);
                 ctx.free("originFile");
             },
+            /** 创建包含字体展示的图片文件 */
             async function createImage(ctx) {
                 const { ttfFile, input } = ctx.pick("ttfFile", "input");
                 if (input.previewImage) {
@@ -67,6 +69,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
             },
 
+            /** 加载 Harfbuzz 字体操作库 */
             async function loadHarbuzz(ctx) {
                 const { input, ttfFile } = ctx.pick("input", "ttfFile");
 
@@ -81,6 +84,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("blob", blob);
                 ctx.free("ttfFile");
             },
+            /** 获取字体的基础信息，如字体族类，license等 */
             async function getBasicMessage(ctx) {
                 const { face } = ctx.pick("face");
                 const buffer = face.reference_table("name");
@@ -89,6 +93,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("nameTable", nameTable);
             },
 
+            /** 根据 subsets 参数进行优先分包 */
             async function subsetFonts(ctx) {
                 const { input, hb, face } = ctx.pick(
                     "input",
@@ -112,6 +117,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 );
                 ctx.set("subsetResult", subsetResult);
             },
+            /** 将剩下的字符进行自动分包 */
             async function useAutoSubsets(ctx) {
                 const { input, face, blob, subsetResult, hb } = ctx.pick(
                     "input",
@@ -171,6 +177,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 blob.free();
                 ctx.free("blob", "face", "hb");
             },
+            /** 输出 css 文件 */
             async function outputCSS(ctx) {
                 const { nameTable, subsetResult, input } = ctx.pick(
                     "input",
