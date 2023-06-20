@@ -5,6 +5,10 @@
     "main": "dist/index.js",
     "browser": "dist/browser/index.js",
     "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
+    },
     "scripts": {
         "build": "rollup -c ",
         "dev": "rollup -c -w",
@@ -33,6 +37,7 @@
         "@rollup/plugin-alias": "^5.0.0",
         "@rollup/plugin-commonjs": "^25.0.1",
         "@rollup/plugin-replace": "^5.0.2",
+        "@rollup/plugin-terser": "^0.4.3",
         "@types/byte-size": "^8.1.0",
         "@types/md5": "^2.3.2",
         "@types/wawoff2": "^1.0.0",

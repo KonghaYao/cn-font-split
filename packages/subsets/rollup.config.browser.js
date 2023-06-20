@@ -55,6 +55,7 @@ export default {
         globals: {
             process: "globalThis.process",
         },
+        // sourcemap: true,
     },
 
     plugins: [
@@ -109,6 +110,7 @@ export default {
             },
             preferBuiltins: true,
         }),
+
         babel({
             extensions: [".ts"],
             babelHelpers: "bundled",
