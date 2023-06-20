@@ -45,12 +45,13 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     async loadFileResponse(token: K | string): Promise<Response> {
         if (!globalThis.fetch) {
             throw new Error(
-                " fetch 函数不存在，请升级更高级的 Nodejs 或者其它环境"
+                "fetch 函数不存在，请适配 fetch 或者升级更高级的 Nodejs "
             );
         }
 
         return fetch(new URL(this.ensureGet(token), import.meta.url));
     }
+    /** 重新设定内部的数据 */
     redefine(input: { [key in K]: string } | [K, string][]) {
         if (input instanceof Array) {
             input.map(([k, v]) => this.set(k, v));
@@ -60,14 +61,18 @@ export class AssetsMap<K extends string> extends Map<K, string> {
             );
         }
     }
+    /** 对外输出文件 */
     outputFile: IOutputFile = async (file, data, options) => {
         if (isNode) {
             const outputFile = (await import("fs-extra")).outputFile;
-            await outputFile(file, data, options);
+            return outputFile(file, data, options);
         }
         if (isDeno) {
             const { outputFile } = await import("./deno/fs-extra");
-            await outputFile(file, data);
+            return outputFile(file, data);
         }
+        throw new Error(
+            "你的环境好像不支持内部的 outputFile，请你适配 outputFile 参数"
+        );
     };
 }
