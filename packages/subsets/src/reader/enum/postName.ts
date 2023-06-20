@@ -6,7 +6,7 @@
  * http://www.microsoft.com/typography/otspec/WGL4.htm
  */
 
-export default {
+export const postName = {
     0: ".notdef",
     1: ".null",
     2: "nonmarkingreturn",

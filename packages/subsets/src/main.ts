@@ -190,11 +190,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 );
             },
             async function outputHTML(ctx) {
-                const { nameTable, subsetResult, input } = ctx.pick(
-                    "input",
-                    "nameTable",
-                    "subsetResult"
-                );
+                const { input } = ctx.pick("input");
                 if (input.testHTML !== false) {
                     const { createTestHTML } = await import(
                         "./templates/html/index"

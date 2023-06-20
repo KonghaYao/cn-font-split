@@ -6,7 +6,7 @@
 
 import { mac, win, platformTbl } from "./enum/platform";
 import { nameIdTbl } from "./nameIdTbl";
-import string from "./utils/string";
+import { getUTF8String, getUCS2String } from "./utils/string";
 import { Reader } from "./reader";
 
 type NameRecord = {
@@ -99,16 +99,16 @@ export const decodeNameTableFromUint8Array = (nameTable: Uint8Array) => {
 
                 names[key] =
                     language === 0
-                        ? string.getUTF8String(nameRecord.name!)
-                        : string.getUCS2String(nameRecord.name!);
+                        ? getUTF8String(nameRecord.name!)
+                        : getUCS2String(nameRecord.name!);
             } else {
                 console.warn(
                     "name table decode: found an unknown key in your font file, key",
                     nameRecord.nameId,
                     "value",
                     language === 0
-                        ? string.getUTF8String(nameRecord.name)
-                        : string.getUCS2String(nameRecord.name)
+                        ? getUTF8String(nameRecord.name)
+                        : getUCS2String(nameRecord.name)
                 );
             }
         }

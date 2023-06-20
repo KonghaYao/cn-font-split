@@ -4,6 +4,6 @@ declare module "*.html" {
 }
 declare module "https://*" {
     const a: any;
-
+    export const ensureDir: any;
     export default a;
 }

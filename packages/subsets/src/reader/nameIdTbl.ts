@@ -2,7 +2,7 @@
  * @file ttf `name`编码表
  * @author mengke01(kekee000@gmail.com)
  */
-const nameId: Record<number, string> = {
+export const nameIdTbl: Record<number, string> = {
     0: "copyright",
     1: "fontFamily",
     2: "fontSubFamily",
@@ -23,4 +23,3 @@ const nameId: Record<number, string> = {
     18: "compatibleFull",
     19: "sampleText",
 };
-export { nameId as nameIdTbl };

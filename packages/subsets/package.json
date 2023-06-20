@@ -12,7 +12,7 @@
         "dev:browser": "rollup -c rollup.config.browser.js -w",
         "test": "vitest",
         "coverage": "vitest run --coverage",
-        "prepublish": "pnpm build"
+        "prepublish": "pnpm build&&pnpm build:browser"
     },
     "keywords": [],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",

@@ -9,8 +9,12 @@ export type SubsetResult = {
     path: string;
     size: number;
 }[];
+/** unicode-range的数据表示格式 */
 export type Subset = (number | [number, number])[];
+
+/** unicode-range的数据数组 */
 export type Subsets = Subset[];
+
 /** 替换系统内部的文件输出方式 */
 export type IOutputFile = (
     file: string,
@@ -21,7 +25,7 @@ export type IOutputFile = (
 export type InputTemplate = {
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | ArrayBuffer | Uint8Array;
-    /** 切割后放置文件的文件夹 */
+    /** 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数 */
     destFold: string;
     /** 替换生成后的 CSS 文件的信息 */
     css?: Partial<{
@@ -30,18 +34,20 @@ export type InputTemplate = {
         fontStyle: string;
         fontDisplay: string;
     }>;
-    /** 输入的字体类型, 不输入则自动识别 */
+    /**
+     * 输入的字体类型, 不输入则自动识别
+     * @deprecated 4.0.0 以上为自动识别
+     */
     fontType?: FontType;
-    /** 输出的字体类型，默认 woff2*/
+    /** 输出的字体类型，默认 woff2 */
     targetType?: FontType;
 
     /**
      * 控制分包内的 Unicode 字符，优先级高
-     * 1. 直接传入 unicode-range 的数据模式，这个可以节省一部分性能
      */
     subsets?: Subsets;
 
-    /** 自动分包，如果固定使用了 subsets ，那么将会自动分包剩下的 Unicode 字符 */
+    /** 自动分包，如果使用了 subsets 参数，那么将会自动分包剩下的 Unicode 字符 */
     autoChunk?: boolean;
     /*  自动分包时使用，优先分包这些字符 */
     unicodeRank?: number[][];

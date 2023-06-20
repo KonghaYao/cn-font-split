@@ -6,7 +6,7 @@
  * http://www.microsoft.com/typography/otspec/WGL4.htm
  */
 
-export default {
+export const unicodeName = {
     0: 1,
     1: 1,
     2: 1,
