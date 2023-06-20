@@ -1,7 +1,6 @@
 import type { ReadStream } from "fs-extra";
 import { resolveNodeModule } from "../utils/resolveNodeModule";
 import { isBrowser, isDeno, isNode } from "../utils/env";
-import { Buffer } from "buffer";
 import type { IOutputFile } from "src/interface";
 export class AssetsMap<K extends string> extends Map<K, string> {
     constructor(input: { [key in K]: string } | [K, string][]) {
@@ -19,18 +18,20 @@ export class AssetsMap<K extends string> extends Map<K, string> {
         }
     }
     /** 异步地导入本地数据 */
-    async loadFileAsync(token: K | string): Promise<Buffer> {
+    async loadFileAsync(token: K | string): Promise<Uint8Array> {
         if (isNode) {
             const { readFile } = await import("node:fs/promises");
-            return readFile(await resolveNodeModule(this.ensureGet(token)));
+            return readFile(
+                await resolveNodeModule(this.ensureGet(token))
+            ).then((res) => {
+                return new Uint8Array(res.buffer);
+            });
         } else if (isBrowser) {
             return this.loadFileResponse(token)
                 .then((res) => res.arrayBuffer())
-                .then((res) => Buffer.from(res));
+                .then((res) => new Uint8Array(res));
         } else if (isDeno) {
-            return Deno.readFile(this.ensureGet(token)).then((res) =>
-                Buffer.from(res)
-            );
+            return Deno.readFile(this.ensureGet(token));
         }
         throw new Error("loadFileAsync 适配环境失败");
     }

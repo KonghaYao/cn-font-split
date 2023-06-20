@@ -23,16 +23,16 @@ export const fontSplit = async (opt: InputTemplate) => {
             /** 从路径或者二进制数据获取原始字体文件 */
             async function LoadFile(ctx) {
                 const { input } = ctx.pick("input");
-                let res!: ArrayBuffer;
+                let res!: Uint8Array;
 
                 if (typeof input.FontPath === "string") {
                     res = await Assets.loadFileAsync(input.FontPath);
-                } else {
+                } else if (input.FontPath instanceof Uint8Array) {
                     // 视为二进制数据
-                    res = input.FontPath;
+                    res = new Uint8Array(input.FontPath);
                 }
                 ctx.trace("输入文件大小：" + byteSize(res.byteLength));
-                ctx.set("originFile", new Uint8Array(res));
+                ctx.set("originFile", res);
             },
             /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {

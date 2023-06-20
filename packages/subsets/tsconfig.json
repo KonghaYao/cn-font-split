@@ -55,7 +55,7 @@
         // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */
         // "allowUmdGlobalAccess": true,          /* Allow accessing UMD globals from modules. */
 
-        "types": ["./src/env", "./src/global"],
+        // "types": ["./src/env", "./src/global"],
 
         /* Source Map Options */
         // "sourceRoot": "",                      /* Specify the location where debugger should locate TypeScript files instead of source locations. */

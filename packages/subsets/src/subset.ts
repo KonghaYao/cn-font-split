@@ -8,7 +8,6 @@ import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";
 import { IContext } from "./fontSplit/context";
 import { getExtensionsByFontType } from "./utils/getExtensionsByFontType";
-import { Buffer } from "buffer";
 export interface Options {
     variationAxes?: Record<number, number>;
     preserveNameIds?: number[];
@@ -81,11 +80,10 @@ export function subsetFont(
     const facePtr = Subset.runSubset();
     const arr = hb.collectUnicodes(facePtr);
 
-    let buffer: Buffer | null;
+    let buffer: Uint8Array | null;
     if (arr.length) {
         const binarySubset = Subset.toBinary();
-        // 不是 buffer 会导致错误
-        buffer = Buffer.from(binarySubset.data());
+        buffer = binarySubset.data().slice();
         binarySubset.destroy();
     } else {
         buffer = null;

@@ -107,7 +107,7 @@ export default {
             alias: {
                 path: "path-browserify",
             },
-            preferBuiltins: false,
+            preferBuiltins: true,
         }),
         babel({
             extensions: [".ts"],
