@@ -6,13 +6,13 @@
     "browser": "dist/browser/index.js",
     "type": "module",
     "scripts": {
-        "build": "tsc&rollup -c ",
+        "build": "rollup -c ",
         "dev": "rollup -c -w",
-        "build:browser": "tsc&rollup -c rollup.config.browser.js ",
+        "build:browser": "rollup -c rollup.config.browser.js ",
         "dev:browser": "rollup -c rollup.config.browser.js -w",
         "test": "vitest",
         "coverage": "vitest run --coverage",
-        "prepublish": "pnpm build&&pnpm build:browser"
+        "prepublish": "tsc && pnpm build && pnpm build:browser && tsc"
     },
     "keywords": [],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",

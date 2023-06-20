@@ -13,7 +13,7 @@ const nodeAssets = await fse.readJson("./src/adapter/nodeAssets.json");
 const require = createRequire(import.meta.url);
 
 // 防止打包时删除 ts 的类型注解
-// emptyDirSync("./dist/browser/");
+fse.emptyDirSync("./dist/browser/");
 
 // 传递一次静态文件
 await Promise.all(

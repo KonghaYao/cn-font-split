@@ -5,7 +5,7 @@ import fse from "fs-extra";
 import resolve from "@rollup/plugin-node-resolve";
 import condition from "@forsee/rollup-plugin-conditional";
 // 防止打包时删除 ts 的类型注解
-// emptyDirSync("./dist/");
+fse.emptyDirSync("./dist/");
 
 export default {
     external: [],
