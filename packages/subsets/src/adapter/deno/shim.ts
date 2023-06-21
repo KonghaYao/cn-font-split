@@ -1,11 +1,12 @@
 import { isDeno } from "../../utils/env";
-
-isDeno &&
-    /** @ts-ignore */
-    (globalThis.location = {
-        origin: "/",
+try {
+    isDeno &&
         /** @ts-ignore */
-        toString() {
-            return;
-        },
-    });
+        (globalThis.location = {
+            origin: "/",
+            /** @ts-ignore */
+            toString() {
+                return;
+            },
+        });
+} catch (e) {}

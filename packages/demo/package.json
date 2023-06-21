@@ -9,7 +9,8 @@
         "coverage": "vitest run --coverage"
     },
     "dependencies": {
-        "@konghayao/cn-font-split": "workspace:"
+        "@konghayao/cn-font-split": "workspace:",
+        "comlink": "^4.4.1"
     },
     "devDependencies": {
         "@headlessui/vue": "^1.7.14",

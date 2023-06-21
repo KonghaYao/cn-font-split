@@ -15,6 +15,7 @@ import { subsetsToSet } from "./utils/subsetsToSet";
 import { autoSubset } from "./autoSubset/index";
 import { Latin, getCN_SC_Rank } from "./ranks/index";
 import { Assets } from "./adapter/assets";
+import { env } from "./utils/env";
 
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
@@ -22,6 +23,8 @@ export const fontSplit = async (opt: InputTemplate) => {
         [
             /** 从路径或者二进制数据获取原始字体文件 */
             async function LoadFile(ctx) {
+                ctx.info("cn-font-split 环境检测\t", env);
+
                 const { input } = ctx.pick("input");
                 let res!: Uint8Array;
 

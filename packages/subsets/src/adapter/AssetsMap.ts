@@ -1,6 +1,6 @@
 import type { ReadStream } from "fs-extra";
 import { resolveNodeModule } from "../utils/resolveNodeModule";
-import { isBrowser, isDeno, isNode } from "../utils/env";
+import { isBrowser, isDeno, isInWorker, isNode } from "../utils/env";
 import type { IOutputFile } from "src/interface";
 export class AssetsMap<K extends string> extends Map<K, string> {
     constructor(input: { [key in K]: string } | [K, string][]) {
@@ -26,7 +26,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
             ).then((res) => {
                 return new Uint8Array(res.buffer);
             });
-        } else if (isBrowser) {
+        } else if (isBrowser || isInWorker) {
             return this.loadFileResponse(token)
                 .then((res) => res.arrayBuffer())
                 .then((res) => new Uint8Array(res));

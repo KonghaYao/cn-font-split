@@ -30,6 +30,7 @@
         "imagescript": "^1.2.16",
         "md5": "^2.3.0",
         "p-limit": "^4.0.0",
+        "threads": "^1.7.0",
         "tslog": "^4.8.2"
     },
     "devDependencies": {

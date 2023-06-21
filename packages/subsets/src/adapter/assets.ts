@@ -1,4 +1,4 @@
-import { isBrowser } from "../utils/env";
+import { isBrowser, isInWorker } from "../utils/env";
 import { AssetsMap } from "./AssetsMap";
 import node from "./nodeAssets.json";
 const input = {
@@ -10,4 +10,6 @@ const input = {
         "unicodes_contours.dat": "./unicodes_contours.dat",
     },
 };
-export const Assets = new AssetsMap(isBrowser ? input.browser : input.node);
+export const Assets = new AssetsMap(
+    isBrowser || isInWorker ? input.browser : input.node
+);
