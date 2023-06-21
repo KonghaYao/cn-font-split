@@ -8,10 +8,8 @@ import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";
 import { IContext } from "./fontSplit/context";
 import { getExtensionsByFontType } from "./utils/getExtensionsByFontType";
-export interface Options {
-    variationAxes?: Record<number, number>;
-    preserveNameIds?: number[];
-}
+import { subsetFont } from "./subsetService/subsetFont";
+
 export const countSubsetChars = (subset: (number | [number, number])[]) => {
     return subset.reduce((col: number, cur) => {
         col += 1;
@@ -34,7 +32,9 @@ export const subsetAll = async (
     for (let index = 0; index < subsets.length; index++) {
         const subset = subsets[index];
         const start = performance.now();
-        const [buffer, arr] = subsetFont(face, subset, hb);
+        const [buffer, arr] = await subsetFont(face, subset, hb, {
+            threads: false,
+        });
         const middle = performance.now();
         if (buffer) {
             const transferred = await convert(buffer, targetType);
@@ -65,30 +65,3 @@ export const subsetAll = async (
 
     return subsetMessage;
 };
-
-/** 从总包中抽取出指定 subset 的字符区间，并返回最终结果的字符 */
-export function subsetFont(
-    face: HB.Face,
-    subsetUnicode: (number | [number, number])[],
-    hb: HB.Handle,
-    { preserveNameIds, variationAxes }: Options = {}
-) {
-    const Subset = hb.createSubset(face, preserveNameIds, variationAxes);
-    Subset.adjustLayout();
-
-    Subset.addChars(subsetUnicode);
-    const facePtr = Subset.runSubset();
-    const arr = hb.collectUnicodes(facePtr);
-
-    let buffer: Uint8Array | null;
-    if (arr.length) {
-        const binarySubset = Subset.toBinary();
-        buffer = binarySubset.data().slice();
-        binarySubset.destroy();
-    } else {
-        buffer = null;
-    }
-    Subset.destroy();
-
-    return [buffer, arr] as const;
-}

@@ -1,7 +1,7 @@
 import { HB } from "../hb";
 import { convert } from "../font-converter";
 import { FontType } from "../detectFormat";
-import { subsetFont } from "../subset";
+import { subsetFont } from "../subsetService/subsetFont";
 
 /** 计算分包时，单个包内可以容纳的最大轮廓 */
 export async function calcContoursBorder(
@@ -19,7 +19,9 @@ export async function calcContoursBorder(
         sampleUnicode.push(element);
     }
     // console.log(sampleUnicode.length);
-    const [buffer, arr] = subsetFont(face, sampleUnicode, hb);
+    const [buffer, arr] = await subsetFont(face, sampleUnicode, hb, {
+        threads: false,
+    });
     const transferred = await convert(
         new Uint8Array(buffer!.buffer),
         targetType

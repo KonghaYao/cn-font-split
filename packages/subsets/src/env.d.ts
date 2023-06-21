@@ -7,3 +7,8 @@ declare module "https://*" {
     export const ensureDir: any;
     export default a;
 }
+declare module "web-worker:*" {
+    export default class WebWorker extends Worker {
+        constructor();
+    }
+}

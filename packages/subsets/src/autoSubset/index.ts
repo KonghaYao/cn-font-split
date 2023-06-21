@@ -4,7 +4,7 @@ import { convert } from "../font-converter";
 import type { FontType } from "../detectFormat";
 import { IContext } from "../fontSplit/context";
 import { getExtensionsByFontType } from "../utils/getExtensionsByFontType";
-import { subsetFont } from "../subset";
+import { subsetFont } from "../subsetService/subsetFont";
 import { createContoursMap } from "./createContoursMap";
 import { calcContoursBorder } from "./calcContoursBorder";
 import { createRecord } from "./createRecord";
@@ -54,7 +54,9 @@ export const autoSubset = async (
     let index = 0;
     for (const chunk of totalChunk) {
         const start = performance.now();
-        const [buffer, arr] = subsetFont(face, chunk, hb);
+        const [buffer, arr] = await subsetFont(face, chunk, hb, {
+            threads: false,
+        });
         const middle = performance.now();
         const transferred = await convert(
             new Uint8Array(buffer!.buffer),

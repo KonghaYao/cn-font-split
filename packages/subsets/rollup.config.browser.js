@@ -59,6 +59,7 @@ export default {
     },
 
     plugins: [
+        // TODO 未添加 worker 处理
         condition({ env: "browser" }),
         alias({
             entries: [{ find: "path", replacement: "path-browserify" }],
