@@ -15,11 +15,11 @@ import { IOutputFile } from "@konghayao/cn-font-split";
 import { proxy } from "comlink";
 const onclick = async () => {
   const { SplitWorkerAPI } = await import("../composables/font-split-worker/api");
-
+  console.log("开始");
   const outputFile: IOutputFile = async function (path, buffer) {
     console.log(path);
   };
-  SplitWorkerAPI.fontSplit(
+  (await SplitWorkerAPI).fontSplit(
     {
       destFold: "./temp",
       FontPath: "/SmileySans-Oblique.ttf", // 注意使用绝对路径

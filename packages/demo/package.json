@@ -10,7 +10,8 @@
     },
     "dependencies": {
         "@konghayao/cn-font-split": "workspace:",
-        "comlink": "^4.4.1"
+        "comlink": "^4.4.1",
+        "threads": "^1.7.0"
     },
     "devDependencies": {
         "@headlessui/vue": "^1.7.14",

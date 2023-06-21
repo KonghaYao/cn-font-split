@@ -56,6 +56,9 @@ importers:
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
+      threads:
+        specifier: ^1.7.0
+        version: 1.7.0
     devDependencies:
       '@headlessui/vue':
         specifier: ^1.7.14
@@ -157,9 +160,6 @@ importers:
       p-limit:
         specifier: ^4.0.0
         version: 4.0.0
-      threads:
-        specifier: ^1.7.0
-        version: 1.7.0
       tslog:
         specifier: ^4.8.2
         version: 4.8.2
@@ -188,6 +188,9 @@ importers:
       '@types/wawoff2':
         specifier: ^1.0.0
         version: 1.0.0
+      comlink:
+        specifier: ^4.4.1
+        version: 4.4.1
       path-browserify:
         specifier: ^1.0.1
         version: 1.0.1
@@ -2746,7 +2749,6 @@ packages:
 
   /comlink@4.4.1:
     resolution: {integrity: sha512-+1dlx0aY5Jo1vHy/tSsIGpSkN4tS9rZSW8FIhG0JH/crs9wwweswIo/POr451r7bZww3hFbPAKnTpimzL/mm4Q==}
-    dev: false
 
   /commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
