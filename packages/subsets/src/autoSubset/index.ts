@@ -15,6 +15,7 @@ import { calcContoursBorder } from "./calcContoursBorder";
 import { createRecord } from "./createRecord";
 import { recordToLog } from "./recordToLog";
 import { Context } from "src/pipeline";
+import { transfer } from "comlink";
 
 /** 可以实现较为准确的数值切割，偏差大致在 10 kb 左右 */
 export const autoSubset = async (
@@ -59,10 +60,9 @@ export const autoSubset = async (
     // console.log(totalChunk.flat().length);
 
     if (input.threads) {
-        console.log("并行");
         await Promise.all(
-            totalChunk.map(async (chunk, index) => {
-                await runSubSet(
+            totalChunk.map(async (chunk, index) =>
+                runSubSet(
                     face,
                     chunk,
                     hb,
@@ -73,8 +73,8 @@ export const autoSubset = async (
                     subsetMessage,
                     ctx,
                     index
-                );
-            })
+                )
+            )
         );
     } else {
         let index = 0;
@@ -110,13 +110,17 @@ async function runSubSet(
     index: number
 ) {
     const start = performance.now();
-    const [buffer, arr] = subsetFont(face, chunk, hb, {
-        threads: input.threads,
-    });
+    const [buffer, arr] = subsetFont(face, chunk, hb, {});
     const middle = performance.now();
     if (!buffer) return;
-    const transferred = await convert(buffer!, targetType);
+    const service = input.threads?.service;
+    const transferred = service
+        ? await service.pool.exec("convert", [buffer, targetType], {
+              transfer: [buffer.buffer],
+          })
+        : await convert(buffer!, targetType);
     const end = performance.now();
+
     const outputMessage = await createRecord(
         outputFile,
         ext,

@@ -236,6 +236,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                     );
                 }
             },
+            async function Clear(ctx) {
+                const { input } = ctx.pick("input");
+                input.threads?.service?.destroy();
+            },
         ],
         createContext(opt)
     );

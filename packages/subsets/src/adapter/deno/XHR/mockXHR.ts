@@ -116,7 +116,7 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
         }
     }
     async $request(res: Response) {
-        console.warn("XHR 代理中", this.$data.url.toString());
+        !config.silent && console.warn("XHR 代理中", this.$data.url.toString());
 
         this._responseHeaders = res.headers;
         this.$data.status = res.status;
