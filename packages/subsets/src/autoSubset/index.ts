@@ -1,5 +1,10 @@
-import { HB } from "../hb";
-import { IOutputFile, SubsetResult } from "../interface";
+import { BufferFlag, HB } from "../hb";
+import {
+    IOutputFile,
+    InputTemplate,
+    SubsetResult,
+    Subsets,
+} from "../interface";
 import { convert } from "../font-converter";
 import type { FontType } from "../detectFormat";
 import { IContext } from "../fontSplit/context";
@@ -9,6 +14,7 @@ import { createContoursMap } from "./createContoursMap";
 import { calcContoursBorder } from "./calcContoursBorder";
 import { createRecord } from "./createRecord";
 import { recordToLog } from "./recordToLog";
+import { Context } from "src/pipeline";
 
 /** 可以实现较为准确的数值切割，偏差大致在 10 kb 左右 */
 export const autoSubset = async (
@@ -20,6 +26,7 @@ export const autoSubset = async (
     ctx: IContext,
     maxSize = 70 * 1024
 ) => {
+    const { input } = ctx.pick("input");
     const ext = getExtensionsByFontType(targetType);
     const subsetMessage: SubsetResult = [];
     let sample = subsetUnicode;
@@ -51,37 +58,82 @@ export const autoSubset = async (
     totalChunk.push(cache);
     // console.log(totalChunk.flat().length);
 
-    let index = 0;
-    for (const chunk of totalChunk) {
-        const start = performance.now();
-        const [buffer, arr] = await subsetFont(face, chunk, hb, {
-            threads: false,
-        });
-        const middle = performance.now();
-        const transferred = await convert(
-            new Uint8Array(buffer!.buffer),
-            targetType
+    if (input.threads) {
+        console.log("并行");
+        await Promise.all(
+            totalChunk.map(async (chunk, index) => {
+                await runSubSet(
+                    face,
+                    chunk,
+                    hb,
+                    input,
+                    targetType,
+                    outputFile,
+                    ext,
+                    subsetMessage,
+                    ctx,
+                    index
+                );
+            })
         );
-        const end = performance.now();
-        const outputMessage = await createRecord(
-            outputFile,
-            ext,
-            transferred,
-            Array.from(arr)
-        );
-        subsetMessage.push(outputMessage);
-        recordToLog(
-            ctx,
-            transferred,
-            start,
-            middle,
-            end,
-            arr,
-            index,
-            outputMessage.hash
-        );
-        index++;
+    } else {
+        let index = 0;
+        for (const chunk of totalChunk) {
+            await runSubSet(
+                face,
+                chunk,
+                hb,
+                input,
+                targetType,
+                outputFile,
+                ext,
+                subsetMessage,
+                ctx,
+                index
+            );
+            index++;
+        }
     }
     ctx.trace("结束分包");
     return subsetMessage;
 };
+async function runSubSet(
+    face: HB.Face,
+    chunk: number[],
+    hb: HB.Handle,
+    input: InputTemplate,
+    targetType: FontType,
+    outputFile: IOutputFile,
+    ext: string,
+    subsetMessage: SubsetResult,
+    ctx: IContext,
+    index: number
+) {
+    const start = performance.now();
+    const [buffer, arr] = await subsetFont(face, chunk, hb, {
+        threads: input.threads,
+    });
+    const middle = performance.now();
+    const transferred = await convert(
+        new Uint8Array(buffer!.buffer),
+        targetType
+    );
+    const end = performance.now();
+    const outputMessage = await createRecord(
+        outputFile,
+        ext,
+        transferred,
+        Array.from(arr)
+    );
+    subsetMessage.push(outputMessage);
+    recordToLog(
+        ctx,
+        transferred,
+        start,
+        middle,
+        end,
+        arr,
+        index,
+        outputMessage.hash
+    );
+}

@@ -1,6 +1,7 @@
 import { FontType } from "./detectFormat";
 import { WriteFileOptions } from "fs-extra";
 import type { Buffer } from "buffer";
+import { SubsetService } from "./subsetService";
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     hash: string;
@@ -23,6 +24,10 @@ export type IOutputFile = (
 ) => Promise<void>;
 
 export type InputTemplate = {
+    threads?: {
+        service?: SubsetService;
+    };
+
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;
     /** 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数 */

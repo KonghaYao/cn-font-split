@@ -3,8 +3,7 @@ import { ISubsetFont, SubsetFontOptions } from "./index";
 
 export const subsetFont: ISubsetFont = async (...args) => {
     if (args[3].threads) {
-        // TODO 使用
-        return subsetFontSimple(...args);
+        return args[3].threads.service!.subsetFont(...args);
     } else {
         return subsetFontSimple(...args);
     }

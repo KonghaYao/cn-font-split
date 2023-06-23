@@ -4,7 +4,7 @@ import babel from "@rollup/plugin-babel";
 import fse from "fs-extra";
 import resolve from "@rollup/plugin-node-resolve";
 import condition from "@forsee/rollup-plugin-conditional";
-import webWorkerLoader from "rollup-plugin-web-worker-loader";
+import OMT from "@surma/rollup-plugin-off-main-thread";
 
 // 防止打包时删除 ts 的类型注解
 fse.emptyDirSync("./dist/");
@@ -18,7 +18,7 @@ export default {
         paths: {},
     },
     plugins: [
-        webWorkerLoader(),
+        OMT(),
         condition({ env: "node" }),
         json({
             namedExports: false,

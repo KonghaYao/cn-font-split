@@ -25,6 +25,7 @@ export const subsetAll = async (
     targetType: FontType,
     ctx: IContext
 ): Promise<SubsetResult> => {
+    const { input } = ctx.pick("input");
     const ext = getExtensionsByFontType(targetType);
 
     const subsetMessage: SubsetResult = [];
@@ -33,7 +34,7 @@ export const subsetAll = async (
         const subset = subsets[index];
         const start = performance.now();
         const [buffer, arr] = await subsetFont(face, subset, hb, {
-            threads: false,
+            threads: input.threads,
         });
         const middle = performance.now();
         if (buffer) {
