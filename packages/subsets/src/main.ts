@@ -1,4 +1,4 @@
-import { convert } from "./font-converter";
+import { convert } from "./convert/font-converter";
 
 import { hbjs } from "./hb";
 import { Executor } from "./pipeline/index";
@@ -16,6 +16,7 @@ import { autoSubset } from "./autoSubset/index";
 import { Latin, getCN_SC_Rank } from "./ranks/index";
 import { Assets } from "./adapter/assets";
 import { env } from "./utils/env";
+import { ConvertManager } from "./convert/convert.manager";
 // import { SubsetService } from "./subsetService";
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -87,7 +88,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("face", face);
                 ctx.set("blob", blob);
                 if (opt.threads) {
-                    // opt.threads.service = new SubsetService(ttfFile);
+                    opt.threads.service = new ConvertManager();
                 }
                 ctx.free("ttfFile");
             },

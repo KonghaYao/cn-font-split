@@ -1,4 +1,4 @@
-import { FontType, supportedFormats, detectFormat } from "./detectFormat";
+import { FontType, supportedFormats, detectFormat } from "../detectFormat";
 import { compress, decompress } from "@chinese-fonts/wawoff2";
 
 /** 字体格式转化 */

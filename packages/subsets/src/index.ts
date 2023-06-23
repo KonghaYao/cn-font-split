@@ -1,4 +1,4 @@
-export * from "./font-converter";
+export * from "./convert/font-converter";
 export * from "./interface";
 export * from "./hb";
 export * from "./subset";

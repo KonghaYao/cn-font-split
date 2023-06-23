@@ -1,5 +1,5 @@
 import { HB } from "../hb";
-import { convert } from "../font-converter";
+import { convert } from "../convert/font-converter";
 import { FontType } from "../detectFormat";
 import { subsetFont } from "../subsetService/subsetFont";
 

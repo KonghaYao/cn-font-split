@@ -22,10 +22,10 @@ export type IOutputFile = (
     data: Uint8Array | string,
     options?: string | WriteFileOptions | undefined
 ) => Promise<void>;
-
+import { ConvertManager } from "./convert/convert.manager";
 export type InputTemplate = {
     threads?: {
-        service?: null;
+        service?: ConvertManager;
     };
 
     /** 字体文件的相对地址，或者直接输入 buffer */

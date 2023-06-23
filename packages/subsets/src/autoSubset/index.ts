@@ -5,7 +5,7 @@ import {
     SubsetResult,
     Subsets,
 } from "../interface";
-import { convert } from "../font-converter";
+import { convert } from "../convert/font-converter";
 import type { FontType } from "../detectFormat";
 import { IContext } from "../fontSplit/context";
 import { getExtensionsByFontType } from "../utils/getExtensionsByFontType";
@@ -110,14 +110,12 @@ async function runSubSet(
     index: number
 ) {
     const start = performance.now();
-    const [buffer, arr] = await subsetFont(face, chunk, hb, {
+    const [buffer, arr] = subsetFont(face, chunk, hb, {
         threads: input.threads,
     });
     const middle = performance.now();
-    const transferred = await convert(
-        new Uint8Array(buffer!.buffer),
-        targetType
-    );
+    if (!buffer) return;
+    const transferred = await convert(buffer!, targetType);
     const end = performance.now();
     const outputMessage = await createRecord(
         outputFile,

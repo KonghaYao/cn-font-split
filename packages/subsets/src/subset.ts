@@ -1,7 +1,7 @@
 import { HB } from "./hb";
 import { timeRecordFormat } from "./utils/timeCount";
 import { IOutputFile, SubsetResult, Subsets } from "./interface";
-import { convert } from "./font-converter";
+import { convert } from "./convert/font-converter";
 import { FontType } from "./detectFormat";
 import md5 from "md5";
 import byteSize from "byte-size";
@@ -9,6 +9,7 @@ import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";
 import { IContext } from "./fontSplit/context";
 import { getExtensionsByFontType } from "./utils/getExtensionsByFontType";
 import { subsetFont } from "./subsetService/subsetFont";
+import { transfer } from "comlink";
 
 export const countSubsetChars = (subset: (number | [number, number])[]) => {
     return subset.reduce((col: number, cur) => {
@@ -33,12 +34,15 @@ export const subsetAll = async (
     for (let index = 0; index < subsets.length; index++) {
         const subset = subsets[index];
         const start = performance.now();
-        const [buffer, arr] = await subsetFont(face, subset, hb, {
-            threads: input.threads,
-        });
+        const [buffer, arr] = subsetFont(face, subset, hb, {});
         const middle = performance.now();
         if (buffer) {
-            const transferred = await convert(buffer, targetType);
+            const service = input.threads?.service;
+            const transferred = service
+                ? await service.acquire((api) =>
+                      api.convert(transfer(buffer, [buffer.buffer]), targetType)
+                  )
+                : await convert(buffer, targetType);
             const end = performance.now();
             ctx.trace(
                 [
