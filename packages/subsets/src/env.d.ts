@@ -5,6 +5,7 @@ declare module "*.html" {
 declare module "https://*" {
     const a: any;
     export const ensureDir: any;
+    export const fileURLToPath: any;
     export default a;
 }
 declare module "omt:*" {

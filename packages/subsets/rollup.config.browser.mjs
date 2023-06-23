@@ -9,6 +9,7 @@ import path from "node:path";
 import alias from "@rollup/plugin-alias";
 import condition from "@forsee/rollup-plugin-conditional";
 import OMT from "@surma/rollup-plugin-off-main-thread";
+import replace from "@rollup/plugin-replace";
 const nodeAssets = await fse.readJson("./src/adapter/nodeAssets.json");
 
 const require = createRequire(import.meta.url);
@@ -112,11 +113,22 @@ export default {
             },
             preferBuiltins: true,
         }),
-
+        {
+            transform(code, id) {
+                if (id.includes("workerpool")) {
+                    console.log("matched", id);
+                    return code.replaceAll(
+                        "new Worker(script)",
+                        "new Worker(script,{type:globalThis.__worker__type__||'module'})"
+                    );
+                }
+            },
+        },
         babel({
             extensions: [".ts"],
             babelHelpers: "bundled",
         }),
+
         analyze({
             summaryOnly: true,
             writeTo: (str) =>
