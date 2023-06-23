@@ -169,6 +169,9 @@ importers:
       worker-rpc:
         specifier: ^0.2.0
         version: 0.2.0
+      worker-transfer:
+        specifier: workspace:^
+        version: link:../worker-transfer
     devDependencies:
       '@forsee/rollup-plugin-conditional':
         specifier: ^1.0.2

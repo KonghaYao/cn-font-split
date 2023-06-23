@@ -12,8 +12,8 @@
     "scripts": {
         "build": "rollup -c ",
         "dev": "rollup -c -w",
-        "build:browser": "rollup -c rollup.config.browser.js ",
-        "dev:browser": "rollup -c rollup.config.browser.js -w",
+        "build:browser": "rollup -c rollup.config.browser.mjs ",
+        "dev:browser": "rollup -c rollup.config.browser.mjs -w",
         "test": "vitest",
         "coverage": "vitest run --coverage",
         "prepublish": "tsc && pnpm build && pnpm build:browser && tsc"
@@ -31,8 +31,7 @@
         "imagescript": "^1.2.16",
         "md5": "^2.3.0",
         "p-limit": "^4.0.0",
-        "tslog": "^4.8.2",
-        "worker-rpc": "^0.2.0"
+        "tslog": "^4.8.2"
     },
     "devDependencies": {
         "@forsee/rollup-plugin-conditional": "^1.0.2",

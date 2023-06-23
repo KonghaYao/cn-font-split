@@ -8,6 +8,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import alias from "@rollup/plugin-alias";
 import condition from "@forsee/rollup-plugin-conditional";
+import OMT from "@surma/rollup-plugin-off-main-thread";
 const nodeAssets = await fse.readJson("./src/adapter/nodeAssets.json");
 
 const require = createRequire(import.meta.url);
@@ -59,7 +60,7 @@ export default {
     },
 
     plugins: [
-        // TODO 未添加 worker 处理
+        OMT(),
         condition({ env: "browser" }),
         alias({
             entries: [{ find: "path", replacement: "path-browserify" }],

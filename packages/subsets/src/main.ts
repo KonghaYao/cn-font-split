@@ -16,7 +16,7 @@ import { autoSubset } from "./autoSubset/index";
 import { Latin, getCN_SC_Rank } from "./ranks/index";
 import { Assets } from "./adapter/assets";
 import { env } from "./utils/env";
-import { SubsetService } from "./subsetService";
+// import { SubsetService } from "./subsetService";
 
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
@@ -87,7 +87,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("face", face);
                 ctx.set("blob", blob);
                 if (opt.threads) {
-                    opt.threads.service = new SubsetService(ttfFile);
+                    // opt.threads.service = new SubsetService(ttfFile);
                 }
                 ctx.free("ttfFile");
             },
