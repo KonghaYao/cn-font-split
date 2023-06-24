@@ -44,15 +44,8 @@
         "workerpool": "^6.4.0"
     },
     "devDependencies": {
-        "@forsee/rollup-plugin-conditional": "^1.0.2",
-        "@rollup/plugin-alias": "^5.0.0",
-        "@rollup/plugin-commonjs": "^25.0.1",
-        "@rollup/plugin-replace": "^5.0.2",
-        "@rollup/plugin-terser": "^0.4.3",
-        "@surma/rollup-plugin-off-main-thread": "^2.2.3",
         "@types/byte-size": "^8.1.0",
         "@types/md5": "^2.3.2",
-        "@types/wawoff2": "^1.0.0",
         "@types/workerpool": "^6.4.0",
         "comlink": "^4.4.1",
         "path-browserify": "^1.0.1",

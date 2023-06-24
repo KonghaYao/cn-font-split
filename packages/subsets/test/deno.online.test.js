@@ -4,10 +4,10 @@ import {
     fontSplit,
     Assets,
     DenoAdapter,
-} from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.1.0/dist/browser/index.js";
+} from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.2.0/dist/browser/index.js";
 
 await DenoAdapter();
-const root = "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.1.0";
+const root = "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.2.0";
 Assets.redefine({
     "hb-subset.wasm": root + "/dist/browser/hb-subset.wasm",
     "cn_char_rank.dat": root + "/dist/browser/cn_char_rank.dat",
