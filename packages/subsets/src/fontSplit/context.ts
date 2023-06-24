@@ -22,12 +22,14 @@ export const createContext = (opt: InputTemplate) =>
         {
             log: {
                 settings: {
+                    // minLevel: 6,
                     prettyLogTimeZone: "local",
                     prettyLogTemplate:
                         (true
                             ? ""
                             : "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}} {{ms}}\t ") +
                         "{{logLevelName}}\t",
+                    ...(opt?.logger?.settings ?? {}),
                 },
             },
         }

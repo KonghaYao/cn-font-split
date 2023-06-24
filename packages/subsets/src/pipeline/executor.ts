@@ -40,16 +40,16 @@ export class Executor<
         const ptr = this.setPtr(this.ptr + 1);
         const task = this.steps[ptr];
         if (task) {
-            this.context.info("-->\t" + task.name + "\tStart");
+            this.context.info("-->\t\t" + task.name + "\tStart");
             const start = performance.now();
             await task(this.context);
             const end = performance.now();
             this.context.info(
                 "<--\t" +
-                    task.name +
-                    "\tDone\t" +
                     (end - start).toFixed(0) +
-                    "ms"
+                    "ms\t" +
+                    task.name +
+                    "\tDone\t"
             );
 
             const record: PerformanceRecord = { name: task.name, start, end };

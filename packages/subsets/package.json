@@ -18,7 +18,18 @@
         "coverage": "vitest run --coverage",
         "prepublish": "tsc && pnpm build && pnpm build:browser && tsc"
     },
-    "keywords": [],
+    "keywords": [
+        "font",
+        "converter",
+        "performance",
+        "wasm",
+        "woff2",
+        "ttf",
+        "otf",
+        "opentype-fonts",
+        "font-subsetter",
+        "font-subset"
+    ],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "dependencies": {
@@ -29,7 +40,6 @@
         "byte-size": "^8.1.1",
         "imagescript": "^1.2.16",
         "md5": "^2.3.0",
-        "p-limit": "^4.0.0",
         "tslog": "^4.8.2",
         "workerpool": "^6.4.0"
     },

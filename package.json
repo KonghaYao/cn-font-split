@@ -1,5 +1,6 @@
 {
-    "name": "@konghayao/global",
+    "name": "root",
+    "private": true,
     "version": "3.4.2",
     "description": "中文 web font 切割工具",
     "main": "dist/index.js",

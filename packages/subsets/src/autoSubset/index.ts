@@ -14,8 +14,6 @@ import { createContoursMap } from "./createContoursMap";
 import { calcContoursBorder } from "./calcContoursBorder";
 import { createRecord } from "./createRecord";
 import { recordToLog } from "./recordToLog";
-import { Context } from "src/pipeline";
-import { transfer } from "comlink";
 
 /** 可以实现较为准确的数值切割，偏差大致在 10 kb 左右 */
 export const autoSubset = async (

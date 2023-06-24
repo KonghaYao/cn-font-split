@@ -23,6 +23,7 @@ export type IOutputFile = (
     options?: string | WriteFileOptions | undefined
 ) => Promise<void>;
 import { ConvertManager } from "./convert/convert.manager";
+import { ISettingsParam } from "tslog";
 export type InputTemplate = {
     threads?: {
         service?: ConvertManager;
@@ -80,6 +81,10 @@ export type InputTemplate = {
      * @dev
      */
     log?: (...args: any[]) => void;
+
+    logger?: {
+        settings?: ISettingsParam<unknown>;
+    };
     /** 输出文件的方式，如果你需要在特定的平台使用，那么需要适配这个函数 */
     outputFile?: IOutputFile;
 };

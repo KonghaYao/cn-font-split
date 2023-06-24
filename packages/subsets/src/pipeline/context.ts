@@ -27,6 +27,24 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
     ) {
         super(opts?.log?.settings, opts?.log?.logObj);
     }
+
+    recordLog(log: (...args: any[]) => void) {
+        this.attachTransport((obj) => {
+            const params = Object.keys(obj)
+                .filter((i) => !isNaN(parseInt(i)))
+                .map((i) => {
+                    return [parseInt(i), obj[i]] as const;
+                })
+                .sort((a, b) => a[0] - b[0])
+                .map((i) => i[1]);
+            log!(
+                /** @ts-ignore */
+                this._prettyFormatLogObjMeta(obj._meta),
+                ...params
+            );
+        });
+    }
+
     set<K extends keyof T>(key: K, value: T[K]) {
         this._originData[key] = value;
     }
