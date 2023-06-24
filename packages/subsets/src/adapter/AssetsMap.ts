@@ -19,19 +19,22 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     }
     /** 异步地导入本地数据 */
     async loadFileAsync(token: K | string): Promise<Uint8Array> {
+        const targetPath = this.ensureGet(token);
         if (isNode) {
             const { readFile } = await import("node:fs/promises");
-            return readFile(
-                await resolveNodeModule(this.ensureGet(token))
-            ).then((res) => {
+            return readFile(await resolveNodeModule(targetPath)).then((res) => {
                 return new Uint8Array(res.buffer);
             });
-        } else if (isBrowser || isInWorker) {
+        } else if (
+            isBrowser ||
+            isInWorker ||
+            ["https://", "http://"].some((i) => targetPath.startsWith(i))
+        ) {
             return this.loadFileResponse(token)
                 .then((res) => res.arrayBuffer())
                 .then((res) => new Uint8Array(res));
         } else if (isDeno) {
-            return Deno.readFile(this.ensureGet(token));
+            return Deno.readFile(targetPath);
         }
         throw new Error("loadFileAsync 适配环境失败");
     }
