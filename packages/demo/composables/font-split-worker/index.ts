@@ -1,10 +1,14 @@
-import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index";
+import { fontSplit, Assets } from "@konghayao/cn-font-split/dist/browser/index";
 import { expose } from "comlink";
+// const root = "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.1.0";
+// Assets.redefine({
+//     "hb-subset.wasm": root + "/dist/browser/hb-subset.wasm",
+//     "cn_char_rank.dat": root + "/dist/browser/cn_char_rank.dat",
+//     "unicodes_contours.dat": root + "/dist/browser/unicodes_contours.dat",
+// });
 expose({
-    async fontSplit(args: any, outputFile: any) {
-        console.log(args);
-        await fontSplit({ ...args, outputFile });
-        return 1;
+    fontSplit(args: any, outputFile: any) {
+        return fontSplit({ ...args, outputFile });
     },
 });
 // fontSplit({

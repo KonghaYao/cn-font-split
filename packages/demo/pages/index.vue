@@ -11,24 +11,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import { IOutputFile } from "@konghayao/cn-font-split";
-import { proxy } from "comlink";
+import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index";
 const onclick = async () => {
-  const { SplitWorkerAPI } = await import("../composables/font-split-worker/api");
   console.log("开始");
-  const outputFile: IOutputFile = async function (path, buffer) {
-    console.log(path);
-  };
-  (await SplitWorkerAPI).fontSplit(
-    {
-      destFold: "./temp",
-      FontPath: "/SmileySans-Oblique.ttf", // 注意使用绝对路径
-      targetType: "woff2",
-      // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
-      // previewImage: {},
-      threads: {},
-    },
-    proxy(outputFile)
-  );
+
+  fontSplit({
+    destFold: "./temp",
+    FontPath: "/SmileySans-Oblique.ttf", // 注意使用绝对路径
+    targetType: "woff2",
+    // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
+    // previewImage: {},
+    threads: {},
+    // log(...args){},
+    outputFile(path, file) {},
+  });
 };
 </script>
