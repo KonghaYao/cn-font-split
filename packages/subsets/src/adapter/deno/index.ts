@@ -1,3 +1,5 @@
-import "./shim";
+import { isDeno } from "../../utils/env";
 export * from "./fs-extra";
-export * from "./XHR/mockXHR";
+export const DenoAdapter = async () => {
+    isDeno && (await import("./shim"));
+};

@@ -1,15 +1,13 @@
-import { isDeno } from "../../utils/env";
 import "https://deno.land/x/xhr@0.3.0/mod.ts";
 try {
-    isDeno &&
+    /** @ts-ignore */
+    globalThis.location = {
+        origin: "/",
         /** @ts-ignore */
-        (globalThis.location = {
-            origin: "/",
-            /** @ts-ignore */
-            toString() {
-                return;
-            },
-        });
+        toString() {
+            return;
+        },
+    };
 } catch (e) {}
 
 try {
@@ -43,6 +41,4 @@ try {
         },
         silent: true,
     });
-} catch (e) {
-    console.log(e);
-}
+} catch (e) {}

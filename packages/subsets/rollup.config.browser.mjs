@@ -115,6 +115,7 @@ export default {
         }),
         {
             transform(code, id) {
+                // workerpool 源代码不支持 module worker，故自己改源码
                 if (id.includes("workerpool")) {
                     console.log("matched", id);
                     return code.replaceAll(

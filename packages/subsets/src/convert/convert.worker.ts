@@ -1,10 +1,14 @@
 import { convert } from "./font-converter";
 import { FontType } from "../detectFormat";
 import { worker, Transfer } from "workerpool";
-import { isDeno } from "../../dist";
+import { DenoAdapter } from "../adapter/deno/index";
 // 欺骗 环境，认为是 classic worker
 !globalThis.importScripts && (globalThis.importScripts = () => {});
-isDeno && (await import("../adapter/deno/shim"));
+
+//ifdef browser
+await DenoAdapter();
+//endif
+
 export class API {
     ready() {
         return true;

@@ -1,7 +1,8 @@
 import "https://deno.land/x/process@v0.3.0/mod.ts";
 
-import { fontSplit, Assets } from "../dist/browser/index.js";
+import { fontSplit, Assets, DenoAdapter } from "../dist/browser/index.js";
 
+await DenoAdapter();
 Assets.redefine({
     "hb-subset.wasm": "./dist/browser/hb-subset.wasm",
     "cn_char_rank.dat": "./dist/browser/cn_char_rank.dat",

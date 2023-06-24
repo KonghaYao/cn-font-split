@@ -26,6 +26,7 @@ const onclick = async () => {
       targetType: "woff2",
       // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
       // previewImage: {},
+      threads: {},
     },
     proxy(outputFile)
   );
