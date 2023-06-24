@@ -49,6 +49,7 @@ export type InputTemplate = {
 
     /**
      * 控制分包内的 Unicode 字符，优先级高
+     * @dev
      */
     subsets?: Subsets;
 
@@ -74,7 +75,10 @@ export type InputTemplate = {
         name?: string;
         compressLevel?: number;
     };
-    /* TODO 日志输出<副作用> */
+    /**
+     * 日志输出<副作用>
+     * @dev
+     */
     log?: (...args: any[]) => void;
     /** 输出文件的方式，如果你需要在特定的平台使用，那么需要适配这个函数 */
     outputFile?: IOutputFile;
