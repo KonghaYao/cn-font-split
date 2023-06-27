@@ -21,7 +21,9 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     async loadFileAsync(token: K | string): Promise<Uint8Array> {
         const targetPath = this.ensureGet(token);
         if (isNode) {
-            const { readFile } = await import("node:fs/promises");
+            const {
+                promises: { readFile },
+            } = await import("fs");
             return readFile(await resolveNodeModule(targetPath)).then((res) => {
                 return new Uint8Array(res.buffer);
             });

@@ -16,6 +16,6 @@ fontSplit({
     FontPath: "../../fonts/SmileySans-Oblique.ttf",
     targetType: "woff2",
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
-    // previewImage: {},
+    previewImage: {},
     threads: {},
 });

@@ -38,12 +38,16 @@ await Promise.all(
         ...[
             "@chinese-fonts/wawoff2/build/compress_binding.wasm",
             "@chinese-fonts/wawoff2/build/decompress_binding.wasm",
+            "@chinese-fonts/imagescript/dist/zlib.wasm",
+            "@chinese-fonts/imagescript/dist/png.wasm",
+            "@chinese-fonts/imagescript/dist/font.wasm",
         ].map((i) => require.resolve(i)),
     ].map((i) => {
         return fse.copy(i, "./dist/browser/" + path.basename(i));
     })
 );
 import { createTypeForBrowser } from "./scripts/createTypeForBrowser.mjs";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 createTypeForBrowser();
 export default {
@@ -51,9 +55,6 @@ export default {
     output: {
         dir: "./dist/browser",
         format: "es",
-        paths: {
-            imagescript: "https://esm.sh/imagescript",
-        },
         globals: {
             process: "globalThis.process",
         },
@@ -71,15 +72,10 @@ export default {
         }),
 
         {
+            id: "external",
             async resolveId(source, importer, options) {
-                const external = [
-                    "imagescript",
-                    // "@chinese-fonts/wawoff2",
-                    "@konghayao/harfbuzzjs",
-                    "module",
-                    "fs-extra",
-                    "fs/promises",
-                ];
+                const external = ["imagescript", "module", "fs-extra"];
+
                 if (external.includes(source) || source.startsWith("node:")) {
                     console.log(source);
                     return { id: source, external: true };
@@ -106,7 +102,7 @@ export default {
         common(),
         resolve({
             browser: true,
-            extensions: [".ts", ".html"],
+            extensions: [".ts", ".html", ".js", ".mjs"],
             // moduleDirectories: [],
             alias: {
                 path: "path-browserify",
@@ -117,7 +113,7 @@ export default {
             transform(code, id) {
                 // workerpool 源代码不支持 module worker，故自己改源码
                 if (id.includes("workerpool")) {
-                    console.log("matched", id);
+                    // console.log("matched", id);
                     return code.replaceAll(
                         "new Worker(script)",
                         "new Worker(script,{type:globalThis.__worker__type__||'module'})"

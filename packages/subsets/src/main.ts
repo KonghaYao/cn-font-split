@@ -17,6 +17,7 @@ import { Latin, getCN_SC_Rank } from "./ranks/index";
 import { Assets } from "./adapter/assets";
 import { env } from "./utils/env";
 import { ConvertManager } from "./convert/convert.manager";
+import { makeImage } from "./imagescript/index";
 // import { SubsetService } from "./subsetService";
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -51,21 +52,10 @@ export const fontSplit = async (opt: InputTemplate) => {
             async function createImage(ctx) {
                 const { ttfFile, input } = ctx.pick("ttfFile", "input");
                 if (input.previewImage) {
-                    const { Image } = await import("imagescript");
-                    const Font = await Image.renderText(
+                    const encoded = await makeImage(
                         ttfFile,
-                        128,
-                        input.previewImage?.text ??
-                            "中文网字计划\nThe Project For Web"
-                    );
-                    const encoded = await Font.encode(
-                        input.previewImage.compressLevel ?? 9,
-                        {
-                            creationTime: Date.now(),
-                            software: "cn-font-split",
-                            author: "江夏尧",
-                            description: "cn-font-split 切割字体预览图",
-                        }
+                        input.previewImage?.text,
+                        input.previewImage.compressLevel
                     );
                     await outputFile(
                         path.join(input.destFold, "preview" + ".png"),

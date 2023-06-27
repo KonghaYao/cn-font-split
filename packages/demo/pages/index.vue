@@ -20,7 +20,7 @@ const onclick = async () => {
     FontPath: "/SmileySans-Oblique.ttf", // 注意使用绝对路径
     targetType: "woff2",
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
-    // previewImage: {},
+    previewImage: {},
     threads: {},
     // log(...args){},
     outputFile(path, file) {},
