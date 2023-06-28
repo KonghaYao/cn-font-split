@@ -3,16 +3,16 @@ import { isDeno, isNode } from "../utils/env";
 const loadImageScript = async (): Promise<any> => {
     if (isNode) {
         /** @ts-ignore */
-        return import("@chinese-fonts/imagescript/dist/ImageScript.font.js");
+        return import("@chinese-fonts/imagescript/dist/index.font.js");
     } else if (isDeno) {
         /** @ts-ignore */
         return import(
             /** @ts-ignore */
-            "@chinese-fonts/imagescript/dist/ImageScript.font.js"
+            "@chinese-fonts/imagescript/dist/index.font.js"
         );
     } else {
         /** @ts-ignore */
-        return import("@chinese-fonts/imagescript/dist/ImageScript.font.js");
+        return import("@chinese-fonts/imagescript/dist/index.font.js");
         /** @ts-ignore */
         // return globalThis.ImageScript;
     }
@@ -22,8 +22,8 @@ export const makeImage = async (
     text = "中文网字计划\nThe Project For Web",
     level = 9
 ) => {
-    const { renderText } = await loadImageScript();
-    const Font = await renderText(ttfFile, 128, text);
+    const { Image } = await loadImageScript();
+    const Font = await Image.renderText(ttfFile, 128, text);
     return Font.encode(level, {
         creationTime: Date.now(),
         software: "cn-font-split",
