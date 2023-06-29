@@ -1,6 +1,6 @@
 import { isDeno, isNode } from "../utils/env";
 
-const loadImageScript = async (): Promise<any> => {
+const loadImageScript = async (): Promise<typeof import('@chinese-fonts/imagescript')> => {
     if (isNode) {
         /** @ts-ignore */
         return import("@chinese-fonts/imagescript/dist/index.font.js");
@@ -23,11 +23,6 @@ export const makeImage = async (
     level = 9
 ) => {
     const { Image } = await loadImageScript();
-    const Font = await Image.renderText(ttfFile, 128, text);
-    return Font.encode(level, {
-        creationTime: Date.now(),
-        software: "cn-font-split",
-        author: "江夏尧",
-        description: "cn-font-split 切割字体预览图",
-    });
+    const Font = Image.renderText(ttfFile, 128, text);
+    return Font.encode(level);
 };
