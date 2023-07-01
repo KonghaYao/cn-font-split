@@ -1,4 +1,4 @@
-import { fontSplit, Assets } from "@konghayao/cn-font-split/dist/browser/index";
+import { fontSplit, Assets } from "https://localhost:8000/dist/browser/index";
 import { expose } from "comlink";
 // const root = "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.1.0";
 // Assets.redefine({
