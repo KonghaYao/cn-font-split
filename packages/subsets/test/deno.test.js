@@ -13,7 +13,7 @@ Assets.redefine({
 console.log(Assets);
 fontSplit({
     destFold: "./temp",
-    FontPath: "../../fonts/SmileySans-Oblique.ttf",
+    FontPath: "../demo/public/SmileySans-Oblique.ttf",
     targetType: "woff2",
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},

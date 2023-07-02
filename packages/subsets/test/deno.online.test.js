@@ -4,10 +4,10 @@ import {
     fontSplit,
     Assets,
     DenoAdapter,
-} from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.2.0/dist/browser/index.js";
+} from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.2/dist/browser/index.js";
 
 await DenoAdapter();
-const root = "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.2.0";
+const root = "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.2";
 Assets.redefine({
     "hb-subset.wasm": root + "/dist/browser/hb-subset.wasm",
     "cn_char_rank.dat": root + "/dist/browser/cn_char_rank.dat",
@@ -17,7 +17,7 @@ Assets.redefine({
 console.log(Assets);
 fontSplit({
     destFold: "./temp",
-    FontPath: "../../fonts/SmileySans-Oblique.ttf",
+    FontPath: "../demo/public/SmileySans-Oblique.ttf",
     targetType: "woff2",
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     // previewImage: {},
