@@ -1,6 +1,7 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2023 / 6 / 20 | 江夏尧 | Version 4.3.0 |
+| 更新时间： 2023 / 6 / 20 | 江夏尧 | `LTS` 4.3.3 |
+| ------------------------ | ------ | ----------- |
 
 ## 简介
 
@@ -22,7 +23,7 @@
 
 > 里面的字体都是可以免费商用的，我对其进行了切割并且放置在了 [Github](https://github.com/KonghaYao/chinese-free-web-font-storage) 和 [Gitee](https://gitee.com/dongzhongzhidong/chinese-free-web-font-storage) 上，如果需要可以直接获取文件。
 
-![中文网字计划](./assets/chinese-fonts.png)
+![中文网字计划](/assets/chinese-fonts.png)
 
 ## 快速使用
 
@@ -70,15 +71,15 @@ fontSplit({
 ### 打包分析报告成果
 
 1. 汉字囊括分析
-   ![](./assets/HanCheck.png)
+   ![](/assets/HanCheck.png)
 2. 打包切片密集度分析
-   ![](./assets/PackageSize.png)
+   ![](/assets/PackageSize.png)
 3. 打包时间分析
-   ![](./assets/Time.png)
+   ![](/assets/Time.png)
 4. 字体头部信息展示
-   ![](./assets/Package_header.png)
+   ![](/assets/Package_header.png)
 5. 全字体展示
-   ![](./assets/Slices.png)
+   ![](/assets/Slices.png)
 
 ## 提高你的字体加载速度
 
@@ -104,6 +105,25 @@ fontSplit({
     1. 例如：使用一个只有大致 6373 字符的字体，但是采用 Noto-Serif-SC 分包策略，那么部分包内会有缺失字体的现象，这是正常的。
     2. 这个特性，插件将不会进行干涉。
     3. 建议较全的字体包可以使用 Google 字体的中文分包方式，而小字体包使用自动分包策略就好了。
+
+## 兼容性提醒
+
+### Nodejs ✅^18.0.0
+
+1. 需要支持 esm、fetch、worker_threads 等高级特性，如果不支持部分特性，可以找找社区的 polyfill 插件。
+
+### Deno ✅1.30.0 ❌^1.30.0
+
+1. 1.30.0 为推荐版本，后续版本中使用了本地 npm 路径导入，导致性能衰弱。
+2. 在 1.30.0 版本之后的一些特性导致了多线程失败。
+3. 性能上 Deno 比 Nodejs 要好一些，但是 Deno 正在开发中，故暂时观望一整子
+
+### Browser
+
+1. 支持 module worker（多线程必须）
+2. 支持 WebAssembly 相关功能
+3. 不对项目成品文件再次打包（会导致奇奇怪怪的依赖问题）
+4. 可以使用 CDN 导入 /dist/browser/index.js 文件，这个是支持的。
 
 ### 感谢
 

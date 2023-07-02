@@ -8,10 +8,11 @@ try {
             return;
         },
     };
-} catch (e) {}
+} catch (e) { }
 
 try {
     const { mockXHR } = await import("./XHR/mockXHR");
+
     const { fileURLToPath } = await import(
         "https://deno.land/std@0.170.0/node/url.ts"
     );
@@ -41,4 +42,4 @@ try {
         },
         silent: true,
     });
-} catch (e) {}
+} catch (e) { }

@@ -13,7 +13,8 @@
 <script setup lang="ts">
 const onclick = async () => {
   const { fontSplit } = await import(
-    "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.2/dist/browser/index.js"
+    "http://localhost:8000/dist/browser/index.js"
+    // "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.2/dist/browser/index.js"
   );
   console.log("开始");
   fontSplit({

@@ -1,5 +1,5 @@
 import { IOutputFile, Subset } from "../interface";
-import md5 from "md5";
+import md5 from "../utils/md5";
 import { subsetToUnicodeRange } from "../utils/subsetToUnicodeRange";
 
 export async function createRecord(

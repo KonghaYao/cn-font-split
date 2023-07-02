@@ -3,15 +3,6 @@
     "private": true,
     "version": "3.4.2",
     "description": "中文 web font 切割工具",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "scripts": {
-        "build": "rollup -c ",
-        "dev": "rollup -c -w",
-        "prepublish": "tsc && pnpm build",
-        "test": "node ./test/test.js ",
-        "live": "live-server ./build"
-    },
     "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
@@ -21,19 +12,18 @@
     },
     "devDependencies": {
         "@babel/core": "^7.22.1",
+        "rollup": "2.79.0",
         "@babel/preset-typescript": "^7.21.5",
         "@rollup/plugin-babel": "^6.0.3",
         "@rollup/plugin-json": "^6.0.0",
         "@rollup/plugin-node-resolve": "^15.1.0",
         "@types/fs-extra": "^9.0.13",
-        "rollup": "^3.24.0",
         "@forsee/rollup-plugin-conditional": "^1.0.2",
         "@rollup/plugin-alias": "^5.0.0",
         "@rollup/plugin-commonjs": "^25.0.1",
         "@rollup/plugin-replace": "^5.0.2",
         "@rollup/plugin-terser": "^0.4.3",
         "@surma/rollup-plugin-off-main-thread": "^2.2.3",
-        "rollup-plugin-analyzer": "^4.0.0",
-        "zod": "^3.21.4"
+        "rollup-plugin-analyzer": "^4.0.0"
     }
 }

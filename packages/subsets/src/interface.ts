@@ -27,6 +27,10 @@ import { ISettingsParam } from "tslog";
 export type InputTemplate = {
     threads?: {
         service?: ConvertManager;
+        /** 多线程文本图片生成 */
+        image?: boolean
+        /** 多线程切割 */
+        split?: boolean
     };
 
     /** 字体文件的相对地址，或者直接输入 buffer */

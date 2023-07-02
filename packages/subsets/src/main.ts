@@ -18,6 +18,7 @@ import { Assets } from "./adapter/assets";
 import { env } from "./utils/env";
 import { ConvertManager } from "./convert/convert.manager";
 import { makeImage } from "./imagescript/index";
+import { Parallel } from "./pipeline/parallel";
 // import { SubsetService } from "./subsetService";
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -48,21 +49,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set("ttfFile", ttfFile);
                 ctx.free("originFile");
             },
-            /** 创建包含字体展示的图片文件 */
-            async function createImage(ctx) {
-                const { ttfFile, input } = ctx.pick("ttfFile", "input");
-                if (input.previewImage) {
-                    const encoded = await makeImage(
-                        ttfFile,
-                        input.previewImage?.text,
-                        input.previewImage.compressLevel
-                    );
-                    await outputFile(
-                        path.join(input.destFold, "preview" + ".png"),
-                        encoded
-                    );
-                }
-            },
+
 
             /** 加载 Harfbuzz 字体操作库 */
             async function loadHarbuzz(ctx) {
@@ -80,8 +67,26 @@ export const fontSplit = async (opt: InputTemplate) => {
                 if (opt.threads) {
                     opt.threads.service = new ConvertManager();
                 }
-                ctx.free("ttfFile");
+
             },
+            new Parallel<ReturnType<typeof createContext>>(
+                'outputCSS', /** 创建包含字体展示的图片文件 */
+                async function createImage(ctx) {
+                    const { ttfFile, input } = ctx.pick("ttfFile", "input");
+                    if (input.previewImage) {
+                        const encoded = await makeImage(
+                            ttfFile,
+                            input.previewImage?.text,
+                            input.previewImage.compressLevel,
+                            input.threads && input.threads?.image !== false
+                        );
+                        await outputFile(
+                            path.join(input.destFold, "preview" + ".png"),
+                            encoded
+                        );
+                    }
+                    ctx.free("ttfFile");
+                }),
             /** 获取字体的基础信息，如字体族类，license等 */
             async function getBasicMessage(ctx) {
                 const { face } = ctx.pick("face");

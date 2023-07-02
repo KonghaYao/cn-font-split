@@ -6,6 +6,7 @@ declare module "https://*" {
     const a: any;
     export const ensureDir: any;
     export const fileURLToPath: any;
+    export const Md5: any
     export default a;
 }
 declare module "omt:*" {

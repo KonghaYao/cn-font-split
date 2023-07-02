@@ -3,7 +3,7 @@ import { timeRecordFormat } from "./utils/timeCount";
 import { IOutputFile, SubsetResult, Subsets } from "./interface";
 import { convert } from "./convert/font-converter";
 import { FontType } from "./detectFormat";
-import md5 from "md5";
+import md5 from "./utils/md5";
 import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";
 import { IContext } from "./fontSplit/context";
@@ -37,10 +37,10 @@ export const subsetAll = async (
         const middle = performance.now();
         if (buffer) {
             const service = input.threads?.service;
-            const transferred = service
+            const transferred: Uint8Array = service
                 ? await service.pool.exec("convert", [buffer, targetType], {
-                      transfer: [buffer.buffer],
-                  })
+                    transfer: [buffer.buffer],
+                })
                 : await convert(buffer, targetType);
             const end = performance.now();
             ctx.trace(
