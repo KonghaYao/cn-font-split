@@ -11,19 +11,20 @@
   </div>
 </template>
 <script setup lang="ts">
-import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index";
 const onclick = async () => {
+  const { fontSplit } = await import(
+    "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.2/dist/browser/index.js"
+  );
   console.log("开始");
-
   fontSplit({
     destFold: "./temp",
-    FontPath: "/SmileySans-Oblique.ttf", // 注意使用绝对路径
+    FontPath: new URL("/SmileySans-Oblique.ttf", location.href).toString(), // 注意使用绝对路径
     targetType: "woff2",
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},
     threads: {},
     // log(...args){},
-    outputFile(path, file) {},
+    async outputFile(path, file) {},
   });
 };
 </script>

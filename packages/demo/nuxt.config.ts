@@ -9,7 +9,11 @@ export default defineNuxtConfig({
         "nuxt-vitest",
     ],
     vite: {
+        optimizeDeps: {
+            exclude: ['@konghayao/cn-font-split']
+        },
         plugins: [
+
             topLevelAwait({
                 // The export name of top-level await promise for each chunk module
                 promiseExportName: "__tla",
