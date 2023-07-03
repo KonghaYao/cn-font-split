@@ -17,7 +17,8 @@ interface Deno {
     ): Promise<void>;
 }
 declare global {
-    const Deno: Deno;
+
+    var Deno: Deno; // eslint-disable-line no-var
 }
 interface FsFile {
     readonly rid: number;

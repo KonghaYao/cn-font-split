@@ -1,7 +1,6 @@
 import { FontType } from "./detectFormat";
 import { WriteFileOptions } from "fs-extra";
 import type { Buffer } from "buffer";
-// import { SubsetService } from "./subsetService";
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     hash: string;

@@ -12,7 +12,7 @@ await DenoAdapter();
 
 worker({
     async makeImage(ttfFile, text, level) {
-        console.log('多线程模式')
+        // console.log('多线程模式')
         const res = await mk(ttfFile, text, level)
 
         return new Transfer(res, [res.buffer])
