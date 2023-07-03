@@ -20,7 +20,7 @@ const properties = [
 export function defineGetAndSet(XHR: XMLHttpRequest) {
     // 将这些 键值对 映射到 $data 属性对象的对应值上去
     const auto = properties.reduce((col, cur) => {
-        /** @ts-ignore */
+
         col[cur] = {
             get() {
                 return this.$data[cur];
@@ -30,7 +30,7 @@ export function defineGetAndSet(XHR: XMLHttpRequest) {
             },
         };
         return col;
-    }, {});
+    }, {} as any);
     Object.defineProperties(XHR, auto);
 
     Object.assign(XHR, {

@@ -6,7 +6,7 @@
  * http://www.microsoft.com/typography/otspec/WGL4.htm
  */
 
-export const postName = {
+export const postName: Record<number, string> = {
     0: ".notdef",
     1: ".null",
     2: "nonmarkingreturn",

@@ -2,7 +2,9 @@ import { convert } from "./font-converter";
 import { FontType } from "../detectFormat";
 import { worker, Transfer } from "workerpool";
 // 欺骗 环境，认为是 classic worker
-!globalThis.importScripts && (globalThis.importScripts = () => { });
+!globalThis.importScripts && (globalThis.importScripts = (...args: string[]) => {
+    console.warn('触发 importScripts 的伪装，可能导致 bug，', args)
+});
 
 
 //ifdef browser

@@ -6,7 +6,7 @@
  * http://www.microsoft.com/typography/otspec/WGL4.htm
  */
 
-export const unicodeName = {
+export const unicodeName: Record<number, number> = {
     0: 1,
     1: 1,
     2: 1,

@@ -37,9 +37,9 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
                 })
                 .sort((a, b) => a[0] - b[0])
                 .map((i) => i[1]);
-            log!(
-                /** @ts-ignore */
-                this._prettyFormatLogObjMeta(obj._meta),
+            log(
+                // 因为这里被标记为了 private，但是可以访问到，所以需要防止 ts 报错
+                (this as any)._prettyFormatLogObjMeta(obj._meta),
                 ...params
             );
         });
@@ -75,11 +75,10 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
         // 遍历所有要选取的属性
         keys.forEach((key) => {
             if (key in this._originData) {
-                pickedObj[key] = this._originData[key]!;
+                pickedObj[key] = this._originData[key] as T[K];
             } else {
                 console.warn(
-                    `[Warning] Context: ${
-                        key as string
+                    `[Warning] Context: ${key as string
                     } isn't found in context, It could cause Error`
                 );
             }

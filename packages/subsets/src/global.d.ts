@@ -1,4 +1,4 @@
-export {};
+export { };
 
 interface Deno {
     // 这里添加 Deno 的 API 定义
@@ -17,7 +17,7 @@ interface Deno {
     ): Promise<void>;
 }
 declare global {
-    var Deno: Deno;
+    const Deno: Deno;
 }
 interface FsFile {
     readonly rid: number;

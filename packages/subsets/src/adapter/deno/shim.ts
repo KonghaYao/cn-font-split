@@ -1,9 +1,7 @@
 import "https://deno.land/x/xhr@0.3.0/mod.ts";
 try {
-    /** @ts-ignore */
-    globalThis.location = {
+    (globalThis as any).location = {
         origin: "/",
-        /** @ts-ignore */
         toString() {
             return;
         },
@@ -31,7 +29,8 @@ try {
                     const item = cache.has(path)
                         ? cache.get(path)
                         : await Deno.readFile(path);
-                    cache.set(path, item!);
+                    if (!item) throw new Error("mockXHR 获取数据失败 " + url)
+                    cache.set(path, item);
                     // console.log(path, item);
                     // console.log(item);
                     return new Response(item, {

@@ -13,7 +13,9 @@ declare module "omt:*" {
     const a: string;
     export default a;
 }
-
+declare module "https://deno.land/std@0.170.0/node/url.ts" {
+    export * from 'node:url'
+}
 declare module "comlink/dist/esm/node-adapter.mjs" {
     import { Endpoint } from "comlink/dist/esm/protocol";
     export interface NodeEndpoint {

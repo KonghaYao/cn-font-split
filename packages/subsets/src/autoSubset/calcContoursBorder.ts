@@ -13,22 +13,23 @@ export async function calcContoursBorder(
 ) {
     const sample = face.collectUnicodes();
     const space = Math.floor(sample.length / 300);
-    let sampleUnicode: number[] = [];
+    const sampleUnicode: number[] = [];
     for (let index = 0; index < sample.length; index += space) {
         const element = sample[index];
         sampleUnicode.push(element);
     }
     // console.log(sampleUnicode.length);
-    const [buffer, arr] = await subsetFont(face, sampleUnicode, hb, {
+    const [buffer, arr] = subsetFont(face, sampleUnicode, hb, {
         threads: false,
     });
+    if (!buffer) throw new Error('尝试测试分包比率时，分包失败')
     const transferred = await convert(
-        new Uint8Array(buffer!.buffer),
+        new Uint8Array(buffer.buffer),
         targetType
     );
 
     const totalContours: number = arr.reduce((col, cur) => {
-        return col + (contoursMap.get(cur) ?? contoursMap.get(0)!);
+        return col + (contoursMap.get(cur) ?? contoursMap.get(0) as number);
     }, 0);
     const ContoursPerByte = totalContours / transferred.byteLength;
     return maxSize * ContoursPerByte;

@@ -33,8 +33,8 @@ export const decodeNameTableFromUint8Array = (nameTable: Uint8Array) => {
     let offset = 0;
     reader.seek(offset);
 
-    /**@ts-ignore */
-    const nameTbl: { format: number; count: number; stringOffset: number } = {};
+
+    const nameTbl: Partial<{ format: number; count: number; stringOffset: number }> = {};
     // 顺序不可变
     nameTbl.format = reader.read("Uint16");
     nameTbl.count = reader.read("Uint16");
@@ -99,8 +99,8 @@ export const decodeNameTableFromUint8Array = (nameTable: Uint8Array) => {
 
                 names[key] =
                     language === 0
-                        ? getUTF8String(nameRecord.name!)
-                        : getUCS2String(nameRecord.name!);
+                        ? getUTF8String(nameRecord.name)
+                        : getUCS2String(nameRecord.name);
             } else {
                 console.warn(
                     "name table decode: found an unknown key in your font file, key",

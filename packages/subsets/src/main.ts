@@ -53,10 +53,11 @@ export const fontSplit = async (opt: InputTemplate) => {
 
             /** 加载 Harfbuzz 字体操作库 */
             async function loadHarbuzz(ctx) {
-                const { input, ttfFile } = ctx.pick("input", "ttfFile");
+                const { ttfFile } = ctx.pick("input", "ttfFile");
 
-                let wasm = await loadHarbuzzAdapter();
-                const hb = hbjs(wasm!.instance);
+                const wasm = await loadHarbuzzAdapter();
+                if (!wasm) throw new Error("启动 harfbuzz 失败")
+                const hb = hbjs(wasm.instance);
                 const blob = hb.createBlob(ttfFile);
 
                 const face = hb.createFace(blob, 0);
@@ -91,7 +92,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             async function getBasicMessage(ctx) {
                 const { face } = ctx.pick("face");
                 const buffer = face.reference_table("name");
-                const nameTable = decodeNameTableFromUint8Array(buffer!);
+                const nameTable = decodeNameTableFromUint8Array(buffer);
                 console.table(nameTable);
                 ctx.set("nameTable", nameTable);
             },

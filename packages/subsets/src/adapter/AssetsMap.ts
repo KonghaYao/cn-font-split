@@ -12,7 +12,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     }
     ensureGet(token: K | string) {
         if (this.has(token as K)) {
-            return this.get(token as K)!;
+            return this.get(token as K) as string;
         } else {
             return token;
         }

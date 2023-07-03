@@ -1,9 +1,8 @@
-import { BufferFlag, HB } from "../hb";
+import { HB } from "../hb";
 import {
     IOutputFile,
     InputTemplate,
     SubsetResult,
-    Subsets,
 } from "../interface";
 import { convert } from "../convert/font-converter";
 import type { FontType } from "../detectFormat";
@@ -28,7 +27,7 @@ export const autoSubset = async (
     const { input } = ctx.pick("input");
     const ext = getExtensionsByFontType(targetType);
     const subsetMessage: SubsetResult = [];
-    let sample = subsetUnicode;
+    const sample = subsetUnicode;
 
     const contoursMap = await createContoursMap();
 
@@ -46,7 +45,8 @@ export const autoSubset = async (
     let cache: number[] = [];
     const totalChunk: number[][] = [];
     for (const unicode of sample) {
-        count += contoursMap.get(unicode) ?? contoursMap.get(0)!;
+        // contoursMap 0 是平均值
+        count += contoursMap.get(unicode) ?? contoursMap.get(0) as number;
         cache.push(unicode);
         if (count >= contoursBorder) {
             totalChunk.push(cache);
@@ -114,9 +114,9 @@ async function runSubSet(
     const service = input.threads?.service;
     const transferred = service
         ? await service.pool.exec("convert", [buffer, targetType], {
-              transfer: [buffer.buffer],
-          })
-        : await convert(buffer!, targetType);
+            transfer: [buffer.buffer],
+        })
+        : await convert(buffer, targetType);
     const end = performance.now();
 
     const outputMessage = await createRecord(

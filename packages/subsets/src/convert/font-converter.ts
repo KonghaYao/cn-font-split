@@ -11,7 +11,7 @@ export const convert = async function (
     if (snft.includes(toFormat)) {
         toFormat = "sfnt";
     }
-    if (snft.includes(fromFormat!)) {
+    if (snft.includes(fromFormat || "")) {
         fromFormat = "sfnt";
     }
     if (!supportedFormats.has(toFormat)) {

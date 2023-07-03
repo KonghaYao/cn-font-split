@@ -27,7 +27,7 @@ export class Executor<
      *  index of this.order => running;
      *  more => done;
      */
-    protected ptr: number = -1;
+    protected ptr = -1;
     setPtr(newPtr: number) {
         if (newPtr <= this.steps.length && newPtr >= 0) {
             this.ptr = newPtr;
@@ -87,7 +87,7 @@ export class Executor<
     ) {
         if (!this.steps)
             throw new Error("run: Please defineOrder for the tasks");
-        let max = this.steps.length * maxStepsOver;
+        const max = this.steps.length * maxStepsOver;
         let count = 0;
         let keep = true;
         while (keep) {

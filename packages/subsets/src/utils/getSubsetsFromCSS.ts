@@ -2,8 +2,12 @@ import { Subsets } from "src/interface";
 
 /** 从 CSS 文件中获取字体 subsets 类型的数据 */
 export const getSubsetsFromCSS = (css: string): Subsets => {
-    return css.match(/@font-face[\s\S]+?\}/g)!.map((face) => {
-        const range = face.match(/unicode-range:(.*(?:[,;]))+/)![1];
+    const list = css.match(/@font-face[\s\S]+?\}/g)
+    if (!list) return []
+    return list.map((face) => {
+        const unicodeList = face.match(/unicode-range:(.*(?:[,;]))+/)
+        if (!unicodeList) return []
+        const range = unicodeList[1];
         return range
             .split(/[,;]/)
             .map((i) => i.trim())

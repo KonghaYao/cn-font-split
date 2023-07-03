@@ -66,10 +66,8 @@ export function getString(bytes: Uint8Array): string {
  * @return {string} 名字
  */
 export function getUnicodeName(unicode: number): string {
-    /** @ts-ignore */
     const unicodeNameIndex = unicodeName[unicode];
     if (undefined !== unicodeNameIndex) {
-        /** @ts-ignore */
         return postName[unicodeNameIndex];
     }
 
@@ -88,7 +86,7 @@ export function toUTF8Bytes(str: string): Array<number> {
         if (str.charCodeAt(i) <= 0x7f) {
             byteArray.push(str.charCodeAt(i));
         } else {
-            const codePoint = str.codePointAt(i)!;
+            const codePoint = str.codePointAt(i) as number;
             if (codePoint > 0xffff) {
                 i++;
             }

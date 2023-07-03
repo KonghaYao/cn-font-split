@@ -6,7 +6,7 @@ let OutputMd5: MD5Function
 import crypto from "crypto";
 OutputMd5 = (b: Uint8Array) => {
     const buffer = Buffer.from(b)
-    let sf = crypto.createHash("md5");
+    const sf = crypto.createHash("md5");
     sf.update(buffer);
     return sf.digest("hex");
 }
@@ -25,4 +25,4 @@ if (isDeno) {
 //endif
 
 // 留下一段话，防止跨平台打包的一个 BUG
-export default OutputMd5!;
+export default OutputMd5;

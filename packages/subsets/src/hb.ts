@@ -39,7 +39,7 @@ function _buffer_flag(s: BufferFlag) {
     return flagMap[s] || 0x0;
 }
 
-export namespace HB {
+export declare namespace HB {
     export type Handle = ReturnType<typeof hbjs>;
     export type Face = ReturnType<ReturnType<typeof hbjs>["createFace"]>;
     export type Blob = ReturnType<ReturnType<typeof hbjs>["createBlob"]>;
@@ -71,9 +71,9 @@ export function hbjs(instance: any) {
         /** A blob of binary data (usually the contents of a font file). */
         blob: Uint8Array
     ) {
-        let blobPtr = exports.malloc(blob.byteLength);
+        const blobPtr = exports.malloc(blob.byteLength);
         heapu8.set(blob, blobPtr);
-        let ptr = exports.hb_blob_create(
+        const ptr = exports.hb_blob_create(
             blobPtr,
             blob.byteLength,
             HB_MEMORY_MODE_WRITABLE,
@@ -147,9 +147,9 @@ export function hbjs(instance: any) {
      * Return unicodes the face supports
      */
     function collectUnicodes(ptr?: number) {
-        let unicodeSetPtr = exports.hb_set_create();
+        const unicodeSetPtr = exports.hb_set_create();
         exports.hb_face_collect_unicodes(ptr, unicodeSetPtr);
-        let result = typedArrayFromSet(unicodeSetPtr, Uint32Array);
+        const result = typedArrayFromSet(unicodeSetPtr, Uint32Array);
         exports.hb_set_destroy(unicodeSetPtr);
         return result;
     }
@@ -170,13 +170,13 @@ export function hbjs(instance: any) {
              * @param {string} table Table name
              */
             reference_table(table: string) {
-                let blob = exports.hb_face_reference_table(ptr, hb_tag(table));
-                let length = exports.hb_blob_get_length(blob);
+                const blob = exports.hb_face_reference_table(ptr, hb_tag(table));
+                const length = exports.hb_blob_get_length(blob);
                 if (!length) {
-                    return;
+                    throw new Error(' 引用字体文件中 table 失败')
                 }
-                let blobptr = exports.hb_blob_get_data(blob, null);
-                let table_string = heapu8.subarray(blobptr, blobptr + length);
+                const blobptr = exports.hb_blob_get_data(blob, null);
+                const table_string = heapu8.subarray(blobptr, blobptr + length);
                 return table_string;
             },
             collectUnicodes() {
@@ -186,11 +186,11 @@ export function hbjs(instance: any) {
              * Return letiation axis infos
              */
             getAxisInfos() {
-                let axis = exports.malloc(64 * 32);
-                let c = exports.malloc(4);
+                const axis = exports.malloc(64 * 32);
+                const c = exports.malloc(4);
                 heapu32[c / 4] = 64;
                 exports.hb_ot_let_get_axis_infos(ptr, 0, c, axis);
-                let result: Record<
+                const result: Record<
                     string,
                     { min: number; max: number; default: number }
                 > = {};
@@ -218,25 +218,25 @@ export function hbjs(instance: any) {
         };
     }
 
-    let pathBufferSize = 65536; // should be enough for most glyphs
-    let pathBuffer = exports.malloc(pathBufferSize); // permanently allocated
+    const pathBufferSize = 65536; // should be enough for most glyphs
+    const pathBuffer = exports.malloc(pathBufferSize); // permanently allocated
 
-    let nameBufferSize = 256; // should be enough for most glyphs
-    let nameBuffer = exports.malloc(nameBufferSize); // permanently allocated
+    const nameBufferSize = 256; // should be enough for most glyphs
+    const nameBuffer = exports.malloc(nameBufferSize); // permanently allocated
 
     /**
      * Create an object representing a Harfbuzz font.
      * @param  face An object returned from `createFace`.
      **/
     function createFont(face: ReturnType<typeof createFace>) {
-        let ptr = exports.hb_font_create(face.ptr);
+        const ptr = exports.hb_font_create(face.ptr);
 
         /**
          * Return a glyph as an SVG path string.
          * @param {number} glyphId ID of the requested glyph in the font.
          **/
         function glyphToPath(glyphId: number) {
-            let svgLength = exports.hbjs_glyph_svg(
+            const svgLength = exports.hbjs_glyph_svg(
                 ptr,
                 glyphId,
                 pathBuffer,
@@ -244,8 +244,8 @@ export function hbjs(instance: any) {
             );
             return svgLength > 0
                 ? utf8Decoder.decode(
-                      heapu8.subarray(pathBuffer, pathBuffer + svgLength)
-                  )
+                    heapu8.subarray(pathBuffer, pathBuffer + svgLength)
+                )
                 : "";
         }
 
@@ -260,7 +260,7 @@ export function hbjs(instance: any) {
                 nameBuffer,
                 nameBufferSize
             );
-            let array = heapu8.subarray(
+            const array = heapu8.subarray(
                 nameBuffer,
                 nameBuffer + nameBufferSize
             );
@@ -277,7 +277,7 @@ export function hbjs(instance: any) {
              * @param {number} glyphId ID of the requested glyph in the font.
              **/
             glyphToJson(glyphId: number) {
-                let path: string = glyphToPath(glyphId);
+                const path: string = glyphToPath(glyphId);
                 return path
                     .replace(/([MLQCZ])/g, "|$1 ")
                     .split("|")
@@ -285,7 +285,7 @@ export function hbjs(instance: any) {
                         return x.length;
                     })
                     .map(function (x) {
-                        let row = x.split(/[ ,]/g);
+                        const row = x.split(/[ ,]/g);
                         return {
                             type: row[0],
                             values: row
@@ -313,8 +313,8 @@ export function hbjs(instance: any) {
              * @param {object} letiations Dictionary of letiations to set
              **/
             setletiations(letiations: Record<string, number>) {
-                let entries = Object.entries<number>(letiations);
-                let lets: number = exports.malloc(8 * entries.length);
+                const entries = Object.entries<number>(letiations);
+                const lets: number = exports.malloc(8 * entries.length);
                 entries.forEach(function (entry, i) {
                     heapu32[lets / 4 + i * 2 + 0] = hb_tag(entry[0]);
                     heapf32[lets / 4 + i * 2 + 1] = entry[1];
@@ -336,7 +336,7 @@ export function hbjs(instance: any) {
      * Faster than encoding to UTF-8
      **/
     function createAsciiString(text: string) {
-        let ptr = exports.malloc(text.length + 1);
+        const ptr = exports.malloc(text.length + 1);
         for (let i = 0; i < text.length; ++i) {
             const char = text.charCodeAt(i);
             if (char > 127) throw new Error("Expected ASCII text");
@@ -369,7 +369,7 @@ export function hbjs(instance: any) {
      * Create an object representing a Harfbuzz buffer.
      **/
     function createBuffer() {
-        let ptr = exports.hb_buffer_create();
+        const ptr = exports.hb_buffer_create();
 
         return {
             ptr: ptr,
@@ -434,7 +434,7 @@ export function hbjs(instance: any) {
              * @param {string} language: The buffer language
              */
             setLanguage(language: string) {
-                let str = createAsciiString(language);
+                const str = createAsciiString(language);
                 exports.hb_buffer_set_language(
                     ptr,
                     exports.hb_language_from_string(str.ptr, -1)
@@ -446,7 +446,7 @@ export function hbjs(instance: any) {
              * @param {string} script: The buffer script
              */
             setScript(script: string) {
-                let str = createAsciiString(script);
+                const str = createAsciiString(script);
                 exports.hb_buffer_set_script(
                     ptr,
                     exports.hb_script_from_string(str.ptr, -1)
@@ -479,8 +479,8 @@ export function hbjs(instance: any) {
              *   - flags: Glyph flags like `HB_GLYPH_FLAG_UNSAFE_TO_BREAK` (0x1)
              **/
             json() {
-                let length = exports.hb_buffer_get_length(ptr);
-                let result: {
+                const length = exports.hb_buffer_get_length(ptr);
+                const result: {
                     g: number;
                     cl: number;
                     ax: number;
@@ -489,15 +489,15 @@ export function hbjs(instance: any) {
                     dy: number;
                     flags: any;
                 }[] = [];
-                let infosPtr = exports.hb_buffer_get_glyph_infos(ptr, 0);
-                let infosPtr32 = infosPtr / 4;
-                let positionsPtr32 =
+                const infosPtr = exports.hb_buffer_get_glyph_infos(ptr, 0);
+                const infosPtr32 = infosPtr / 4;
+                const positionsPtr32 =
                     exports.hb_buffer_get_glyph_positions(ptr, 0) / 4;
-                let infos = heapu32.subarray(
+                const infos = heapu32.subarray(
                     infosPtr32,
                     infosPtr32 + 5 * length
                 );
-                let positions = heapi32.subarray(
+                const positions = heapi32.subarray(
                     positionsPtr32,
                     positionsPtr32 + 5 * length
                 );
@@ -568,10 +568,10 @@ export function hbjs(instance: any) {
         stop_at: number,
         stop_phase: number
     ) {
-        let bufLen = 1024 * 1024;
-        let traceBuffer = exports.malloc(bufLen);
-        let featurestr = createAsciiString(features);
-        let traceLen = exports.hbjs_shape_with_trace(
+        const bufLen = 1024 * 1024;
+        const traceBuffer = exports.malloc(bufLen);
+        const featurestr = createAsciiString(features);
+        const traceLen = exports.hbjs_shape_with_trace(
             font.ptr,
             buffer.ptr,
             featurestr.ptr,
@@ -581,7 +581,7 @@ export function hbjs(instance: any) {
             bufLen
         );
         featurestr.free();
-        let trace = utf8Decoder.decode(
+        const trace = utf8Decoder.decode(
             heapu8.subarray(traceBuffer, traceBuffer + traceLen - 1)
         );
         exports.free(traceBuffer);
@@ -594,7 +594,7 @@ export function hbjs(instance: any) {
         preserveNameIds?: number[],
         variationAxes?: Record<number, number>
     ) {
-        let ptr = exports.hb_subset_input_create_or_fail();
+        const ptr = exports.hb_subset_input_create_or_fail();
         if (ptr === 0) {
             throw new Error(
                 "hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure"

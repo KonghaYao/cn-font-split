@@ -6,24 +6,33 @@
     "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
+    "scripts": {
+        "lint:subsets": "eslint packages/subsets/**/*.ts "
+    },
     "dependencies": {
         "fonteditor-core": "^2.1.11",
         "fs-extra": "^10.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.22.1",
-        "rollup": "2.79.0",
         "@babel/preset-typescript": "^7.21.5",
-        "@rollup/plugin-babel": "^6.0.3",
-        "@rollup/plugin-json": "^6.0.0",
-        "@rollup/plugin-node-resolve": "^15.1.0",
-        "@types/fs-extra": "^9.0.13",
         "@forsee/rollup-plugin-conditional": "^1.0.2",
         "@rollup/plugin-alias": "^5.0.0",
+        "@rollup/plugin-babel": "^6.0.3",
         "@rollup/plugin-commonjs": "^25.0.1",
+        "@rollup/plugin-json": "^6.0.0",
+        "@rollup/plugin-node-resolve": "^15.1.0",
         "@rollup/plugin-replace": "^5.0.2",
         "@rollup/plugin-terser": "^0.4.3",
         "@surma/rollup-plugin-off-main-thread": "^2.2.3",
-        "rollup-plugin-analyzer": "^4.0.0"
+        "@types/fs-extra": "^9.0.13",
+        "eslint": "8.44.0",
+        "prettier": "2.8.8",
+        "rollup": "2.79.0",
+        "rollup-plugin-analyzer": "^4.0.0",
+        "eslint-config-prettier": "8.8.0",
+        "eslint-plugin-import": "2.27.5",
+        "@typescript-eslint/eslint-plugin": "5.60.1",
+        "@typescript-eslint/parser": "5.60.1"
     }
 }

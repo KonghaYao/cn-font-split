@@ -182,7 +182,6 @@ export class Reader {
      * 注销
      */
     dispose() {
-        /** @ts-ignore */
-        delete this.view;
+        this.view = new DataView(new ArrayBuffer(0))
     }
 }
