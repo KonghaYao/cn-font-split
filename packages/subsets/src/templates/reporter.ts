@@ -13,8 +13,10 @@ export const createReporter = (
             chars: i.unicodeRange,
         };
     });
+
     return JSON.stringify({
-        config: input,
+        // 修复 FontPath 输入二进制数据后导致的膨胀
+        config: { ...input, fontPath: typeof input.FontPath !== "string" ? 'it is a binary input' : input.FontPath },
         message: fontData,
         data,
         record,
