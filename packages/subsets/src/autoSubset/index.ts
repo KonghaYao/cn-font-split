@@ -5,7 +5,7 @@ import {
     SubsetResult,
 } from "../interface";
 import { convert } from "../convert/font-converter";
-import type { FontType } from "../detectFormat";
+import type { FontType } from "../utils/detectFormat";
 import { IContext } from "../fontSplit/context";
 import { getExtensionsByFontType } from "../utils/getExtensionsByFontType";
 import { subsetFont } from "../subsetService/subsetFont";

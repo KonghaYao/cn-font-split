@@ -2,7 +2,7 @@ import { HB } from "./hb";
 import { timeRecordFormat } from "./utils/timeCount";
 import { IOutputFile, SubsetResult, Subsets } from "./interface";
 import { convert } from "./convert/font-converter";
-import { FontType } from "./detectFormat";
+import { FontType } from "./utils/detectFormat";
 import md5 from "./utils/md5";
 import byteSize from "byte-size";
 import { subsetToUnicodeRange } from "./utils/subsetToUnicodeRange";

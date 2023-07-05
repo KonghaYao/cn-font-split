@@ -1,4 +1,4 @@
-import type { FontType } from "../detectFormat";
+import type { FontType } from "./detectFormat";
 
 export const Extensions = {
     otf: "otf",

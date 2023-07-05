@@ -1,4 +1,4 @@
-import { FontType } from "./detectFormat";
+import { FontType } from "./utils/detectFormat";
 import { WriteFileOptions } from "fs-extra";
 import type { Buffer } from "buffer";
 /** subset 切割完毕后的数据格式 */
