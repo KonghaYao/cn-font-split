@@ -59,7 +59,7 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
                 url:
                     url instanceof URL
                         ? url
-                        : new URL(url, globalThis.location.origin),
+                        : new URL(url, globalThis.location?.origin),
                 headers: toHeaders(headers),
                 method,
                 body,
