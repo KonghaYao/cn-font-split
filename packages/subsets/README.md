@@ -134,7 +134,7 @@ fontSplit({
 ### 感谢
 
 1. 项目核心插件为 Harfbuzz 项目，源项目使用 C 与 C++ 构建了一个字体布局工具，然后提供了 WASM 的打包方法。项目重新构建并提供了 Typescript 版本的 API 封装，使得代码可以更好地融入生态中。
-2. 项目中的 name table 读取插件修改了 fonteditor-fore 的源代码，神奇地完成了大量解析工作，真是太棒了。
+2. 项目中的 name table 读取插件修改了 fonteditor-core 的源代码，神奇地完成了大量解析工作，真是太棒了。
 3. wawoff2 项目将 Google 的 woff2 格式转换功能代码编译成为了 wasm，为我们的字体压缩提供了非常简便的 API。但是 wawoff2 项目的导出方式为 js 嵌入 wasm，极大影响了 js 打包和使用，故项目也重新构建并发布出适合的版本。
 4. 多线程采用了 workerpool 的解决方案，但是 workerpool 不支持 module worker，我就在 rollup 的时候加上了这个功能。
 

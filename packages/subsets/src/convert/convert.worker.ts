@@ -1,5 +1,5 @@
 import { convert } from "./font-converter";
-import { FontType } from "../detectFormat";
+import type { FontType } from "../utils/detectFormat";
 import { worker, Transfer } from "workerpool";
 // 欺骗 环境，认为是 classic worker
 !globalThis.importScripts && (globalThis.importScripts = (...args: string[]) => {
