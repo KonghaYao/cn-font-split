@@ -41,7 +41,8 @@ export const createCSS = (
 ) => {
     const css = opts.css || {};
     const family =
-        fontData.preferredFamily || fontData.fontFamily || css.fontFamily;
+        // fontData.preferredFamily  不使用这个，因为这个容易引起歧义
+        fontData.fontFamily || css.fontFamily;
 
     const preferredSubFamily =
         fontData.preferredSubFamily || fontData.fontSubFamily;
