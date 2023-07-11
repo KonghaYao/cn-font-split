@@ -158,8 +158,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@konghayao/harfbuzzjs':
-        specifier: ^0.3.6
-        version: 0.3.6
+        specifier: ^1.0.0
+        version: 1.0.0
       byte-size:
         specifier: ^8.1.1
         version: 8.1.1
@@ -942,8 +942,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@konghayao/harfbuzzjs@0.3.6:
-    resolution: {integrity: sha512-lBOG2RK02wQI2+twpJi7z1WFO/I2wWC4jwjiQNc+aYsMsT4nacllrLOBjze2HJmlN4/hT950YTdG1nmmIS4X+Q==}
+  /@konghayao/harfbuzzjs@1.0.0:
+    resolution: {integrity: sha512-2OJHEMzosQil3HvLdWYhPctlnu/O46tSSwCDg3Byasf+/E0pcN6Rtx421j8+cfhGv85O0ttTQMIsmxY1V6mKlA==}
     dev: false
 
   /@mapbox/node-pre-gyp@1.0.10:

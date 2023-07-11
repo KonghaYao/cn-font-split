@@ -1,6 +1,6 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2023 / 7 / 6 | 江夏尧 | `LTS` 4.3.5 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
+| 更新时间： 2023 / 7 / 6 | 江夏尧 | `LTS` 4.3.6 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
 | ----------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- |
 
 ## 简介
@@ -45,7 +45,7 @@ npm install @konghayao/cn-font-split
 ```js
 import { fontSplit } from '@konghayao/cn-font-split';
 // import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index.js";
-// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.5/dist/browser/index.js";
+// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.6/dist/browser/index.js";
 
 fontSplit({
     FontPath: './fonts/SourceHanSerifCN-Bold.ttf', // 部分 otf 文件会报错，最好使用 ttf 版本的字体

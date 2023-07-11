@@ -2,13 +2,13 @@ import { HB } from "../hb";
 
 import { Subset } from "src/interface";
 export interface SubsetFontOptions {
-    variationAxes?: Record<number, number>;
+    variationAxes?: Record<string, number>;
     preserveNameIds?: number[];
     threads?:
-        | false
-        | {
-              service?: null;
-          };
+    | false
+    | {
+        service?: null;
+    };
 }
 export type ISubsetFont = (
     face: HB.Face,

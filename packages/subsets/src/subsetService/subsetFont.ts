@@ -10,7 +10,6 @@ export function subsetFont(
 ) {
     const Subset = hb.createSubset(face, preserveNameIds, variationAxes);
     Subset.adjustLayout();
-
     Subset.addChars(subsetUnicode);
     const facePtr = Subset.runSubset();
     const arr = hb.collectUnicodes(facePtr);

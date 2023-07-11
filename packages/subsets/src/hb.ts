@@ -189,7 +189,7 @@ export function hbjs(instance: any) {
                 const axis = exports.malloc(64 * 32);
                 const c = exports.malloc(4);
                 heapu32[c / 4] = 64;
-                exports.hb_ot_let_get_axis_infos(ptr, 0, c, axis);
+                exports.hb_ot_var_get_axis_infos(ptr, 0, c, axis);
                 const result: Record<
                     string,
                     { min: number; max: number; default: number }
@@ -592,7 +592,7 @@ export function hbjs(instance: any) {
     function createSubset(
         face: ReturnType<typeof createFace>,
         preserveNameIds?: number[],
-        variationAxes?: Record<number, number>
+        variationAxes?: Record<string, number>
     ) {
         const ptr = exports.hb_subset_input_create_or_fail();
         if (ptr === 0) {
