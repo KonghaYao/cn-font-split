@@ -41,16 +41,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.trace('输入文件大小：' + byteSize(res.byteLength));
                 ctx.set('originFile', res);
             },
-            /** 补全复杂字形的分包策略 */
-            async function getFeatureUnicodes(ctx) {
-                const { originFile, input } = ctx.pick('input', 'originFile');
-                if (input.fontFeature !== false) {
-                    const { getFeaturePackageList } = await import('./getFeaturePackageList')
-                    ctx.set('feature_unicodes', getFeaturePackageList(originFile, input?.fontFeature?.maxPackageSize));
-                } else {
-                    ctx.set("feature_unicodes", [])
-                }
-            },
+
             /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {
                 const { input, originFile } = ctx.pick('input', 'originFile');
@@ -59,7 +50,16 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set('ttfFile', ttfFile);
                 ctx.free('originFile');
             },
-
+            /** 补全复杂字形的分包策略 */
+            async function getFeatureUnicodes(ctx) {
+                const { ttfFile, input } = ctx.pick('input', 'ttfFile');
+                if (input.fontFeature !== false) {
+                    const { getFeaturePackageList } = await import('./getFeaturePackageList')
+                    ctx.set('feature_unicodes', getFeaturePackageList(ttfFile, input?.fontFeature?.maxPackageSize));
+                } else {
+                    ctx.set("feature_unicodes", [])
+                }
+            },
             /** 加载 Harfbuzz 字体操作库 */
             async function loadHarbuzz(ctx) {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
