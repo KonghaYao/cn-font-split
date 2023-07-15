@@ -1,5 +1,5 @@
 import { convert } from "./convert/font-converter";
-
+import { getFeaturePackageList } from './getFeaturePackageList'
 import { hbjs } from "./hb";
 import { Executor } from "./pipeline/index";
 import { loadHarbuzzAdapter } from "./adapter/loadHarfbuzz";
@@ -40,6 +40,11 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
                 ctx.trace("输入文件大小：" + byteSize(res.byteLength));
                 ctx.set("originFile", res);
+            },
+            async function getFeatureUnicodes(ctx) {
+
+                const { originFile } = ctx.pick("originFile");
+                ctx.set('feature_unicodes', getFeaturePackageList(originFile))
             },
             /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {
@@ -99,17 +104,17 @@ export const fontSplit = async (opt: InputTemplate) => {
 
             /** 根据 subsets 参数进行优先分包 */
             async function subsetFonts(ctx) {
-                const { input, hb, face } = ctx.pick(
+                const { input, hb, face, feature_unicodes } = ctx.pick(
                     "input",
                     "face",
                     "hb",
-                    "blob"
+                    "blob", "feature_unicodes"
                 );
 
                 const subsetResult = await subsetAll(
                     face,
                     hb,
-                    opt.subsets ?? [],
+                    opt.subsets ?? [feature_unicodes,],
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -123,58 +128,61 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 将剩下的字符进行自动分包 */
             async function useAutoSubsets(ctx) {
-                const { input, face, blob, subsetResult, hb } = ctx.pick(
+                const { input, face, blob, subsetResult, hb, } = ctx.pick(
                     "input",
                     "face",
                     "blob",
                     "hb",
-                    "subsetResult"
+                    "subsetResult",
                 );
+                if (input.autoChunk !== false) {
 
-                const bundleChars = subsetsToSet(
-                    subsetResult.map((i) => i.subset)
-                );
-
-                const totalChars = face.collectUnicodes();
-                ctx.trace("总字符数", totalChars.length);
-
-                // subsets 分割结果和总字符做 set 减法得到未分割字符数
-                const codes: number[] = [];
-                for (let index = 0; index < totalChars.length; index++) {
-                    const element = totalChars[index];
-                    if (!bundleChars.has(element)) {
-                        codes.push(element);
-                    }
-                }
-
-                ctx.info("参与自动分包：", codes.length);
-                const unicodeRank: number[][] = opt.unicodeRank ?? [
-                    Latin,
-                    await getCN_SC_Rank(),
-                ];
-
-                // 把末尾的东西，额外分成一部分
-                const finalChunk = codes.filter(
-                    (i) => !unicodeRank.some((rank) => rank.includes(i))
-                );
-
-                unicodeRank.push(finalChunk);
-                for (const rank of unicodeRank) {
-                    const chunks = await autoSubset(
-                        face,
-                        hb,
-                        rank,
-                        async (filename, buffer) => {
-                            return outputFile(
-                                path.join(input.destFold, filename),
-                                buffer
-                            );
-                        },
-                        input.targetType ?? "woff2",
-                        ctx,
-                        opt.chunkSize
+                    const bundleChars = subsetsToSet(
+                        subsetResult.map((i) => i.subset)
                     );
-                    subsetResult.push(...chunks);
+
+                    const totalChars = face.collectUnicodes();
+                    ctx.trace("总字符数", totalChars.length);
+
+                    // subsets 分割结果和总字符做 set 减法得到未分割字符数
+                    const codes: number[] = [];
+                    for (let index = 0; index < totalChars.length; index++) {
+                        const element = totalChars[index];
+                        if (!bundleChars.has(element)) {
+                            codes.push(element);
+                        }
+                    }
+
+                    ctx.info("参与自动分包：", codes.length);
+                    const unicodeRank: number[][] = opt.unicodeRank ?? [
+
+                        Latin,
+                        await getCN_SC_Rank(),
+                    ];
+
+                    // 把末尾的东西，额外分成一部分
+                    const finalChunk = codes.filter(
+                        (i) => !unicodeRank.some((rank) => rank.includes(i))
+                    );
+
+                    unicodeRank.push(finalChunk);
+                    for (const rank of unicodeRank) {
+                        const chunks = await autoSubset(
+                            face,
+                            hb,
+                            rank,
+                            async (filename, buffer) => {
+                                return outputFile(
+                                    path.join(input.destFold, filename),
+                                    buffer
+                                );
+                            },
+                            input.targetType ?? "woff2",
+                            ctx,
+                            opt.chunkSize
+                        );
+                        subsetResult.push(...chunks);
+                    }
                 }
 
                 face.destroy();

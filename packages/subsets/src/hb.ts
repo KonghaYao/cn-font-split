@@ -605,14 +605,21 @@ export function hbjs(instance: any) {
         const inputUnicodePtr = exports.hb_subset_input_unicode_set(ptr);
         return {
             ptr,
+            clearTableDrop() {
+                exports.hb_set_clear(exports.hb_subset_input_set(ptr, 3/**HB_SUBSET_SETS_DROP_TABLE_TAG */));
+            },
             adjustLayout() {
-                // Do the equivalent of --font-features=*
-                const layoutFeatures = exports.hb_subset_input_set(
-                    ptr,
-                    6 // HB_SUBSET_SETS_LAYOUT_FEATURE_TAG
-                );
-                exports.hb_set_clear(layoutFeatures);
-                exports.hb_set_invert(layoutFeatures);
+
+                for (const iterator of [6, 7]) {
+                    // Do the equivalent of --font-features=*
+                    const layoutFeatures = exports.hb_subset_input_set(
+                        ptr,
+                        iterator
+                    );
+                    exports.hb_set_clear(layoutFeatures);
+                    exports.hb_set_invert(layoutFeatures);
+                }
+
                 if (preserveNameIds) {
                     const inputNameIds = exports.hb_subset_input_set(
                         ptr,
