@@ -32,6 +32,13 @@ export type InputTemplate = {
         split?: boolean
     };
 
+    /** 字体复杂字形等特性的支持 */
+    fontFeature?: {
+        /** 分包时，复杂字形因为彼此之间的依赖关系不能够智能分包，故 */
+        maxPackageSize?: number
+
+    } | false
+
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;
     /** 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数 */
