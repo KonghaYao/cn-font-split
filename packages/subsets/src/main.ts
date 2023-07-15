@@ -114,7 +114,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const subsetResult = await subsetAll(
                     face,
                     hb,
-                    opt.subsets ?? [feature_unicodes,],
+                    opt.subsets ?? feature_unicodes,
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -128,12 +128,12 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 将剩下的字符进行自动分包 */
             async function useAutoSubsets(ctx) {
-                const { input, face, blob, subsetResult, hb, } = ctx.pick(
+                const { input, face, blob, subsetResult, hb, feature_unicodes } = ctx.pick(
                     "input",
                     "face",
                     "blob",
                     "hb",
-                    "subsetResult",
+                    "subsetResult", "feature_unicodes"
                 );
                 if (input.autoChunk !== false) {
 

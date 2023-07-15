@@ -30,7 +30,7 @@ export const subsetAll = async (
 
     const subsetMessage: SubsetResult = [];
     ctx.trace("id \t分包时间及速度 \t转换时间及速度\t分包最终情况");
-    for (let index = 0; index < subsets.length; index++) {
+    const p = subsets.map(async (_, index) => {
         const subset = subsets[index];
         const start = performance.now();
         const [buffer, arr] = subsetFont(face, subset, hb, {});
@@ -65,7 +65,8 @@ export const subsetAll = async (
         } else {
             ctx.warn([index, "未发现字符", "取消分包"].join("\t"));
         }
-    }
+    })
 
+    await Promise.all(p)
     return subsetMessage;
 };

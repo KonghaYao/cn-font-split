@@ -144,8 +144,9 @@ const featurelist = [
     'zero',
 ];
 import { parse } from 'opentype.js'
+import { Subset, Subsets } from './interface';
 /** 获取到所有的 feature 字体数据，并合并为一个单元 */
-export const getFeaturePackageList = (buffer: Uint8Array) => {
+export const getFeaturePackageList = (buffer: Uint8Array, MaxLengthPer = 300): Subsets => {
     const font = parse(buffer.buffer);
 
 
@@ -170,8 +171,24 @@ export const getFeaturePackageList = (buffer: Uint8Array) => {
             );
         })
         .filter((i) => i.length > 1);
-    const res = [...new Set(featureData.flat(2))]// 需要进行数目分包
+
+
+    const result: Set<number>[] = []
+
+    featureData.forEach((data) => {
+        const final = result[result.length - 1]
+        if (final === undefined) {
+            result.push(new Set(data))
+        } else if (data.length + final.size >= MaxLengthPer) {
+            result.push(new Set(data))
+        } else {
+            data.forEach(i => final.add(i))
+        }
+
+    })
+    // console.log()
+    return result.map(i => [...i])
 
     // throw new Error('')
-    return res
+    // return [...new Set(featureData.flat(2))]
 }

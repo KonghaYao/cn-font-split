@@ -17,7 +17,7 @@ export const createContext = (opt: InputTemplate) =>
         blob: HB.Blob;
         subsets: Subsets;
         nameTable: Record<string, string>;
-        feature_unicodes: number[]
+        feature_unicodes: Subsets
     }>(
         { input: opt },
         {
