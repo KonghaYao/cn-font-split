@@ -10,7 +10,7 @@ fontSplit({
     FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
     targetType: 'woff2',
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
-    // previewImage: {},
+    previewImage: {},
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     threads: {},

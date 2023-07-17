@@ -48,14 +48,17 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const ttfFile = await convert(originFile, 'truetype');
                 ctx.set('ttfFile', ttfFile);
+
                 ctx.free('originFile');
             },
             /** 补全复杂字形的分包策略 */
             async function getFeatureUnicodes(ctx) {
                 const { ttfFile, input } = ctx.pick('input', 'ttfFile');
+                const font = (await import("opentype.js")).parse(ttfFile.buffer)
+                ctx.set("opentype_font", font)
                 if (input.fontFeature !== false) {
                     const { getFeaturePackageList } = await import('./getFeaturePackageList')
-                    ctx.set('feature_unicodes', getFeaturePackageList(ttfFile, input?.fontFeature?.maxPackageSize));
+                    ctx.set('feature_unicodes', getFeaturePackageList(font, input?.fontFeature?.maxPackageSize));
                 } else {
                     ctx.set("feature_unicodes", [])
                 }
@@ -77,26 +80,25 @@ export const fontSplit = async (opt: InputTemplate) => {
                 if (opt.threads) {
                     opt.threads.service = new ConvertManager();
                 }
+                ctx.free('ttfFile');
             },
-            new Parallel<ReturnType<typeof createContext>>(
-                'outputCSS' /** 创建包含字体展示的图片文件 */,
-                async function createImage(ctx) {
-                    const { ttfFile, input } = ctx.pick('ttfFile', 'input');
-                    if (input.previewImage) {
-                        const encoded = await makeImage(
-                            ttfFile,
-                            input.previewImage?.text,
-                            input.previewImage.compressLevel,
-                            input.threads && input.threads?.image !== false
-                        );
-                        await outputFile(
-                            path.join(input.destFold, 'preview' + '.png'),
-                            encoded
-                        );
-                    }
-                    ctx.free('ttfFile');
+
+            async function createImage(ctx) {
+                const { input, opentype_font } = ctx.pick('ttfFile', 'input', "opentype_font");
+                if (input.previewImage) {
+                    const encoded = await makeImage(
+                        opentype_font,
+                        input.previewImage?.text
+                    );
+                    await outputFile(
+                        path.join(input.destFold, 'preview' + '.svg'),
+                        encoded
+                    );
                 }
-            ),
+                ctx.free("opentype_font")
+
+            },
+
             /** 获取字体的基础信息，如字体族类，license等 */
             async function getBasicMessage(ctx) {
                 const { face } = ctx.pick('face');

@@ -1,12 +1,17 @@
-import { makeImage as MakeImageLocal } from './image.local'
-import { makeImage as MakeImageThread } from './image.worker'
+import { Font } from 'opentype.js';
 export const makeImage = async (
-    ttfFile: Uint8Array,
-    text = "中文网字计划\nThe Project For Web",
-    level = 9, threads = false
+    f: Font,
+    text = "中文网字计划\nThe Project For Web"
 ) => {
-    if (threads) {
-        return MakeImageThread(ttfFile, text, level)
-    }
-    return MakeImageLocal(ttfFile, text, level)
+    const bounding = { height: 0, width: 0 };
+    const padding = 12;
+    const path = text.split('\n').map((i, index) => {
+        const p = f.getPath(i, 12, (index + 1) * 140, 120);
+        bounding.width = Math.max(bounding.width, p.getBoundingBox().x2);
+        return p.toSVG(2);
+    });
+    bounding.height = 140 * path.length + (path.length + 1) * padding;
+    bounding.width += (path.length + 1) * padding;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${bounding.width
+        }" height="${bounding.height}">${path.join('')}</svg>`;
 };

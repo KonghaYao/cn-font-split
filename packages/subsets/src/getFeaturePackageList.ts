@@ -143,11 +143,10 @@ const featurelist = [
     'vrtr',
     'zero',
 ];
-import { parse } from 'opentype.js'
-import { Subset, Subsets } from './interface';
+import { Font } from 'opentype.js'
+import { Subsets } from './interface';
 /** 获取到所有的 feature 字体数据，并合并为一个单元 */
-export const getFeaturePackageList = (buffer: Uint8Array, MaxLengthPer = 300): Subsets => {
-    const font = parse(buffer.buffer);
+export const getFeaturePackageList = (font: Font, MaxLengthPer = 300): Subsets => {
 
 
     // https://learn.microsoft.com/zh-cn/typography/opentype/spec/featurelist

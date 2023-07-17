@@ -1,6 +1,7 @@
 import { HB } from "../hb";
 import { Context } from "../pipeline/index";
 import { InputTemplate, SubsetResult, Subsets } from "../interface";
+import { Font } from "opentype.js";
 
 /** 全局 Context 的类型，用于在分步函数中定义类型 */
 export type IContext = ReturnType<typeof createContext>;
@@ -18,6 +19,7 @@ export const createContext = (opt: InputTemplate) =>
         subsets: Subsets;
         nameTable: Record<string, string>;
         feature_unicodes: Subsets
+        opentype_font: Font
     }>(
         { input: opt },
         {
