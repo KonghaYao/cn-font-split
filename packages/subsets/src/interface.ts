@@ -26,7 +26,10 @@ import { ISettingsParam } from "tslog";
 export type InputTemplate = {
     threads?: {
         service?: ConvertManager;
-        /** 多线程文本图片生成 */
+        /** 
+         * 多线程文本图片生成
+         * @deprecated 默认已经修改为主线程执行，速度够快
+         */
         image?: boolean
         /** 多线程切割 */
         split?: boolean

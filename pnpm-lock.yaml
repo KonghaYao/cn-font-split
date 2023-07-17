@@ -148,9 +148,6 @@ importers:
       '@chinese-fonts/font-contours':
         specifier: ^1.0.0
         version: 1.0.0
-      '@chinese-fonts/imagescript':
-        specifier: ^1.3.1
-        version: 1.3.1
       '@chinese-fonts/wawoff2':
         specifier: ^2.0.3
         version: 2.0.3
@@ -565,11 +562,6 @@ packages:
 
   /@chinese-fonts/font-contours@1.0.0:
     resolution: {integrity: sha512-KJx2DuJEJ24horFEEXhmkxaBbDFEU6kdI5/eFQ6PJd2LJMEYV6/6/Rl9APS0UTA+KLTnZUG/IJleZ5f5fSA00g==}
-    dev: false
-
-  /@chinese-fonts/imagescript@1.3.1:
-    resolution: {integrity: sha512-z8/X68bTuBXW2Lpbi8mWzeTSTlMJNVLVajFIY1Zw6sxEmP1JcmFcAn/psdRrhcEYMVLG+saabSOVFI7Yto1E/Q==}
-    engines: {node: '>=14.0.0'}
     dev: false
 
   /@chinese-fonts/wawoff2@2.0.3:

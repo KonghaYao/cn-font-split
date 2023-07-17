@@ -7,9 +7,9 @@
 
 在工作中遇到了使用中文字体的烦恼，字体包动不动就 10 多 MB，没有办法在 Web 应用中使用，所以制作了这个字体切割的插件。通过插件将大的字体文件切割为多个小的字体文件，然后通过 CSS 文件的 `unicode-range` 按需加载，实现整个字符集的可用加载！多线程加 WebAssembly 分包速度极快，平台兼容性极强！[详见兼容性章节](#兼容性提醒)。
 
-| [Nodejs](#nodejs)    | [Deno](#deno)      | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun      |
-| -------------------- | ------------------ | ------------------ | ------------------- | ------------------ | -------- |
-| ✅^18.0.0 ⏺️ ^14.0.0 | ✅1.30.0 ⏺️^1.30.0 | ✅^102             | ✅^114              | ✅^15              | ❌Coming |
+| [Nodejs](#nodejs)    | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun      |
+| -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
+| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0     | ✅^102             | ✅^114              | ✅^15              | ❌Coming |
 
 ### 新版本功能
 
@@ -54,7 +54,7 @@ fontSplit({
     chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
     testHTML: true, // 输出一份 html 报告文件
     reporter: true, // 输出 json 格式报告
-    // previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成
+    // previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成，文件为 SVG 格式
     threads: {}, // 建议开启多线程
     css: {
         // 覆盖默认的 css 设置，一般完全不需要进行更改
@@ -116,11 +116,10 @@ fontSplit({
 
 ### Deno
 
-> version: ✅1.30.0 ⏺️ ^1.30.0
+> version: ✅1.30.0
 
 1. 1.30.0 为推荐版本，后续版本中使用了本地 npm 路径导入，导致性能衰弱。可以参考 `deno run -A --no-npm index.mjs` 避免。
-2. 在 1.30.0 版本之后的一些特性导致了多线程失败。需要在配置中添加选项 `threads.image = false`使用单线程生成图片。
-3. 性能上 Deno 比 Nodejs 要好一些，但是 Deno 正在开发中，故暂时观望一整子
+2. 性能上 Deno 比 Nodejs 要好一些，但是 Deno 正在开发中，故暂时观望一整子
 
 ### Browser
 
@@ -134,9 +133,10 @@ fontSplit({
 ### 感谢
 
 1. 项目核心插件为 Harfbuzz 项目，源项目使用 C 与 C++ 构建了一个字体布局工具，然后提供了 WASM 的打包方法。项目重新构建并提供了 Typescript 版本的 API 封装，使得代码可以更好地融入生态中。
-2. 项目中的 name table 读取插件修改了 fonteditor-core 的源代码，神奇地完成了大量解析工作，真是太棒了。
-3. wawoff2 项目将 Google 的 woff2 格式转换功能代码编译成为了 wasm，为我们的字体压缩提供了非常简便的 API。但是 wawoff2 项目的导出方式为 js 嵌入 wasm，极大影响了 js 打包和使用，故项目也重新构建并发布出适合的版本。
-4. 多线程采用了 workerpool 的解决方案，但是 workerpool 不支持 module worker，我就在 rollup 的时候加上了这个功能。
+2. opentype.js 这个项目为第二解析引擎，主要处理 feature 关系判断和文本转化为 SVG 的任务。
+3. 项目中的 name table 读取插件修改了 fonteditor-core 的源代码，神奇地完成了大量解析工作，真是太棒了。
+4. wawoff2 项目将 Google 的 woff2 格式转换功能代码编译成为了 wasm，为我们的字体压缩提供了非常简便的 API。但是 wawoff2 项目的导出方式为 js 嵌入 wasm，极大影响了 js 打包和使用，故项目也重新构建并发布出适合的版本。
+5. 多线程采用了 workerpool 的解决方案，但是 workerpool 不支持 module worker，我就在 rollup 的时候加上了这个功能。
 
 ## 开源许可证
 
