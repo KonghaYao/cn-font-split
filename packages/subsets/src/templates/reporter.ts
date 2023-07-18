@@ -1,8 +1,10 @@
 import { InputTemplate, SubsetResult } from "../interface";
 import { PerformanceRecord } from "../pipeline/executor";
+export type ReporterFile = ReturnType<typeof createReporter>
+export type NameTable = Record<string, string | { en: string }>
 export const createReporter = (
     subsetResult: SubsetResult,
-    fontData: Record<string, string>,
+    nameTable: NameTable,
     input: InputTemplate,
     record: PerformanceRecord[]
 ) => {
@@ -14,11 +16,11 @@ export const createReporter = (
         };
     });
 
-    return JSON.stringify({
+    return {
         // 修复 FontPath 输入二进制数据后导致的膨胀
         config: { ...input, fontPath: typeof input.FontPath !== "string" ? 'it is a binary input' : input.FontPath },
-        message: fontData,
+        message: nameTable,
         data,
         record,
-    });
+    }
 };

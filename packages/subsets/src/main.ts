@@ -8,7 +8,6 @@ import { createContext } from './fontSplit/context';
 import path from 'path';
 import byteSize from 'byte-size';
 import { InputTemplate } from './interface';
-import { decodeNameTableFromUint8Array } from './reader/decodeNameTableFromUint8Array';
 import { createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
@@ -242,7 +241,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     );
                     await outputFile(
                         path.join(input.destFold, 'reporter.json'),
-                        reporter
+                        JSON.stringify(reporter)
                     );
                 }
             },
