@@ -1,5 +1,5 @@
 import { convert } from './convert/font-converter';
-import { getFeaturePackageList } from './getFeaturePackageList';
+
 import { hbjs } from './hb';
 import { Executor } from './pipeline/index';
 import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
@@ -18,7 +18,6 @@ import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
 import { makeImage } from './imagescript/index';
-import { Parallel } from './pipeline/parallel';
 // import { SubsetService } from "./subsetService";
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -84,7 +83,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
 
             async function createImage(ctx) {
-                const { input, opentype_font } = ctx.pick('ttfFile', 'input', "opentype_font");
+                const { input, opentype_font } = ctx.pick('input', "opentype_font");
                 if (input.previewImage) {
                     const encoded = await makeImage(
                         opentype_font,
@@ -95,17 +94,17 @@ export const fontSplit = async (opt: InputTemplate) => {
                         encoded
                     );
                 }
-                ctx.free("opentype_font")
+
 
             },
 
             /** 获取字体的基础信息，如字体族类，license等 */
             async function getBasicMessage(ctx) {
-                const { face } = ctx.pick('face');
-                const buffer = face.reference_table('name');
-                const nameTable = decodeNameTableFromUint8Array(buffer);
+                const { opentype_font } = ctx.pick('opentype_font');
+                const nameTable = opentype_font.tables['name']
                 console.table(nameTable);
                 ctx.set('nameTable', nameTable);
+                ctx.free("opentype_font")
             },
 
             /** 根据 subsets 参数进行优先分包 */

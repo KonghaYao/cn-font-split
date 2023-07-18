@@ -27,9 +27,9 @@
             createResource,
             onMount,
             createEffect,
-        } from 'https://cdn.skypack.dev/solid-js';
+        } from 'https://esm.sh/solid-js';
 
-        import html from 'https://cdn.skypack.dev/solid-js/html';
+        import html from 'https://esm.sh/solid-js/html';
         import * as echarts from 'https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.esm.min.js';
         function _formatBytes(bytes, decimals = 2) {
             if (bytes === 0) return '0 Bytes';
@@ -309,8 +309,8 @@
                     ${Object.entries(message).map((i) => {
                         return html`
                             <tr>
-                                <td>${i[0]}</td>
-                                <td>${i[1]}</td>
+                                <td>${i[0].en}</td>
+                                <td>${i[1].en}</td>
                             </tr>
                         `;
                     })}
@@ -350,7 +350,7 @@
             </div>`;
         };
 
-        import { render } from 'https://cdn.skypack.dev/solid-js/web';
+        import { render } from 'https://esm.sh/solid-js/web';
         render(App, document.body);
     </script>
 </html>

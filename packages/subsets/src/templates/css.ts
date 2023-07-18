@@ -29,26 +29,27 @@ export const subFamilyToWeight = (str: string) => {
 };
 
 export const isItalic = (str: string) => {
-    return str.toLowerCase().includes("Italic");
+    return str.toLowerCase().includes("italic");
 };
 export const createCSS = (
     subsetResult: SubsetResult,
-    fontData: Record<string, string>,
+    nameTable: Record<string, string | { en: string }>,
     opts: {
         css: InputTemplate["css"];
         compress: boolean;
     }
 ) => {
+    const fontData = Object.fromEntries(Object.entries(nameTable).map(([key, val]) => { return [key, typeof val === 'string' ? val : val.en] }))
     const css = opts.css || {};
     const family =
         // fontData.preferredFamily  不使用这个，因为这个容易引起歧义
         fontData.fontFamily || css.fontFamily;
 
     const preferredSubFamily =
-        fontData.preferredSubFamily || fontData.fontSubFamily;
+        fontData.preferredSubFamily || fontData.fontSubFamily || "";
 
     const style =
-        css.fontStyle || isItalic(preferredSubFamily) ? "italic" : "normal";
+        css.fontStyle || (isItalic(preferredSubFamily) ? "italic" : "normal");
     const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
     const cssStyleSheet = subsetResult
         .map(({ path, unicodeRange }) => {
