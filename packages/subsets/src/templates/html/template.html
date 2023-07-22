@@ -31,6 +31,12 @@
 
         import html from 'https://esm.sh/solid-js/html';
         import * as echarts from 'https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.esm.min.js';
+        const getFontData = (nameTable) =>
+            Object.fromEntries(
+                Object.entries(nameTable).map(([key, val]) => {
+                    return [key, typeof val === 'string' ? val : val.en];
+                })
+            );
         function _formatBytes(bytes, decimals = 2) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -324,12 +330,13 @@
             createEffect(() => {
                 if (data()) {
                     document.body.style.fontFamily = `"${
-                        data().message.fontFamily ||
-                        data().message.preferredFamily
+                        getFontData(data().message).fontFamily ||
+                        getFontData(data().message).preferredFamily
                     }"`;
 
-                    document.querySelector('title').textContent =
-                        data().message.fontFamily;
+                    document.querySelector('title').textContent = getFontData(
+                        data().message
+                    ).fontFamily;
                     const link = document.createElement('link');
                     link.rel = 'stylesheet';
                     link.href =
@@ -339,10 +346,16 @@
             });
             const content = () =>
                 html` <div>
-                        ${RangeAnalyze(data().data, data().message)}
-                        ${DataAnalyze(data().data, data().message)}
-                        ${TimeAnalyze(data().record, data().message)}
-                        ${BaseMessage(data().message)}
+                        ${RangeAnalyze(
+                            data().data,
+                            getFontData(data().message)
+                        )}
+                        ${DataAnalyze(data().data, getFontData(data().message))}
+                        ${TimeAnalyze(
+                            data().record,
+                            getFontData(data().message)
+                        )}
+                        ${BaseMessage(getFontData(data().message))}
                     </div>
                     ${CharList(data().data)}`;
             return html`<div>
