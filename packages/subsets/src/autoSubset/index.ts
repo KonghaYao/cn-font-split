@@ -137,3 +137,49 @@ async function runSubSet(
         outputMessage.hash
     );
 }
+import { FeatureMap, processSingleUnicodeWithFeature } from '../subsetService/featureMap'
+/** 获取自动分包方案 */
+export const getAutoSubset = async (
+    face: HB.Face,
+    hb: HB.Handle,
+    subsetUnicode: number[],
+    targetType: FontType,
+    ctx: IContext,
+    maxSize = 70 * 1024, featureMap: FeatureMap
+) => {
+
+    const sample = subsetUnicode;
+
+    const contoursMap = await createContoursMap();
+
+    // 采样估值法，计算单个分包包含 contours 数目
+    const contoursBorder = await calcContoursBorder(
+        hb,
+        face,
+        targetType,
+        contoursMap,
+        maxSize
+    );
+
+    ctx.trace("开始分包");
+    let count = 0;
+    let cache: number[] = [];
+    const totalChunk: number[][] = [];
+    const defaultVal = contoursMap.get(0) as number
+    for (const unicode of sample) {
+        // featureMap 已经进行了去重
+        const unicodeSet = processSingleUnicodeWithFeature(unicode, featureMap)
+        const sum = unicodeSet.reduce((col, cur) => col + (contoursMap.get(cur) ?? defaultVal), 0)
+        // contoursMap 0 是平均值
+        count += sum
+        cache.push(...unicodeSet);
+        if (count >= contoursBorder) {
+            totalChunk.push(cache);
+            cache = [];
+            count = 0;
+        }
+    }
+    totalChunk.push(cache);
+    // console.log(totalChunk.flat().length);
+    return totalChunk
+}

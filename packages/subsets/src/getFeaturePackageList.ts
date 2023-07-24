@@ -1,4 +1,4 @@
-const featurelist = [
+export const featureList = [
     'aalt',
     'abvf',
     'abvm',
@@ -150,7 +150,7 @@ export const getFeaturePackageList = (font: Font, MaxLengthPer = 300): Subsets =
 
 
     // https://learn.microsoft.com/zh-cn/typography/opentype/spec/featurelist
-    const featureData = featurelist
+    const featureData = featureList
         .flatMap((i) => {
             const getFeature: (i: string) => { sub: number | number[], by: number | number[] }[] = font.substitution
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
