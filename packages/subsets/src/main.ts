@@ -103,7 +103,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             async function getBasicMessage(ctx) {
                 const { opentype_font } = ctx.pick('opentype_font');
                 const nameTable = opentype_font.tables['name'];
-                console.table(nameTable);
+                // console.table(nameTable);
                 ctx.set('nameTable', nameTable);
             },
 
@@ -165,6 +165,9 @@ export const fontSplit = async (opt: InputTemplate) => {
                     autoPart.push(...subset)
                 }
                 // 检查 featureMap 中未释出
+                for (const iterator of featureMap.values()) {
+                    if (iterator) ctx.warn("featureMap 未释出" + iterator.size)
+                }
 
                 ctx.set('subsetsToRun', [...forcePart, ...autoPart]);
                 ctx.free('opentype_font');
@@ -204,7 +207,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 );
                 const css = createCSS(subsetResult, nameTable, {
                     css: input.css,
-                    compress: false,
+                    compress: true,
                 });
                 await outputFile(
                     path.join(
