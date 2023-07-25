@@ -1,6 +1,6 @@
 import { Font } from 'opentype.js'
 import { featureList } from '../getFeaturePackageList'
-import { Subset, SubsetResult } from '../interface';
+import { Subset, SubsetResult, Subsets } from '../interface';
 export const getFeatureData = (font: Font) => featureList
     .flatMap((i) => {
         const getFeature: (i: string) => { sub: number | number[], by: number | number[] }[] = font.substitution
@@ -79,5 +79,11 @@ export const decorateSubset = (subset: Subset, featureMap: FeatureMap) => {
         }
     })
 
+
+}
+
+/** 强制分包部分的实现 */
+export const forceSubset = (subsets: Subsets, featureMap: FeatureMap) => {
+    return subsets.map(i => decorateSubset(i, featureMap))
 
 }
