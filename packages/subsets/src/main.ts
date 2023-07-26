@@ -74,12 +74,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                 if (opt.threads) {
                     opt.threads.service = new ConvertManager();
                 }
-
             },
             async function initOpentype(ctx) {
                 const { ttfFile, input } = ctx.pick('input', 'ttfFile');
-                const font = (await import("opentype.js")).parse(ttfFile.buffer)
-                ctx.set("opentype_font", font)
+                const font = (await import('opentype.js')).parse(
+                    ttfFile.buffer
+                );
+                ctx.set('opentype_font', font);
                 ctx.free('ttfFile');
             },
             async function createImage(ctx) {
@@ -106,8 +107,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 // console.table(nameTable);
                 ctx.set('nameTable', nameTable);
             },
-
-            /** 根据 subsets 参数进行优先分包 */
+            /** 通过数据计算得出分包的数据结构 */
             async function PreSubset(ctx) {
                 const { input, hb, face, opentype_font } = ctx.pick(
                     'input',
@@ -116,10 +116,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'blob',
                     'opentype_font'
                 );
+
+                /** 根据 subsets 参数进行优先分包 */
                 const subsets = opt.subsets ?? [];
                 // input.fontFeature !== false && subsets.unshift(...feature_unicodes)
                 const featureData = getFeatureData(opentype_font);
                 const featureMap = getFeatureMap(featureData);
+                // console.log(featureMap.get(65176)) // Set(4) { 65176, 65188, 65182, 64849 }
                 const forcePart = forceSubset(subsets, featureMap);
 
                 const totalChars = face.collectUnicodes();
@@ -137,15 +140,21 @@ export const fontSplit = async (opt: InputTemplate) => {
                     }
                 }
 
-                const unicodeRank: number[][] = opt.unicodeRank ?? [
+
+                /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
+                const unicodeForceBundle: number[][] = opt.unicodeRank ?? [
                     Latin,
                     await getCN_SC_Rank(),
-
                 ];
-                unicodeRank.push(codes.filter(
-                    (i) => !unicodeRank.some((rank) => rank.includes(i))
-                ))
+                unicodeForceBundle.push(
+                    codes.filter(
+                        (i) => !unicodeForceBundle.some((includesCodes) => includesCodes.includes(i))
+                    )
+                );
+
+                // console.log(featureMap.get(65176)) // Set(4) { 65176, 65188, 65182, 64849 }
                 const contoursMap = await createContoursMap();
+                /** 单包最大轮廓数值 */
                 const contoursBorder = await calcContoursBorder(
                     hb,
                     face,
@@ -154,35 +163,49 @@ export const fontSplit = async (opt: InputTemplate) => {
                     input.chunkSize ?? 70 * 1024
                 );
 
-                const autoPart: number[][] = []
-                for (const rank of unicodeRank) {
-                    const subset = await getAutoSubset(
-                        rank,
-                        ctx,
+                const autoPart: number[][] = [];
+                for (const bundle of unicodeForceBundle) {
+                    const subset = getAutoSubset(
+                        bundle,
                         contoursBorder,
-                        featureMap
+                        contoursMap,
+                        featureMap,
                     );
-                    autoPart.push(...subset)
+                    autoPart.push(...subset);
                 }
-                // 检查 featureMap 中未释出
-                for (const iterator of featureMap.values()) {
-                    if (iterator) ctx.warn("featureMap 未释出" + iterator.size)
+                // 检查 featureMap 中未使用的数据
+                for (const [key, iterator] of featureMap.entries()) {
+                    if (iterator) ctx.warn('featureMap ' + key + ' 未使用' + iterator.size);
                 }
 
-                ctx.set('subsetsToRun', [...forcePart, ...autoPart]);
+                const totalSubsets = [...forcePart, ...autoPart]
+                const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
+                    col += cur.length
+                    return col
+                }, 0)
+                if (subsetCharsNumber < totalChars.length) {
+                    console.log("字符缺漏", subsetCharsNumber, totalChars.length)
+                }
+                // 在分包时仍然是成功的
+
+                // totalSubsets.some((i) => [65176, 65188, 65182, 64849].every(ii => i.includes(ii))) && console.log('确认')
+                ctx.set('subsetsToRun', totalSubsets);
                 ctx.free('opentype_font');
             },
-            /** 将剩下的字符进行自动分包 */
+            /** 执行所有包的分包动作 */
             async function subsetFont(ctx) {
                 const { input, face, blob, subsetsToRun, hb } = ctx.pick(
                     'input',
                     'face',
                     'blob',
                     'hb',
-                    "subsetsToRun",
+                    'subsetsToRun'
                 );
 
-                const Message = await useSubset(face, hb, subsetsToRun,
+                const Result = await useSubset(
+                    face,
+                    hb,
+                    subsetsToRun,
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -190,10 +213,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                         );
                     },
                     input.targetType ?? 'woff2',
-                    ctx,
-                )
+                    ctx
+                );
 
-                ctx.set("subsetResult", Message)
+                ctx.set('subsetResult', Result);
                 face.destroy();
                 blob.free();
                 ctx.free('blob', 'face', 'hb');

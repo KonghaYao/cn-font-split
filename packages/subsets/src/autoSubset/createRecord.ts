@@ -18,6 +18,7 @@ export async function createRecord(
         hash: hashName,
         path: hashName + ext,
         unicodeRange: str.join(','),
+        // unicodeRange: subsetToUnicodeRange(subset),
         subset: str.map(i => {
             i = i.replace("U+", '')
             if (i.includes("-")) {

@@ -45,7 +45,9 @@ export const getFeatureMap = (featureData: number[][]) => {
     return featureMap
 }
 export type FeatureMap = Map<number, Set<number> | null>
+/** 从单个 unicode 中找出 feature 相关的数据 */
 export const processSingleUnicodeWithFeature = (i: number, featureMap: FeatureMap) => {
+
     const item = featureMap.get(i)
     if (item === undefined) {
         // undefined 说明该 unicode 没有 feature，不用处理
@@ -57,14 +59,15 @@ export const processSingleUnicodeWithFeature = (i: number, featureMap: FeatureMa
         // 有 feature 存在， 返回 feature 数组表示这些 unicode 值都需要包括到一个包中，同时将这些 unicode 码点从中取消
         item.forEach(i => featureMap.set(i, null))
 
-        return [...item.values()]
+        return [...item]
     }
 }
 
-/** 装饰普通的 Subset 使其能够使用 opentype feature
+/** 
+ * 装饰普通的 Subset 使其能够使用 opentype feature
  * @important 注意，是 subset 而不是 subsets
  */
-export const decorateSubset = (subset: Subset, featureMap: FeatureMap) => {
+const decorateSubset = (subset: Subset, featureMap: FeatureMap) => {
     return subset.flatMap(i => {
         if (typeof i === 'number') {
             return processSingleUnicodeWithFeature(i, featureMap)

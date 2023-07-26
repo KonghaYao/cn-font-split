@@ -79,6 +79,9 @@ async function runSubSet(
     const [buffer, arr] = subsetFont(face, chunk, hb, {});
     const middle = performance.now();
     if (!buffer) return;
+
+
+    // 执行 ttf 文件转 woff2
     const service = input.threads?.service;
     const transferred = service
         ? await service.pool.exec('convert', [buffer, targetType], {
@@ -86,6 +89,8 @@ async function runSubSet(
         })
         : await convert(buffer, targetType);
     const end = performance.now();
+
+
 
     const outputMessage = await createRecord(
         outputFile,
@@ -110,23 +115,21 @@ import {
     processSingleUnicodeWithFeature,
 } from '../subsetService/featureMap';
 /** 获取自动分包方案 */
-export const getAutoSubset = async (
+export const getAutoSubset = (
     subsetUnicode: number[],
-    ctx: IContext,
     contoursBorder: number,
-    featureMap: FeatureMap
+    contoursMap: Map<number, number>,
+    featureMap: FeatureMap,
 ) => {
-    const sample = subsetUnicode;
-
-    const contoursMap = await createContoursMap();
-
     let count = 0;
     let cache: number[] = [];
     const totalChunk: number[][] = [];
+
     const defaultVal = contoursMap.get(0) as number;
-    for (const unicode of sample) {
+    for (const unicode of subsetUnicode) {
         // featureMap 已经进行了去重
         const unicodeSet = processSingleUnicodeWithFeature(unicode, featureMap);
+
         const sum = unicodeSet.reduce(
             (col, cur) => col + (contoursMap.get(cur) ?? defaultVal),
             0
@@ -134,13 +137,16 @@ export const getAutoSubset = async (
         // contoursMap 0 是平均值
         count += sum;
         cache.push(...unicodeSet);
+
         if (count >= contoursBorder) {
             totalChunk.push(cache);
             cache = [];
             count = 0;
         }
+
     }
-    totalChunk.push(cache);
+    if (cache.length) totalChunk.push(cache);
+
     // console.log(totalChunk.flat().length);
     return totalChunk;
 };
