@@ -44,7 +44,7 @@ export const createCSS = (
     const css = opts.css || {};
     const family =
         // fontData.preferredFamily  不使用这个，因为这个容易引起歧义
-        fontData.fontFamily || css.fontFamily;
+        css.fontFamily || fontData.fontFamily;
 
     const preferredSubFamily =
         fontData.preferredSubFamily || fontData.fontSubFamily || "";
@@ -56,7 +56,7 @@ export const createCSS = (
         .map(({ path, unicodeRange }) => {
             return `@font-face {
 font-family: "${family}";
-src: url("./${path}");
+src: local("${ fontData.fontFamily }"), url("./${path}");
 font-style: ${style};
 font-weight: ${weight};
 font-display: ${css.fontDisplay || "swap"};
