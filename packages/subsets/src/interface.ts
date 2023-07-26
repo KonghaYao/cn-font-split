@@ -23,6 +23,7 @@ export type IOutputFile = (
 ) => Promise<void>;
 import { ConvertManager } from "./convert/convert.manager";
 import { ISettingsParam } from "tslog";
+import { WorkerPoolOptions } from "workerpool";
 export type InputTemplate = {
     threads?: {
         service?: ConvertManager;
@@ -33,6 +34,7 @@ export type InputTemplate = {
         image?: boolean
         /** 多线程切割 */
         split?: boolean
+        options?: WorkerPoolOptions
     };
 
     /** 字体复杂字形等特性的支持 */

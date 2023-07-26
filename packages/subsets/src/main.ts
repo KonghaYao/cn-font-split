@@ -72,7 +72,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set('face', face);
                 ctx.set('blob', blob);
                 if (opt.threads) {
-                    opt.threads.service = new ConvertManager();
+                    opt.threads.service = new ConvertManager(opt.threads.options);
                 }
             },
             async function initOpentype(ctx) {
