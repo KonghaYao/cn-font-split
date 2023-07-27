@@ -4,5 +4,7 @@ export default defineConfig({
     test: {
         // ...
         environment: "node",
+        exclude: ['test', 'node_modules'],
     },
+
 });
