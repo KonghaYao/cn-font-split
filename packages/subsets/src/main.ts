@@ -1,9 +1,7 @@
 import { convert } from './convert/font-converter';
-
 import { hbjs } from './hb';
 import { Executor } from './pipeline/index';
 import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
-import { subsetAll } from './subset';
 import { createContext } from './fontSplit/context';
 import path from 'path';
 import byteSize from 'byte-size';
@@ -11,20 +9,16 @@ import { InputTemplate, Subsets } from './interface';
 import { createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
-import { useSubset, getAutoSubset } from './autoSubset/index';
-import { Latin, getCN_SC_Rank } from './ranks/index';
+import { useSubset, getAutoSubset } from './useSubset/index';
+import { Latin, getCN_SC_Rank } from './data/Ranks';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
-import { makeImage } from './imagescript/index';
-import {
-    forceSubset,
-    getFeatureData,
-    getFeatureMap,
-} from './subsetService/featureMap';
-import { calcContoursBorder } from './autoSubset/calcContoursBorder';
-import { createContoursMap } from './autoSubset/createContoursMap';
-// import { SubsetService } from "./subsetService";
+import { makeImage } from './makeImage/index';
+import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
+import { forceSubset } from './subsetService/forceSubset';
+import { calcContoursBorder } from './useSubset/calcContoursBorder';
+import { createContoursMap } from './useSubset/createContoursMap';
 
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
@@ -72,7 +66,9 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set('face', face);
                 ctx.set('blob', blob);
                 if (opt.threads) {
-                    opt.threads.service = new ConvertManager(opt.threads.options);
+                    opt.threads.service = new ConvertManager(
+                        opt.threads.options
+                    );
                 }
             },
             async function initOpentype(ctx) {
@@ -140,7 +136,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                     }
                 }
 
-
                 /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const unicodeForceBundle: number[][] = opt.unicodeRank ?? [
                     Latin,
@@ -148,7 +143,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ];
                 unicodeForceBundle.push(
                     codes.filter(
-                        (i) => !unicodeForceBundle.some((includesCodes) => includesCodes.includes(i))
+                        (i) =>
+                            !unicodeForceBundle.some((includesCodes) =>
+                                includesCodes.includes(i)
+                            )
                     )
                 );
 
@@ -169,22 +167,29 @@ export const fontSplit = async (opt: InputTemplate) => {
                         bundle,
                         contoursBorder,
                         contoursMap,
-                        featureMap,
+                        featureMap
                     );
                     autoPart.push(...subset);
                 }
                 // 检查 featureMap 中未使用的数据
                 for (const [key, iterator] of featureMap.entries()) {
-                    if (iterator) ctx.warn('featureMap ' + key + ' 未使用' + iterator.size);
+                    if (iterator)
+                        ctx.warn(
+                            'featureMap ' + key + ' 未使用' + iterator.size
+                        );
                 }
 
-                const totalSubsets = [...forcePart, ...autoPart]
+                const totalSubsets = [...forcePart, ...autoPart];
                 const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
-                    col += cur.length
-                    return col
-                }, 0)
+                    col += cur.length;
+                    return col;
+                }, 0);
                 if (subsetCharsNumber < totalChars.length) {
-                    console.log("字符缺漏", subsetCharsNumber, totalChars.length)
+                    console.log(
+                        '字符缺漏',
+                        subsetCharsNumber,
+                        totalChars.length
+                    );
                 }
                 // 在分包时仍然是成功的
 

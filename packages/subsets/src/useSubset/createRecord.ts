@@ -1,7 +1,7 @@
-import { UnicodeRange } from "@japont/unicode-range";
-import { IOutputFile, Subset } from "../interface";
-import md5 from "../utils/md5";
-import { subsetToUnicodeRange } from "../utils/subsetToUnicodeRange";
+import { UnicodeRange } from '@japont/unicode-range';
+import { IOutputFile, Subset } from '../interface';
+import md5 from '../utils/md5';
+import { subsetToUnicodeRange } from '../utils/subsetToUnicodeRange';
 
 export async function createRecord(
     outputFile: IOutputFile,
@@ -11,7 +11,7 @@ export async function createRecord(
 ) {
     const hashName = md5(transferred);
     await outputFile(hashName + ext, transferred);
-    const str = UnicodeRange.stringify(subset)
+    const str = UnicodeRange.stringify(subset);
 
     return {
         size: transferred.byteLength,
@@ -19,12 +19,12 @@ export async function createRecord(
         path: hashName + ext,
         unicodeRange: str.join(','),
         // unicodeRange: subsetToUnicodeRange(subset),
-        subset: str.map(i => {
-            i = i.replace("U+", '')
-            if (i.includes("-")) {
-                return i.split("-").map(i => parseInt(i)) as [number, number]
+        subset: str.map((i) => {
+            i = i.replace('U+', '');
+            if (i.includes('-')) {
+                return i.split('-').map((i) => parseInt(i)) as [number, number];
             } else {
-                return parseInt(i)
+                return parseInt(i);
             }
         }),
     };

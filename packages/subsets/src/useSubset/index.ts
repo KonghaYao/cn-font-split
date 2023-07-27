@@ -4,26 +4,24 @@ import { convert } from '../convert/font-converter';
 import type { FontType } from '../utils/detectFormat';
 import { IContext } from '../fontSplit/context';
 import { getExtensionsByFontType } from '../utils/getExtensionsByFontType';
-import { subsetFont } from '../subsetService/subsetFont';
-import { createContoursMap } from './createContoursMap';
+import { subsetFont } from './subsetFont';
 import { createRecord } from './createRecord';
 import { recordToLog } from './recordToLog';
 
-/** 可以实现较为准确的数值切割，偏差大致在 10 kb 左右 */
+/** 直接根据chunk 批量分包字体 */
 export const useSubset = async (
     face: HB.Face,
     hb: HB.Handle,
     totalChunk: number[][],
     outputFile: IOutputFile,
     targetType: FontType,
-    ctx: IContext,
+    ctx: IContext
 ) => {
     const { input } = ctx.pick('input');
     const ext = getExtensionsByFontType(targetType);
     const subsetMessage: SubsetResult = [];
 
     ctx.trace('开始分包 分包数', totalChunk.length);
-
 
     if (input.threads) {
         await Promise.all(
@@ -80,17 +78,14 @@ async function runSubSet(
     const middle = performance.now();
     if (!buffer) return;
 
-
     // 执行 ttf 文件转 woff2
     const service = input.threads?.service;
     const transferred = service
         ? await service.pool.exec('convert', [buffer, targetType], {
-            transfer: [buffer.buffer],
-        })
+              transfer: [buffer.buffer],
+          })
         : await convert(buffer, targetType);
     const end = performance.now();
-
-
 
     const outputMessage = await createRecord(
         outputFile,
@@ -119,7 +114,7 @@ export const getAutoSubset = (
     subsetUnicode: number[],
     contoursBorder: number,
     contoursMap: Map<number, number>,
-    featureMap: FeatureMap,
+    featureMap: FeatureMap
 ) => {
     let count = 0;
     let cache: number[] = [];
@@ -143,7 +138,6 @@ export const getAutoSubset = (
             cache = [];
             count = 0;
         }
-
     }
     if (cache.length) totalChunk.push(cache);
 
