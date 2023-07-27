@@ -13,12 +13,14 @@ export const createContext = (opt: InputTemplate) =>
         originFile: Uint8Array;
         ttfFile: Uint8Array;
         hb: HB.Handle;
+        subsetsToRun: number[][],
         subsetResult: SubsetResult;
         face: HB.Face;
         blob: HB.Blob;
         subsets: Subsets;
         nameTable: Record<string, string>;
-        feature_unicodes: Subsets
+        // /** @deprecated  */
+        // feature_unicodes: Subsets
         opentype_font: Font
     }>(
         { input: opt },

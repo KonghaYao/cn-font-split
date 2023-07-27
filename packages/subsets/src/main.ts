@@ -1,23 +1,24 @@
 import { convert } from './convert/font-converter';
-
 import { hbjs } from './hb';
 import { Executor } from './pipeline/index';
 import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
-import { subsetAll } from './subset';
 import { createContext } from './fontSplit/context';
 import path from 'path';
 import byteSize from 'byte-size';
-import { InputTemplate } from './interface';
+import { InputTemplate, Subsets } from './interface';
 import { createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
-import { autoSubset } from './autoSubset/index';
-import { Latin, getCN_SC_Rank } from './ranks/index';
+import { useSubset, getAutoSubset } from './useSubset/index';
+import { Latin, getCN_SC_Rank } from './data/Ranks';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
-import { makeImage } from './imagescript/index';
-// import { SubsetService } from "./subsetService";
+import { makeImage } from './makeImage/index';
+import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
+import { forceSubset } from './subsetService/forceSubset';
+import { calcContoursBorder } from './useSubset/calcContoursBorder';
+import { createContoursMap } from './useSubset/createContoursMap';
 
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
@@ -49,18 +50,7 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 ctx.free('originFile');
             },
-            /** 补全复杂字形的分包策略 */
-            async function getFeatureUnicodes(ctx) {
-                const { ttfFile, input } = ctx.pick('input', 'ttfFile');
-                const font = (await import("opentype.js")).parse(ttfFile.buffer)
-                ctx.set("opentype_font", font)
-                if (input.fontFeature !== false) {
-                    const { getFeaturePackageList } = await import('./getFeaturePackageList')
-                    ctx.set('feature_unicodes', getFeaturePackageList(font, input?.fontFeature?.maxPackageSize));
-                } else {
-                    ctx.set("feature_unicodes", [])
-                }
-            },
+
             /** 加载 Harfbuzz 字体操作库 */
             async function loadHarbuzz(ctx) {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
@@ -76,13 +66,24 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set('face', face);
                 ctx.set('blob', blob);
                 if (opt.threads) {
-                    opt.threads.service = new ConvertManager();
+                    opt.threads.service = new ConvertManager(
+                        opt.threads.options
+                    );
                 }
+            },
+            async function initOpentype(ctx) {
+                const { ttfFile, input } = ctx.pick('input', 'ttfFile');
+                const font = (await import('opentype.js')).parse(
+                    ttfFile.buffer
+                );
+                ctx.set('opentype_font', font);
                 ctx.free('ttfFile');
             },
-
             async function createImage(ctx) {
-                const { input, opentype_font } = ctx.pick('input', "opentype_font");
+                const { input, opentype_font } = ctx.pick(
+                    'input',
+                    'opentype_font'
+                );
                 if (input.previewImage) {
                     const encoded = await makeImage(
                         opentype_font,
@@ -93,34 +94,123 @@ export const fontSplit = async (opt: InputTemplate) => {
                         encoded
                     );
                 }
-
-
             },
 
             /** 获取字体的基础信息，如字体族类，license等 */
             async function getBasicMessage(ctx) {
                 const { opentype_font } = ctx.pick('opentype_font');
-                const nameTable = opentype_font.tables['name']
-                console.table(nameTable);
+                const nameTable = opentype_font.tables['name'];
+                // console.table(nameTable);
                 ctx.set('nameTable', nameTable);
-                ctx.free("opentype_font")
             },
-
-            /** 根据 subsets 参数进行优先分包 */
-            async function subsetFonts(ctx) {
-                const { input, hb, face, feature_unicodes } = ctx.pick(
+            /** 通过数据计算得出分包的数据结构 */
+            async function PreSubset(ctx) {
+                const { input, hb, face, opentype_font } = ctx.pick(
                     'input',
                     'face',
                     'hb',
                     'blob',
-                    'feature_unicodes'
+                    'opentype_font'
                 );
-                const subsets = opt.subsets ?? []
-                input.fontFeature !== false && subsets.unshift(...feature_unicodes)
-                const subsetResult = await subsetAll(
+
+                /** 根据 subsets 参数进行优先分包 */
+                const subsets = opt.subsets ?? [];
+                // input.fontFeature !== false && subsets.unshift(...feature_unicodes)
+                const featureData = getFeatureData(opentype_font);
+                const featureMap = getFeatureMap(featureData);
+                // console.log(featureMap.get(65176)) // Set(4) { 65176, 65188, 65182, 64849 }
+                const forcePart = forceSubset(subsets, featureMap);
+
+                const totalChars = face.collectUnicodes();
+                ctx.trace('总字符数', totalChars.length);
+
+                /** 已近在 forcePart 中分包的 unicode */
+                const bundleChars = subsetsToSet(forcePart);
+
+                /** 求出未分包的 unicodes */
+                const codes: number[] = [];
+                for (let index = 0; index < totalChars.length; index++) {
+                    const element = totalChars[index];
+                    if (!bundleChars.has(element)) {
+                        codes.push(element);
+                    }
+                }
+
+                /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
+                const unicodeForceBundle: number[][] = opt.unicodeRank ?? [
+                    Latin,
+                    await getCN_SC_Rank(),
+                ];
+                unicodeForceBundle.push(
+                    codes.filter(
+                        (i) =>
+                            !unicodeForceBundle.some((includesCodes) =>
+                                includesCodes.includes(i)
+                            )
+                    )
+                );
+
+                // console.log(featureMap.get(65176)) // Set(4) { 65176, 65188, 65182, 64849 }
+                const contoursMap = await createContoursMap();
+                /** 单包最大轮廓数值 */
+                const contoursBorder = await calcContoursBorder(
+                    hb,
+                    face,
+                    input.targetType ?? 'woff2',
+                    contoursMap,
+                    input.chunkSize ?? 70 * 1024
+                );
+
+                const autoPart: number[][] = [];
+                for (const bundle of unicodeForceBundle) {
+                    const subset = getAutoSubset(
+                        bundle,
+                        contoursBorder,
+                        contoursMap,
+                        featureMap
+                    );
+                    autoPart.push(...subset);
+                }
+                // 检查 featureMap 中未使用的数据
+                for (const [key, iterator] of featureMap.entries()) {
+                    if (iterator)
+                        ctx.warn(
+                            'featureMap ' + key + ' 未使用' + iterator.size
+                        );
+                }
+
+                const totalSubsets = [...forcePart, ...autoPart];
+                const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
+                    col += cur.length;
+                    return col;
+                }, 0);
+                if (subsetCharsNumber < totalChars.length) {
+                    console.log(
+                        '字符缺漏',
+                        subsetCharsNumber,
+                        totalChars.length
+                    );
+                }
+                // 在分包时仍然是成功的
+
+                // totalSubsets.some((i) => [65176, 65188, 65182, 64849].every(ii => i.includes(ii))) && console.log('确认')
+                ctx.set('subsetsToRun', totalSubsets);
+                ctx.free('opentype_font');
+            },
+            /** 执行所有包的分包动作 */
+            async function subsetFont(ctx) {
+                const { input, face, blob, subsetsToRun, hb } = ctx.pick(
+                    'input',
+                    'face',
+                    'blob',
+                    'hb',
+                    'subsetsToRun'
+                );
+
+                const Result = await useSubset(
                     face,
                     hb,
-                    subsets,
+                    subsetsToRun,
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
@@ -130,66 +220,8 @@ export const fontSplit = async (opt: InputTemplate) => {
                     input.targetType ?? 'woff2',
                     ctx
                 );
-                ctx.set('subsetResult', subsetResult);
-                ctx.free('feature_unicodes');
-            },
-            /** 将剩下的字符进行自动分包 */
-            async function useAutoSubsets(ctx) {
-                const { input, face, blob, subsetResult, hb } = ctx.pick(
-                    'input',
-                    'face',
-                    'blob',
-                    'hb',
-                    'subsetResult'
-                );
-                if (input.autoChunk !== false) {
-                    const bundleChars = subsetsToSet(
-                        subsetResult.map((i) => i.subset)
-                    );
 
-                    const totalChars = face.collectUnicodes();
-                    ctx.trace('总字符数', totalChars.length);
-
-                    // subsets 分割结果和总字符做 set 减法得到未分割字符数
-                    const codes: number[] = [];
-                    for (let index = 0; index < totalChars.length; index++) {
-                        const element = totalChars[index];
-                        if (!bundleChars.has(element)) {
-                            codes.push(element);
-                        }
-                    }
-
-                    ctx.info('参与自动分包：', codes.length);
-                    const unicodeRank: number[][] = opt.unicodeRank ?? [
-                        Latin,
-                        await getCN_SC_Rank(),
-                    ];
-
-                    // 把末尾的东西，额外分成一部分
-                    const finalChunk = codes.filter(
-                        (i) => !unicodeRank.some((rank) => rank.includes(i))
-                    );
-
-                    unicodeRank.push(finalChunk);
-                    for (const rank of unicodeRank) {
-                        const chunks = await autoSubset(
-                            face,
-                            hb,
-                            rank,
-                            async (filename, buffer) => {
-                                return outputFile(
-                                    path.join(input.destFold, filename),
-                                    buffer
-                                );
-                            },
-                            input.targetType ?? 'woff2',
-                            ctx,
-                            opt.chunkSize
-                        );
-                        subsetResult.push(...chunks);
-                    }
-                }
-
+                ctx.set('subsetResult', Result);
                 face.destroy();
                 blob.free();
                 ctx.free('blob', 'face', 'hb');
@@ -203,7 +235,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 );
                 const css = createCSS(subsetResult, nameTable, {
                     css: input.css,
-                    compress: false,
+                    compress: true,
                 });
                 await outputFile(
                     path.join(

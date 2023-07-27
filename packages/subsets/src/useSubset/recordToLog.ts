@@ -1,6 +1,6 @@
-import { timeRecordFormat } from "../utils/timeCount";
-import byteSize from "byte-size";
-import { IContext } from "../fontSplit/context";
+import { timeRecordFormat } from '../utils/timeCount';
+import byteSize from 'byte-size';
+import { IContext } from '../fontSplit/context';
 
 export async function recordToLog(
     ctx: IContext,
@@ -19,12 +19,12 @@ export async function recordToLog(
         [
             index,
             timeRecordFormat(start, middle),
-            (arr.length / (middle - start)).toFixed(2) + "字符/ms",
+            (arr.length / (middle - start)).toFixed(2) + '字符/ms',
             timeRecordFormat(middle, end),
-            (arr.length / (end - middle)).toFixed(2) + "字符/ms",
-            byteSize(transferred.byteLength) + "/" + arr.length,
+            (arr.length / (end - middle)).toFixed(2) + '字符/ms',
+            byteSize(transferred.byteLength) + '/' + arr.length,
             hash.slice(0, 7),
             isTwice,
-        ].join(" \t")
+        ].join(' \t')
     );
 }

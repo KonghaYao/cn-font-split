@@ -1,5 +1,13 @@
-import { HB } from "../hb";
-import { SubsetFontOptions } from "./index";
+import { HB } from '../hb';
+export interface SubsetFontOptions {
+    variationAxes?: Record<string, number>;
+    preserveNameIds?: number[];
+    threads?:
+        | false
+        | {
+              service?: null;
+          };
+}
 
 /** 从总包中抽取出指定 subset 的字符区间，并返回最终结果的字符 */
 export function subsetFont(
@@ -11,7 +19,7 @@ export function subsetFont(
     const Subset = hb.createSubset(face, preserveNameIds, variationAxes);
     Subset.addChars(subsetUnicode);
     Subset.adjustLayout();
-    Subset.clearTableDrop()
+    Subset.clearTableDrop();
     const facePtr = Subset.runSubset();
     const arr = hb.collectUnicodes(facePtr);
 
