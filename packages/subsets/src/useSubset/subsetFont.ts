@@ -16,6 +16,9 @@ export function subsetFont(
     hb: HB.Handle,
     { preserveNameIds, variationAxes }: SubsetFontOptions = {}
 ) {
+    if (subsetUnicode.length === 0) {
+        throw new Error(' 发现空分包');
+    }
     const Subset = hb.createSubset(face, preserveNameIds, variationAxes);
     Subset.addChars(subsetUnicode);
     Subset.adjustLayout();

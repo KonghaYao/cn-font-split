@@ -76,7 +76,10 @@ async function runSubSet(
     const start = performance.now();
     const [buffer, arr] = subsetFont(face, chunk, hb, {});
     const middle = performance.now();
-    if (!buffer) return;
+    if (!buffer || chunk.length === 0 || buffer.byteLength === 0) {
+        ctx.warn('发现空分包' + chunk);
+        return;
+    }
 
     // 执行 ttf 文件转 woff2
     const service = input.threads?.service;
