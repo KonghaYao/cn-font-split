@@ -10,7 +10,7 @@ fontSplit({
     // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
     // FontPath: './test/temp/字魂扁桃体.ttf',
     // FontPath: './test/temp/字魂扁桃体.ttf',
-    FontPath: './test/temp/SourceHanSerifSC.ttf',
+    // FontPath: './test/temp/SourceHanSerifSC.ttf',
 
     targetType: 'woff2',
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
