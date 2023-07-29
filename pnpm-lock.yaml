@@ -14,6 +14,9 @@ importers:
       fs-extra:
         specifier: ^10.1.0
         version: 10.1.0
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
     devDependencies:
       '@babel/core':
         specifier: ^7.22.1
@@ -8106,7 +8109,6 @@ packages:
     resolution: {integrity: sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /ufo@1.1.2:
     resolution: {integrity: sha512-TrY6DsjTQQgyS3E3dBaOXf0TpPD8u9FVrVYmKVegJuFw51n/YB9XPt+U6ydzFG5ZIN7+DIjPbNmXoBj9esYhgQ==}
