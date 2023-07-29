@@ -118,13 +118,12 @@ export const fontSplit = async (opt: InputTemplate) => {
                 // input.fontFeature !== false && subsets.unshift(...feature_unicodes)
                 const featureData = getFeatureData(opentype_font);
                 const featureMap = getFeatureMap(featureData);
-                // console.log(featureMap.get(65176)) // Set(4) { 65176, 65188, 65182, 64849 }
                 const forcePart = forceSubset(subsets, featureMap);
 
                 const totalChars = face.collectUnicodes();
                 ctx.trace('总字符数', totalChars.length);
 
-                /** 已近在 forcePart 中分包的 unicode */
+                /** 已经在 forcePart 中分包的 unicode */
                 const bundleChars = subsetsToSet(forcePart);
 
                 /** 求出未分包的 unicodes */
