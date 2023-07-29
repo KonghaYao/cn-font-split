@@ -1,6 +1,6 @@
-import { FontType } from "./utils/detectFormat";
-import { WriteFileOptions } from "fs-extra";
-import type { Buffer } from "buffer";
+import { FontType } from './utils/detectFormat';
+import { WriteFileOptions } from 'fs-extra';
+import type { Buffer } from 'buffer';
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     hash: string;
@@ -21,28 +21,29 @@ export type IOutputFile = (
     data: Uint8Array | string,
     options?: string | WriteFileOptions | undefined
 ) => Promise<void>;
-import { ConvertManager } from "./convert/convert.manager";
-import { ISettingsParam } from "tslog";
-import { WorkerPoolOptions } from "workerpool";
+import { ConvertManager } from './convert/convert.manager';
+import { ISettingsParam } from 'tslog';
+import { WorkerPoolOptions } from 'workerpool';
 export type InputTemplate = {
     threads?: {
         service?: ConvertManager;
-        /** 
+        /**
          * 多线程文本图片生成
          * @deprecated 默认已经修改为主线程执行，速度够快
          */
-        image?: boolean
+        image?: boolean;
         /** 多线程切割 */
-        split?: boolean
-        options?: WorkerPoolOptions
+        split?: boolean;
+        options?: WorkerPoolOptions;
     };
 
     /** 字体复杂字形等特性的支持 */
-    fontFeature?: {
-        /** 分包时，复杂字形因为彼此之间的依赖关系不能够智能分包，故 */
-        maxPackageSize?: number
-
-    } | false
+    fontFeature?:
+        | {
+              /** 分包时，复杂字形因为彼此之间的依赖关系不能够智能分包，故 */
+              maxPackageSize?: number;
+          }
+        | false;
 
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;
@@ -54,6 +55,10 @@ export type InputTemplate = {
         fontWeight: number | string;
         fontStyle: string;
         fontDisplay: string;
+        /** 本地字体名称，优先级高于自动生成名称 */
+        localFamily: string | string[];
+        /** 当 fontFamily 不支持一些 format 时，动用其它 format */
+        polyfill: ({ name: string; format?: string } | string)[];
     }>;
     /**
      * 输入的字体类型, 不输入则自动识别
