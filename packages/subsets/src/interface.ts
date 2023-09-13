@@ -39,11 +39,11 @@ export type InputTemplate = {
 
     /** 字体复杂字形等特性的支持 */
     fontFeature?:
-        | {
-              /** 分包时，复杂字形因为彼此之间的依赖关系不能够智能分包，故 */
-              maxPackageSize?: number;
-          }
-        | false;
+    | {
+        /** 分包时，复杂字形因为彼此之间的依赖关系不能够智能分包，故 */
+        maxPackageSize?: number;
+    }
+    | false;
 
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;
@@ -60,17 +60,11 @@ export type InputTemplate = {
         /** 当 fontFamily 不支持一些 format 时，动用其它 format */
         polyfill: ({ name: string; format?: string } | string)[];
     }>;
-    /**
-     * 输入的字体类型, 不输入则自动识别
-     * @deprecated 4.0.0 以上为自动识别
-     */
-    fontType?: FontType;
     /** 输出的字体类型，默认 woff2 */
     targetType?: FontType;
 
     /**
      * 控制分包内的 Unicode 字符，优先级高
-     * @dev
      */
     subsets?: Subsets;
 
@@ -80,6 +74,8 @@ export type InputTemplate = {
     unicodeRank?: number[][];
     /** 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小  */
     chunkSize?: number;
+    /** 分包字符的容忍度，这个数值是基础值的倍数 */
+    chunkSizeTolerance?: number;
 
     /** 输出的 css 文件的名称 ，默认为 result.css */
     cssFileName?: string;
@@ -98,7 +94,6 @@ export type InputTemplate = {
     };
     /**
      * 日志输出<副作用>
-     * @dev
      */
     log?: (...args: any[]) => void;
 

@@ -12,6 +12,7 @@ export const createContext = (opt: InputTemplate) =>
         input: InputTemplate;
         originFile: Uint8Array;
         ttfFile: Uint8Array;
+        ttfBufferSize: number;
         hb: HB.Handle;
         subsetsToRun: number[][],
         subsetResult: SubsetResult;
