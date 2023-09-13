@@ -85,8 +85,8 @@ async function runSubSet(
     const service = input.threads?.service;
     const transferred = service
         ? await service.pool.exec('convert', [buffer, targetType], {
-              transfer: [buffer.buffer],
-          })
+            transfer: [buffer.buffer],
+        })
         : await convert(buffer, targetType);
     const end = performance.now();
 
@@ -117,7 +117,8 @@ export const getAutoSubset = (
     subsetUnicode: number[],
     contoursBorder: number,
     contoursMap: Map<number, number>,
-    featureMap: FeatureMap
+    featureMap: FeatureMap,
+    maxCharSize: number
 ) => {
     let count = 0;
     let cache: number[] = [];
@@ -136,7 +137,7 @@ export const getAutoSubset = (
         count += sum;
         cache.push(...unicodeSet);
 
-        if (count >= contoursBorder) {
+        if (count >= contoursBorder || cache.length >= maxCharSize) {
             totalChunk.push(cache);
             cache = [];
             count = 0;

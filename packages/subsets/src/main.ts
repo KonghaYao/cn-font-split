@@ -43,9 +43,10 @@ export const fontSplit = async (opt: InputTemplate) => {
 
             /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {
-                const { input, originFile } = ctx.pick('input', 'originFile');
+                const { originFile } = ctx.pick('input', 'originFile');
 
                 const ttfFile = await convert(originFile, 'truetype');
+                ctx.set("ttfBufferSize", ttfFile.byteLength)
                 ctx.set('ttfFile', ttfFile);
 
                 ctx.free('originFile');
@@ -72,7 +73,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
             },
             async function initOpentype(ctx) {
-                const { ttfFile, input } = ctx.pick('input', 'ttfFile');
+                const { ttfFile } = ctx.pick('input', 'ttfFile');
                 const font = (await import('opentype.js')).parse(
                     ttfFile.buffer
                 );
@@ -105,12 +106,12 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 通过数据计算得出分包的数据结构 */
             async function PreSubset(ctx) {
-                const { input, hb, face, opentype_font } = ctx.pick(
+                const { input, hb, face, opentype_font, ttfBufferSize } = ctx.pick(
                     'input',
                     'face',
                     'hb',
                     'blob',
-                    'opentype_font'
+                    'opentype_font', "ttfBufferSize"
                 );
 
                 /** 根据 subsets 参数进行优先分包 */
@@ -161,12 +162,15 @@ export const fontSplit = async (opt: InputTemplate) => {
                 );
 
                 const autoPart: number[][] = [];
+                /** 计算合理的单个分包的理论字符上限，尽量保证不会出现超大分包 */
+                const maxCharSize = (opt.chunkSizeTolerance ?? 1.7) * totalChars.length * (input.chunkSize ?? 70 * 1024) / ttfBufferSize;
                 for (const bundle of unicodeForceBundle) {
                     const subset = getAutoSubset(
                         bundle,
                         contoursBorder,
                         contoursMap,
-                        featureMap
+                        featureMap,
+                        maxCharSize
                     );
                     autoPart.push(...subset);
                 }
