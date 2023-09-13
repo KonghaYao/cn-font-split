@@ -9,7 +9,6 @@ import path from 'node:path';
 import alias from '@rollup/plugin-alias';
 import condition from '@forsee/rollup-plugin-conditional';
 import OMT from '@surma/rollup-plugin-off-main-thread';
-import replace from '@rollup/plugin-replace';
 const nodeAssets = await fse.readJson('./src/adapter/nodeAssets.json');
 
 const require = createRequire(import.meta.url);
@@ -44,7 +43,6 @@ await Promise.all(
     })
 );
 import { createTypeForBrowser } from './scripts/createTypeForBrowser.mjs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
 
 createTypeForBrowser();
 export default {
