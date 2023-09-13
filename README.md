@@ -1,7 +1,7 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2023 / 7 / 6 | 江夏尧 | `LTS` 4.3.6 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
-| ----------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- |
+| 更新时间： 2023 / 8/6 | 江夏尧 | `LTS` 4.6.0 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
+| --------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- |
 
 ## 简介
 
