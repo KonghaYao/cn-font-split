@@ -94,8 +94,10 @@ async function runSubSet(
         outputFile,
         ext,
         transferred,
-        Array.from(arr)
+        // chunk, // 理论分包
+        Array.from(arr), // 实际分包
     );
+    // console.log(chunk.length - arr.length) // 记录理论分包和实际分包的数目差距
     subsetMessage.push(outputMessage);
     recordToLog(
         ctx,

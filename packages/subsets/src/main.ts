@@ -19,7 +19,7 @@ import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
 import { forceSubset } from './subsetService/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
-
+import { findOutliers } from './useSubset/findOutliers'
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
     const exec = new Executor(
@@ -182,7 +182,22 @@ export const fontSplit = async (opt: InputTemplate) => {
                         );
                 }
 
-                const totalSubsets = [...forcePart, ...autoPart];
+                const fullSubsets = [...forcePart, ...autoPart];
+
+                // 清理整个分包算法结果中的离群最小值
+                const [mins, largePart] = findOutliers(fullSubsets, fullSubsets.map(i => i.length), 1)
+                const combinedMinsPart = mins.sort((a, b) => a.length - b.length).reduce((col, cur) => {
+                    const last = col[col.length - 1]
+                    if (last.length + cur.length <= maxCharSize * 1.3) {
+                        last.push(...cur)
+                    } else {
+                        col.push([...cur])
+                    }
+                    return col
+                }, [[]] as number[][])
+                ctx.info(`减少分包碎片 ${mins.length} => ${combinedMinsPart.length}  `)
+                const totalSubsets = [...combinedMinsPart, ...largePart]
+
                 const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
                     col += cur.length;
                     return col;
