@@ -4,7 +4,7 @@ import { WorkerURLWrapper } from "../utils/WorkerURLWrapper";
 export class ConvertManager {
     pool: WorkerPool
     constructor(options?: WorkerPoolOptions) {
-        this.pool = pool(WorkerURLWrapper("./" + WORKER_URL), options);
+        this.pool = pool(WorkerURLWrapper("./" + WORKER_URL), { ...options, workerOpts: { type: 'module' } });
     }
 
     destroy(): void {
