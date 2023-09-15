@@ -127,6 +127,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 /** 已经在 forcePart 中分包的 unicode */
                 const bundleChars = subsetsToSet(forcePart);
 
+
                 /** 求出未分包的 unicodes */
                 const codes: number[] = [];
                 for (let index = 0; index < totalChars.length; index++) {
@@ -135,12 +136,12 @@ export const fontSplit = async (opt: InputTemplate) => {
                         codes.push(element);
                     }
                 }
-
+                const charsSet = new Set([...totalChars])
                 /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const unicodeForceBundle: number[][] = opt.unicodeRank ?? [
                     Latin,
                     await getCN_SC_Rank(),
-                ];
+                ].map(i => i.filter(ii => charsSet.has(ii)));
                 unicodeForceBundle.push(
                     codes.filter(
                         (i) =>
