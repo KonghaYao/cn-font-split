@@ -1,14 +1,11 @@
 import analyze from 'rollup-plugin-analyzer';
-import json from '@rollup/plugin-json';
-import common from '@rollup/plugin-commonjs';
-import babel from '@rollup/plugin-babel';
+import commonPlugin from '@rollup/plugin-commonjs';
 import fse from 'fs-extra';
 import resolve from '@rollup/plugin-node-resolve';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import alias from '@rollup/plugin-alias';
 import condition from '@forsee/rollup-plugin-conditional';
-import OMT from '@surma/rollup-plugin-off-main-thread';
 const nodeAssets = await fse.readJson('./src/adapter/nodeAssets.json');
 
 const require = createRequire(import.meta.url);
@@ -43,6 +40,7 @@ await Promise.all(
     })
 );
 import { createTypeForBrowser } from './scripts/createTypeForBrowser.mjs';
+import commonConfig from './scripts/common.config.mjs';
 
 createTypeForBrowser();
 export default {
@@ -57,43 +55,11 @@ export default {
     },
 
     plugins: [
-        OMT(),
         condition({ env: 'browser' }),
         alias({
             entries: [{ find: 'path', replacement: 'path-browserify' }],
         }),
-        json({
-            namedExports: false,
-        }),
-
-        {
-            id: 'external',
-            async resolveId(source, importer, options) {
-                const external = ['imagescript', 'module', 'fs-extra'];
-
-                if (external.includes(source) || source.startsWith('node:')) {
-                    console.log(source);
-                    return { id: source, external: true };
-                }
-            },
-        },
-        {
-            name: 'html',
-            load: {
-                order: 'pre',
-
-                handler(id) {
-                    if (id.endsWith('.html')) {
-                        const code = fse.readFileSync(id);
-                        return {
-                            code: `export default ${JSON.stringify(
-                                code.toString('utf-8')
-                            )}`,
-                        };
-                    }
-                },
-            },
-        },
+        ...commonPlugin,
         common(),
         resolve({
             browser: true,
@@ -103,10 +69,6 @@ export default {
                 path: 'path-browserify',
             },
             preferBuiltins: true,
-        }),
-        babel({
-            extensions: ['.ts'],
-            babelHelpers: 'bundled',
         }),
 
         analyze({
