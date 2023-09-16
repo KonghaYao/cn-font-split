@@ -164,7 +164,7 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const autoPart: number[][] = [];
                 /** 计算合理的单个分包的理论字符上限，尽量保证不会出现超大分包 */
-                const maxCharSize = (opt.chunkSizeTolerance ?? 1.7) * totalChars.length * (input.chunkSize ?? 70 * 1024) / ttfBufferSize;
+                const maxCharSize = (opt.chunkSizeTolerance ?? 1.7) * totalChars.length * ((input.chunkSize ?? 70) * 1024) / ttfBufferSize;
                 for (const bundle of unicodeForceBundle) {
                     const subset = getAutoSubset(
                         bundle,
@@ -186,10 +186,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const fullSubsets = [...forcePart, ...autoPart];
 
                 // 清理整个分包算法结果中的离群最小值
-                const [mins, largePart] = findOutliers(fullSubsets, fullSubsets.map(i => i.length), 1)
+                const [mins, largePart, min] = findOutliers(fullSubsets, fullSubsets.map(i => i.length), 1)
                 const combinedMinsPart = mins.sort((a, b) => a.length - b.length).reduce((col, cur) => {
                     const last = col[col.length - 1]
-                    if (last.length + cur.length <= maxCharSize * 1.3) {
+                    if (last.length + cur.length <= min * 1.1) {
                         last.push(...cur)
                     } else {
                         col.push([...cur])
