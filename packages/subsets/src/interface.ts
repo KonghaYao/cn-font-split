@@ -78,7 +78,8 @@ export type InputTemplate = {
     chunkSize?: number;
     /** 分包字符的容忍度，这个数值是基础值的倍数 */
     chunkSizeTolerance?: number;
-
+    /** 最大允许的分包数目，超过这个数目，程序报错退出 */
+    maxAllowSubsetsCount?: number
     /** 输出的 css 文件的名称 ，默认为 result.css */
     cssFileName?: string;
 

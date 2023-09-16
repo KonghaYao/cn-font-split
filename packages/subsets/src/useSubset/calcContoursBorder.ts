@@ -9,16 +9,19 @@ export async function calcContoursBorder(
     face: HB.Face,
     targetType: FontType,
     contoursMap: Map<number, number>,
-    maxSize: number
+    maxSize: number,
+    totalChars: Set<number>
 ) {
-    const sample = face.collectUnicodes();
-    const space = Math.floor(sample.length / 300);
+    const space = Math.floor(totalChars.size / 100)
     const sampleUnicode: number[] = [];
-    for (let index = 0; index < sample.length; index += space) {
-        const element = sample[index];
-        sampleUnicode.push(element);
+    let index = 0
+    for (const iterator of totalChars) {
+        if (index % space === 0) {
+            sampleUnicode.push(iterator);
+        }
+        index++
     }
-    // console.log(sampleUnicode.length);
+
     const [buffer, arr] = subsetFont(face, sampleUnicode, hb, {
         threads: false,
     });

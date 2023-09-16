@@ -116,7 +116,6 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 /** 根据 subsets 参数进行优先分包 */
                 const subsets = opt.subsets ?? [];
-                // input.fontFeature !== false && subsets.unshift(...feature_unicodes)
                 const featureData = getFeatureData(opentype_font);
                 const featureMap = getFeatureMap(featureData);
                 const forcePart = forceSubset(subsets, featureMap);
@@ -125,33 +124,34 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.trace('总字符数', totalChars.length);
 
                 /** 已经在 forcePart 中分包的 unicode */
-                const bundleChars = subsetsToSet(forcePart);
+                const forcePartSet = subsetsToSet(forcePart);
 
-
-                /** 求出未分包的 unicodes */
-                const codes: number[] = [];
-                for (let index = 0; index < totalChars.length; index++) {
-                    const element = totalChars[index];
-                    if (!bundleChars.has(element)) {
-                        codes.push(element);
+                const getUnForcedCodes = (totalChars: Uint32Array, forcePartSet: Set<number>) => {
+                    if (forcePartSet.size === 0) return [...totalChars]
+                    /** 求出未分包的 unicodes */
+                    const codes: number[] = [];
+                    for (let index = 0; index < totalChars.length; index++) {
+                        const element = totalChars[index];
+                        if (!forcePartSet.has(element)) {
+                            codes.push(element);
+                        }
                     }
+                    return codes
                 }
+                const codes = getUnForcedCodes(totalChars, forcePartSet)
+
                 const charsSet = new Set([...totalChars])
                 /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const unicodeForceBundle: number[][] = opt.unicodeRank ?? [
                     Latin,
                     await getCN_SC_Rank(),
                 ].map(i => i.filter(ii => charsSet.has(ii)));
+                const forceBundleSet = new Set([...unicodeForceBundle.flat()])
                 unicodeForceBundle.push(
-                    codes.filter(
-                        (i) =>
-                            !unicodeForceBundle.some((includesCodes) =>
-                                includesCodes.includes(i)
-                            )
-                    )
+                    codes.filter((i) => !forceBundleSet.has(i))
                 );
 
-                // console.log(featureMap.get(65176)) // Set(4) { 65176, 65188, 65182, 64849 }
+
                 const contoursMap = await createContoursMap();
                 /** 单包最大轮廓数值 */
                 const contoursBorder = await calcContoursBorder(
@@ -159,12 +159,14 @@ export const fontSplit = async (opt: InputTemplate) => {
                     face,
                     input.targetType ?? 'woff2',
                     contoursMap,
-                    input.chunkSize ?? 70 * 1024
+                    input.chunkSize ?? 70 * 1024,
+                    charsSet
                 );
 
                 const autoPart: number[][] = [];
                 /** 计算合理的单个分包的理论字符上限，尽量保证不会出现超大分包 */
-                const maxCharSize = (opt.chunkSizeTolerance ?? 1.7) * totalChars.length * ((input.chunkSize ?? 70) * 1024) / ttfBufferSize;
+                const maxCharSize = (opt.chunkSizeTolerance ?? 1.7) * totalChars.length * (input.chunkSize ?? 70 * 1024) / ttfBufferSize;
+
                 for (const bundle of unicodeForceBundle) {
                     const subset = getAutoSubset(
                         bundle,
@@ -185,19 +187,26 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const fullSubsets = [...forcePart, ...autoPart];
 
-                // 清理整个分包算法结果中的离群最小值
-                const [mins, largePart, min] = findOutliers(fullSubsets, fullSubsets.map(i => i.length), 1)
-                const combinedMinsPart = mins.sort((a, b) => a.length - b.length).reduce((col, cur) => {
-                    const last = col[col.length - 1]
-                    if (last.length + cur.length <= min * 1.1) {
-                        last.push(...cur)
-                    } else {
-                        col.push([...cur])
-                    }
-                    return col
-                }, [[]] as number[][])
-                ctx.info(`减少分包碎片 ${mins.length} => ${combinedMinsPart.length}  `)
-                const totalSubsets = [...combinedMinsPart, ...largePart]
+                const reduceMinsPackage = (fullSubsets: number[][]) => {
+                    // 清理整个分包算法结果中的离群最小值
+                    const [mins, largePart, min] = findOutliers(fullSubsets, fullSubsets.map(i => i.length), 1)
+                    const minsLength = mins.length
+                    if (!mins.length) return fullSubsets
+
+                    const combinedMinsPart = mins.sort((a, b) => a.length - b.length).reduce((col, cur) => {
+                        const last = col[col.length - 1]
+                        if (last.length + cur.length <= min * 1.1) {
+                            last.push(...cur)
+                        } else {
+                            col.push([...cur])
+                        }
+                        return col
+                    }, [[]] as number[][])
+                    ctx.info(`减少分包碎片 ${minsLength} => ${combinedMinsPart.length}  `)
+                    return [...combinedMinsPart, ...largePart]
+                }
+
+                const totalSubsets = reduceMinsPackage(fullSubsets)
 
                 const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
                     col += cur.length;
@@ -210,9 +219,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         totalChars.length
                     );
                 }
-                // 在分包时仍然是成功的
-
-                // totalSubsets.some((i) => [65176, 65188, 65182, 64849].every(ii => i.includes(ii))) && console.log('确认')
+                if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600)) throw new Error("分包数为" + totalSubsets.length + '，超过了期望最大分包数，将会导致您的机器过久运行')
                 ctx.set('subsetsToRun', totalSubsets);
                 ctx.free('opentype_font');
             },
