@@ -284,7 +284,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'subsetResult'
                 );
                 if (!(input.testHTML === false && input.reporter === false)) {
-                    const reporter = createReporter(
+                    const reporter = await createReporter(
                         subsetResult,
                         nameTable,
                         input,

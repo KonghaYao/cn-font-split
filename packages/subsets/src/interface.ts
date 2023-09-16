@@ -8,6 +8,8 @@ export type SubsetResult = {
     subset: Subset;
     path: string;
     size: number;
+    diff: number
+    charLength: number;
 }[];
 /** unicode-range的数据表示格式 */
 export type Subset = (number | [number, number])[];
