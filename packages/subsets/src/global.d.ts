@@ -17,7 +17,7 @@ interface Deno {
     ): Promise<void>;
 }
 declare global {
-
+    var __cn_font_split_version__: string
     var Deno: Deno; // eslint-disable-line no-var
 }
 interface FsFile {

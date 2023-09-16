@@ -1,13 +1,13 @@
 import analyze from 'rollup-plugin-analyzer';
-import commonPlugin from '@rollup/plugin-commonjs';
+import common from '@rollup/plugin-commonjs';
 import fse from 'fs-extra';
 import resolve from '@rollup/plugin-node-resolve';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import alias from '@rollup/plugin-alias';
 import condition from '@forsee/rollup-plugin-conditional';
+import commonPlugin from './scripts/common.config.mjs';
 const nodeAssets = await fse.readJson('./src/adapter/nodeAssets.json');
-
 const require = createRequire(import.meta.url);
 
 // 防止打包时删除 ts 的类型注解
@@ -40,7 +40,6 @@ await Promise.all(
     })
 );
 import { createTypeForBrowser } from './scripts/createTypeForBrowser.mjs';
-import commonConfig from './scripts/common.config.mjs';
 
 createTypeForBrowser();
 export default {
@@ -56,10 +55,10 @@ export default {
 
     plugins: [
         condition({ env: 'browser' }),
+        ...commonPlugin,
         alias({
             entries: [{ find: 'path', replacement: 'path-browserify' }],
         }),
-        ...commonPlugin,
         common(),
         resolve({
             browser: true,
