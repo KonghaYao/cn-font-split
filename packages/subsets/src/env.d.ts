@@ -2,9 +2,6 @@ declare module "*.html" {
     const a: string;
     export default a;
 }
-declare global {
-    var __cn_font_split_version__: string
-}
 
 declare module "https://*" {
     const a: any;
@@ -38,4 +35,5 @@ declare module "comlink/dist/esm/node-adapter.mjs" {
     }
     export default function nodeEndpoint(nep: NodeEndpoint): Endpoint;
 }
-export { }
+// 这个是全局的静态文件声明，不要进行模块化
+// export { }
