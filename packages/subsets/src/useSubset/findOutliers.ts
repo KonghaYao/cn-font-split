@@ -20,5 +20,5 @@ export function findOutliers(
     }
   }
 
-  return [outliers, bigger];
+  return [outliers, bigger, mean] as const;
 }
