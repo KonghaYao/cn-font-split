@@ -1,32 +1,30 @@
 import { InputTemplate, SubsetResult } from '../interface';
 import { NameTable } from './reporter';
 
-const trans: Record<string, number> = {
-    'extra light': 200,
-    'ultra light': 200,
-    light: 300,
-    normal: 400,
-    regular: 400,
-    medium: 500,
-    'semi bold': 600,
-    'demi bold': 600,
-    bold: 700,
-    'extra bold': 800,
-    'ultra bold': 800,
-    heavy: 900,
-    black: 900,
-};
+const doubleFontWeightName = new Map([
+    ['extra light', 200],
+    ['ultra light', 200],
+    ['extra bold', 800],
+    ['ultra bold', 800],
+    ['semi bold', 600],
+    ['demi bold', 600],
+])
+const singleFontWeightName = new Map([
+    ["light", 300],
+    ["normal", 400],
+    ["regular", 400],
+    ["medium", 500],
+    ["bold", 700],
+    ["heavy", 900],
+    ["black", 900],
+]);
 
 export const subFamilyToWeight = (str: string) => {
-    const items = str.split(' ');
-    let weight = 400;
-    items.some((i) => {
-        if (i in trans) {
-            weight = trans[i];
-            return true;
-        }
-    });
-    return weight;
+    const name = [...doubleFontWeightName.keys()].find(i => str.includes(i))
+    if (name) return doubleFontWeightName.get(name)
+    const singleName = [...singleFontWeightName.keys()].find(i => str.includes(i))
+    if (singleName) return singleFontWeightName.get(singleName)
+    return 400;
 };
 
 export const isItalic = (str: string) => {
@@ -65,19 +63,19 @@ export const createCSS = (
     const polyfills =
         typeof css.polyfill === 'string'
             ? [
-                  {
-                      name: css.polyfill,
-                      format: getKeyWordsFromFontPath(css.polyfill),
-                  },
-              ]
+                {
+                    name: css.polyfill,
+                    format: getKeyWordsFromFontPath(css.polyfill),
+                },
+            ]
             : css.polyfill?.map((i) =>
-                  typeof i === 'string'
-                      ? {
-                            name: i,
-                            format: getKeyWordsFromFontPath(i),
-                        }
-                      : i
-              ) ?? [];
+                typeof i === 'string'
+                    ? {
+                        name: i,
+                        format: getKeyWordsFromFontPath(i),
+                    }
+                    : i
+            ) ?? [];
 
     const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
     const cssStyleSheet = subsetResult
@@ -85,15 +83,14 @@ export const createCSS = (
             return `@font-face {
 font-family: "${family}";
 src:${[
-                ...locals.map((i) => `local("${i}")`),
-                `url("./${path}") format("woff2")`,
-                ...polyfills.map(
-                    (i) =>
-                        `url("${i.name}") ${
-                            i.format ? `format("${i.format}")` : ''
-                        }`
-                ),
-            ].join(',')};
+                    ...locals.map((i) => `local("${i}")`),
+                    `url("./${path}") format("woff2")`,
+                    ...polyfills.map(
+                        (i) =>
+                            `url("${i.name}") ${i.format ? `format("${i.format}")` : ''
+                            }`
+                    ),
+                ].join(',')};
 font-style: ${style};
 font-weight: ${weight};
 font-display: ${css.fontDisplay || 'swap'};

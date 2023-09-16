@@ -1,24 +1,21 @@
 import { UnicodeRange } from '@japont/unicode-range';
-import { IOutputFile, Subset } from '../interface';
+import { IOutputFile } from '../interface';
 import md5 from '../utils/md5';
-import { subsetToUnicodeRange } from '../utils/subsetToUnicodeRange';
-
 export async function createRecord(
     outputFile: IOutputFile,
     ext: string,
     transferred: Uint8Array,
+    chunk: number[],
     subset: number[]
 ) {
     const hashName = md5(transferred);
     await outputFile(hashName + ext, transferred);
     const str = UnicodeRange.stringify(subset);
-
     return {
         size: transferred.byteLength,
         hash: hashName,
         path: hashName + ext,
         unicodeRange: str.join(','),
-        // unicodeRange: subsetToUnicodeRange(subset),
         subset: str.map((i) => {
             i = i.replace('U+', '');
             if (i.includes('-')) {
@@ -27,5 +24,7 @@ export async function createRecord(
                 return parseInt(i);
             }
         }),
+        diff: chunk.length - subset.length,
+        charLength: subset.length
     };
 }

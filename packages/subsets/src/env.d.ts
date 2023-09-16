@@ -2,6 +2,10 @@ declare module "*.html" {
     const a: string;
     export default a;
 }
+declare global {
+    var __cn_font_split_version__: string
+}
+
 declare module "https://*" {
     const a: any;
     export const ensureDir: any;
@@ -34,3 +38,4 @@ declare module "comlink/dist/esm/node-adapter.mjs" {
     }
     export default function nodeEndpoint(nep: NodeEndpoint): Endpoint;
 }
+export { }
