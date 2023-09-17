@@ -7,18 +7,24 @@ export type NameTable = Record<string, string | { en: string }>
 
 
 export interface BundleReporter {
-    size: {
-        byteLength: number,
-        ttfLength: number,
-        bundledTotalLength: number
-    }
+    /** 原始字节数 */
+    originLength: number,
+    /** ttf字节数 */
+    ttfLength: number,
+    /** 打包完成后总字节数 */
+    bundledTotalLength: number
+    /** 原始 unicode 数 */
+    originSize: number
+    /** 打包后 unicode 数 */
+    bundledSize: number
 }
-
+export type FontReporter = Awaited<ReturnType<typeof createReporter>>
 export const createReporter = async (
     subsetResult: SubsetResult,
     nameTable: NameTable,
     input: InputTemplate,
-    record: PerformanceRecord[]
+    record: PerformanceRecord[],
+    bundleMessage: BundleReporter
 ) => {
     const data = subsetResult.map((i) => {
         return {
@@ -41,9 +47,11 @@ export const createReporter = async (
         data,
         record,
         version: __cn_font_split_version__,
+        /** 环境信息 */
         env: {
             envName: env,
             ...await getDeviceMessage(env)
         },
+        bundleMessage
     }
 };

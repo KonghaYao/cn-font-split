@@ -6,7 +6,7 @@ import { createContext } from './fontSplit/context';
 import path from 'path';
 import byteSize from 'byte-size';
 import { InputTemplate } from './interface';
-import { createReporter } from './templates/reporter';
+import { BundleReporter, createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
 import { useSubset, getAutoSubset } from './useSubset/index';
@@ -41,17 +41,17 @@ export const fontSplit = async (opt: InputTemplate) => {
                     res = new Uint8Array(input.FontPath);
                 }
                 ctx.trace('输入文件大小：' + byteSize(res.byteLength));
+                ctx.set("bundleMessage", { originLength: res.byteLength })
                 ctx.set('originFile', res);
             },
 
             /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {
-                const { originFile } = ctx.pick('input', 'originFile');
-
+                const { originFile, bundleMessage } = ctx.pick('input', 'originFile', 'bundleMessage');
                 const ttfFile = await convert(originFile, 'truetype');
+                bundleMessage.ttfLength = ttfFile.byteLength
                 ctx.set("ttfBufferSize", ttfFile.byteLength)
                 ctx.set('ttfFile', ttfFile);
-
                 ctx.free('originFile');
             },
 
@@ -109,12 +109,14 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 通过数据计算得出分包的数据结构 */
             async function PreSubset(ctx) {
-                const { input, hb, face, opentype_font, ttfBufferSize } = ctx.pick(
+                const { input, hb, face, opentype_font, ttfBufferSize, bundleMessage } = ctx.pick(
                     'input',
                     'face',
                     'hb',
                     'blob',
-                    'opentype_font', "ttfBufferSize"
+                    'opentype_font',
+                    "ttfBufferSize",
+                    'bundleMessage'
                 );
 
                 /** 根据 subsets 参数进行优先分包 */
@@ -125,6 +127,7 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const totalChars = face.collectUnicodes();
                 ctx.trace('总字符数', totalChars.length);
+                bundleMessage.originSize = totalChars.length
 
                 /** 已经在 forcePart 中分包的 unicode */
                 const forcePartSet = subsetsToSet(forcePart);
@@ -197,12 +200,13 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 执行所有包的分包动作 */
             async function subsetFont(ctx) {
-                const { input, face, blob, subsetsToRun, hb } = ctx.pick(
+                const { input, face, blob, subsetsToRun, hb, bundleMessage } = ctx.pick(
                     'input',
                     'face',
                     'blob',
                     'hb',
-                    'subsetsToRun'
+                    'subsetsToRun',
+                    'bundleMessage'
                 );
 
                 const Result = await useSubset(
@@ -219,6 +223,8 @@ export const fontSplit = async (opt: InputTemplate) => {
                     ctx
                 );
 
+                bundleMessage.bundledSize = Result.reduce((col, cur) => col + cur.charLength, 0)
+                bundleMessage.bundledTotalLength = Result.reduce((col, cur) => col + cur.size, 0)
                 ctx.set('subsetResult', Result);
                 face.destroy();
                 blob.free();
@@ -257,17 +263,19 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
             },
             async function outputReporter(ctx) {
-                const { nameTable, subsetResult, input } = ctx.pick(
+                const { nameTable, subsetResult, input, bundleMessage } = ctx.pick(
                     'input',
                     'nameTable',
-                    'subsetResult'
+                    'subsetResult',
+                    'bundleMessage'
                 );
                 if (!(input.testHTML === false && input.reporter === false)) {
                     const reporter = await createReporter(
                         subsetResult,
                         nameTable,
                         input,
-                        exec.records
+                        exec.records,
+                        bundleMessage as BundleReporter
                     );
                     await outputFile(
                         path.join(input.destFold, 'reporter.json'),
