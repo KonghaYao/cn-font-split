@@ -1,7 +1,7 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2023 / 8/6 | 江夏尧 | `LTS` 4.6.0 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
-| --------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- |
+| 更新时间： 2023 / 9/17 | 江夏尧 | `LTS` 4.7.2 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
+| ---------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- |
 
 ## 简介
 
@@ -45,7 +45,7 @@ npm install @konghayao/cn-font-split
 ```js
 import { fontSplit } from '@konghayao/cn-font-split';
 // import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index.js";
-// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.3.6/dist/browser/index.js";
+// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.7.2/dist/browser/index.js";
 
 fontSplit({
     FontPath: './fonts/SourceHanSerifCN-Bold.ttf', // 部分 otf 文件会报错，最好使用 ttf 版本的字体
@@ -55,7 +55,7 @@ fontSplit({
     testHTML: true, // 输出一份 html 报告文件
     reporter: true, // 输出 json 格式报告
     // previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成，文件为 SVG 格式
-    threads: {}, // 建议开启多线程
+    threads: {}, // 建议开启多线程，速度飞快
     css: {
         // 覆盖默认的 css 设置，一般不需要进行更改
         // fontFamily: "站酷庆科黄油体",
@@ -129,6 +129,13 @@ fontSplit({
 2. 支持 WebAssembly 相关功能
 3. 不对项目成品文件再次打包（会导致奇奇怪怪的依赖问题）
 4. 可以使用 CDN 导入 /dist/browser/index.js 文件，这个是支持的。
+
+### Bun
+
+> version: ❌ Coming
+
+1. Bun 现在的版本只能跑在 linux 平台
+2. Bun 对于 worker_thread 的实现未完成，暂时未找到方案
 
 ### 感谢
 
