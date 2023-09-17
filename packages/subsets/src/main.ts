@@ -5,7 +5,7 @@ import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
 import { createContext } from './fontSplit/context';
 import path from 'path';
 import byteSize from 'byte-size';
-import { InputTemplate, Subsets } from './interface';
+import { InputTemplate } from './interface';
 import { createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
@@ -19,7 +19,10 @@ import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
 import { forceSubset } from './subsetService/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
-import { findOutliers } from './useSubset/findOutliers'
+import { getUnForcedCodes } from './useSubset/getUnForcedCodes';
+import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
+export { type FontReporter } from './templates/reporter'
+
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
     const exec = new Executor(
@@ -126,18 +129,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                 /** 已经在 forcePart 中分包的 unicode */
                 const forcePartSet = subsetsToSet(forcePart);
 
-                const getUnForcedCodes = (totalChars: Uint32Array, forcePartSet: Set<number>) => {
-                    if (forcePartSet.size === 0) return [...totalChars]
-                    /** 求出未分包的 unicodes */
-                    const codes: number[] = [];
-                    for (let index = 0; index < totalChars.length; index++) {
-                        const element = totalChars[index];
-                        if (!forcePartSet.has(element)) {
-                            codes.push(element);
-                        }
-                    }
-                    return codes
-                }
                 const codes = getUnForcedCodes(totalChars, forcePartSet)
 
                 const charsSet = new Set([...totalChars])
@@ -187,26 +178,7 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const fullSubsets = [...forcePart, ...autoPart];
 
-                const reduceMinsPackage = (fullSubsets: number[][]) => {
-                    // 清理整个分包算法结果中的离群最小值
-                    const [mins, largePart, min] = findOutliers(fullSubsets, fullSubsets.map(i => i.length), 1)
-                    const minsLength = mins.length
-                    if (!mins.length) return fullSubsets
-
-                    const combinedMinsPart = mins.sort((a, b) => a.length - b.length).reduce((col, cur) => {
-                        const last = col[col.length - 1]
-                        if (last.length + cur.length <= min * 1.1) {
-                            last.push(...cur)
-                        } else {
-                            col.push([...cur])
-                        }
-                        return col
-                    }, [[]] as number[][])
-                    ctx.info(`减少分包碎片 ${minsLength} => ${combinedMinsPart.length}  `)
-                    return [...combinedMinsPart, ...largePart]
-                }
-
-                const totalSubsets = reduceMinsPackage(fullSubsets)
+                const totalSubsets = reduceMinsPackage(fullSubsets, ctx)
 
                 const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
                     col += cur.length;
