@@ -1,5 +1,5 @@
-import { FontEditor, TTF } from "fonteditor-core";
-import { CharsetReporter } from "./index";
+import { type Font } from 'opentype.js'
+import { type CharsetReporter } from "./index.js";
 
 export type Charset = ([number, number] | [number])[];
 export const calcCharset = (charset: Charset) => {
@@ -14,12 +14,11 @@ export const calcCharset = (charset: Charset) => {
 
 /** 字符集判断 */
 export const FontSetMatch = (
-    font: FontEditor.Font,
-    meta: TTF.TTFObject,
+    font: Font,
+    items: Set<number>,
     charset: Charset,
     name: string
 ): CharsetReporter => {
-    const items = new Set(Object.keys(meta.cmap).map((i) => parseInt(i)));
     let support_count = 0;
     let area_count = 0;
     for (const area of charset) {
