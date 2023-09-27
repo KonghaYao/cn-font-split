@@ -1,6 +1,5 @@
-import { FontEditor, TTF } from "fonteditor-core";
-
-import { CharsetReporter } from "./index";
+import { type Font } from 'opentype.js'
+import { type CharsetReporter } from "./index.js";
 
 export type UnicodeCharset = {
     start: number;
@@ -11,11 +10,10 @@ export type UnicodeCharset = {
 
 /** 字符集判断 */
 export const UnicodeMatch = (
-    font: FontEditor.Font,
-    meta: TTF.TTFObject,
+    font: Font,
+    items: Set<number>,
     Unicode: UnicodeCharset
 ): CharsetReporter[] => {
-    const items = new Set(Object.keys(meta.cmap).map((i) => parseInt(i)));
     return Unicode.map((i) => {
         let support_count = 0;
         const area_count = i.end - i.start + 1;
