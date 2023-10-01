@@ -1,66 +1,29 @@
-import opentype, { type Font } from 'opentype.js'
-import { Charset, FontSetMatch } from "./FontSetMatch.js";
-import { UnicodeCharset, UnicodeMatch } from "./UnicodeMatch.js";
-export interface CharsetReporter {
-    name: string;
-    cn?: string;
-    start?: number;
-    end?: number;
-    support_count: number;
-    area_count: number;
-    coverage: string;
-    in_set_rate: string;
-}
-export type CharsetLoader = (path: string) => Promise<Charset | UnicodeCharset>;
+import opentype, { type Font } from 'opentype.js';
+import { getCharsetReport } from './Charset/getCharsetReport.js';
+import {
+    defaultCharsetLoader,
+    CharsetLoader,
+} from './Charset/defaultCharsetLoader.js';
 
-const defaultCharsetLoader: CharsetLoader = async (path) => {
-    const { default: D } = await import("../data/" + path);
-    return D;
-};
-/** 分析字体中的 */
+/** 分析字体中的字符集和字型相关信息 */
 export const FontAnalyze = async (
     input: Buffer | ArrayBuffer,
     { charsetLoader = defaultCharsetLoader }: { charsetLoader: CharsetLoader }
 ) => {
+    const font = opentype.parse(input);
 
-    const font = opentype.parse(input)
-
-    const meta = font.tables.cmap.glyphIndexMap
-
-    const headers = font.tables.name
+    const headers = font.tables.name;
     console.table(headers);
-    const unicodeSet = new Set(Object.keys(meta).map(i => parseInt(i)))
+
+    // 获取包中的所有 unicode
+    const meta = font.tables.cmap.glyphIndexMap;
+    const unicodeSet = new Set(Object.keys(meta).map((i) => parseInt(i)));
     // 软件需要在浏览器运行，所以按需加载比较合适
-    const standard = await Promise.all(
-        [
-            ["gb2312.json", "GB/T 2312"],
-            ["changyong-3500.json", "现代汉语常用字表"],
-            ["tongyong-7000.json", "现代汉语通用字表"],
-            ["yiwu-jiaoyu.json", "义务教育语文课程常用字表"],
-            ["tongyong-guifan.json", "通用规范汉字表"],
-            ["hanyi-jianfan.json", "汉仪简繁字表"],
-            ["fangzheng-jianfan.json", "方正简繁字表"],
-            ["iicore.json", "国际表意文字核心（IICore）"],
-            ["gbk.json", "GBK"],
-            ["changyong4808.json", "常用国字标准字体表"],
-            ["cichangyong-6343.json", "次常用国字标准字体表"],
-            ["big5-changyong.json", "Big5 常用汉字表"],
-            ["big5.json", "Big5"],
-            ["hk-changyong.json", "常用字字形表（香港）"],
-            ["hk-hkscs.json", "香港增补字符集"],
-            ["hk-suppchara.json", "常用香港外字表"],
-        ].map(async ([_path, name]) => {
-            const set = await charsetLoader(_path);
-            return FontSetMatch(font, unicodeSet, set as Charset, name);
-        })
+    const { unicodeReport, standard } = await getCharsetReport(
+        charsetLoader,
+        font,
+        unicodeSet
     );
-    // console.table(standard);
-
-    const Unicode = await charsetLoader("unicodes.json");
-    const unicodeReport = UnicodeMatch(font, unicodeSet, Unicode as UnicodeCharset);
-    // 太长了，不进行打印
-    // console.table(areas, ["cn", "coverage", "support_count", "area_count"]);
-
     return {
         file: {
             size: input.byteLength,

@@ -1,5 +1,5 @@
-import { type Font } from 'opentype.js'
-import { type CharsetReporter } from "./index.js";
+import { type Font } from 'opentype.js';
+import { type CharsetReporter } from './defaultCharsetLoader.js';
 
 export type UnicodeCharset = {
     start: number;
