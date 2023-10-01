@@ -77,7 +77,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             async function initOpentype(ctx) {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
-                const font = (await import('opentype.js')).parse(
+                const font = (await import('@konghayao/opentype.js')).parse(
                     ttfFile.buffer
                 );
                 ctx.set('opentype_font', font);

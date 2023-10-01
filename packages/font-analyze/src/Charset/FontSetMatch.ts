@@ -1,4 +1,4 @@
-import { type Font } from 'opentype.js';
+import { type Font } from '@konghayao/opentype.js';
 import { type CharsetReporter } from './defaultCharsetLoader.js';
 
 export type Charset = ([number, number] | [number])[];

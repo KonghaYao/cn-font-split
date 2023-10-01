@@ -35,5 +35,9 @@ declare module "comlink/dist/esm/node-adapter.mjs" {
     }
     export default function nodeEndpoint(nep: NodeEndpoint): Endpoint;
 }
+declare module "@konghayao/opentype.js" {
+    export * from "@types/opentype.js";
+}
+
 // 这个是全局的静态文件声明，不要进行模块化
 // export { }

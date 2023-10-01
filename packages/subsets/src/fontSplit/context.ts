@@ -1,7 +1,7 @@
 import { HB } from "../hb";
 import { Context } from "../pipeline/index";
 import { InputTemplate, SubsetResult, Subsets } from "../interface";
-import { Font } from "opentype.js";
+import { Font } from "@konghayao/opentype.js";
 import { type BundleReporter } from "../templates/reporter";
 
 /** 全局 Context 的类型，用于在分步函数中定义类型 */
