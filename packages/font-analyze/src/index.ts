@@ -1,4 +1,4 @@
-import opentype, { type Font } from 'opentype.js';
+import { parse, type Font } from '@konghayao/opentype.js';
 import { getCharsetReport } from './Charset/getCharsetReport.js';
 import {
     defaultCharsetLoader,
@@ -10,7 +10,7 @@ export const FontAnalyze = async (
     input: Buffer | ArrayBuffer,
     { charsetLoader = defaultCharsetLoader }: { charsetLoader: CharsetLoader }
 ) => {
-    const font = opentype.parse(input);
+    const font = parse(input);
 
     const headers = font.tables.name;
     console.table(headers);

@@ -1,4 +1,4 @@
-import { Font } from 'opentype.js';
+import { Font } from '@konghayao/opentype.js';
 export const makeImage = async (
     f: Font,
     text = "中文网字计划\nThe Project For Web"
