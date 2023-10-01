@@ -1,4 +1,4 @@
-import { Font } from 'opentype.js';
+import { Font } from '@konghayao/opentype.js';
 import { FeatureList } from '../data/FeatureList';
 import { Subset } from '../interface';
 
@@ -9,8 +9,8 @@ export const getFeatureData = (font: Font) =>
             i: string
         ) => { sub: number | number[]; by: number | number[] }[] =
             font.substitution// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            /** @ts-ignore */
-            .getFeature
+                /** @ts-ignore */
+                .getFeature
                 .bind(font.substitution);
         return (
             getFeature(i)
