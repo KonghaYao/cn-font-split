@@ -36,11 +36,11 @@
         "@chinese-fonts/font-contours": "^1.0.0",
         "@chinese-fonts/wawoff2": "^2.0.3",
         "@japont/unicode-range": "^1.0.0",
-        "@konghayao/harfbuzzjs": "^8.2.1",
+        "@konghayao/harfbuzzjs": "8.2.1-beta.1",
+        "@konghayao/opentype.js": "^2023.10.1",
         "byte-size": "^8.1.1",
         "fs-extra": "^10.1.0",
         "md5": "^2.3.0",
-        "@konghayao/opentype.js": "^2023.10.1",
         "os-locale": "^6.0.2",
         "tslog": "^4.8.2",
         "workerpool": "^6.5.0"

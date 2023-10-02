@@ -10,7 +10,6 @@
         "lint:subsets": "eslint packages/subsets/**/*.ts "
     },
     "dependencies": {
-        "fonteditor-core": "^2.1.11",
         "fs-extra": "^10.1.0",
         "typescript": "^5.1.6"
     },
