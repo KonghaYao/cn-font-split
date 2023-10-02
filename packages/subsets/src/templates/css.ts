@@ -32,14 +32,14 @@ export const isItalic = (str: string) => {
 };
 export const createCSS = (
     subsetResult: SubsetResult,
-    nameTable: NameTable,
+    nameTable: { windows?: NameTable, macintosh?: NameTable },
     opts: {
         css: InputTemplate['css'];
         compress: boolean;
     }
 ) => {
     const fontData = Object.fromEntries(
-        Object.entries(nameTable).map(([key, val]) => {
+        Object.entries(nameTable?.windows ?? nameTable?.macintosh ?? {}).map(([key, val]) => {
             return [key, typeof val === 'string' ? val : val.en];
         })
     );

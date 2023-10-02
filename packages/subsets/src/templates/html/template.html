@@ -325,10 +325,17 @@
         };
         const App = () => {
             const [data] = createResource(() =>
-                fetch('./reporter.json').then((res) => res.json())
+                fetch('./reporter.json')
+                    .then((res) => res.json())
+                    .then((res) => {
+                        res.message =
+                            res.message.windows || res.message.macintosh;
+                        return res;
+                    })
             );
             createEffect(() => {
                 if (data()) {
+                    console.log(data().message);
                     document.body.style.fontFamily = `"${
                         getFontData(data().message).fontFamily ||
                         getFontData(data().message).preferredFamily
