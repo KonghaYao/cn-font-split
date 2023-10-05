@@ -21,7 +21,7 @@ import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
 import { getUnForcedCodes } from './useSubset/getUnForcedCodes';
 import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
-export { type FontReporter } from './templates/reporter'
+export { type FontReporter } from './templates/reporter';
 
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
@@ -41,16 +41,20 @@ export const fontSplit = async (opt: InputTemplate) => {
                     res = new Uint8Array(input.FontPath);
                 }
                 ctx.trace('输入文件大小：' + byteSize(res.byteLength));
-                ctx.set("bundleMessage", { originLength: res.byteLength })
+                ctx.set('bundleMessage', { originLength: res.byteLength });
                 ctx.set('originFile', res);
             },
 
             /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
             async function transferFontType(ctx) {
-                const { originFile, bundleMessage } = ctx.pick('input', 'originFile', 'bundleMessage');
+                const { originFile, bundleMessage } = ctx.pick(
+                    'input',
+                    'originFile',
+                    'bundleMessage'
+                );
                 const ttfFile = await convert(originFile, 'truetype');
-                bundleMessage.ttfLength = ttfFile.byteLength
-                ctx.set("ttfBufferSize", ttfFile.byteLength)
+                bundleMessage.ttfLength = ttfFile.byteLength;
+                ctx.set('ttfBufferSize', ttfFile.byteLength);
                 ctx.set('ttfFile', ttfFile);
                 ctx.free('originFile');
             },
@@ -77,8 +81,8 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             async function initOpentype(ctx) {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
-                const { default: opentype } = await import('@konghayao/opentype.js')
-                const font = opentype.parse(ttfFile.buffer);
+                const { parse } = await import('@konghayao/opentype.js');
+                const font = parse(ttfFile.buffer);
                 ctx.set('opentype_font', font);
                 ctx.free('ttfFile');
             },
@@ -108,13 +112,20 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 通过数据计算得出分包的数据结构 */
             async function PreSubset(ctx) {
-                const { input, hb, face, opentype_font, ttfBufferSize, bundleMessage } = ctx.pick(
+                const {
+                    input,
+                    hb,
+                    face,
+                    opentype_font,
+                    ttfBufferSize,
+                    bundleMessage,
+                } = ctx.pick(
                     'input',
                     'face',
                     'hb',
                     'blob',
                     'opentype_font',
-                    "ttfBufferSize",
+                    'ttfBufferSize',
                     'bundleMessage'
                 );
 
@@ -126,24 +137,24 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const totalChars = face.collectUnicodes();
                 ctx.trace('总字符数', totalChars.length);
-                bundleMessage.originSize = totalChars.length
+                bundleMessage.originSize = totalChars.length;
 
                 /** 已经在 forcePart 中分包的 unicode */
                 const forcePartSet = subsetsToSet(forcePart);
 
-                const codes = getUnForcedCodes(totalChars, forcePartSet)
+                const codes = getUnForcedCodes(totalChars, forcePartSet);
 
-                const charsSet = new Set([...totalChars])
+                const charsSet = new Set([...totalChars]);
                 /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
-                const unicodeForceBundle: number[][] = opt.unicodeRank ?? [
-                    Latin,
-                    await getCN_SC_Rank(),
-                ].map(i => i.filter(ii => charsSet.has(ii)));
-                const forceBundleSet = new Set([...unicodeForceBundle.flat()])
+                const unicodeForceBundle: number[][] =
+                    opt.unicodeRank ??
+                    [Latin, await getCN_SC_Rank()].map((i) =>
+                        i.filter((ii) => charsSet.has(ii))
+                    );
+                const forceBundleSet = new Set([...unicodeForceBundle.flat()]);
                 unicodeForceBundle.push(
                     codes.filter((i) => !forceBundleSet.has(i))
                 );
-
 
                 const contoursMap = await createContoursMap();
                 /** 单包最大轮廓数值 */
@@ -158,7 +169,11 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const autoPart: number[][] = [];
                 /** 计算合理的单个分包的理论字符上限，尽量保证不会出现超大分包 */
-                const maxCharSize = (opt.chunkSizeTolerance ?? 1.7) * totalChars.length * (input.chunkSize ?? 70 * 1024) / ttfBufferSize;
+                const maxCharSize =
+                    ((opt.chunkSizeTolerance ?? 1.7) *
+                        totalChars.length *
+                        (input.chunkSize ?? 70 * 1024)) /
+                    ttfBufferSize;
 
                 for (const bundle of unicodeForceBundle) {
                     const subset = getAutoSubset(
@@ -180,7 +195,7 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 const fullSubsets = [...forcePart, ...autoPart];
 
-                const totalSubsets = reduceMinsPackage(fullSubsets, ctx)
+                const totalSubsets = reduceMinsPackage(fullSubsets, ctx);
 
                 const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
                     col += cur.length;
@@ -193,20 +208,26 @@ export const fontSplit = async (opt: InputTemplate) => {
                         totalChars.length
                     );
                 }
-                if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600)) throw new Error("分包数为" + totalSubsets.length + '，超过了期望最大分包数，将会导致您的机器过久运行')
+                if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600))
+                    throw new Error(
+                        '分包数为' +
+                            totalSubsets.length +
+                            '，超过了期望最大分包数，将会导致您的机器过久运行'
+                    );
                 ctx.set('subsetsToRun', totalSubsets);
                 ctx.free('opentype_font');
             },
             /** 执行所有包的分包动作 */
             async function subsetFont(ctx) {
-                const { input, face, blob, subsetsToRun, hb, bundleMessage } = ctx.pick(
-                    'input',
-                    'face',
-                    'blob',
-                    'hb',
-                    'subsetsToRun',
-                    'bundleMessage'
-                );
+                const { input, face, blob, subsetsToRun, hb, bundleMessage } =
+                    ctx.pick(
+                        'input',
+                        'face',
+                        'blob',
+                        'hb',
+                        'subsetsToRun',
+                        'bundleMessage'
+                    );
 
                 const Result = await useSubset(
                     face,
@@ -222,8 +243,14 @@ export const fontSplit = async (opt: InputTemplate) => {
                     ctx
                 );
 
-                bundleMessage.bundledSize = Result.reduce((col, cur) => col + cur.charLength, 0)
-                bundleMessage.bundledTotalLength = Result.reduce((col, cur) => col + cur.size, 0)
+                bundleMessage.bundledSize = Result.reduce(
+                    (col, cur) => col + cur.charLength,
+                    0
+                );
+                bundleMessage.bundledTotalLength = Result.reduce(
+                    (col, cur) => col + cur.size,
+                    0
+                );
                 ctx.set('subsetResult', Result);
                 face.destroy();
                 blob.free();
@@ -262,12 +289,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
             },
             async function outputReporter(ctx) {
-                const { nameTable, subsetResult, input, bundleMessage } = ctx.pick(
-                    'input',
-                    'nameTable',
-                    'subsetResult',
-                    'bundleMessage'
-                );
+                const { nameTable, subsetResult, input, bundleMessage } =
+                    ctx.pick(
+                        'input',
+                        'nameTable',
+                        'subsetResult',
+                        'bundleMessage'
+                    );
                 if (!(input.testHTML === false && input.reporter === false)) {
                     const reporter = await createReporter(
                         subsetResult,
