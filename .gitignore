@@ -5,3 +5,4 @@ dist
 otf
 **/temp
 .rollup.cache
+.DS_Store
