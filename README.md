@@ -24,7 +24,7 @@
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun |
 | -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
-| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ❌Coming |
+| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ⏺️ ^1.0.0 |
 
 ### 新版本功能
 
@@ -90,9 +90,10 @@ fontSplit({
 
 ### 更多 demo
 
-1. [Nodejs 使用](/packages/subsets/test/test_threads.mjs)
+1. [Nodejs 使用](/packages/subsets/test/node.test.mjs)
 2. [Deno 使用](/packages/subsets/test/deno.test.js)
-3. [浏览器使用](/packages/demo/pages/index.vue)
+3. [Bun 使用](/packages/subsets/test/bun.test.js)
+4. [浏览器使用](https://github.com/KonghaYao/chinese-free-web-font-storage/blob/feature/docs/src/components/online-split/index.tsx)
 
 ## 提高你的字体加载速度
 
@@ -123,32 +124,33 @@ fontSplit({
 
 ### Nodejs
 
-> version: ✅^18.0.0 ⏺️ ^14.0.0 可以使用一些 polyfill
+> version: ✅^18.0.0 ⏺️ ^14.0.0 可以使用一些 polyfill [Nodejs 使用](/packages/subsets/test/node.test.mjs)
 
-1. 需要支持 esm、fetch、worker_threads 等高级特性，如果不支持部分特性，可以找找社区的 polyfill 插件。[polyfill 示例](https://github.com/KonghaYao/cn-font-split-test/tree/main/test)
+1. Nodejs 几乎不需要进行适配，可以直接使用，效率不要
+2. Nodejs 18 以下的代码需要支持 esm、fetch、worker_threads 等高级特性，如果不支持部分特性，可以找找社区的 polyfill 插件。[polyfill 示例](https://github.com/KonghaYao/cn-font-split-test/tree/main/test)
 
 ### Deno
 
-> version: ✅^1.30.0
+> version: ✅^1.30.0 [Deno 使用](/packages/subsets/test/deno.test.js)
 
-1. 1.30.0 为推荐版本，后续版本中使用了本地 npm 路径导入，导致性能衰弱。可以参考 `deno run -A --no-npm index.mjs` 避免。
+1. 1.30.0 为不自动本地安装的版本，后续版本中使用了本地 npm 路径导入，导致部分情况下性能衰弱。可以参考 `deno run -A --no-npm index.mjs` 避免。
 2. 性能上 Deno 比 Nodejs 要好一些，但是 Deno 正在开发中，故暂时观望一整子
 
 ### Browser
 
-> version: ✅ Chrome 102; FireFox 114; Safari 15
+> version: ✅ Chrome 102; FireFox 114; Safari 15 [浏览器使用](https://github.com/KonghaYao/chinese-free-web-font-storage/blob/feature/docs/src/components/online-split/index.tsx)
 
-1. 支持 module worker（多线程必须）
-2. 支持 WebAssembly 相关功能
-3. 不对项目成品文件再次打包（会导致奇奇怪怪的依赖问题）
-4. 可以使用 CDN 导入 /dist/browser/index.js 文件，这个是支持的。
+1. 浏览器需要 支持 module worker（多线程必须）、支持 WebAssembly 相关功能
+2. 在网页中引入时，不要对项目成品文件再次打包（会导致奇奇怪怪的依赖问题）
+3. 可以使用 CDN 导入 /dist/browser/index.js 文件，这个是支持的。
 
 ### Bun
 
-> version: ❌ Coming
+> version: ⏺️ ^1.0.0 [Bun 使用](/packages/subsets/test/bun.test.js)
 
-1. Bun 现在的版本只能跑在 linux 和 Mac 平台
-2. Bun 对于 worker_thread 的实现未完成，暂时未找到方案
+1. Bun 现在的版本只能跑在 linux 和 Mac 平台，Windows 似乎官方在支持
+2. Bun 仍然不稳定，对于部分 API 的实现暂未优化，故支持不太好
+3. Bun 对于 worker_thread 的实现未完成，而且 Bun 的 Worker 也有问题，在处理多线程时有问题
 
 ### 感谢
 

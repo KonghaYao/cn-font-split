@@ -15,10 +15,6 @@ fontSplit({
     destFold: './temp',
     FontPath: '../demo/public/SmileySans-Oblique.ttf',
     // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
-    targetType: 'woff2',
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     // previewImage: {},
-    threads: {
-        image: false,
-    },
 });
