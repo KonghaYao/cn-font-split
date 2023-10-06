@@ -263,10 +263,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'nameTable',
                     'subsetResult'
                 );
-                const css = createCSS(subsetResult, nameTable, {
-                    css: input.css,
-                    compress: true,
-                });
+                const css = createCSS(subsetResult, nameTable, input.css);
                 await outputFile(
                     path.join(
                         input.destFold,
