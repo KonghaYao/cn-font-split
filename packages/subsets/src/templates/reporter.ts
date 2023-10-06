@@ -1,24 +1,23 @@
-import { InputTemplate, SubsetResult } from "../interface";
-import { PerformanceRecord } from "../pipeline/executor";
+import { InputTemplate, SubsetResult } from '../interface';
+import { PerformanceRecord } from '../pipeline/executor';
 import { env } from '../utils/env';
-import { getDeviceMessage } from './device'
-export type ReporterFile = ReturnType<typeof createReporter>
-export type NameTable = Record<string, string | { en: string }>
-
+import { getDeviceMessage } from './device';
+export type ReporterFile = ReturnType<typeof createReporter>;
+export type NameTable = Record<string, string | { en: string }>;
 
 export interface BundleReporter {
     /** 原始字节数 */
-    originLength: number,
+    originLength: number;
     /** ttf字节数 */
-    ttfLength: number,
+    ttfLength: number;
     /** 打包完成后总字节数 */
-    bundledTotalLength: number
+    bundledTotalLength: number;
     /** 原始 unicode 数 */
-    originSize: number
+    originSize: number;
     /** 打包后 unicode 数 */
-    bundledSize: number
+    bundledSize: number;
 }
-export type FontReporter = Awaited<ReturnType<typeof createReporter>>
+export type FontReporter = Awaited<ReturnType<typeof createReporter>>;
 export const createReporter = async (
     subsetResult: SubsetResult,
     nameTable: NameTable,
@@ -32,7 +31,7 @@ export const createReporter = async (
             size: i.size,
             chars: i.unicodeRange,
             diff: i.diff,
-            charsSize: i.charLength
+            charsSize: i.charLength,
         };
     });
 
@@ -40,8 +39,11 @@ export const createReporter = async (
         // 修复 FontPath 输入二进制数据后导致的膨胀
         config: {
             ...input,
-            fontPath: typeof input.FontPath !== "string" ? 'it is a binary input' : input.FontPath,
-            threads: { ...input.threads, service: undefined }
+            fontPath:
+                typeof input.FontPath !== 'string'
+                    ? 'it is a binary input'
+                    : input.FontPath,
+            threads: { ...input.threads, service: undefined },
         },
         message: nameTable,
         data,
@@ -50,8 +52,8 @@ export const createReporter = async (
         /** 环境信息 */
         env: {
             envName: env,
-            ...await getDeviceMessage(env)
+            ...(await getDeviceMessage(env)),
         },
-        bundleMessage
-    }
+        bundleMessage,
+    };
 };

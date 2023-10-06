@@ -1,7 +1,7 @@
-import { Font } from '@konghayao/opentype.js';
+import type { Font } from '@konghayao/opentype.js';
 export const makeImage = async (
     f: Font,
-    text = "中文网字计划\nThe Project For Web"
+    text = '中文网字计划\nThe Project For Web'
 ) => {
     const bounding = { height: 0, width: 0 };
     const padding = 12;
@@ -12,6 +12,7 @@ export const makeImage = async (
     });
     bounding.height = 140 * path.length + (path.length + 1) * padding;
     bounding.width += (path.length + 1) * padding;
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${bounding.width
-        }" height="${bounding.height}">${path.join('')}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${
+        bounding.width
+    }" height="${bounding.height}">${path.join('')}</svg>`;
 };

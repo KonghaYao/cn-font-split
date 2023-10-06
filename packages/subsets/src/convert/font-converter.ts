@@ -1,5 +1,9 @@
-import { FontType, supportedFormats, detectFormat } from "../utils/detectFormat";
-import { compress, decompress } from "@chinese-fonts/wawoff2";
+import {
+    FontType,
+    supportedFormats,
+    detectFormat,
+} from '../utils/detectFormat';
+import { compress, decompress } from '@chinese-fonts/wawoff2';
 
 /** 字体格式转化 */
 export const convert = async function (
@@ -7,12 +11,12 @@ export const convert = async function (
     toFormat: FontType,
     fromFormat?: FontType
 ) {
-    const snft = ["truetype", "ttf", "otf"];
+    const snft = ['truetype', 'ttf', 'otf'];
     if (snft.includes(toFormat)) {
-        toFormat = "sfnt";
+        toFormat = 'sfnt';
     }
-    if (snft.includes(fromFormat || "")) {
-        fromFormat = "sfnt";
+    if (snft.includes(fromFormat || '')) {
+        fromFormat = 'sfnt';
     }
     if (!supportedFormats.has(toFormat)) {
         throw new Error(`Unsupported target format: ${toFormat}`);
@@ -27,13 +31,13 @@ export const convert = async function (
     if (fromFormat === toFormat) {
         return buffer;
     }
-    if (fromFormat === "woff") {
+    if (fromFormat === 'woff') {
         // buffer = woffTool.toSfnt(buffer);
-        throw new Error("Unsupported source format: woff");
-    } else if (fromFormat === "woff2") {
+        throw new Error('Unsupported source format: woff');
+    } else if (fromFormat === 'woff2') {
         buffer = await decompress(buffer);
     }
-    if (toFormat === "woff2") {
+    if (toFormat === 'woff2') {
         buffer = await compress(buffer);
     }
     return buffer;

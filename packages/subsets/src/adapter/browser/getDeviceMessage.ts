@@ -1,8 +1,8 @@
-import { DeviceMessage } from "../../templates/device";
+import { DeviceMessage } from '../../templates/device';
 
 /** 获取浏览器环境信息 */
 export const getBrowserDeviceMessage = (): DeviceMessage => {
-    const WINDOW = window
+    const WINDOW = window;
     let OS_PLATFORM = '';
     let OS_PLATFORM_VERSION = '';
     let OS_ARCH = '';
@@ -10,7 +10,9 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
     let OS_MODEL = '';
     const OS_LOCALE =
         (WINDOW.navigator && WINDOW.navigator.language) ||
-        (WINDOW.navigator && WINDOW.navigator.languages && WINDOW.navigator.languages[0]) ||
+        (WINDOW.navigator &&
+            WINDOW.navigator.languages &&
+            WINDOW.navigator.languages[0]) ||
         '';
 
     // @ts-expect-error userAgentData is not part of the navigator interface yet
@@ -18,7 +20,13 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
 
     if (isUserAgentData(userAgentData)) {
         userAgentData
-            .getHighEntropyValues(['architecture', 'model', 'platform', 'platformVersion', 'fullVersionList'])
+            .getHighEntropyValues([
+                'architecture',
+                'model',
+                'platform',
+                'platformVersion',
+                'fullVersionList',
+            ])
             .then((ua: UAData) => {
                 OS_PLATFORM = ua.platform || '';
                 OS_ARCH = ua.architecture || '';
@@ -26,11 +34,12 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
                 OS_PLATFORM_VERSION = ua.platformVersion || '';
 
                 if (ua.fullVersionList && ua.fullVersionList.length > 0) {
-                    const firstUa = ua.fullVersionList[ua.fullVersionList.length - 1];
+                    const firstUa =
+                        ua.fullVersionList[ua.fullVersionList.length - 1];
                     OS_BROWSER = `${firstUa.brand} ${firstUa.version}`;
                 }
             })
-            .catch(e => void e);
+            .catch((e) => void e);
     }
     return {
         runtime: {
@@ -49,11 +58,15 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
             manufacturer: OS_BROWSER,
             architecture: OS_ARCH,
         },
-        createdTime: new Date().toUTCString()
-    }
-}
+        createdTime: new Date().toUTCString(),
+    };
+};
 function isUserAgentData(data: unknown): data is UserAgentData {
-    return typeof data === 'object' && data !== null && 'getHighEntropyValues' in data;
+    return (
+        typeof data === 'object' &&
+        data !== null &&
+        'getHighEntropyValues' in data
+    );
 }
 interface UserAgentData {
     getHighEntropyValues: (keys: string[]) => Promise<UAData>;

@@ -3,10 +3,10 @@ export interface SubsetFontOptions {
     variationAxes?: Record<string, number>;
     preserveNameIds?: number[];
     threads?:
-    | false
-    | {
-        service?: null;
-    };
+        | false
+        | {
+              service?: null;
+          };
 }
 
 /** 从总包中抽取出指定 subset 的字符区间，并返回最终结果的字符 */

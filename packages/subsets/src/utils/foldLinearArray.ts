@@ -1,7 +1,7 @@
 export const foldLinearArray = (arr: number[]) => {
     const res = arr.reduce((col, cur) => {
         const last = col[col.length - 1];
-        if (typeof last === "number") {
+        if (typeof last === 'number') {
             if (last + 1 === cur) {
                 col.pop();
                 col.push([last, cur]);

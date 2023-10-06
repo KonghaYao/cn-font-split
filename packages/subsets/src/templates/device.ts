@@ -1,5 +1,5 @@
-import { getBrowserDeviceMessage } from '../adapter/browser/getDeviceMessage'
-import { getNodeDeviceMessage } from '../adapter/node/getDeviceMessage'
+import { getBrowserDeviceMessage } from '../adapter/browser/getDeviceMessage';
+import { getNodeDeviceMessage } from '../adapter/node/getDeviceMessage';
 export interface DeviceMessage {
     runtime: {
         name: string;
@@ -11,7 +11,7 @@ export interface DeviceMessage {
         build_number?: string;
     };
     device: {
-        cpus: number,
+        cpus: number;
         locale: string;
         model?: string;
         manufacturer?: string;
@@ -21,8 +21,6 @@ export interface DeviceMessage {
 }
 
 export const getDeviceMessage = (env: string) => {
-    if (env === 'browser')
-        return getBrowserDeviceMessage()
-    if (env === 'node')
-        return getNodeDeviceMessage()
-}
+    if (env === 'browser') return getBrowserDeviceMessage();
+    if (env === 'node') return getNodeDeviceMessage();
+};

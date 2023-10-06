@@ -1,4 +1,4 @@
-import { Logger, ISettingsParam } from "tslog";
+import { Logger, ISettingsParam } from 'tslog';
 /**
  * 数据上下文, 同时具有 logger 的功能
  * @example
@@ -67,7 +67,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
     pick<K extends keyof T>(...keys: K[]): Pick<T, K> {
         if (keys.length === 0)
             throw new Error(
-                "Context pick: please send some name to access the keys you sure to be existed!"
+                'Context pick: please send some name to access the keys you sure to be existed!'
             );
         // 创建一个新的对象，用于存储选取的属性
         const pickedObj = {} as Pick<T, K>;
@@ -78,7 +78,8 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
                 pickedObj[key] = this._originData[key] as T[K];
             } else {
                 console.warn(
-                    `[Warning] Context: ${key as string
+                    `[Warning] Context: ${
+                        key as string
                     } isn't found in context, It could cause Error`
                 );
             }

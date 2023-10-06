@@ -7,20 +7,19 @@
 // 也不可以在 XHR 实例上定义
 // 这样的话会导致无法接收到数据
 
-import { MockXMLHttpRequest } from "./mockXHR";
+import { MockXMLHttpRequest } from './mockXHR';
 
 // 但是确认为是 mockjs 内的数据返回就可以直接修改 XHR 实例了
 const properties = [
-    "readyState",
-    "status",
-    "response",
-    "responseText",
-    "statusText",
+    'readyState',
+    'status',
+    'response',
+    'responseText',
+    'statusText',
 ];
 export function defineGetAndSet(XHR: XMLHttpRequest) {
     // 将这些 键值对 映射到 $data 属性对象的对应值上去
     const auto = properties.reduce((col, cur) => {
-
         col[cur] = {
             get() {
                 return this.$data[cur];
@@ -40,7 +39,7 @@ export function defineGetAndSet(XHR: XMLHttpRequest) {
         getAllResponseHeaders(this: MockXMLHttpRequest) {
             return [...this._responseHeaders.entries()]
                 .map(([key, value]) => `${key}: ${value}`)
-                .join("\n");
+                .join('\n');
         },
     });
 }

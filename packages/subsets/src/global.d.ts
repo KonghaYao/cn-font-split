@@ -1,4 +1,4 @@
-export { };
+export {};
 
 interface Deno {
     // 这里添加 Deno 的 API 定义
@@ -17,7 +17,7 @@ interface Deno {
     ): Promise<void>;
 }
 declare global {
-    var __cn_font_split_version__: string
+    var __cn_font_split_version__: string;
     var Deno: Deno; // eslint-disable-line no-var
 }
 interface FsFile {

@@ -7,7 +7,7 @@ function hb_tag(s: string) {
     );
 }
 function HB_TAG(str: string) {
-    return str.split("").reduce(function (a, ch) {
+    return str.split('').reduce(function (a, ch) {
         return (a << 8) + ch.charCodeAt(0);
     }, 0);
 }
@@ -17,15 +17,15 @@ function _hb_untag(tag: number) {
         String.fromCharCode((tag >> 16) & 0xff),
         String.fromCharCode((tag >> 8) & 0xff),
         String.fromCharCode((tag >> 0) & 0xff),
-    ].join("");
+    ].join('');
 }
 export type BufferFlag =
-    | "BOT"
-    | "EOT"
-    | "PRESERVE_DEFAULT_IGNORABLES"
-    | "REMOVE_DEFAULT_IGNORABLES"
-    | "DO_NOT_INSERT_DOTTED_CIRCLE"
-    | "PRODUCE_UNSAFE_TO_CONCAT";
+    | 'BOT'
+    | 'EOT'
+    | 'PRESERVE_DEFAULT_IGNORABLES'
+    | 'REMOVE_DEFAULT_IGNORABLES'
+    | 'DO_NOT_INSERT_DOTTED_CIRCLE'
+    | 'PRODUCE_UNSAFE_TO_CONCAT';
 
 function _buffer_flag(s: BufferFlag) {
     const flagMap = {
@@ -41,8 +41,8 @@ function _buffer_flag(s: BufferFlag) {
 
 export declare namespace HB {
     export type Handle = ReturnType<typeof hbjs>;
-    export type Face = ReturnType<ReturnType<typeof hbjs>["createFace"]>;
-    export type Blob = ReturnType<ReturnType<typeof hbjs>["createBlob"]>;
+    export type Face = ReturnType<ReturnType<typeof hbjs>['createFace']>;
+    export type Blob = ReturnType<ReturnType<typeof hbjs>['createBlob']>;
 }
 
 /**
@@ -51,14 +51,14 @@ export declare namespace HB {
  * @author modify by konghayao
  */
 export function hbjs(instance: any) {
-    "use strict";
+    'use strict';
 
     const exports = instance.exports;
     const heapu8 = new Uint8Array(exports.memory.buffer);
     const heapu32 = new Uint32Array(exports.memory.buffer);
     const heapi32 = new Int32Array(exports.memory.buffer);
     const heapf32 = new Float32Array(exports.memory.buffer);
-    const utf8Decoder = new TextDecoder("utf8");
+    const utf8Decoder = new TextDecoder('utf8');
 
     const HB_MEMORY_MODE_WRITABLE = 2;
     const HB_SET_VALUE_INVALID = -1;
@@ -170,10 +170,13 @@ export function hbjs(instance: any) {
              * @param {string} table Table name
              */
             reference_table(table: string) {
-                const blob = exports.hb_face_reference_table(ptr, hb_tag(table));
+                const blob = exports.hb_face_reference_table(
+                    ptr,
+                    hb_tag(table)
+                );
                 const length = exports.hb_blob_get_length(blob);
                 if (!length) {
-                    throw new Error(' 引用字体文件中 table 失败')
+                    throw new Error(' 引用字体文件中 table 失败');
                 }
                 const blobptr = exports.hb_blob_get_data(blob, null);
                 const table_string = heapu8.subarray(blobptr, blobptr + length);
@@ -244,9 +247,9 @@ export function hbjs(instance: any) {
             );
             return svgLength > 0
                 ? utf8Decoder.decode(
-                    heapu8.subarray(pathBuffer, pathBuffer + svgLength)
-                )
-                : "";
+                      heapu8.subarray(pathBuffer, pathBuffer + svgLength)
+                  )
+                : '';
         }
 
         /**
@@ -279,8 +282,8 @@ export function hbjs(instance: any) {
             glyphToJson(glyphId: number) {
                 const path: string = glyphToPath(glyphId);
                 return path
-                    .replace(/([MLQCZ])/g, "|$1 ")
-                    .split("|")
+                    .replace(/([MLQCZ])/g, '|$1 ')
+                    .split('|')
                     .filter(function (x) {
                         return x.length;
                     })
@@ -339,7 +342,7 @@ export function hbjs(instance: any) {
         const ptr = exports.malloc(text.length + 1);
         for (let i = 0; i < text.length; ++i) {
             const char = text.charCodeAt(i);
-            if (char > 127) throw new Error("Expected ASCII text");
+            if (char > 127) throw new Error('Expected ASCII text');
             heapu8[ptr + i] = char;
         }
         heapu8[ptr + text.length] = 0;
@@ -400,7 +403,7 @@ export function hbjs(instance: any) {
              * Set buffer direction explicitly.
              * @param {string} direction: One of "ltr", "rtl", "ttb" or "btt"
              */
-            setDirection(dir: "ltr" | "rtl" | "ttb" | "btt") {
+            setDirection(dir: 'ltr' | 'rtl' | 'ttb' | 'btt') {
                 exports.hb_buffer_set_direction(
                     ptr,
                     {
@@ -597,7 +600,7 @@ export function hbjs(instance: any) {
         const ptr = exports.hb_subset_input_create_or_fail();
         if (ptr === 0) {
             throw new Error(
-                "hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure"
+                'hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure'
             );
         }
 
@@ -606,10 +609,14 @@ export function hbjs(instance: any) {
         return {
             ptr,
             clearTableDrop() {
-                exports.hb_set_clear(exports.hb_subset_input_set(ptr, 3/**HB_SUBSET_SETS_DROP_TABLE_TAG */));
+                exports.hb_set_clear(
+                    exports.hb_subset_input_set(
+                        ptr,
+                        3 /**HB_SUBSET_SETS_DROP_TABLE_TAG */
+                    )
+                );
             },
             adjustLayout() {
-
                 for (const iterator of [6, 7]) {
                     // Do the equivalent of --font-features=*
                     const layoutFeatures = exports.hb_subset_input_set(
@@ -666,13 +673,13 @@ export function hbjs(instance: any) {
                 resultPtr = exports.hb_subset_or_fail(face.ptr, ptr);
                 if (resultPtr === 0) {
                     throw new Error(
-                        "hb_subset_or_fail (harfbuzz) returned zero, indicating failure. Maybe the input file is corrupted?"
+                        'hb_subset_or_fail (harfbuzz) returned zero, indicating failure. Maybe the input file is corrupted?'
                     );
                 }
                 return resultPtr;
             },
             destroy() {
-                if (resultPtr && typeof resultPtr === "number")
+                if (resultPtr && typeof resultPtr === 'number')
                     exports.hb_face_destroy(resultPtr);
                 exports.hb_subset_input_destroy(ptr);
             },
@@ -685,7 +692,7 @@ export function hbjs(instance: any) {
                 if (subsetByteLength === 0) {
                     exports.hb_blob_destroy(blobPtr);
                     throw new Error(
-                        "Failed to create subset font, maybe the input file is corrupted?"
+                        'Failed to create subset font, maybe the input file is corrupted?'
                     );
                 }
 
