@@ -14,16 +14,15 @@
         "typescript": "^5.1.6"
     },
     "devDependencies": {
-        "@babel/core": "^7.22.1",
-        "@babel/preset-typescript": "^7.21.5",
+        "@babel/core": "^7.23.0",
+        "@babel/preset-typescript": "^7.23.0",
         "@forsee/rollup-plugin-conditional": "^1.0.2",
         "@rollup/plugin-alias": "^5.0.0",
         "@rollup/plugin-babel": "^6.0.3",
         "@rollup/plugin-commonjs": "^25.0.1",
         "@rollup/plugin-json": "^6.0.0",
         "@rollup/plugin-node-resolve": "^15.1.0",
-        "@rollup/plugin-replace": "^5.0.2",
-        "@rollup/plugin-terser": "^0.4.3",
+        "@rollup/plugin-replace": "^5.0.3",
         "@surma/rollup-plugin-off-main-thread": "^2.2.3",
         "@types/fs-extra": "^9.0.13",
         "@typescript-eslint/eslint-plugin": "5.60.1",
@@ -32,7 +31,7 @@
         "eslint-config-prettier": "8.8.0",
         "eslint-plugin-import": "2.27.5",
         "prettier": "2.8.8",
-        "rollup": "2.79.0",
+        "rollup": "3.29.4",
         "rollup-plugin-analyzer": "^4.0.0"
     }
 }

@@ -19,5 +19,5 @@ fontSplit({
     chunkSize: 70 * 1024,
     // autoChunk: false,
     // subsets: [[31105, 8413]],
-    threads: {},
+    // threads: {},
 });

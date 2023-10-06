@@ -27,12 +27,14 @@ import { ConvertManager } from './convert/convert.manager';
 import { ISettingsParam } from 'tslog';
 import { WorkerPoolOptions } from 'workerpool';
 export type InputTemplate = {
-    threads?: {
-        service?: ConvertManager;
-        /** 多线程切割 */
-        split?: boolean;
-        options?: WorkerPoolOptions;
-    };
+    threads?:
+        | {
+              service?: ConvertManager;
+              /** 多线程切割 */
+              split?: boolean;
+              options?: WorkerPoolOptions;
+          }
+        | false;
 
     /**
      * 字体复杂字形等特性的支持
