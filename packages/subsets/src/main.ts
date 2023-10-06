@@ -73,7 +73,8 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.set('hb', hb);
                 ctx.set('face', face);
                 ctx.set('blob', blob);
-                if (opt.threads) {
+                if (opt.threads !== false) {
+                    opt.threads = opt.threads || {};
                     opt.threads.service = new ConvertManager(
                         opt.threads.options
                     );
@@ -81,7 +82,10 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             async function initOpentype(ctx) {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
-                const { parse } = await import('@konghayao/opentype.js');
+                // rollup 认为 opentype.js 是一个 js 文件，所以会找不到路径
+                const { parse } = await import(
+                    '@konghayao/opentype.js/dist/opentype.js'
+                );
                 const font = parse(ttfFile.buffer);
                 ctx.set('opentype_font', font);
                 ctx.free('ttfFile');
@@ -309,7 +313,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             async function Clear(ctx) {
                 const { input } = ctx.pick('input');
-                input.threads?.service?.destroy();
+                input.threads && input.threads?.service?.destroy();
             },
         ],
         createContext(opt)
