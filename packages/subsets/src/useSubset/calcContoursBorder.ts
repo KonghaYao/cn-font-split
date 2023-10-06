@@ -12,14 +12,14 @@ export async function calcContoursBorder(
     maxSize: number,
     totalChars: Set<number>
 ) {
-    const space = Math.floor(totalChars.size / 100)
+    const space = Math.floor(totalChars.size / 100);
     const sampleUnicode: number[] = [];
-    let index = 0
+    let index = 0;
     for (const iterator of totalChars) {
         if (index % space === 0) {
             sampleUnicode.push(iterator);
         }
-        index++
+        index++;
     }
 
     const [buffer, arr] = subsetFont(face, sampleUnicode, hb, {

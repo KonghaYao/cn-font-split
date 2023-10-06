@@ -18,9 +18,9 @@ const folder = (arr) => {
             [[]]
         );
 };
-import fs from "fs-extra";
+import fs from 'fs-extra';
 let count = 0;
-const i = fs.readFileSync("./gb12345-han.txt", "utf-8");
-const a = folder(i.split("\n").map((i) => i.charCodeAt(0)));
+const i = fs.readFileSync('./gb12345-han.txt', 'utf-8');
+const a = folder(i.split('\n').map((i) => i.charCodeAt(0)));
 
-fs.outputJSONSync("./gb12345.json", a);
+fs.outputJSONSync('./gb12345.json', a);

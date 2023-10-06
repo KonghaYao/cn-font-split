@@ -25,6 +25,6 @@ export async function createRecord(
             }
         }),
         diff: chunk.length - subset.length,
-        charLength: subset.length
+        charLength: subset.length,
     };
 }
