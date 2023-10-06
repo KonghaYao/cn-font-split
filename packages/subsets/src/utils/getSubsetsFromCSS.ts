@@ -1,4 +1,4 @@
-import { Subsets } from 'src/interface';
+import { Subsets } from '../interface';
 
 /** 从 CSS 文件中获取字体 subsets 类型的数据 */
 export const getSubsetsFromCSS = (css: string): Subsets => {

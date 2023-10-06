@@ -1,7 +1,7 @@
 import type { ReadStream } from 'fs-extra';
 import { resolveNodeModule } from '../utils/resolveNodeModule';
 import { isBrowser, isDeno, isInWorker, isNode } from '../utils/env';
-import type { IOutputFile } from 'src/interface';
+import type { IOutputFile } from '../interface';
 export class AssetsMap<K extends string> extends Map<K, string> {
     constructor(input: { [key in K]: string } | [K, string][]) {
         super(

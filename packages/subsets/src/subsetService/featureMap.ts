@@ -8,8 +8,8 @@ export const getFeatureData = (font: Font) =>
         const getFeature: (
             i: string
         ) => { sub: number | number[]; by: number | number[] }[] =
-            font.substitution /** @ts-ignore */.getFeature // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                .bind(font.substitution);
+            /** @ts-ignore */
+            font.substitution.getFeature.bind(font.substitution);
         return (
             getFeature(i)
                 ?.map((ii) => [ii.sub, ii.by].flat())
