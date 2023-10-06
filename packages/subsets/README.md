@@ -1,15 +1,30 @@
 # 中文 Web Font 切割工具
 
-| 更新时间： 2023 / 9/17 | 江夏尧 | `LTS` 4.7.2 | [![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)](https://www.codefactor.io/repository/github/konghayao/cn-font-split) | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
-| ---------------------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- |
+![updateTime](https://img.shields.io/badge/更新时间-2023/10/05-green)
+![author](https://img.shields.io/badge/author-江夏尧-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.8.5-green)
+
+![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
+![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
+![downloadCount](https://img.shields.io/npm/dw/%40konghayao%2Fcn-font-split)
+
+| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
+| ------------------------------------------------- | ---------------------------------------------------- |
 
 ## 简介
 
-在工作中遇到了使用中文字体的烦恼，字体包动不动就 10 多 MB，没有办法在 Web 应用中使用，所以制作了这个字体切割的插件。通过插件将大的字体文件切割为多个小的字体文件，然后通过 CSS 文件的 `unicode-range` 按需加载，实现整个字符集的可用加载！自研多线程加 WebAssembly 分包速度极快，平台兼容性极强，支持生成文字图片预览，支持复杂字形分包！[详见兼容性章节](#兼容性提醒)。
+`cn-font-split` 是 **[中文网字计划](https://chinese-font.netlify.app/)** 所使用的字体分包工具，通过高性能的各种技术将庞大的字体包拆分为适合网络分发的版本。经过四个版本的字体研究与代码迭代，这项技术在我们的网站中得到了充分的应用，实现了中文字体在 Web 领域的加载速度与效率的双飞跃。
 
-| [Nodejs](#nodejs)    | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun      |
+比快更快，比强更强。
+
+-   🚀 `自研多线程`+ `WebAssembly` 分包速度极快；
+-   💻 坚持 Web 平台为基底，兼容性极强，浏览器、Node、Deno，统统可以运行。
+-   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
+
+[详见兼容性章节](#兼容性提醒)。
+| [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun |
 | -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
-| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0     | ✅^102             | ✅^114              | ✅^15              | ❌Coming |
+| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ❌Coming |
 
 ### 新版本功能
 
@@ -32,7 +47,7 @@
 
 ## 快速使用
 
-Nodejs 版本推荐使用 大于 18 的版本，如低级版本，需要 [参考兼容性章节](#兼容性提醒)。
+Nodejs 版本推荐使用 **大于 18 的版本**。如低级版本或者其他的设备环境，[参考兼容性章节](#兼容性提醒)。
 
 ### 安装
 
@@ -45,17 +60,16 @@ npm install @konghayao/cn-font-split
 ```js
 import { fontSplit } from '@konghayao/cn-font-split';
 // import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index.js";
-// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.7.2/dist/browser/index.js";
+// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.8.3/dist/browser/index.js";
 
 fontSplit({
     FontPath: './fonts/SourceHanSerifCN-Bold.ttf', // 部分 otf 文件会报错，最好使用 ttf 版本的字体
     destFold: './build',
-    targetType: 'woff2', // ttf woff2；注意 eot 文件在浏览器中的支持度非常低，所以不进行支持
     chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
     testHTML: true, // 输出一份 html 报告文件
     reporter: true, // 输出 json 格式报告
-    // previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成，文件为 SVG 格式
-    threads: {}, // 建议开启多线程，速度飞快
+    previewImage: {}, // 只要填入 这个参数，就会进行图片预览文件生成，文件为 SVG 格式
+    threads: {}, // 默认开启多线程，速度飞快
     css: {
         // 覆盖默认的 css 设置，一般不需要进行更改
         // fontFamily: "站酷庆科黄油体",
@@ -69,7 +83,7 @@ fontSplit({
 ```
 - build
     ... // 很多字体分包
-    - index.html // 用于展示打包分析报告
+    - index.html // 用于展示打包分析报告, 需要开一个服务端口进行查看
     - reporter.json // 打包信息
     - result.css // css 入口，引入这个 css 文件即可使用字体包
 ```
@@ -109,14 +123,13 @@ fontSplit({
 
 ### Nodejs
 
-> version: ✅^18.0.0 ⏺️ ^14.0.0 可以使用一些 polyfill [polyfill 示例](https://github.com/KonghaYao/cn-font-split-test/tree/main/test)
+> version: ✅^18.0.0 ⏺️ ^14.0.0 可以使用一些 polyfill
 
-1. 需要支持 esm、fetch、worker_threads 等高级特性，如果不支持部分特性，可以找找社区的 polyfill 插件。
-2. 低版本适配请看这里
+1. 需要支持 esm、fetch、worker_threads 等高级特性，如果不支持部分特性，可以找找社区的 polyfill 插件。[polyfill 示例](https://github.com/KonghaYao/cn-font-split-test/tree/main/test)
 
 ### Deno
 
-> version: ✅1.30.0
+> version: ✅^1.30.0
 
 1. 1.30.0 为推荐版本，后续版本中使用了本地 npm 路径导入，导致性能衰弱。可以参考 `deno run -A --no-npm index.mjs` 避免。
 2. 性能上 Deno 比 Nodejs 要好一些，但是 Deno 正在开发中，故暂时观望一整子
@@ -134,16 +147,15 @@ fontSplit({
 
 > version: ❌ Coming
 
-1. Bun 现在的版本只能跑在 linux 平台
+1. Bun 现在的版本只能跑在 linux 和 Mac 平台
 2. Bun 对于 worker_thread 的实现未完成，暂时未找到方案
 
 ### 感谢
 
 1. 项目核心插件为 Harfbuzz 项目，源项目使用 C 与 C++ 构建了一个字体布局工具，然后提供了 WASM 的打包方法。项目重新构建并提供了 Typescript 版本的 API 封装，使得代码可以更好地融入生态中。
 2. opentype.js 这个项目为第二解析引擎，主要处理 feature 关系判断和文本转化为 SVG 的任务，在渲染方面给我们的支持很多。
-3. 项目中的 name table 读取插件修改了 fonteditor-core 的源代码，神奇地完成了大量解析工作，真是太棒了。
-4. wawoff2 项目将 Google 的 woff2 格式转换功能代码编译成为了 wasm，为我们的字体压缩提供了非常简便的 API。但是 wawoff2 项目的导出方式为 js 嵌入 wasm，极大影响了 js 打包和使用，故项目也重新构建并发布出适合的版本。
-5. 多线程采用了 workerpool 的解决方案，但是 workerpool 不支持 module worker，我就在 rollup 的时候加上了这个功能。
+3. wawoff2 项目将 Google 的 woff2 格式转换功能代码编译成为了 wasm，为我们的字体压缩提供了非常简便的 API。但是 wawoff2 项目的导出方式为 js 嵌入 wasm，极大影响了 js 打包和使用，故项目也重新构建并发布出适合的版本。
+4. 多线程采用了 workerpool 的解决方案，多线程的加持下，速度快了非常多。
 
 ## 开源许可证
 
