@@ -8,7 +8,7 @@ export type SubsetResult = {
     subset: Subset;
     path: string;
     size: number;
-    diff: number
+    diff: number;
     charLength: number;
 }[];
 /** unicode-range的数据表示格式 */
@@ -29,23 +29,16 @@ import { WorkerPoolOptions } from 'workerpool';
 export type InputTemplate = {
     threads?: {
         service?: ConvertManager;
-        /**
-         * 多线程文本图片生成
-         * @deprecated 默认已经修改为主线程执行，速度够快
-         */
-        image?: boolean;
         /** 多线程切割 */
         split?: boolean;
         options?: WorkerPoolOptions;
     };
 
-    /** 字体复杂字形等特性的支持 */
-    fontFeature?:
-    | {
-        /** 分包时，复杂字形因为彼此之间的依赖关系不能够智能分包，故 */
-        maxPackageSize?: number;
-    }
-    | false;
+    /**
+     * 字体复杂字形等特性的支持
+     * @todo
+     */
+    fontFeature?: boolean;
 
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;
@@ -61,6 +54,15 @@ export type InputTemplate = {
         localFamily: string | string[];
         /** 当 fontFamily 不支持一些 format 时，动用其它 format */
         polyfill: ({ name: string; format?: string } | string)[];
+        comment:
+            | {
+                  /** cn-font-split 相关的数据 */
+                  base?: boolean;
+                  /** 字体文件中的 name table，有字体证书相关的说明 */
+                  nameTable?: boolean;
+              }
+            | false;
+        compress: boolean;
     }>;
     /** 输出的字体类型，默认 woff2 */
     targetType?: FontType;
@@ -79,7 +81,7 @@ export type InputTemplate = {
     /** 分包字符的容忍度，这个数值是基础值的倍数 */
     chunkSizeTolerance?: number;
     /** 最大允许的分包数目，超过这个数目，程序报错退出 */
-    maxAllowSubsetsCount?: number
+    maxAllowSubsetsCount?: number;
     /** 输出的 css 文件的名称 ，默认为 result.css */
     cssFileName?: string;
 
