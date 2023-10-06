@@ -82,11 +82,11 @@ async function runSubSet(
     }
 
     // 执行 ttf 文件转 woff2
-    const service = input.threads?.service;
+    const service = input.threads && input.threads?.service;
     const transferred = service
         ? await service.pool.exec('convert', [buffer, targetType], {
-            transfer: [buffer.buffer],
-        })
+              transfer: [buffer.buffer],
+          })
         : await convert(buffer, targetType);
     const end = performance.now();
 
@@ -95,7 +95,7 @@ async function runSubSet(
         ext,
         transferred,
         chunk, // 理论分包
-        Array.from(arr), // 实际分包
+        Array.from(arr) // 实际分包
     );
     // console.log(chunk.length - arr.length) // 记录理论分包和实际分包的数目差距
     subsetMessage.push(outputMessage);
