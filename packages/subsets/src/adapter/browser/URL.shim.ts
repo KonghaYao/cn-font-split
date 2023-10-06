@@ -14,6 +14,6 @@ class URLProxy extends URL {
 }
 // 为了防止全局状态中 base 出现 blob 而导致的 URL 解析错误
 if (!(globalThis instanceof URLProxy)) {
-    globalThis._URL = URL;
+    (globalThis as any)._URL = URL;
     globalThis.URL = URLProxy;
 }
