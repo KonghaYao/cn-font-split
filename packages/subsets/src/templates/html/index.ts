@@ -1,4 +1,4 @@
-import html from './template.html';
+import { Assets } from '../../adapter/assets';
 export const createTestHTML = () => {
-    return html;
+    return Assets.loadFileAsync('template.html')
 };
