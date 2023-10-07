@@ -1,4 +1,4 @@
-import type { ReadStream } from 'fs-extra';
+import { type ReadStream } from 'fs-extra';
 import { resolveNodeModule } from '../utils/resolveNodeModule';
 import { isBrowser, isDeno, isInWorker, isNode } from '../utils/env';
 import type { IOutputFile } from '../interface';
@@ -11,8 +11,14 @@ export class AssetsMap<K extends string> extends Map<K, string> {
         );
     }
     ensureGet(token: K | string) {
+        let shortPath;
         if (this.has(token as K)) {
-            return this.get(token as K) as string;
+            shortPath = this.get(token as K) as string;
+            if (this.pathTransform) {
+                return this.pathTransform(shortPath);
+            } else {
+                return shortPath;
+            }
         } else {
             return token;
         }
@@ -57,6 +63,11 @@ export class AssetsMap<K extends string> extends Map<K, string> {
 
         return fetch(new URL(this.ensureGet(token), import.meta.url));
     }
+    /**
+     * 在浏览器等使用情况下，assets 都放置在一个路径下，所以可以使用此属性直接设置 root,
+     * @env node 对于 node 环境用处不大
+     */
+    public pathTransform?: (innerPath: string) => string;
     /** 重新设定内部的数据 */
     redefine(input: { [key in K]: string } | [K, string][]) {
         if (input instanceof Array) {
