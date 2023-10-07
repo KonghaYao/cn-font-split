@@ -1,6 +1,6 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/10/05-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/10/07-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
 ![npmVersion](https://img.shields.io/badge/LTS_version-4.8.5-green)
 

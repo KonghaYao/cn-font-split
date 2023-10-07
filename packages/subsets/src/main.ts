@@ -285,7 +285,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     const reporter = createTestHTML();
                     await outputFile(
                         path.join(input.destFold, 'index.html'),
-                        reporter
+                        await reporter
                     );
                 }
             },
