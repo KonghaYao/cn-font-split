@@ -1,9 +1,24 @@
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
-    test: {
-        // ...
-        environment: 'node',
-        exclude: ['test', 'node_modules'],
-    },
+export default defineConfig(({ mode }) => {
+    console.log(mode);
+    return {
+        test:
+            mode === 'node'
+                ? {
+                      // ...
+                      environment: 'node',
+                      exclude: ['node_modules'],
+                  }
+                : mode === 'browser'
+                ? {
+                      globals: true,
+                      browser: {
+                          enabled: true,
+                          name: 'chrome',
+                          headless: false,
+                      },
+                  }
+                : {},
+    };
 });
