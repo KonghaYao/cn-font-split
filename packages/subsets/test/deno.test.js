@@ -3,13 +3,8 @@ import 'https://deno.land/x/process@v0.3.0/mod.ts';
 import { fontSplit, Assets, DenoAdapter } from '../dist/browser/index.js';
 
 await DenoAdapter();
-const root = '.';
-Assets.redefine({
-    'hb-subset.wasm': root + '/dist/browser/hb-subset.wasm',
-    'cn_char_rank.dat': root + '/dist/browser/cn_char_rank.dat',
-    'unicodes_contours.dat': root + '/dist/browser/unicodes_contours.dat',
-});
-
+Assets.pathTransform = (innerPath) =>
+    innerPath.replace('./', './dist/browser/');
 console.log(Assets);
 fontSplit({
     destFold: './temp',
