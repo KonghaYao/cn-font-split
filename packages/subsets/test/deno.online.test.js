@@ -1,13 +1,11 @@
-import 'https://deno.land/x/process@v0.3.0/mod.ts';
-
 import {
     fontSplit,
     Assets,
     DenoAdapter,
-} from 'https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.8.2/dist/browser/index.js';
+} from 'https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.9.0/dist/browser/index.js';
 
 await DenoAdapter();
-const root = 'https://esm.sh/@konghayao/cn-font-split@4.8.2/dist/browser/';
+const root = 'https://esm.sh/@konghayao/cn-font-split@4.9.0/dist/browser/';
 Assets.pathTransform = (innerPath) => innerPath.replace('./', root);
 console.log(Assets);
 

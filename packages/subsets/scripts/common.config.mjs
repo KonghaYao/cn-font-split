@@ -9,23 +9,6 @@ export default [
     json({
         namedExports: false,
     }),
-    {
-        name: 'html',
-        load: {
-            order: 'pre',
-
-            handler(id) {
-                if (id.endsWith('.html')) {
-                    const code = fse.readFileSync(id);
-                    return {
-                        code: `export default ${JSON.stringify(
-                            code.toString('utf-8')
-                        )}`,
-                    };
-                }
-            },
-        },
-    },
     babel({
         extensions: ['.ts'],
         babelHelpers: 'bundled',

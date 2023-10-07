@@ -1,5 +1,3 @@
-import 'https://deno.land/x/process@v0.3.0/mod.ts';
-
 import { fontSplit, Assets, DenoAdapter } from '../dist/browser/index.js';
 
 await DenoAdapter();
