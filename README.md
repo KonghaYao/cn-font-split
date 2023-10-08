@@ -1,8 +1,8 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/10/05-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/10/08-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.8.5-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.9.0-green)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
@@ -17,9 +17,9 @@
 
 比快更快，比强更强。
 
--   🚀 `自研多线程`+ `WebAssembly` 分包速度极快；
--   💻 坚持 Web 平台为基底，兼容性极强，浏览器、Node、Deno，统统可以运行。
--   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
+- 🚀 `自研多线程`+ `WebAssembly` 分包速度极快；
+- 💻 坚持 Web 平台为基底，兼容性极强，浏览器、Node、Deno，统统可以运行。
+- 🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
 
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun |
@@ -80,7 +80,7 @@ fontSplit({
 
 ### 打包成品目录
 
-```
+```txt
 - build
     ... // 很多字体分包
     - index.html // 用于展示打包分析报告, 需要开一个服务端口进行查看
