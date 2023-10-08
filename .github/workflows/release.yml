@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch: # 添加 workflow_dispatch 触发器
 
 jobs:
   publish:
@@ -14,10 +15,13 @@ jobs:
       with:
         node-version: 18
         registry-url: 'https://registry.npmjs.org'
-    - run: cd ./packages/subsets
-    - run: npm install
+    - run: npm install pnpm -g
+    - run: pnpm install
     - run: npm pkg set name=cn-font-split
+      working-directory: packages/subsets
     - run: npm run prepublish
+      working-directory: packages/subsets
     - run: npm publish --access public
+      working-directory: packages/subsets
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
