@@ -97,7 +97,7 @@ font-style: ${style};
 font-weight: ${weight};
 font-display: ${css.fontDisplay || 'swap'};
 unicode-range:${unicodeRange};
-}`;
+}`; // css 这个句尾不需要分号😭
             return css.compress !== false ? str.replace(/\n/g, '') : str;
         })
         .join('\n');
