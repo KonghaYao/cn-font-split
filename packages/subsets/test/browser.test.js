@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { fontSplit, Assets } from '../dist/browser/index.js';
 
-test('name', async () => {
+test('Browser Test For cn-font-split', async () => {
     Assets.pathTransform = (innerPath) =>
         innerPath.replace('./', 'http://127.0.0.1:9000/');
     console.log(Assets)

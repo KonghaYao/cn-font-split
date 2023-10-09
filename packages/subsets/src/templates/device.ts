@@ -1,3 +1,4 @@
+import type { env as ENV } from '../utils/env';
 import { getBrowserDeviceMessage } from '../adapter/browser/getDeviceMessage';
 import { getNodeDeviceMessage } from '../adapter/node/getDeviceMessage';
 export interface DeviceMessage {
@@ -20,7 +21,9 @@ export interface DeviceMessage {
     createdTime: string;
 }
 
-export const getDeviceMessage = (env: string) => {
+export const getDeviceMessage = async (
+    env: typeof ENV
+): Promise<DeviceMessage | undefined> => {
     if (env === 'browser') return getBrowserDeviceMessage();
     if (env === 'node') return getNodeDeviceMessage();
 };

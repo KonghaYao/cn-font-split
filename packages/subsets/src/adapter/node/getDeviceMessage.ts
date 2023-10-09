@@ -10,6 +10,7 @@ export const getNodeDeviceMessage = async () => {
         os: {
             name: os.platform(),
             version: os.version(),
+            release: os.release(),
         },
         device: {
             cpus: os.cpus().length,
