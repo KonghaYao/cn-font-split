@@ -1,6 +1,7 @@
 import type { env as ENV } from '../utils/env';
 import { getBrowserDeviceMessage } from '../adapter/browser/getDeviceMessage';
 import { getNodeDeviceMessage } from '../adapter/node/getDeviceMessage';
+import { getDenoDeviceMessage } from '../adapter/deno/getDeviceMessage';
 export interface DeviceMessage {
     runtime: {
         name: string;
@@ -21,7 +22,11 @@ export interface DeviceMessage {
     createdTime: string;
 }
 
-export const getDeviceMessage = (env: string) => {
-    if (env === 'browser' || env === 'deno') return getBrowserDeviceMessage();
+export const getDeviceMessage = async (
+    env: typeof ENV
+): Promise<DeviceMessage | undefined> => {
+    if (env === 'browser') return getBrowserDeviceMessage();
     if (env === 'node') return getNodeDeviceMessage();
+    if (env === 'deno') return getDenoDeviceMessage();
+
 };

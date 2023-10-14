@@ -7,7 +7,7 @@ interface Deno {
     exit: (code?: number) => never;
     chdir: (directory: string) => void;
     cwd: () => string;
-    version: string;
+    version: { deno: string; v8: string; typescript: string };
     open(path: string | URL, options?: OpenOptions): Promise<FsFile>;
     readFile: (path: string | URL) => Promise<Uint8Array>;
     writeFile(
