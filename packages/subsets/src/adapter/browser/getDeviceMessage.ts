@@ -16,7 +16,7 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
         '';
 
     // @ts-expect-error userAgentData is not part of the navigator interface yet
-    const userAgentData = WINDOW.navigator && WINDOW.navigator.userAgentData;
+    const userAgentData = WINDOW.navigator.userAgentData;
 
     if (isUserAgentData(userAgentData)) {
         userAgentData
