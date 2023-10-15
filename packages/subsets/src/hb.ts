@@ -47,8 +47,8 @@ export declare namespace HB {
 
 /**
  * harfbuzz 的函数
- * @message copided from https://github.com/harfbuzz/harfbuzzjs/blob/main/hbjs.js
- * @author modify by konghayao
+ * @message copied from https://github.com/harfbuzz/harfbuzzjs/blob/main/hbjs.js
+ * @author refactor and modify by konghayao
  */
 export function hbjs(instance: any) {
     'use strict';
@@ -338,7 +338,8 @@ export function hbjs(instance: any) {
      * Use when you know the input range should be ASCII.
      * Faster than encoding to UTF-8
      **/
-    function createAsciiString(text: string) {
+    function createAsciiString(text?: string) {
+        if (!text) return { ptr: 0, length: 0, free() {} };
         const ptr = exports.malloc(text.length + 1);
         for (let i = 0; i < text.length; ++i) {
             const char = text.charCodeAt(i);
@@ -541,9 +542,16 @@ export function hbjs(instance: any) {
     function shape(
         font: ReturnType<typeof createFont>,
         buffer: ReturnType<typeof createFont>,
-        features?: unknown
+        features?: string
     ) {
-        exports.hb_shape(font.ptr, buffer.ptr, 0, 0);
+        const featurestr = createAsciiString(features);
+        exports.hb_shape(
+            font.ptr,
+            buffer.ptr,
+            featurestr.ptr,
+            featurestr.length
+        );
+        featurestr.free();
     }
 
     /**
