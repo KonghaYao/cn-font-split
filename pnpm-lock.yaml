@@ -91,6 +91,9 @@ importers:
       '@konghayao/opentype.js':
         specifier: ^2023.10.5
         version: 2023.10.5
+      '@napi-rs/ttf2woff2':
+        specifier: ^0.0.5
+        version: 0.0.5
       byte-size:
         specifier: ^8.1.1
         version: 8.1.1
@@ -785,6 +788,122 @@ packages:
     hasBin: true
     dependencies:
       eslint-plugin-local-rules: 1.3.2
+    dev: false
+
+  /@napi-rs/ttf2woff2-android-arm-eabi@0.0.5:
+    resolution: {integrity: sha512-ksESpRohBo04wehfkmlC2Yg8wt3DgtYfXJh5/Css1eFZPTzlGvzcFt9cOF2zJ3oYX3s+URO8BfFgjUKDM2+p8w==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-android-arm64@0.0.5:
+    resolution: {integrity: sha512-0qgeheD/HURS0Ks+wUUSUuXu4Xh5tr0A9l10IBuEuiTP7Q2Zy6HXuUn1a39opT5i2yR0GBGiIGDn/EBlh7yfOA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-darwin-arm64@0.0.5:
+    resolution: {integrity: sha512-9V+EUCxAwc0e/asjcCU19GCwFNk6FVX6M2qtdqhSrTkg/8HyYNHV3CKXwZJi/b7Vw/+ExivtnU/6KZ/Ao46ynA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-darwin-x64@0.0.5:
+    resolution: {integrity: sha512-lE1m1Xi8xSH4/83YZFQ30pBI7YH84MOFJHt469Y88xOD+f0KntOD82OcYfMpp5/+X8DkwxQEY26c7sA+UE51Hg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-linux-arm64-gnu@0.0.5:
+    resolution: {integrity: sha512-jKVYsQ4ADpgM7Yw9YLgP21o6r9myjMUll+5QRQRqfzrvidbGHkgB/6HIsXQ8ely5f5NHvOUNEL3+YaoRymcfCA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-linux-arm64-musl@0.0.5:
+    resolution: {integrity: sha512-FFQsqD4h3A9MWPQ915ztg/yi8mxUdIzhN2wy7LKN+yPZ4Mh5+hbaCemV/QFae8LYRgM0UZF6TU9ZC7CVSb8kXQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-linux-x64-gnu@0.0.5:
+    resolution: {integrity: sha512-o30iS1YOvlqa5fU0m3YYkuxhO5tDrRxhjNR5dL50u6/ix4MxlYfzs6wvTwQ28G6WoQBrlN28UwG4/s+eijxUmw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-linux-x64-musl@0.0.5:
+    resolution: {integrity: sha512-Nc8ef8xmutlwajDmktMjvqISz9tZvwAjZVXmYzcLfbt/AwU5gtE3C5W6CKjVkHxvWd7Lp8Ol0ucM7BJZDharEw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-win32-arm64-msvc@0.0.5:
+    resolution: {integrity: sha512-s+dEABjJui0mlWcuR1EwdLGKiB7vwd/ckIMaK1TXsDwMPA1ftaRC/WVCD5qgV6eee4koDjewqjMUzdcil9qp7Q==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-win32-ia32-msvc@0.0.5:
+    resolution: {integrity: sha512-eGmugSHye9BiK8CCGWKcjDeJDPHEOwCL4r/p0tmK+fo9BSHRTa2HmOhX0aZjonoo1mYCdeBN9mSDzlQgl5llDA==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2-win32-x64-msvc@0.0.5:
+    resolution: {integrity: sha512-gN9B+ROlQq3dJGp7bL8NmP/DVVYy102EzYv82/dsAPapDnF2WkdlGqmi/oL4GXIvfy1GxEsFEQfYxEN/+Vs5vQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@napi-rs/ttf2woff2@0.0.5:
+    resolution: {integrity: sha512-76FH0gE6AXyLqUkz4z+xNoO7gQMhD7L5M3uDfElIUSO6NV0pz+l8y2fyOHAdYwhFwYMaQmBN76AavbLzXiMP4w==}
+    engines: {node: '>= 10'}
+    optionalDependencies:
+      '@napi-rs/ttf2woff2-android-arm-eabi': 0.0.5
+      '@napi-rs/ttf2woff2-android-arm64': 0.0.5
+      '@napi-rs/ttf2woff2-darwin-arm64': 0.0.5
+      '@napi-rs/ttf2woff2-darwin-x64': 0.0.5
+      '@napi-rs/ttf2woff2-linux-arm64-gnu': 0.0.5
+      '@napi-rs/ttf2woff2-linux-arm64-musl': 0.0.5
+      '@napi-rs/ttf2woff2-linux-x64-gnu': 0.0.5
+      '@napi-rs/ttf2woff2-linux-x64-musl': 0.0.5
+      '@napi-rs/ttf2woff2-win32-arm64-msvc': 0.0.5
+      '@napi-rs/ttf2woff2-win32-ia32-msvc': 0.0.5
+      '@napi-rs/ttf2woff2-win32-x64-msvc': 0.0.5
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
