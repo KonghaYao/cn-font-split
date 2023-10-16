@@ -1,8 +1,9 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/10/08-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/10/16-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
 ![npmVersion](https://img.shields.io/badge/LTS_version-4.9.0-green)
+[![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
@@ -17,24 +18,24 @@
 
 比快更快，比强更强。
 
-- 🚀 `自研多线程`+ `WebAssembly` 分包速度极快；
-- 💻 坚持 Web 平台为基底，兼容性极强，浏览器、Node、Deno，统统可以运行。
-- 🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
+-   🚀 `自研多线程`+ (`WebAssembly`｜`Native`) 分包速度极快；
+-   💻 坚持 Web 平台为基底，兼容性极强，浏览器、Node、Deno，统统可以运行。
+-   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
 
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun |
 | -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
-| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ⏺️ ^1.0.0 |
+| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ✅ ^1.0.0 |
 
 ### 新版本功能
 
-1. ✅ 🚀 多线程压缩，核心越多，速度越快！（13.4s -> 4.7s）
-2. ✅ 🚀 使用 WASM 解析与分包，提升打包速度。
+1. ✅ 🚀 多线程压缩，核心越多，速度越快！（1310ms -> 760ms）
+2. ✅ 🚀 使用 WASM 和原生工具解析与分包，提升打包速度。
 3. ✅ 🔒 依赖检查与重构，安全版本。
 4. ✅ 📦 更加可控的分包方式，支持细颗粒度的字符拆分。
 5. ✅ 🔔 支持 OTF 格式字体打包，支持复杂字形渲染。
 6. ✅ 🏞️ 字体预览图生成
-7. ✅ ⌨️ 支持 Nodejs、Deno、Browser，随处可使用！
+7. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，随处可使用！
 8. ✅ 🥳 不止中文，只要是包内的字符，统统分包
 
 ### 成品预览
@@ -82,7 +83,7 @@ fontSplit({
 
 ```txt
 - build
-    ... // 很多字体分包
+    ... // 很多字体分包，hash 命名
     - index.html // 用于展示打包分析报告, 需要开一个服务端口进行查看
     - reporter.json // 打包信息
     - result.css // css 入口，引入这个 css 文件即可使用字体包
@@ -122,19 +123,12 @@ fontSplit({
 
 ## 兼容性提醒
 
-### Nodejs
+### 🚀 Nodejs
 
 > version: ✅^18.0.0 ⏺️ ^14.0.0 可以使用一些 polyfill [Nodejs 使用](/packages/subsets/test/node.test.mjs)
 
 1. Nodejs 几乎不需要进行适配，可以直接使用，效率不要
 2. Nodejs 18 以下的代码需要支持 esm、fetch、worker_threads 等高级特性，如果不支持部分特性，可以找找社区的 polyfill 插件。[polyfill 示例](https://github.com/KonghaYao/cn-font-split-test/tree/main/test)
-
-### Deno
-
-> version: ✅^1.30.0 [Deno 使用](/packages/subsets/test/deno.test.js)
-
-1. 1.30.0 为不自动本地安装的版本，后续版本中使用了本地 npm 路径导入，导致部分情况下性能衰弱。可以参考 `deno run -A --no-npm index.mjs` 避免。
-2. 性能上 Deno 比 Nodejs 要好一些，但是 Deno 正在开发中，故暂时观望一整子
 
 ### Browser
 
@@ -143,21 +137,28 @@ fontSplit({
 1. 浏览器需要 支持 module worker（多线程必须）、支持 WebAssembly 相关功能
 2. 在网页中引入时，不要对项目成品文件再次打包（会导致奇奇怪怪的依赖问题）
 3. 可以使用 CDN 导入 /dist/browser/index.js 文件，这个是支持的。
+4. 浏览器版本可以直接在浏览器运行分包任务，比其他生态环境要方便得多，项目组会一直支持。
+
+### 🚀 Deno
+
+> version: ✅^1.30.0 [Deno 使用](/packages/subsets/test/deno.test.js)
+
+1. 1.30.0 为不自动本地安装的版本，后续版本中使用了本地 npm 路径导入，导致部分情况下性能衰弱。可以参考 `deno run -A --no-npm index.mjs` 避免。
 
 ### Bun
 
-> version: ⏺️ ^1.0.0 [Bun 使用](/packages/subsets/test/bun.test.js)
+> version: ✅^1.0.4 [Bun 使用](/packages/subsets/test/bun.test.js)
 
 1. Bun 现在的版本只能跑在 linux 和 Mac 平台，Windows 似乎官方在支持
-2. Bun 仍然不稳定，对于部分 API 的实现暂未优化，故支持不太好
-3. Bun 对于 worker_thread 的实现未完成，而且 Bun 的 Worker 也有问题，在处理多线程时有问题
+2. Bun 运行速度比 Nodejs 要快 30% 左右（保守估计）。
 
 ### 感谢
 
 1. 项目核心插件为 Harfbuzz 项目，源项目使用 C 与 C++ 构建了一个字体布局工具，然后提供了 WASM 的打包方法。项目重新构建并提供了 Typescript 版本的 API 封装，使得代码可以更好地融入生态中。
 2. opentype.js 这个项目为第二解析引擎，主要处理 feature 关系判断和文本转化为 SVG 的任务，在渲染方面给我们的支持很多。
 3. wawoff2 项目将 Google 的 woff2 格式转换功能代码编译成为了 wasm，为我们的字体压缩提供了非常简便的 API。但是 wawoff2 项目的导出方式为 js 嵌入 wasm，极大影响了 js 打包和使用，故项目也重新构建并发布出适合的版本。
-4. 多线程采用了 workerpool 的解决方案，多线程的加持下，速度快了非常多。
+4. @napi-rs/ttf2woff2 使得 Nodejs 平台和 Bun 平台可以以极快的原生速度压缩字体文件，效率极高。
+5. 多线程采用了 workerpool 的解决方案，多线程的加持下，速度快了非常多。
 
 ## 开源许可证
 
