@@ -29,7 +29,10 @@ export const fontSplit = async (opt: InputTemplate) => {
         [
             /** 从路径或者二进制数据获取原始字体文件 */
             async function LoadFile(ctx) {
-                ctx.info('cn-font-split 环境检测\t', env);
+                ctx.info(
+                    `cn-font-split@${__cn_font_split_version__} 环境检测\t`,
+                    env
+                );
                 typeof opt.log === 'function' && ctx.recordLog(opt.log);
                 const { input } = ctx.pick('input');
                 let res!: Uint8Array;
