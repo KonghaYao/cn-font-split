@@ -5,6 +5,9 @@
     "main": "dist/index.js",
     "browser": "dist/browser/index.js",
     "type": "module",
+    "bin": {
+        "cn-font-split": "bin/cn-font-split.mjs"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
