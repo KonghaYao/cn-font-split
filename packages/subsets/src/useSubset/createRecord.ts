@@ -1,7 +1,7 @@
 import { UnicodeRange } from '@japont/unicode-range';
 import { IOutputFile, InputTemplate, SubsetResult } from '../interface';
 import md5 from '../utils/md5';
-import { templateReplace } from './template-replacer';
+import { templateReplace } from './templateReplacer';
 export async function createRecord(
     outputFile: IOutputFile,
     ext: string,
