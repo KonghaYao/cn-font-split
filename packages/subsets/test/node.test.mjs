@@ -20,8 +20,10 @@ fontSplit({
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},
-    renameOutputFont(hash, ext, index) {
-        // return index.toString() + ext // index 命名
-        return hash.slice(0, 6) + ext // 短 hash 命名
-    }
+    // renameOutputFont: '[hash:8][ext]',
+    // renameOutputFont: '[index][ext]',
+    // renameOutputFont(hash, ext, index) {
+    //     // return index.toString() + ext // index 命名
+    //     return hash.slice(0, 6) + ext // 短 hash 命名
+    // }
 });
