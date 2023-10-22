@@ -80,12 +80,12 @@ export const createCSS = (
 
     const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
     const cssStyleSheet = subsetResult
-        .map(({ path, unicodeRange, filename }) => {
+        .map(({ path, unicodeRange }) => {
             let str = `@font-face {
 font-family: "${family}";
 src:${[
                 ...locals.map((i) => `local("${i}")`),
-                `url("./${filename || path}") format("woff2")`,
+                `url("./${path}") format("woff2")`,
                 ...polyfills.map(
                     (i) =>
                         `url("${i.name}") ${
