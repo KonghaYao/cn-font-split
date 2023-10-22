@@ -27,7 +27,7 @@ export const createReporter = async (
 ) => {
     const data = subsetResult.map((i) => {
         return {
-            name: i.filename || i.path,
+            name: i.path,
             size: i.size,
             chars: i.unicodeRange,
             diff: i.diff,
