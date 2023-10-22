@@ -5,25 +5,20 @@ import { IContext } from '../fontSplit/context';
 export async function recordToLog(
     ctx: IContext,
     transferred: Uint8Array,
-    start: number,
-    middle: number,
-    end: number,
+    hbTime: readonly [number, number],
+    woff2Time: readonly [number, number],
     unicodeInFont: Uint32Array,
     index: number,
-    filename: string,
-    isTwice = false
+    filename: string
 ) {
     const arr = unicodeInFont;
     ctx.trace(
         [
             index,
-            timeRecordFormat(start, middle),
-            (arr.length / (middle - start)).toFixed(2) + '字符/ms',
-            timeRecordFormat(middle, end),
-            (arr.length / (end - middle)).toFixed(2) + '字符/ms',
+            timeRecordFormat(...hbTime),
+            timeRecordFormat(...woff2Time),
             byteSize(transferred.byteLength) + '/' + arr.length,
             filename.slice(0, 7),
-            isTwice,
         ].join(' \t')
     );
 }
