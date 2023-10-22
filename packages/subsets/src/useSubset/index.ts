@@ -22,6 +22,7 @@ export const useSubset = async (
     const subsetMessage: SubsetResult = [];
 
     ctx.trace('开始分包 分包数', totalChunk.length);
+    ctx.trace('序号\thb\twoff2\t大小/字符\t名称');
 
     if (input.threads) {
         await Promise.all(
@@ -73,22 +74,23 @@ async function runSubSet(
     ctx: IContext,
     index: number
 ) {
-    const start = performance.now();
+    const hbStart = performance.now();
     const [buffer, arr] = subsetFont(face, chunk, hb, {});
-    const middle = performance.now();
+    const hbTime = [hbStart, performance.now()] as const;
     if (!buffer || chunk.length === 0 || buffer.byteLength === 0) {
         ctx.warn('发现空分包' + chunk);
         return;
     }
 
     // 执行 ttf 文件转 woff2
+    const woff2Start = performance.now();
     const service = input.threads && input.threads?.service;
     const transferred = service
         ? await service.pool.exec('convert', [buffer, targetType], {
               transfer: [buffer.buffer],
           })
         : await convert(buffer, targetType);
-    const end = performance.now();
+    const woff2Time = [woff2Start, performance.now()] as const;
 
     const outputMessage = await createRecord(
         outputFile,
@@ -104,12 +106,11 @@ async function runSubSet(
     recordToLog(
         ctx,
         transferred,
-        start,
-        middle,
-        end,
+        hbTime,
+        woff2Time,
         arr,
         index,
-        outputMessage.hash
+        outputMessage.path
     );
 }
 import {

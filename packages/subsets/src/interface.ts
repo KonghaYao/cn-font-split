@@ -3,9 +3,6 @@ import { WriteFileOptions } from 'fs-extra';
 import type { Buffer } from 'buffer';
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
-    /** 自定义名称 */
-    filename?: string;
-    hash: string;
     unicodeRange: string;
     subset: Subset;
     path: string;
@@ -110,7 +107,9 @@ export type InputTemplate = {
         settings?: ISettingsParam<unknown>;
     };
     /** 自定义输出字体名称，优先于 outputFile，用于缩短字体文件名称 */
-    renameOutputFont?: (hash: string, ext: string, index: number) => string;
+    renameOutputFont?:
+        | string
+        | ((hash: string, ext: string, index: number) => string);
     /** 输出文件的方式，如果你需要在特定的平台使用，那么需要适配这个函数 */
     outputFile?: IOutputFile;
 };
