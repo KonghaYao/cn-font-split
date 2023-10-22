@@ -20,7 +20,7 @@ fontSplit({
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},
-    // renameOutputFont: '[hash:8][ext]',
+    // renameOutputFont: '[hash:10][ext]',
     // renameOutputFont: '[index][ext]',
     // renameOutputFont(hash, ext, index) {
     //     // return index.toString() + ext // index 命名

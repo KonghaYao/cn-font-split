@@ -1,11 +1,12 @@
 export interface ReplaceProps {
-    hash: string;
+    hash: () => string;
     ext: string;
     index: number;
 }
 
 const REGEXP = /\[\\*([\w:]+)\\*\]/gi;
 
+/** 将文件命名模版字符串计算为最终命名 */
 export const templateReplace = (template: string, data: ReplaceProps) => {
     const replacements = new Map<string, IReplacer>();
 
@@ -34,7 +35,10 @@ export const templateReplace = (template: string, data: ReplaceProps) => {
     return result;
 };
 
+/** 字符串处理函数的类型 */
 type IReplacer = (arg?: string) => string;
+
+/** 统一输出字符串处理函数 */
 const createReplacer = (value: string | (() => string)): IReplacer => {
     const fn = () => {
         if (typeof value === 'function') value = value();
@@ -51,6 +55,5 @@ const createLengthReplacer = (replacer: IReplacer) => {
         result = length ? hash.slice(0, length) : hash;
         return result;
     };
-
     return fn;
 };

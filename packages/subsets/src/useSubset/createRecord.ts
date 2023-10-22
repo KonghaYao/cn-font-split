@@ -11,19 +11,21 @@ export async function createRecord(
     input: InputTemplate,
     index: number
 ): Promise<SubsetResult[0]> {
-    const hashName = md5(transferred);
     const renameOutputFont = input.renameOutputFont || '[hash][ext]';
     const filename =
         typeof renameOutputFont === 'string'
-            ? templateReplace(renameOutputFont, { hash: hashName, index, ext })
-            : renameOutputFont(hashName, ext, index);
+            ? templateReplace(renameOutputFont, {
+                  hash: () => md5(transferred),
+                  index,
+                  ext,
+              })
+            : renameOutputFont(md5(transferred), ext, index);
+
     await outputFile(filename, transferred);
     const str = UnicodeRange.stringify(subset);
     return {
         size: transferred.byteLength,
-        hash: hashName,
-        filename,
-        path: hashName + ext,
+        path: filename,
         unicodeRange: str.join(','),
         subset: str.map((i) => {
             i = i.replace('U+', '');
