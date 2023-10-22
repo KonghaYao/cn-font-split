@@ -1,5 +1,7 @@
+import md5 from '../utils/md5';
+
 export interface ReplaceProps {
-    hash: () => string;
+    transferred: Uint8Array;
     ext: string;
     index: number;
 }
@@ -13,7 +15,9 @@ export const templateReplace = (template: string, data: ReplaceProps) => {
     replacements.set('index', createReplacer(data.index.toString()));
     replacements.set('ext', createReplacer(data.ext));
     // hash
-    const hashReplacer = createLengthReplacer(createReplacer(data.hash));
+    const hashReplacer = createLengthReplacer(
+        createReplacer(() => md5(data.transferred))
+    );
     replacements.set('hash', hashReplacer);
     replacements.set('md5', hashReplacer);
 

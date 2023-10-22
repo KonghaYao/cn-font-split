@@ -1,7 +1,6 @@
 import { UnicodeRange } from '@japont/unicode-range';
 import { IOutputFile, InputTemplate, SubsetResult } from '../interface';
-import md5 from '../utils/md5';
-import { templateReplace } from './templateReplacer';
+import { templateReplace, type ReplaceProps } from './templateReplacer';
 export async function createRecord(
     outputFile: IOutputFile,
     ext: string,
@@ -12,14 +11,15 @@ export async function createRecord(
     index: number
 ): Promise<SubsetResult[0]> {
     const renameOutputFont = input.renameOutputFont || '[hash][ext]';
+    const replaceProps: ReplaceProps = {
+        transferred,
+        ext,
+        index,
+    };
     const filename =
         typeof renameOutputFont === 'string'
-            ? templateReplace(renameOutputFont, {
-                  hash: () => md5(transferred),
-                  index,
-                  ext,
-              })
-            : renameOutputFont(md5(transferred), ext, index);
+            ? templateReplace(renameOutputFont, replaceProps)
+            : renameOutputFont(replaceProps);
 
     await outputFile(filename, transferred);
     const str = UnicodeRange.stringify(subset);
