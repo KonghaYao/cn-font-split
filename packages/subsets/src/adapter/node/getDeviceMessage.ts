@@ -1,4 +1,4 @@
-/** 获取浏览器环境信息 */
+/** 获取node环境信息 */
 export const getNodeDeviceMessage = async () => {
     const os = await import('os');
     const { osLocale } = await import('os-locale');

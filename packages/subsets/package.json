@@ -41,9 +41,9 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@chinese-fonts/font-contours": "^1.0.0",
-        "@chinese-fonts/wawoff2": "^2.0.3",
         "@japont/unicode-range": "^1.0.0",
-        "@konghayao/harfbuzzjs": "8.2.1-beta.1",
+        "@chinese-fonts/wawoff2": "2.0.4",
+        "@konghayao/harfbuzzjs": "8.2.2",
         "@konghayao/opentype.js": "^2023.10.5",
         "@napi-rs/ttf2woff2": "^0.0.5",
         "byte-size": "^8.1.1",
