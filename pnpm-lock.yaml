@@ -80,14 +80,14 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@chinese-fonts/wawoff2':
-        specifier: ^2.0.3
-        version: 2.0.3
+        specifier: 2.0.4
+        version: 2.0.4
       '@japont/unicode-range':
         specifier: ^1.0.0
         version: 1.0.0
       '@konghayao/harfbuzzjs':
-        specifier: 8.2.1-beta.1
-        version: 8.2.1-beta.1
+        specifier: 8.2.2
+        version: 8.2.2
       '@konghayao/opentype.js':
         specifier: ^2023.10.5
         version: 2023.10.5
@@ -500,8 +500,8 @@ packages:
     resolution: {integrity: sha512-KJx2DuJEJ24horFEEXhmkxaBbDFEU6kdI5/eFQ6PJd2LJMEYV6/6/Rl9APS0UTA+KLTnZUG/IJleZ5f5fSA00g==}
     dev: false
 
-  /@chinese-fonts/wawoff2@2.0.3:
-    resolution: {integrity: sha512-HlKCkOlkB/g4TmgknQ5G61i3+T+WRHNLo9dws7dySJvupHUPRShuKb187re2nd6JFCBmpqSerHrIlsav7n1k6A==}
+  /@chinese-fonts/wawoff2@2.0.4:
+    resolution: {integrity: sha512-CqVMlOaRtE2Yza1UbCSb2BFzKYavTgF2jv8uFfSqdr3hFYwcEHRxRfFiK8tQe0X82W74yry6LM1kLNybKQIQCA==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
@@ -779,8 +779,8 @@ packages:
     resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
     dev: true
 
-  /@konghayao/harfbuzzjs@8.2.1-beta.1:
-    resolution: {integrity: sha512-ecDi753M0fbQzwtjrQ+xhdfrRWLw4i+fwzEzFzZGVuTZt/n+J/jrSDqsnEVryIzBAKhn5OHzNvy4ZgaX22RdBA==}
+  /@konghayao/harfbuzzjs@8.2.2:
+    resolution: {integrity: sha512-fWz2KcZX9qLmYZtd5F1mX3maaeqsF2iSNriXe23IZGirlIodunEvtphz18FJkDhPRBgNs7yBkZ+YzdVIRpiLOA==}
     dev: false
 
   /@konghayao/opentype.js@2023.10.5:
