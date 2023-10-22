@@ -76,6 +76,10 @@ fontSplit({
         // fontFamily: "站酷庆科黄油体",
         // fontWeight: 400,
     },
+    renameOutputFont: '[hash:10][ext]', // 自定义分包输出的文件名为 10 位短哈希，或者使用自增索引: '[index][ext]'
+    // renameOutputFont: ({ transferred, ext, index }) => {
+    //   return index.toString(36) + ext
+    // } // 或者也可以像这样传入一个函数返回自定义的文件名
 });
 ```
 
