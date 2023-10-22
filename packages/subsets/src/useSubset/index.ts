@@ -109,7 +109,7 @@ async function runSubSet(
         end,
         arr,
         index,
-        outputMessage.hash
+        outputMessage.path
     );
 }
 import {

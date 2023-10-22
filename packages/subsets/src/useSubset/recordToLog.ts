@@ -4,14 +4,13 @@ import { IContext } from '../fontSplit/context';
 
 export async function recordToLog(
     ctx: IContext,
-
     transferred: Uint8Array,
     start: number,
     middle: number,
     end: number,
     unicodeInFont: Uint32Array,
     index: number,
-    hash: string,
+    filename: string,
     isTwice = false
 ) {
     const arr = unicodeInFont;
@@ -23,7 +22,7 @@ export async function recordToLog(
             timeRecordFormat(middle, end),
             (arr.length / (end - middle)).toFixed(2) + '字符/ms',
             byteSize(transferred.byteLength) + '/' + arr.length,
-            hash.slice(0, 7),
+            filename.slice(0, 7),
             isTwice,
         ].join(' \t')
     );
