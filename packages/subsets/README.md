@@ -23,7 +23,7 @@
 -   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
 
 [详见兼容性章节](#兼容性提醒)。
-| [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | Bun |
+| [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |
 | -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
 | ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ✅ ^1.0.0 |
 
@@ -54,6 +54,20 @@ Nodejs 版本推荐使用 **大于 18 的版本**。如低级版本或者其他�
 
 ```bash
 npm install @konghayao/cn-font-split
+npm install @konghayao/cn-font-split -g # 如果使用命令行，推荐全局安装
+```
+
+### 命令行使用
+
+```bash
+# -i 输入 -o 输出
+cn-font-split -i=../demo/public/SmileySans-Oblique.ttf -o=./temp
+
+# 参数与正常 js 操作是一样的，深层json则需要使用 . 来赋值
+cn-font-split -i=../demo/public/SmileySans-Oblique.ttf -o=./temp --renameOutputFont=[hash:10][ext] --css.fontWeight=700
+
+# 显示输入参数说明，虽然会显示 typescript 类型。。。
+cn-font-split -h
 ```
 
 ### 写打包代码
@@ -76,7 +90,8 @@ fontSplit({
         // fontFamily: "站酷庆科黄油体",
         // fontWeight: 400,
     },
-    renameOutputFont: '[hash:10][ext]', // 自定义分包输出的文件名为 10 位短哈希，或者使用自增索引: '[index][ext]'
+    // 自定义分包输出的文件名为 10 位短哈希，或者使用自增索引: '[index][ext]'
+    renameOutputFont: '[hash:10][ext]',
     // renameOutputFont: ({ transferred, ext, index }) => {
     //   return index.toString(36) + ext
     // } // 或者也可以像这样传入一个函数返回自定义的文件名
