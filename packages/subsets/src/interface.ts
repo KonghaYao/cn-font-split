@@ -1,6 +1,7 @@
 import { FontType } from './utils/detectFormat';
 import { WriteFileOptions } from 'fs-extra';
 import type { Buffer } from 'buffer';
+import type { ReplaceProps } from './useSubset/templateReplacer';
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     unicodeRange: string;
@@ -107,9 +108,7 @@ export type InputTemplate = {
         settings?: ISettingsParam<unknown>;
     };
     /** 自定义输出字体名称，优先于 outputFile，用于缩短字体文件名称 */
-    renameOutputFont?:
-        | string
-        | ((hash: string, ext: string, index: number) => string);
+    renameOutputFont?: string | ((replaceProps: ReplaceProps) => string);
     /** 输出文件的方式，如果你需要在特定的平台使用，那么需要适配这个函数 */
     outputFile?: IOutputFile;
 };

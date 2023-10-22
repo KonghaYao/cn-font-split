@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import { fontSplit } from '../dist/index.js';
+import crypto from 'node:crypto'
 // const buffer = await fs.readFile(
 //     "./node_modules/@konghayao/harfbuzzjs/hb-subset.wasm"
 // );
@@ -22,7 +23,9 @@ fontSplit({
     // threads: {},
     // renameOutputFont: '[hash:10][ext]',
     // renameOutputFont: '[index][ext]',
-    // renameOutputFont(hash, ext, index) {
+    // renameOutputFont({ transferred, ext, index }) {
+    //     const algorithm = 'sha256'
+    //     const hash = crypto.createHash(algorithm).update(transferred).digest('hex')
     //     // return index.toString() + ext // index 命名
     //     return hash.slice(0, 6) + ext // 短 hash 命名
     // }
