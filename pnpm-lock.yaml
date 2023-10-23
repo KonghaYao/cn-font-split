@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -89,8 +85,8 @@ importers:
         specifier: 8.2.2
         version: 8.2.2
       '@konghayao/opentype.js':
-        specifier: ^2023.10.5
-        version: 2023.10.5
+        specifier: ^2023.10.25
+        version: 2023.10.25
       '@napi-rs/ttf2woff2':
         specifier: ^0.0.5
         version: 0.0.5
@@ -781,6 +777,13 @@ packages:
 
   /@konghayao/harfbuzzjs@8.2.2:
     resolution: {integrity: sha512-fWz2KcZX9qLmYZtd5F1mX3maaeqsF2iSNriXe23IZGirlIodunEvtphz18FJkDhPRBgNs7yBkZ+YzdVIRpiLOA==}
+    dev: false
+
+  /@konghayao/opentype.js@2023.10.25:
+    resolution: {integrity: sha512-PNcHegy0Ul+Hrr6PoBsWEzOAgdUoZ2NNe03LhlBwCFq4cEMtw2/2A6YRONfaa9EUXuFP8XDAKpEBXDB7n3QZdQ==}
+    hasBin: true
+    dependencies:
+      eslint-plugin-local-rules: 2.0.0
     dev: false
 
   /@konghayao/opentype.js@2023.10.5:
@@ -2062,7 +2065,7 @@ packages:
     dev: true
 
   /depd@1.1.2:
-    resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}
+    resolution: {integrity: sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -2288,6 +2291,10 @@ packages:
     resolution: {integrity: sha512-X4ziX+cjlCYnZa+GB1ly3mmj44v2PeIld3tQVAxelY6AMrhHSjz6zsgsT6nt0+X5b7eZnvL/O7Q3pSSK2kF/+Q==}
     dev: false
 
+  /eslint-plugin-local-rules@2.0.0:
+    resolution: {integrity: sha512-sWueme0kUcP0JC1+6OBDQ9edBDVFJR92WJHSRbhiRExlenMEuUisdaVBPR+ItFBFXo2Pdw6FD2UfGZWkz8e93g==}
+    dev: false
+
   /esprima@4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
@@ -2315,7 +2322,7 @@ packages:
     dev: true
 
   /etag@1.8.1:
-    resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
+    resolution: {integrity: sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -2514,7 +2521,7 @@ packages:
     dev: true
 
   /fresh@0.5.2:
-    resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
+    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -2551,7 +2558,7 @@ packages:
     resolution: {integrity: sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw==}
     engines: {node: '>= 4.0'}
     os: [darwin]
-    deprecated: The v1 package contains DANGEROUS / INSECURE binaries. Upgrade to safe fsevents v2
+    deprecated: fsevents 1 will break on node v14+ and could be using insecure binaries. Upgrade to fsevents 2.
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
@@ -2954,7 +2961,7 @@ packages:
     dev: true
 
   /inherits@2.0.3:
-    resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
+    resolution: {integrity: sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=}
     dev: true
 
   /inherits@2.0.4:
@@ -3218,7 +3225,7 @@ packages:
     dev: true
 
   /is-wsl@1.1.0:
-    resolution: {integrity: sha512-gfygJYZ2gLTDlmbWMI0CE2MwnFzSN/2SZfkMlItC4K/JBlsWVDB0bO6XhqcY13YXE7iMcAJnzTCJjPiTeJJ0Mw==}
+    resolution: {integrity: sha1-HxbkqiKwTRM2tmGIpmrzxgDDpm0=}
     engines: {node: '>=4'}
     dev: true
 
@@ -3765,7 +3772,7 @@ packages:
     dev: true
 
   /object-assign@4.1.1:
-    resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
+    resolution: {integrity: sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=}
     engines: {node: '>=0.10.0'}
     dev: true
 
@@ -4061,7 +4068,7 @@ packages:
     dev: true
 
   /proxy-middleware@0.15.0:
-    resolution: {integrity: sha512-EGCG8SeoIRVMhsqHQUdDigB2i7qU7fCsWASwn54+nPutYO8n4q6EiwMzyfWlC+dzRFExP+kvcnDFdBDHoZBU7Q==}
+    resolution: {integrity: sha1-o/3xvvtzD5UZZYcqwvYHTGFHelY=}
     engines: {node: '>=0.8.0'}
     dev: true
 
@@ -4967,7 +4974,7 @@ packages:
     dev: true
 
   /vary@1.1.2:
-    resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
+    resolution: {integrity: sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=}
     engines: {node: '>= 0.8'}
     dev: true
 
@@ -5361,3 +5368,7 @@ packages:
       compress-commons: 5.0.1
       readable-stream: 3.6.2
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
