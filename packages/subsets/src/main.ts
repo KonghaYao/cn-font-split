@@ -21,6 +21,10 @@ import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
 import { getUnForcedCodes } from './useSubset/getUnForcedCodes';
 import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
+import {
+    createFontBaseTool,
+    getNameTableFromTool,
+} from './subsetService/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
 
 export const fontSplit = async (opt: InputTemplate) => {
@@ -70,7 +74,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                 if (!wasm) throw new Error('启动 harfbuzz 失败');
                 const hb = hbjs(wasm.instance);
                 const blob = hb.createBlob(ttfFile);
-
                 const face = hb.createFace(blob, 0);
                 blob.destroy();
                 ctx.set('hb', hb);
@@ -87,9 +90,11 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
                 // rollup 认为 opentype.js 是一个 js 文件，所以会找不到路径
                 const { parse } = await import(
-                    '@konghayao/opentype.js/dist/opentype.js'
+                    '@konghayao/opentype.js/dist/opentype.module.js'
                 );
                 const font = parse(ttfFile.buffer);
+                const fontTool = createFontBaseTool(ttfFile.buffer);
+                ctx.set('fontTool', fontTool);
                 ctx.set('opentype_font', font);
                 ctx.free('ttfFile');
             },
@@ -112,9 +117,8 @@ export const fontSplit = async (opt: InputTemplate) => {
 
             /** 获取字体的基础信息，如字体族类，license等 */
             async function getBasicMessage(ctx) {
-                const { opentype_font } = ctx.pick('opentype_font');
-                const nameTable = opentype_font.tables['name'];
-                // console.table(nameTable);
+                const { fontTool } = ctx.pick('fontTool', 'face');
+                const nameTable = getNameTableFromTool(fontTool);
                 ctx.set('nameTable', nameTable);
             },
             /** 通过数据计算得出分包的数据结构 */
@@ -126,6 +130,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     opentype_font,
                     ttfBufferSize,
                     bundleMessage,
+                    fontTool,
                 } = ctx.pick(
                     'input',
                     'face',
@@ -133,12 +138,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'blob',
                     'opentype_font',
                     'ttfBufferSize',
-                    'bundleMessage'
+                    'bundleMessage',
+                    'fontTool'
                 );
 
                 /** 根据 subsets 参数进行优先分包 */
                 const subsets = opt.subsets ?? [];
-                const featureData = getFeatureData(opentype_font);
+                const featureData = getFeatureData(opentype_font, fontTool);
                 const featureMap = getFeatureMap(featureData);
                 const forcePart = forceSubset(subsets, featureMap);
 
@@ -223,6 +229,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     );
                 ctx.set('subsetsToRun', totalSubsets);
                 ctx.free('opentype_font');
+                ctx.free('ttfFile');
             },
             /** 执行所有包的分包动作 */
             async function subsetFont(ctx) {

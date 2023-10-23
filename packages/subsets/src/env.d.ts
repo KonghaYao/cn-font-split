@@ -38,7 +38,11 @@ declare module 'comlink/dist/esm/node-adapter.mjs' {
 declare module '@konghayao/opentype.js' {
     export * from '@types/opentype.js';
 }
-declare module '@konghayao/opentype.js/dist/opentype.js' {
+declare module '@konghayao/opentype.js/src/*' {
+    const a: any;
+    export default a;
+}
+declare module '@konghayao/opentype.js/dist/opentype.module.js' {
     export * from '@types/opentype.js';
 }
 
