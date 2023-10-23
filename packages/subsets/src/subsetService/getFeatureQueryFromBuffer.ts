@@ -2,7 +2,7 @@
 import gsub from '@konghayao/opentype.js/src/tables/gsub.js';
 import parse from '@konghayao/opentype.js/src/parse.js';
 import Substitution from '@konghayao/opentype.js/src/substitution.js';
-import type { Substitution as _Substitution } from 'opentype.js';
+import type { Font, Substitution as _Substitution } from 'opentype.js';
 /**
  * Parses OpenType table entries.
  */
@@ -46,6 +46,10 @@ export const createFontBaseTool = (buffer: ArrayBuffer) => {
         font: {
             tables: {},
             outlinesFormat: 'truetype',
+        } as any as Font,
+        getTable(parser: any, name: string, ...args: any[]) {
+            const binary = this.tableEntries.get(name)!;
+            return binary && parser.parse(this.data, binary.offset, ...args);
         },
     };
 };
@@ -56,10 +60,8 @@ export const getFeatureQueryFromBuffer = (
 ): {
     getFeature(i: string): { sub: number | number[]; by: number | number[] }[];
 } => {
-    const gsubTableEntry = tool.tableEntries.get('GSUB')!;
-    const gsubTable = { data: tool.data, offset: gsubTableEntry.offset };
     /**@ts-ignore */
-    tool.font.tables.gsub = gsub.parse(gsubTable.data, gsubTable.offset);
+    tool.font.tables.gsub = tool.getTable(gsub, 'GSUB');
     return new Substitution(tool.font) as any;
 };
 import name from '@konghayao/opentype.js/src/tables/name.js';
@@ -67,17 +69,29 @@ import ltag from '@konghayao/opentype.js/src/tables/ltag.js';
 
 /** 从字体中读取 name table */
 export const getNameTableFromTool = (tool: FontBaseTool) => {
-    const nameTable = tool.tableEntries.get('name')!;
-    const ltagTableData = tool.tableEntries.get('ltag')!;
-    let ltagTableInfo =
-        ltagTableData && ltag.parse(tool.data, ltagTableData.offset);
-
-    const nameTableInfo = name.parse(
-        tool.data,
-        nameTable.offset,
-        ltagTableInfo
-    );
+    let ltagTableInfo = tool.getTable(ltag, 'ltag')!;
+    const nameTableInfo = tool.getTable(name, 'name', ltagTableInfo)!;
     /** @ts-ignore */
     tool.font.tables.name = nameTableInfo;
     return nameTableInfo;
+};
+
+import head from '@konghayao/opentype.js/src/tables/head.js';
+import loca from '@konghayao/opentype.js/src/tables/loca.js';
+import glyf from '@konghayao/opentype.js/src/tables/glyf.js';
+import maxp from '@konghayao/opentype.js/src/tables/maxp.js';
+export const getGlyphFromTool = (tool: FontBaseTool) => {
+    const indexToLocFormat = tool.getTable(head, 'head').indexToLocFormat;
+    const shortVersion = indexToLocFormat === 0;
+    const numGlyphs = tool.getTable(maxp, 'maxp').numGlyphs;
+    const locaOffsets = tool.getTable(loca, 'loca', numGlyphs, shortVersion);
+    const glyphs = tool.getTable(glyf, 'glyf', locaOffsets, tool.font, {})!;
+    /** @ts-ignore */
+    tool.font.glyphs = glyphs;
+    return glyphs;
+};
+
+import cmap from '@konghayao/opentype.js/src/tables/cmap.js';
+export const getCMapFromTool = (tool: FontBaseTool) => {
+    return tool.getTable(cmap, 'cmap');
 };
