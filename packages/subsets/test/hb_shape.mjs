@@ -31,7 +31,7 @@ const buffer = fs.readFileSync('../demo/public/SmileySans-Oblique.ttf');
 
 const input = '中文网\n字计划\ncodfidsjfld';
 const result = await WebAssembly.instantiate(
-    fs.readFileSync('./node_modules/@konghayao/harfbuzzjs/hb.wasm')
+    fs.readFileSync('./node_modules/@konghayao/harfbuzzjs/hb-subset.wasm')
 );
 const path = shape(hbjs(result.instance), new Uint8Array(buffer), input);
 let bounding = { height: 100, width: 0 };
