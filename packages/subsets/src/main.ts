@@ -127,7 +127,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                     input,
                     hb,
                     face,
-                    opentype_font,
                     ttfBufferSize,
                     bundleMessage,
                     fontTool,
@@ -136,7 +135,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'face',
                     'hb',
                     'blob',
-                    'opentype_font',
                     'ttfBufferSize',
                     'bundleMessage',
                     'fontTool'
@@ -144,7 +142,7 @@ export const fontSplit = async (opt: InputTemplate) => {
 
                 /** 根据 subsets 参数进行优先分包 */
                 const subsets = opt.subsets ?? [];
-                const featureData = getFeatureData(opentype_font, fontTool);
+                const featureData = getFeatureData(fontTool);
                 const featureMap = getFeatureMap(featureData);
                 const forcePart = forceSubset(subsets, featureMap);
 

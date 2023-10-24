@@ -1,13 +1,16 @@
-import { Font } from 'opentype.js';
 import { FeatureList } from '../data/FeatureList';
 import { Subset } from '../interface';
 import {
     FontBaseTool,
+    getCMapFromTool,
     getFeatureQueryFromBuffer,
+    getGlyphIDToUnicodeMap,
 } from './getFeatureQueryFromBuffer';
 /** 从字体中获取 Feature 的数据数组 */
-export const getFeatureData = (font: Font, fontTool: FontBaseTool) => {
+export const getFeatureData = (fontTool: FontBaseTool) => {
     const featureQuery = getFeatureQueryFromBuffer(fontTool);
+    getCMapFromTool(fontTool);
+    const glyphIDToUnicodeMap = getGlyphIDToUnicodeMap(fontTool);
     return FeatureList.flatMap((i) => {
         return (
             featureQuery
@@ -16,8 +19,7 @@ export const getFeatureData = (font: Font, fontTool: FontBaseTool) => {
                 .map((ids) =>
                     ids
                         .map((id) => {
-                            const item = font.glyphs.get(id);
-                            return item.unicode ?? item.unicodes;
+                            return glyphIDToUnicodeMap.get(id) ?? [];
                         })
                         .flat()
                 ) ?? []
