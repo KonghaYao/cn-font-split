@@ -1,11 +1,10 @@
 import fs from 'fs-extra';
 import { fontSplit } from '../dist/index.js';
-// const buffer = await fs.readFile(
-//     "./node_modules/@konghayao/harfbuzzjs/hb-subset.wasm"
-// );
-fs.emptyDirSync('./temp');
+
+
+fs.emptyDirSync('./temp/bun');
 fontSplit({
-    destFold: './temp',
+    destFold: './temp/bun',
     FontPath: '../demo/public/SmileySans-Oblique.ttf',
     // FontPath: './test/temp/江西拙楷.ttf',
     // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
