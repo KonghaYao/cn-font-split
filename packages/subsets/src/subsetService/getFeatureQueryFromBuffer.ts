@@ -1,4 +1,4 @@
-//
+// 修改自 opentype.js 项目，需要自定义操作以减少打包代码量
 import gsub from '@konghayao/opentype.js/src/tables/gsub.js';
 import parse from '@konghayao/opentype.js/src/parse.js';
 import Substitution from '@konghayao/opentype.js/src/substitution.js';
@@ -76,22 +76,30 @@ export const getNameTableFromTool = (tool: FontBaseTool) => {
     return nameTableInfo;
 };
 
-import head from '@konghayao/opentype.js/src/tables/head.js';
-import loca from '@konghayao/opentype.js/src/tables/loca.js';
-import glyf from '@konghayao/opentype.js/src/tables/glyf.js';
-import maxp from '@konghayao/opentype.js/src/tables/maxp.js';
-export const getGlyphFromTool = (tool: FontBaseTool) => {
-    const indexToLocFormat = tool.getTable(head, 'head').indexToLocFormat;
-    const shortVersion = indexToLocFormat === 0;
-    const numGlyphs = tool.getTable(maxp, 'maxp').numGlyphs;
-    const locaOffsets = tool.getTable(loca, 'loca', numGlyphs, shortVersion);
-    const glyphs = tool.getTable(glyf, 'glyf', locaOffsets, tool.font, {})!;
-    /** @ts-ignore */
-    tool.font.glyphs = glyphs;
-    return glyphs;
-};
-
 import cmap from '@konghayao/opentype.js/src/tables/cmap.js';
 export const getCMapFromTool = (tool: FontBaseTool) => {
-    return tool.getTable(cmap, 'cmap');
+    const _cmap =  tool.getTable(cmap, 'cmap');
+    tool.font.tables.cmap =_cmap
+    return _cmap
 };
+
+
+/** 获取字体的 glyphID -> unicode[] 映射表 */
+export function getGlyphIDToUnicodeMap(tool:FontBaseTool) {
+    const font  = tool.font
+    const _IndexToUnicodeMap = new Map<number,number[]>()
+
+    const glyphIndexMap = font.tables.cmap.glyphIndexMap;
+    const charCodes = Object.keys(glyphIndexMap);
+
+    for (let i = 0; i < charCodes.length; i += 1) {
+        const c = charCodes[i];
+        let glyphIndex = glyphIndexMap[c];
+        if (!_IndexToUnicodeMap.has(glyphIndex) ) {
+            _IndexToUnicodeMap.set(glyphIndex,[parseInt(c)])
+        } else {
+            _IndexToUnicodeMap.get(glyphIndex)!.push(parseInt(c));
+        }
+    }
+    return _IndexToUnicodeMap
+}
