@@ -43,6 +43,8 @@ export declare namespace HB {
     export type Handle = ReturnType<typeof hbjs>;
     export type Face = ReturnType<ReturnType<typeof hbjs>['createFace']>;
     export type Blob = ReturnType<ReturnType<typeof hbjs>['createBlob']>;
+    export type Font = ReturnType<ReturnType<typeof hbjs>['createFont']>;
+    export type Buffer = ReturnType<ReturnType<typeof hbjs>['createBuffer']>;
 }
 
 /**
@@ -539,11 +541,7 @@ export function hbjs(instance: any) {
      *   prepared.
      * @param {object} features: (Currently unused).
      */
-    function shape(
-        font: ReturnType<typeof createFont>,
-        buffer: ReturnType<typeof createFont>,
-        features?: string
-    ) {
+    function shape(font: HB.Font, buffer: HB.Buffer, features?: string) {
         const featurestr = createAsciiString(features);
         exports.hb_shape(
             font.ptr,
