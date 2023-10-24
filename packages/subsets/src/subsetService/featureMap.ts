@@ -1,28 +1,31 @@
-import type { Font } from '@konghayao/opentype.js';
 import { FeatureList } from '../data/FeatureList';
 import { Subset } from '../interface';
-
+import {
+    FontBaseTool,
+    getCMapFromTool,
+    getFeatureQueryFromBuffer,
+    getGlyphIDToUnicodeMap,
+} from './getFeatureQueryFromBuffer';
 /** 从字体中获取 Feature 的数据数组 */
-export const getFeatureData = (font: Font) =>
-    FeatureList.flatMap((i) => {
-        const getFeature: (
-            i: string
-        ) => { sub: number | number[]; by: number | number[] }[] =
-            /** @ts-ignore */
-            font.substitution.getFeature.bind(font.substitution);
+export const getFeatureData = (fontTool: FontBaseTool) => {
+    const featureQuery = getFeatureQueryFromBuffer(fontTool);
+    getCMapFromTool(fontTool);
+    const glyphIDToUnicodeMap = getGlyphIDToUnicodeMap(fontTool);
+    return FeatureList.flatMap((i) => {
         return (
-            getFeature(i)
+            featureQuery
+                .getFeature(i)
                 ?.map((ii) => [ii.sub, ii.by].flat())
                 .map((ids) =>
                     ids
                         .map((id) => {
-                            const item = font.glyphs.get(id);
-                            return item.unicode ?? item.unicodes;
+                            return glyphIDToUnicodeMap.get(id) ?? [];
                         })
                         .flat()
                 ) ?? []
         );
     }).filter((i) => i.length > 1);
+};
 /** 将多个关系行，合并为元素的合集映射 */
 export const getFeatureMap = (featureData: number[][]) => {
     const featureMap = new Map<number, Set<number>>();

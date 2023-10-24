@@ -80,17 +80,17 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@chinese-fonts/wawoff2':
-        specifier: ^2.0.3
-        version: 2.0.3
+        specifier: 2.0.4
+        version: 2.0.4
       '@japont/unicode-range':
         specifier: ^1.0.0
         version: 1.0.0
       '@konghayao/harfbuzzjs':
-        specifier: 8.2.1-beta.1
-        version: 8.2.1-beta.1
+        specifier: 8.2.2
+        version: 8.2.2
       '@konghayao/opentype.js':
-        specifier: ^2023.10.5
-        version: 2023.10.5
+        specifier: ^2023.10.26
+        version: 2023.10.26
       '@napi-rs/ttf2woff2':
         specifier: ^0.0.5
         version: 0.0.5
@@ -481,8 +481,8 @@ packages:
     resolution: {integrity: sha512-KJx2DuJEJ24horFEEXhmkxaBbDFEU6kdI5/eFQ6PJd2LJMEYV6/6/Rl9APS0UTA+KLTnZUG/IJleZ5f5fSA00g==}
     dev: false
 
-  /@chinese-fonts/wawoff2@2.0.3:
-    resolution: {integrity: sha512-HlKCkOlkB/g4TmgknQ5G61i3+T+WRHNLo9dws7dySJvupHUPRShuKb187re2nd6JFCBmpqSerHrIlsav7n1k6A==}
+  /@chinese-fonts/wawoff2@2.0.4:
+    resolution: {integrity: sha512-CqVMlOaRtE2Yza1UbCSb2BFzKYavTgF2jv8uFfSqdr3hFYwcEHRxRfFiK8tQe0X82W74yry6LM1kLNybKQIQCA==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
@@ -760,8 +760,15 @@ packages:
     resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
     dev: true
 
-  /@konghayao/harfbuzzjs@8.2.1-beta.1:
-    resolution: {integrity: sha512-ecDi753M0fbQzwtjrQ+xhdfrRWLw4i+fwzEzFzZGVuTZt/n+J/jrSDqsnEVryIzBAKhn5OHzNvy4ZgaX22RdBA==}
+  /@konghayao/harfbuzzjs@8.2.2:
+    resolution: {integrity: sha512-fWz2KcZX9qLmYZtd5F1mX3maaeqsF2iSNriXe23IZGirlIodunEvtphz18FJkDhPRBgNs7yBkZ+YzdVIRpiLOA==}
+    dev: false
+
+  /@konghayao/opentype.js@2023.10.26:
+    resolution: {integrity: sha512-HtXJ9WOTC2HyZDBZvg/hpkYO+tEJfwmLuruwY/w3lJUWEDDx2c6KeWIQ0ytiSUG1YVoOe3gBuB2B0QKEk7gV2w==}
+    hasBin: true
+    dependencies:
+      eslint-plugin-local-rules: 2.0.0
     dev: false
 
   /@konghayao/opentype.js@2023.10.5:
@@ -2043,7 +2050,7 @@ packages:
     dev: true
 
   /depd@1.1.2:
-    resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}
+    resolution: {integrity: sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=}
     engines: {node: '>= 0.6'}
     dev: true
 
@@ -2267,6 +2274,10 @@ packages:
 
   /eslint-plugin-local-rules@1.3.2:
     resolution: {integrity: sha512-X4ziX+cjlCYnZa+GB1ly3mmj44v2PeIld3tQVAxelY6AMrhHSjz6zsgsT6nt0+X5b7eZnvL/O7Q3pSSK2kF/+Q==}
+    dev: false
+
+  /eslint-plugin-local-rules@2.0.0:
+    resolution: {integrity: sha512-sWueme0kUcP0JC1+6OBDQ9edBDVFJR92WJHSRbhiRExlenMEuUisdaVBPR+ItFBFXo2Pdw6FD2UfGZWkz8e93g==}
     dev: false
 
   /esprima@4.0.1:
@@ -2935,7 +2946,7 @@ packages:
     dev: true
 
   /inherits@2.0.3:
-    resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
+    resolution: {integrity: sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=}
     dev: true
 
   /inherits@2.0.4:
