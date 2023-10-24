@@ -88,26 +88,22 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             async function initOpentype(ctx) {
                 const { ttfFile } = ctx.pick('input', 'ttfFile');
-                // rollup 认为 opentype.js 是一个 js 文件，所以会找不到路径
-                const { parse } = await import(
-                    '@konghayao/opentype.js/dist/opentype.module.js'
-                );
-                const font = parse(ttfFile.buffer);
                 const fontTool = createFontBaseTool(ttfFile.buffer);
                 ctx.set('fontTool', fontTool);
-                ctx.set('opentype_font', font);
                 ctx.free('ttfFile');
             },
             async function createImage(ctx) {
-                const { input, opentype_font } = ctx.pick(
+                const { input, hb,face } = ctx.pick(
                     'input',
-                    'opentype_font'
+                    'hb','face'
                 );
                 if (input.previewImage) {
+                    const font = hb.createFont(face)
                     const encoded = await makeImage(
-                        opentype_font,
+                        hb,font,
                         input.previewImage?.text
                     );
+                    font.destroy()
                     await outputFile(
                         path.join(input.destFold, 'preview' + '.svg'),
                         encoded
@@ -226,7 +222,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                             '，超过了期望最大分包数，将会导致您的机器过久运行'
                     );
                 ctx.set('subsetsToRun', totalSubsets);
-                ctx.free('opentype_font');
                 ctx.free('ttfFile');
             },
             /** 执行所有包的分包动作 */
