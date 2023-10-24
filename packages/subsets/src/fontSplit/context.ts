@@ -1,8 +1,8 @@
 import { HB } from '../hb';
 import { Context } from '../pipeline/index';
 import { InputTemplate, SubsetResult, Subsets } from '../interface';
-import { Font } from '@konghayao/opentype.js';
 import { type BundleReporter } from '../templates/reporter';
+import { type FontBaseTool } from '../subsetService/getFeatureQueryFromBuffer';
 
 /** 全局 Context 的类型，用于在分步函数中定义类型 */
 export type IContext = ReturnType<typeof createContext>;
@@ -21,7 +21,7 @@ export const createContext = (opt: InputTemplate) =>
         blob: HB.Blob;
         subsets: Subsets;
         nameTable: Record<string, string>;
-        opentype_font: Font;
+        fontTool: FontBaseTool;
         bundleMessage: Partial<BundleReporter>;
     }>(
         { input: opt },
