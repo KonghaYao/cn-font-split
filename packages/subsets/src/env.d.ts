@@ -41,6 +41,9 @@ declare module '@konghayao/opentype.js' {
 declare module '@konghayao/opentype.js/dist/opentype.js' {
     export * from '@types/opentype.js';
 }
+declare module '@konghayao/opentype.js/dist/opentype.module.js' {
+    export * from '@types/opentype.js';
+}
 
 // 这个是全局的静态文件声明，不要进行模块化
 // export { }
