@@ -51,7 +51,7 @@
         "md5": "^2.3.0",
         "os-locale": "^6.0.2",
         "tslog": "^4.8.2",
-        "workerpool": "^6.5.0"
+        "workerpool": "^7.0.0"
     },
     "devDependencies": {
         "@types/byte-size": "^8.1.0",
