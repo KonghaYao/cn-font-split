@@ -8,6 +8,12 @@ export default () => {
         {
             source: './node/',
         },
+        {
+            source: './deno/',
+        },
+        {
+            source: './bun/',
+        },
     ];
     return (
         <section>
@@ -36,7 +42,10 @@ export const FontRenderRow = (props: {
             .then((res) => {
                 return res
                     .replace(/Smiley\sSans\sOblique/g, familyName)
-                    .replace(/\.\//g, new URL(props.source,location.href).toString());
+                    .replace(
+                        /\.\//g,
+                        new URL(props.source, location.href).toString()
+                    );
             })
             .then((res) => {
                 const blob = new Blob([res]);
