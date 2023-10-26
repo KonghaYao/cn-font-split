@@ -59,7 +59,9 @@ export default {
         alias({
             entries: [{ find: 'path', replacement: 'path-browserify' }],
         }),
-        common(),
+        common({
+            ignore: ['os', 'worker_threads', 'child_process'],
+        }),
         resolve({
             browser: true,
             extensions: ['.ts', '.html', '.js', '.mjs'],

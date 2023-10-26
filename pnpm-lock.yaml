@@ -106,8 +106,8 @@ importers:
         specifier: ^4.8.2
         version: 4.8.2
       workerpool:
-        specifier: ^6.5.0
-        version: 6.5.0
+        specifier: ^7.0.0
+        version: 7.0.0
     devDependencies:
       '@types/byte-size':
         specifier: ^8.1.0
@@ -5433,8 +5433,8 @@ packages:
       stackback: 0.0.2
     dev: true
 
-  /workerpool@6.5.0:
-    resolution: {integrity: sha512-r64Ea3glXY2RVzMeNxB+4J+0YHAVzUdV4cM5nHi4BBC2LvnO1pWFAIYKYuGcPElbg1/7eEiaPtZ/jzCjIUuGBg==}
+  /workerpool@7.0.0:
+    resolution: {integrity: sha512-i5vKqr+WAOFPk7nHOdFEi0fY6dfhtlJtorzWpzuF0anwGGJrSVIPvBdCGH+8E/H2s3C2W6klZWrf6Q4SwixFWA==}
     dev: false
 
   /wrap-ansi@7.0.0:
