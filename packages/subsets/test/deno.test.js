@@ -1,4 +1,5 @@
 import { fontSplit, Assets, DenoAdapter } from '../dist/browser/index.js';
+import fs from 'https://esm.sh/fs-extra';
 fs.emptyDirSync('./temp/deno');
 await DenoAdapter();
 Assets.pathTransform = (innerPath) =>

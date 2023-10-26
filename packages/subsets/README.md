@@ -1,8 +1,8 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/10/16-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/10/24-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.9.0-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.9.2-green)
 [![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
@@ -51,6 +51,8 @@
 Nodejs 版本推荐使用 **大于 18 的版本**。如低级版本或者其他的设备环境，[参考兼容性章节](#兼容性提醒)。
 
 ### 安装
+
+❗ 注意您安装的版本不是 beta 版本。如果是 beta 版本可能会引起一些问题。
 
 ```bash
 npm install @konghayao/cn-font-split
