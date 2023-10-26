@@ -68,7 +68,7 @@ export const FontRenderRow = (props: {
         text.refetch();
     }
     return (
-        <div style="text-wrap: nowrap;">
+        <div class='example-font'>
             <span style={{ 'font-family': familyName }}>{props.testText}</span>
             <link rel="stylesheet" href={text()} />
         </div>
