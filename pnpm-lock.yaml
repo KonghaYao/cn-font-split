@@ -156,6 +156,9 @@ importers:
         specifier: ^1.7.8
         version: 1.8.3
     devDependencies:
+      '@konghayao/cn-font-split':
+        specifier: 'workspace:'
+        version: link:../subsets
       '@playwright/test':
         specifier: ^1.39.0
         version: 1.39.0

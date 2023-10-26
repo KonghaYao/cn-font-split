@@ -14,6 +14,7 @@
         "solid-js": "^1.7.8"
     },
     "devDependencies": {
+        "@konghayao/cn-font-split": "workspace:",
         "@playwright/test": "^1.39.0",
         "vite": "^4.4.5",
         "vite-plugin-solid": "^2.7.0"
