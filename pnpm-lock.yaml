@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -155,9 +159,6 @@ importers:
       '@playwright/test':
         specifier: ^1.39.0
         version: 1.39.0
-      typescript:
-        specifier: ^5.0.2
-        version: 5.1.6
       vite:
         specifier: ^4.4.5
         version: 4.4.5(@types/node@20.4.2)
@@ -5582,7 +5583,3 @@ packages:
       compress-commons: 5.0.1
       readable-stream: 3.6.2
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false

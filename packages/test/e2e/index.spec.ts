@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('compare font style', async ({ page }) => {
-    await page.goto('https://zoplvy-ppxbvd-5173.preview.myide.io/');
+    await page.goto('http://localhost:5173/');
     await page.waitForLoadState('networkidle');
     const fonts = await page.locator('.example-font');
 
