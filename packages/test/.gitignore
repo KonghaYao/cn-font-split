@@ -1,4 +1,7 @@
 # Logs
+**/*.ts-snapshots
+playwright-report/**/*
+test-results
 logs
 *.log
 npm-debug.log*

@@ -1,20 +1,22 @@
 {
-  "name": "test",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@cn-ui/reactive": "^2.3.0",
-    "solid-js": "^1.7.8"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5",
-    "vite-plugin-solid": "^2.7.0"
-  }
+    "name": "test",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "test": "playwright test",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@cn-ui/reactive": "^2.3.0",
+        "solid-js": "^1.7.8"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.39.0",
+        "typescript": "^5.0.2",
+        "vite": "^4.4.5",
+        "vite-plugin-solid": "^2.7.0"
+    }
 }
