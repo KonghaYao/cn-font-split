@@ -46,5 +46,187 @@
         "featureKey": "rand",
         "outputKey": "ff-kosmik-pro-bold",
         "splitText": "Free stood speech 777!"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/exo-bold.woff2",
+        "featureKey": "slat",
+        "outputKey": "exo-bold",
+        "splitText": "Easy Sunday morning & my fox."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "subs",
+        "outputKey": "warnock-pro-bold",
+        "splitText": "H2O, CO2",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/hypatia-sans-pro-bold.woff2",
+        "featureKey": "subs",
+        "outputKey": "hypatia-sans-pro-bold",
+        "splitText": "X2",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/allan-regular.woff2",
+        "featureKey": "titl",
+        "outputKey": "allan-regular",
+        "splitText": "Quick brown lazy Grumpy"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "liga",
+        "outputKey": "warnock-pro-bold-2",
+        "splitText": "Different first Afliction affidavit There"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "dlig",
+        "outputKey": "warnock-pro-bold-3",
+        "splitText": "ct sp st"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/clara-regular.woff2",
+        "featureKey": "ornm",
+        "outputKey": "clara-regular",
+        "splitText": "abcdefg"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "kern",
+        "outputKey": "warnock-pro-bold-4",
+        "splitText": "Try As You Will"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "smcp",
+        "outputKey": "sf-pro-display-bold-1",
+        "splitText": "Changing case to Small Caps."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "c2sc",
+        "outputKey": "sf-pro-display-bold-2",
+        "splitText": "Changing case to Small Caps."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/eb-garamond-bold.woff2",
+        "featureKey": "pcap",
+        "outputKey": "eb-garamond-bold",
+        "splitText": "Georg Duffner - Principal Design"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/eb-garamond-bold.woff2",
+        "featureKey": "c2pc",
+        "outputKey": "eb-garamond-bold-1",
+        "splitText": "Georg Duffner - Principal Design"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/arial-bold.woff2",
+        "featureKey": "unic",
+        "outputKey": "arial-bold",
+        "splitText": "Server Offline"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
+        "featureKey": "cpsp",
+        "outputKey": "sorts-mill-goudy-regular-1",
+        "splitText": "THE LAZY DOG."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "case",
+        "outputKey": "sf-pro-display-bold-3",
+        "splitText": "{¿¡HO-HO—HO!?} [Target] (New)"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "ordn",
+        "outputKey": "warnock-pro-bold-5",
+        "splitText": "1st, 2nd, 3rd"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "onum",
+        "outputKey": "warnock-pro-bold-6",
+        "splitText": "0123456789"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/hypatia-sans-pro-bold.woff2",
+        "featureKey": "pnum",
+        "outputKey": "hypatia-sans-pro-bold-2",
+        "splitText": "0123456789"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "frac",
+        "outputKey": "ubuntu-mono-bold",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "afrc",
+        "outputKey": "ubuntu-mono-bold-1",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "dnom",
+        "outputKey": "ubuntu-mono-bold-2",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "numr",
+        "outputKey": "ubuntu-mono-bold-3",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bree-bold.woff2",
+        "featureKey": "sinf",
+        "outputKey": "bree-bold",
+        "splitText": "H2O SOx YCbCr NO2"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "zero",
+        "outputKey": "warnock-pro-bold-7",
+        "splitText": "0",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/fira-sans-bold.woff2",
+        "featureKey": "mgrk",
+        "outputKey": "fira-sans-bold",
+        "splitText": "Σ∑",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "rlig",
+        "outputKey": "cairo-bold",
+        "splitText": "لا",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "init",
+        "outputKey": "cairo-bold-1",
+        "direction": "rtl",
+        "splitText": "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "medi",
+        "outputKey": "cairo-bold-2",
+        "direction": "rtl",
+        "splitText": "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "fina",
+        "outputKey": "cairo-bold-3",
+        "direction": "rtl",
+        "splitText": "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق"
     }
 ]

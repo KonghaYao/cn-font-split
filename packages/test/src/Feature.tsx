@@ -5,18 +5,22 @@ export const FeatureList = () => {
     return (
         <section style="font-size:32px">
             <header>Feature 测试</header>
-            <ul>
+            <div>
                 {Features.map((i) => {
                     return (
-                        <li class={i.featureKey}>
+                        <details open class={i.featureKey}>
+                            <summary>{i.featureKey}</summary>
                             {[i.outputKey, i.outputKey + '-demo'].map(
                                 (fontFamily) => {
                                     return (
-                                        <div
-                                            class={fontFamily}
-                                            style={`font-family:"${fontFamily}";width:fit-content`}
-                                        >
-                                            <ul>
+                                        <div>
+                                            <header style={{ color: 'gray' }}>
+                                                {fontFamily}
+                                            </header>
+                                            <section
+                                                class={fontFamily}
+                                                style={`font-family:"${fontFamily}";width:fit-content;`}
+                                            >
                                                 {(
                                                     i.featureValues ?? [
                                                         'off',
@@ -24,14 +28,22 @@ export const FeatureList = () => {
                                                     ]
                                                 ).map((val, index) => {
                                                     return (
-                                                        <li
-                                                            style={`color:${colorSet[index]};font-feature-settings: "${i.featureKey}" ${val};`}
+                                                        <p
+                                                            style={{
+                                                                color: colorSet[
+                                                                    index
+                                                                ],
+                                                                direction:
+                                                                    i.direction ??
+                                                                    'initial',
+                                                                'font-feature-settings': `"${i.featureKey}" ${val}`,
+                                                            }}
                                                         >
                                                             {i.splitText}
-                                                        </li>
+                                                        </p>
                                                     );
                                                 })}
-                                            </ul>
+                                            </section>
                                         </div>
                                     );
                                 }
@@ -48,10 +60,10 @@ export const FeatureList = () => {
                                 rel="stylesheet"
                                 href={`./temp/${i.outputKey}/result.css`}
                             />
-                        </li>
+                        </details>
                     );
                 })}
-            </ul>
+            </div>
         </section>
     );
 };
