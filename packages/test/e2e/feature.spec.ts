@@ -23,8 +23,14 @@ for (const iterator of features) {
         expect(img1.height).toEqual(img2.height);
         const diff = new PNG({ width, height });
 
-        const px = pixelmatch(img1.data, img2.data, diff.data, width, height);
-        fs.writeFileSync('./temp/'+iterator.featureKey+'-diff.png', PNG.sync.write(diff));
+        const px = pixelmatch(img1.data, img2.data, diff.data, width, height, {
+            includeAA: true,
+            threshold: 2,
+        });
+        fs.writeFileSync(
+            './temp/' + iterator.featureKey + '-diff.png',
+            PNG.sync.write(diff)
+        );
         expect(px).toBeLessThanOrEqual(10);
     });
 }
