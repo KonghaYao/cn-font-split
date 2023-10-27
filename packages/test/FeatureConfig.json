@@ -1,16 +1,50 @@
 [
     {
-        "fontLink": "https://cdn.jsdelivr.net/fontsource/fonts/sorts-mill-goudy@latest/latin-400-normal.ttf",
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
         "featureKey": "aalt",
-        "fontfamily":"Sorts Mill Goudy",
         "outputKey": "sorts-mill-goudy",
         "splitText": "Sorts Mill Goudy's 1/3 wizard dog."
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bickham-script-pro-3-bold.woff2",
         "featureKey": "swsh",
-        "fontfamily":"of-bickham-script-pro-3",
         "outputKey": "bickham-script-pro-3-bold",
         "splitText": "Fred And Ginger"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bello-pro.woff2",
+        "featureKey": "cswh",
+        "outputKey": "bello-pro",
+        "splitText": "I feel great today."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/caflisch-script-pro-regular.woff2",
+        "featureKey": "calt",
+        "outputKey": "caflisch-script-pro-regular",
+        "splitText": "The bloom has gone off the rose"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
+        "featureKey": "hist",
+        "outputKey": "sorts-mill-goudy-regular",
+        "splitText": "Aparadise lost"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "hlig",
+        "outputKey": "cardo-regular",
+        "splitText": "ſinful ſingular"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "locl",
+        "outputKey": "sf-pro-display-bold",
+        "splitText": "гпклдвзитжц"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ff-kosmik-pro-bold.woff2",
+        "featureKey": "rand",
+        "outputKey": "ff-kosmik-pro-bold",
+        "splitText": "Free stood speech 777!"
     }
 ]

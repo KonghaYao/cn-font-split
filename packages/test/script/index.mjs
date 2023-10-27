@@ -1,12 +1,13 @@
 import fs from 'fs-extra';
-import { fontSplit,convert } from '@konghayao/cn-font-split';
+import { fontSplit, convert } from '@konghayao/cn-font-split';
 import { chunk } from 'lodash-es';
-const features = fs.readJSONSync("./FeatureConfig.json")
+const features = fs.readJSONSync('./FeatureConfig.json');
 // fs.emptyDirSync('./temp');
-features.map(async (i) => {
+for (const i of features) {    
+    console.log(i.outputKey)
     const buffer = await fetch(i.fontLink).then((res) => res.arrayBuffer());
-    const b = await  convert(new Uint8Array(buffer),'ttf')
-    fontSplit({
+    const b = await convert(new Uint8Array(buffer), 'ttf');
+    await fontSplit({
         destFold: './temp/' + i.outputKey,
         FontPath: Buffer.from(b),
         reporter: false,
@@ -20,4 +21,4 @@ features.map(async (i) => {
             3
         ),
     });
-});
+}
