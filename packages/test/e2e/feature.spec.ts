@@ -1,21 +1,29 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs-extra';
 const features = fs.readJSONSync('./FeatureConfig.json');
+import P from 'pngjs';
+import pixelmatch from 'pixelmatch';
+const PNG = P.PNG;
 
-test('feature 测试', async ({ page }) => {
-    await page.goto('http://localhost:5173/');
-    await page.waitForLoadState('networkidle');
-    for (const iterator of features) {
-        const item1 = await page
-            .locator('.' + iterator.featureKey)
-            .screenshot({
-                path: `./temp/features/test-feature-${iterator.featureKey}.png`,
-            });
+for (const iterator of features) {
+    test('feature 测试 ' + iterator.featureKey, async ({ page }) => {
+        await page.goto('http://localhost:5173/');
+        await page.waitForLoadState('networkidle');
         const item2 = await page
             .locator('.' + iterator.featureKey + '-demo')
-            .screenshot({
-                path: `./temp/features/test-feature-${iterator.featureKey}-demo.png`,
-            });
-        await expect(item2).toMatchSnapshot(`./temp/features/test-feature-${iterator.featureKey}.png`);
-    }
-});
+            .screenshot();
+        const item1 = await page
+            .locator('.' + iterator.featureKey)
+            .screenshot();
+        const img1 = PNG.sync.read(item1);
+        const img2 = PNG.sync.read(item2);
+        const { width, height } = img1;
+
+        expect(img1.width).toEqual(img2.width);
+        expect(img1.height).toEqual(img2.height);
+        const diff = new PNG({ width, height });
+
+        const px = pixelmatch(img1.data, img2.data, diff.data, width, height);
+        expect(px).toBeLessThanOrEqual(10);
+    });
+}
