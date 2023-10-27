@@ -9,7 +9,8 @@
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bickham-script-pro-3-bold.woff2",
         "featureKey": "swsh",
         "outputKey": "bickham-script-pro-3-bold",
-        "splitText": "Fred And Ginger"
+        "splitText": "Fred And Ginger",
+        "fontSize": 64
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bello-pro.woff2",

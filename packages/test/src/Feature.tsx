@@ -2,7 +2,7 @@ import Features from '../FeatureConfig.json';
 const colorSet = ['#000000', '#00af6c'];
 export const FeatureList = () => {
     return (
-        <section style="font-size:48px;">
+        <section>
             <header>Feature 测试</header>
             <div>
                 {Features.map((i) => {
@@ -29,6 +29,10 @@ export const FeatureList = () => {
                                                     return (
                                                         <div
                                                             style={{
+                                                                'font-size':
+                                                                    (i.fontSize ??
+                                                                        48) +
+                                                                    'px',
                                                                 color: colorSet[
                                                                     index
                                                                 ],
