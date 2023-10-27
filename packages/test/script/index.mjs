@@ -5,9 +5,10 @@ import { chunk } from 'lodash-es';
 const features = fs.readJSONSync('./FeatureConfig.json');
 const allKey = new Set();
 
+// fs.emptyDirSync('./temp')
 features.forEach((i) => {
-    if (allKey.has(i.outputKey)) throw new Error('重复键 ' + i.outputKey);
-    allKey.add(i.outputKey);
+    if (allKey.has(i.featureKey)) throw new Error('重复键 ' + i.featureKey);
+    allKey.add(i.featureKey);
 });
 
 const getFont = _.memoize((fontLink)=>{
@@ -16,17 +17,17 @@ const getFont = _.memoize((fontLink)=>{
 
 // fs.emptyDirSync('./temp');
 for (const i of features) {
-    console.log(i.outputKey);
-    if(fs.existsSync('./temp/' + i.outputKey)) continue
+    console.log(i.featureKey);
+    if(fs.existsSync('./temp/' + i.featureKey)) continue
     const buffer = await getFont(i.fontLink)
     const b = await convert(new Uint8Array(buffer), 'ttf');
     await fontSplit({
-        destFold: './temp/' + i.outputKey,
+        destFold: './temp/' + i.featureKey,
         FontPath: Buffer.from(b),
         reporter: false,
         testHTML: false,
         css: {
-            fontFamily: i.outputKey + '-demo',
+            fontFamily: i.featureKey + '-demo',
         },
         targetType: 'woff2',
         subsets: chunk(

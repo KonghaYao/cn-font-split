@@ -8,9 +8,9 @@ export const FeatureList = () => {
             <div>
                 {Features.map((i) => {
                     return (
-                        <details open class={i.featureKey}>
+                        <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
-                            {[i.outputKey, i.outputKey + '-demo'].map(
+                            {[i.featureKey, i.featureKey + '-demo'].map(
                                 (fontFamily) => {
                                     return (
                                         <div>
@@ -53,13 +53,13 @@ export const FeatureList = () => {
                             {/* 加载原始字体 */}
                             <style>
                                 {` @font-face {font-family: '${
-                                    i.outputKey
+                                    i.featureKey
                                 }';src: url(${corsRoot + i.fontLink});}`}
                             </style>
                             {/** 加载打包后字体 */}
                             <link
                                 rel="stylesheet"
-                                href={`./temp/${i.outputKey}/result.css`}
+                                href={`./temp/${i.featureKey}/result.css`}
                             />
                         </details>
                     );
