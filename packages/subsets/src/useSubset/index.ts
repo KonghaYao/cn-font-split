@@ -75,9 +75,13 @@ async function runSubSet(
     index: number
 ) {
     const hbStart = performance.now();
+    if (chunk.length === 0) {
+        ctx.warn('发现空分包' + chunk);
+        return;
+    }
     const [buffer, arr] = subsetFont(face, chunk, hb, {});
     const hbTime = [hbStart, performance.now()] as const;
-    if (!buffer || chunk.length === 0 || buffer.byteLength === 0) {
+    if (!buffer || buffer.byteLength === 0) {
         ctx.warn('发现空分包' + chunk);
         return;
     }
