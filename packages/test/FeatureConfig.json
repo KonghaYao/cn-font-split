@@ -63,7 +63,7 @@
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/hypatia-sans-pro-bold.woff2",
-        "featureKey": "subs",
+        "featureKey": "sups",
         "outputKey": "hypatia-sans-pro-bold",
         "splitText": "X2",
         "splitCount": 1
