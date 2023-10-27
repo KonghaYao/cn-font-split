@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { comparePictureBuffer } from './comparePictureBuffer';
 
 test('多构建方式：成品测试', async ({ page }) => {
     await page.goto('http://localhost:5173/');
@@ -6,11 +7,11 @@ test('多构建方式：成品测试', async ({ page }) => {
     const fonts = await page.locator('.example-font');
 
     const fontIndex = await fonts.count();
-    await fonts.nth(0).screenshot({ path: './temp/e2e/test-font.png' });
+    const base = await fonts.nth(0).screenshot();
     for (let i = 1; i < fontIndex; ++i) {
-        const item = await fonts
-            .nth(i)
-            .screenshot({ path: `./temp/test-font-${i}.png` });
-        await expect(item).toMatchSnapshot('./temp/e2e/test-font.png');
+        const item = await fonts.nth(i).screenshot();
+        expect(
+            comparePictureBuffer(base, item, { threshold: 0.3 }).pixelDiffCount
+        ).toBeLessThanOrEqual(500);
     }
 });

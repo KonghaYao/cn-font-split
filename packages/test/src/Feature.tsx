@@ -1,9 +1,8 @@
 import Features from '../FeatureConfig.json';
-const corsRoot = 'https://cors-cdn.deno.dev?url=';
 const colorSet = ['#000000', '#00af6c'];
 export const FeatureList = () => {
     return (
-        <section style="font-size:32px">
+        <section style="font-size:48px;">
             <header>Feature 测试</header>
             <div>
                 {Features.map((i) => {
@@ -28,7 +27,7 @@ export const FeatureList = () => {
                                                     ]
                                                 ).map((val, index) => {
                                                     return (
-                                                        <p
+                                                        <div
                                                             style={{
                                                                 color: colorSet[
                                                                     index
@@ -41,7 +40,7 @@ export const FeatureList = () => {
                                                             lang={i.lang}
                                                         >
                                                             {i.splitText}
-                                                        </p>
+                                                        </div>
                                                     );
                                                 })}
                                             </section>
@@ -54,7 +53,13 @@ export const FeatureList = () => {
                             <style>
                                 {` @font-face {font-family: '${
                                     i.featureKey
-                                }';src: url(${corsRoot + i.fontLink});}`}
+                                }';src: url(${
+                                    './temp/' +
+                                    i.featureKey +
+                                    '/' +
+                                    i.featureKey +
+                                    i.fontLink.replace(/.*\.(.*?)/g, '.$1')
+                                });}`}
                             </style>
                             {/** 加载打包后字体 */}
                             <link
