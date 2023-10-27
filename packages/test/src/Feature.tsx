@@ -38,6 +38,7 @@ export const FeatureList = () => {
                                                                     'initial',
                                                                 'font-feature-settings': `"${i.featureKey}" ${val}`,
                                                             }}
+                                                            lang={i.lang}
                                                         >
                                                             {i.splitText}
                                                         </p>

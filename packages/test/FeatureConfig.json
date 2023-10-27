@@ -39,7 +39,8 @@
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
         "featureKey": "locl",
         "outputKey": "sf-pro-display-bold",
-        "splitText": "гпклдвзитжц"
+        "splitText": "гпклдвзитжц",
+        "lang": "bg"
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ff-kosmik-pro-bold.woff2",
@@ -49,7 +50,7 @@
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/exo-bold.woff2",
-        "featureKey": "slat",
+        "featureKey": "salt",
         "outputKey": "exo-bold",
         "splitText": "Easy Sunday morning & my fox."
     },
@@ -206,7 +207,8 @@
         "featureKey": "rlig",
         "outputKey": "cairo-bold",
         "splitText": "لا",
-        "splitCount": 1
+        "splitCount": 2,
+        "lang": "ar"
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
