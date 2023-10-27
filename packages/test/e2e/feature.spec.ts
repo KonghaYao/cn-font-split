@@ -24,6 +24,7 @@ for (const iterator of features) {
         const diff = new PNG({ width, height });
 
         const px = pixelmatch(img1.data, img2.data, diff.data, width, height);
+        fs.writeFileSync('./temp/'+iterator.featureKey+'-diff.png', PNG.sync.write(diff));
         expect(px).toBeLessThanOrEqual(10);
     });
 }

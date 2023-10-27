@@ -19,7 +19,7 @@ export const FeatureList = () => {
                                             </header>
                                             <section
                                                 class={fontFamily}
-                                                style={`font-family:"${fontFamily}";width:fit-content;`}
+                                                style={`font-family:"${fontFamily}";`}
                                             >
                                                 {(
                                                     i.featureValues ?? [
