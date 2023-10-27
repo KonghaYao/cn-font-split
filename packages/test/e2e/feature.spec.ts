@@ -3,6 +3,7 @@ import fs from 'fs-extra';
 const features = fs.readJSONSync('./FeatureConfig.json');
 import P from 'pngjs';
 import pixelmatch from 'pixelmatch';
+import { comparePictureBuffer } from './comparePictureBuffer';
 const PNG = P.PNG;
 
 for (const iterator of features) {
@@ -15,22 +16,13 @@ for (const iterator of features) {
         const item1 = await page
             .locator('.' + iterator.featureKey)
             .screenshot();
-        const img1 = PNG.sync.read(item1);
-        const img2 = PNG.sync.read(item2);
-        const { width, height } = img1;
-
-        expect(img1.width).toEqual(img2.width);
-        expect(img1.height).toEqual(img2.height);
-        const diff = new PNG({ width, height });
-
-        const px = pixelmatch(img1.data, img2.data, diff.data, width, height, {
-            includeAA: true,
-            threshold: 2,
+        const { pixelDiffCount, diff } = comparePictureBuffer(item1, item2, {
+            threshold: 0.4,
         });
         fs.writeFileSync(
             './temp/' + iterator.featureKey + '-diff.png',
             PNG.sync.write(diff)
         );
-        expect(px).toBeLessThanOrEqual(10);
+        expect(pixelDiffCount).toBeLessThanOrEqual(40);
     });
 }
