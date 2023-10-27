@@ -1,0 +1,16 @@
+[
+    {
+        "fontLink": "https://cdn.jsdelivr.net/fontsource/fonts/sorts-mill-goudy@latest/latin-400-normal.ttf",
+        "featureKey": "aalt",
+        "fontfamily":"Sorts Mill Goudy",
+        "outputKey": "sorts-mill-goudy",
+        "splitText": "Sorts Mill Goudy's 1/3 wizard dog."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bickham-script-pro-3-bold.woff2",
+        "featureKey": "swsh",
+        "fontfamily":"of-bickham-script-pro-3",
+        "outputKey": "bickham-script-pro-3-bold",
+        "splitText": "Fred And Ginger"
+    }
+]

@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -152,6 +148,9 @@ importers:
       '@cn-ui/reactive':
         specifier: ^2.3.0
         version: 2.3.0
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       solid-js:
         specifier: ^1.7.8
         version: 1.8.3
@@ -5586,3 +5585,7 @@ packages:
       compress-commons: 5.0.1
       readable-stream: 3.6.2
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
