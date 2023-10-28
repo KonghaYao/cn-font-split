@@ -3,12 +3,7 @@ import './App.css';
 import linkURL from './style/baseFont.css?url';
 import { FeatureList } from './Feature';
 
-
-
-
-
-
-const CompareFonts =  () => {
+const CompareFonts = () => {
     const testText =
         'cn-font-split 是中文网字计划 所使用的字体分包工具，通过高性能的各种技术将庞大的字体包拆分为适合网络分发的版本。经过四个版本的字体研究与代码迭代，这项技术在我们的网站中得到了充分的应用，实现了中文字体在 Web 领域的加载速度与效率的双飞跃。';
     const models = [
@@ -20,7 +15,7 @@ const CompareFonts =  () => {
         },
     ];
     return (
-        <section>
+        <section style="font-size: 24px">
             <FontRenderRow
                 index={-1}
                 source={''}
@@ -41,14 +36,14 @@ const CompareFonts =  () => {
     );
 };
 
-
-export default ()=>{
-    return <>
-        <CompareFonts></CompareFonts>
-        <FeatureList></FeatureList>
-    </>
-}
-
+export default () => {
+    return (
+        <>
+            <CompareFonts></CompareFonts>
+            <FeatureList></FeatureList>
+        </>
+    );
+};
 
 export const FontRenderRow = (props: {
     source: string;
@@ -84,7 +79,7 @@ export const FontRenderRow = (props: {
         text.refetch();
     }
     return (
-        <div class='example-font'>
+        <div class="example-font">
             <span style={{ 'font-family': familyName }}>{props.testText}</span>
             <link rel="stylesheet" href={text()} />
         </div>
