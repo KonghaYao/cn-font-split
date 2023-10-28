@@ -128,7 +128,6 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'input',
                     'face',
                     'hb',
-                    'blob',
                     'ttfBufferSize',
                     'bundleMessage',
                     'fontTool'

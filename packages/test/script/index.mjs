@@ -29,6 +29,11 @@ for (const i of features) {
         testHTML: false,
         css: {
             fontFamily: i.featureKey + '-demo',
+            comment: {
+                base: false,
+                nameTable: false,
+                unicodes: true
+            }
         },
         targetType: 'woff2',
         subsets: chunk(

@@ -68,6 +68,7 @@ for (const i of features) {
 
     // Output font data(Uint8Array)
     const subsetFontBlob = heapu8.subarray(offset, offset + exports.hb_blob_get_length(resultBlob));
+
     await fs.outputFile(head + "-hb-wasm.ttf", subsetFontBlob);
 
     /* Clean up */
