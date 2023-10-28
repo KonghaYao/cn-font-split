@@ -4,6 +4,8 @@ import { convert } from '@konghayao/cn-font-split';
 import shelljs from 'shelljs'
 const features = fs.readJSONSync('./FeatureConfig.json');
 
+// 生成 harfbuzz 对照测试的样例
+
 const command = (input, output, text) => `hb-subset --font-file=${input} --output-file=${output} --layout-scripts=* --layout-features=* --text="${text}"`
 
 // fs.emptyDirSync('./temp');

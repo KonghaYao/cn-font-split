@@ -13,6 +13,7 @@ export const FeatureList = () => {
                             {[
                                 i.featureKey,
                                 // i.featureKey + '-hb',
+                                // i.featureKey + '-hb-wasm',
                                 i.featureKey + '-demo',
                             ].map((fontFamily) => {
                                 return (
@@ -66,6 +67,12 @@ export const FeatureList = () => {
                                 {` @font-face {font-family: '${
                                     i.featureKey + '-hb'
                                 }';src: url(${folderHead + '-hb.ttf'});}`}
+                            </style> */}
+                            {/* 加载hb wasm切割对照 */}
+                            {/* <style>
+                                {` @font-face {font-family: '${
+                                    i.featureKey + '-hb-wasm'
+                                }';src: url(${folderHead + '-hb-wasm.ttf'});}`}
                             </style> */}
                             {/** 加载打包后字体 */}
                             <link
