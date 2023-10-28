@@ -9,6 +9,7 @@ for (const iterator of features) {
     test('feature 测试 ' + iterator.featureKey, async ({ page }) => {
         await page.goto('http://localhost:5173/');
         await page.waitForLoadState('networkidle');
+        // 测试 harfbuzz 版本只需要将 -demo 替换为 -hb 即可
         const item2 = await page
             .locator('.' + iterator.featureKey + '-demo')
             .screenshot();

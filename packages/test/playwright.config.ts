@@ -19,9 +19,4 @@ export default defineConfig({
             use: { ...devices['Desktop Chrome'] },
         },
     ],
-    expect: {
-        toMatchSnapshot: {
-            maxDiffPixels: 0,
-        },
-    },
 });
