@@ -93,17 +93,15 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ctx.free('ttfFile');
             },
             async function createImage(ctx) {
-                const { input, hb,face } = ctx.pick(
-                    'input',
-                    'hb','face'
-                );
+                const { input, hb, face } = ctx.pick('input', 'hb', 'face');
                 if (input.previewImage) {
-                    const font = hb.createFont(face)
+                    const font = hb.createFont(face);
                     const encoded = await makeImage(
-                        hb,font,
+                        hb,
+                        font,
                         input.previewImage?.text
                     );
-                    font.destroy()
+                    font.destroy();
                     await outputFile(
                         path.join(input.destFold, 'preview' + '.svg'),
                         encoded
