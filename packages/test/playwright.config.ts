@@ -11,7 +11,7 @@ export default defineConfig({
     retries: 2,
 
     // Opt out of parallel tests on CI.
-    workers: 1,
+    workers: 4,
 
     projects: [
         {

@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs-extra';
 const features = fs.readJSONSync('./FeatureConfig.json');
-import P from 'pngjs';
-import pixelmatch from 'pixelmatch';
 import { comparePictureBuffer } from './comparePictureBuffer';
+import P from 'pngjs';
 const PNG = P.PNG;
 
 for (const iterator of features) {
@@ -17,12 +16,12 @@ for (const iterator of features) {
             .locator('.' + iterator.featureKey)
             .screenshot();
         const { pixelDiffCount, diff } = comparePictureBuffer(item1, item2, {
-            threshold: 0.4,
+            threshold: 0.2,
         });
         fs.writeFileSync(
             './temp/' + iterator.featureKey + '-diff.png',
             PNG.sync.write(diff)
         );
-        expect(pixelDiffCount).toBeLessThanOrEqual(40);
+        expect(pixelDiffCount).toBeLessThanOrEqual(50);
     });
 }
