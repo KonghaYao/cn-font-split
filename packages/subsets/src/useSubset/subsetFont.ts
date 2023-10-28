@@ -20,9 +20,9 @@ export function subsetFont(
         throw new Error(' 发现空分包');
     }
     const Subset = hb.createSubset(face, preserveNameIds, variationAxes);
-    Subset.addChars(subsetUnicode);
     Subset.adjustLayout();
-    Subset.clearTableDrop();
+    Subset.addChars(subsetUnicode);
+    // Subset.clearTableDrop();
     const facePtr = Subset.runSubset();
     const arr = hb.collectUnicodes(facePtr);
 

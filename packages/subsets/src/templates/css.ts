@@ -63,6 +63,8 @@ export const createCSS = (
 
     const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
     const cssStyleSheet = subsetResult
+        //  反转数组，使得 feature 在后面覆盖前面的 feature
+        .reverse()
         .map(({ path, unicodeRange }) => {
             let str = `@font-face {
 font-family: "${family}";

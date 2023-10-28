@@ -63,17 +63,17 @@ export const FeatureList = () => {
                                 });}`}
                             </style>
                             {/* 加载hb切割对照 */}
-                            {/* <style>
+                            <style>
                                 {` @font-face {font-family: '${
                                     i.featureKey + '-hb'
                                 }';src: url(${folderHead + '-hb.ttf'});}`}
-                            </style> */}
+                            </style>
                             {/* 加载hb wasm切割对照 */}
-                            {/* <style>
+                            <style>
                                 {` @font-face {font-family: '${
                                     i.featureKey + '-hb-wasm'
                                 }';src: url(${folderHead + '-hb-wasm.ttf'});}`}
-                            </style> */}
+                            </style>
                             {/** 加载打包后字体 */}
                             <link
                                 rel="stylesheet"
