@@ -16,6 +16,13 @@ fontSplit({
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},
     chunkSize: 70 * 1024,
+    // css: {
+    //     comment: {
+    //         base: false,
+    //         nameTable: false,
+    //         unicodes: true
+    //     }
+    // }
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},

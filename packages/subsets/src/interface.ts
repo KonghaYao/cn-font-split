@@ -58,10 +58,21 @@ export type InputTemplate = {
         polyfill: ({ name: string; format?: string } | string)[];
         comment:
             | {
-                  /** cn-font-split 相关的数据 */
-                  base?: boolean;
-                  /** 字体文件中的 name table，有字体证书相关的说明 */
-                  nameTable?: boolean;
+                  /**
+                   * cn-font-split 相关的数据
+                   * @default true
+                   */
+                  base?: false;
+                  /**
+                   * 字体文件中的 name table，有字体证书相关的说明
+                   * @default true
+                   */
+                  nameTable?: false;
+                  /**
+                   * 显示每个字体包含有的 unicode range 的字符, debug 专用
+                   * @default false
+                   */
+                  unicodes?: true;
               }
             | false;
         compress: boolean;
