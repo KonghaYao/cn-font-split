@@ -10,21 +10,21 @@ export const isItalic = (str: string) => {
 
 const createUnicodeCommentForPackage = (range: string) => {
     return `/* ${String.fromCharCode(
-        ...UnicodeRange.parse(range.split(','))
+        ...UnicodeRange.parse(range.split(',')),
     )} */`;
 };
 
 export const createCSS = (
     subsetResult: SubsetResult,
     nameTable: { windows?: NameTable; macintosh?: NameTable },
-    opts: InputTemplate['css']
+    opts: InputTemplate['css'],
 ) => {
     const fontData = Object.fromEntries(
         Object.entries(nameTable?.windows ?? nameTable?.macintosh ?? {}).map(
             ([key, val]) => {
                 return [key, typeof val === 'string' ? val : val.en];
-            }
-        )
+            },
+        ),
     );
     const css = opts || {};
     const commentSetting = opts?.comment || {};
@@ -54,7 +54,7 @@ export const createCSS = (
                             name: i,
                             format: getFormatFromFontPath(i),
                         }
-                      : i
+                      : i,
               ) ?? [];
 
     const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
@@ -62,7 +62,7 @@ export const createCSS = (
         //  反转数组，使得 feature 在后面覆盖前面的 feature
         .reverse()
         .map(({ path, unicodeRange }) => {
-            let str = `@font-face {
+            const str = `@font-face {
 font-family: "${family}";
 src:${[
                 ...locals,
@@ -71,7 +71,7 @@ src:${[
                     (i) =>
                         `url("${i.name}") ${
                             i.format ? `format("${i.format}")` : ''
-                        }`
+                        }`,
                 ),
             ].join(',')};
 font-style: ${style};
@@ -94,7 +94,7 @@ unicode-range:${unicodeRange};
 };
 function createLocalsString(
     css: NonNullable<InputTemplate['css']>,
-    fontData: Record<string, string>
+    fontData: Record<string, string>,
 ) {
     if (css?.localFamily === false) return [];
     const locals =
