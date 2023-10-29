@@ -21,8 +21,12 @@ for (const iterator of features) {
             threshold: 0.2,
         });
         fs.writeFileSync(
-            './temp/' + iterator.featureKey + '-diff.png',
-            PNG.sync.write(diff)
+            './temp/' +
+                iterator.featureKey +
+                '/' +
+                iterator.featureKey +
+                '-diff.png',
+            PNG.sync.write(diff),
         );
         expect(pixelDiffCount).toBeLessThanOrEqual(50);
     });

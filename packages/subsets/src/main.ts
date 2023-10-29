@@ -36,7 +36,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             async function LoadFile(ctx) {
                 ctx.info(
                     `cn-font-split@${__cn_font_split_version__} 环境检测\t`,
-                    env
+                    env,
                 );
                 typeof opt.log === 'function' && ctx.recordLog(opt.log);
                 const { input } = ctx.pick('input');
@@ -58,7 +58,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const { originFile, bundleMessage } = ctx.pick(
                     'input',
                     'originFile',
-                    'bundleMessage'
+                    'bundleMessage',
                 );
                 const ttfFile = await convert(originFile, 'truetype');
                 bundleMessage.ttfLength = ttfFile.byteLength;
@@ -83,7 +83,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 if (opt.threads !== false) {
                     opt.threads = opt.threads || {};
                     opt.threads.service = new ConvertManager(
-                        opt.threads.options
+                        opt.threads.options,
                     );
                 }
             },
@@ -100,12 +100,12 @@ export const fontSplit = async (opt: InputTemplate) => {
                     const encoded = await makeImage(
                         hb,
                         font,
-                        input.previewImage?.text
+                        input.previewImage?.text,
                     );
                     font.destroy();
                     await outputFile(
                         path.join(input.destFold, 'preview' + '.svg'),
-                        encoded
+                        encoded,
                     );
                 }
             },
@@ -131,7 +131,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'hb',
                     'ttfBufferSize',
                     'bundleMessage',
-                    'fontTool'
+                    'fontTool',
                 );
                 const UserSubsets = opt.subsets ?? []; // 1
                 const totalChars = face.collectUnicodes();
@@ -140,7 +140,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const AllUnicodeSet = new Set([...totalChars]); // 2
                 CharsetTool.difference(
                     AllUnicodeSet,
-                    subsetsToSet(UserSubsets)
+                    subsetsToSet(UserSubsets),
                 ); //3
                 /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const autoForceBundle: number[][] = (
@@ -150,16 +150,14 @@ export const fontSplit = async (opt: InputTemplate) => {
                         const isIn = AllUnicodeSet.has(char);
                         AllUnicodeSet.delete(char);
                         return isIn;
-                    })
+                    }),
                 ); // 4
                 const featureData = getFeatureData(fontTool);
                 const featureMap = getFeatureMap(featureData);
                 const ForcePartSubsets = forceSubset(UserSubsets, featureMap); // 5
-                CharsetTool.difference(
-                    AllUnicodeSet,
-                    subsetsToSet(ForcePartSubsets)
-                ); // 6
+                CharsetTool.difference(AllUnicodeSet, ForcePartSubsets.flat()); // 6
 
+                autoForceBundle.push([...AllUnicodeSet]);
                 const contoursMap = await createContoursMap();
                 /** 单包最大轮廓数值 */
                 const contoursBorder = await calcContoursBorder(
@@ -168,7 +166,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     input.targetType ?? 'woff2',
                     contoursMap,
                     input.chunkSize ?? 70 * 1024,
-                    new Set([...totalChars])
+                    new Set([...totalChars]),
                 );
 
                 const AutoPartSubsets: number[][] = [];
@@ -185,7 +183,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         contoursBorder,
                         contoursMap,
                         featureMap,
-                        maxCharSize
+                        maxCharSize,
                     );
                     AutoPartSubsets.push(...subset);
                 } // 9
@@ -193,7 +191,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 for (const [key, iterator] of featureMap.entries()) {
                     if (iterator)
                         ctx.warn(
-                            'featureMap ' + key + ' 未使用' + iterator.size
+                            'featureMap ' + key + ' 未使用' + iterator.size,
                         );
                 }
 
@@ -209,7 +207,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     console.log(
                         '字符缺漏',
                         subsetCharsNumber,
-                        totalChars.length
+                        totalChars.length,
                     );
                 } // 11
 
@@ -217,7 +215,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     throw new Error(
                         '分包数为' +
                             totalSubsets.length +
-                            '，超过了期望最大分包数，将会导致您的机器过久运行'
+                            '，超过了期望最大分包数，将会导致您的机器过久运行',
                     );
                 ctx.set('subsetsToRun', totalSubsets);
                 ctx.free('ttfFile');
@@ -231,7 +229,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         'blob',
                         'hb',
                         'subsetsToRun',
-                        'bundleMessage'
+                        'bundleMessage',
                     );
 
                 const Result = await useSubset(
@@ -241,20 +239,20 @@ export const fontSplit = async (opt: InputTemplate) => {
                     async (filename, buffer) => {
                         return outputFile(
                             path.join(input.destFold, filename),
-                            buffer
+                            buffer,
                         );
                     },
                     input.targetType ?? 'woff2',
-                    ctx
+                    ctx,
                 );
 
                 bundleMessage.bundledSize = Result.reduce(
                     (col, cur) => col + cur.charLength,
-                    0
+                    0,
                 );
                 bundleMessage.bundledTotalLength = Result.reduce(
                     (col, cur) => col + cur.size,
-                    0
+                    0,
                 );
                 ctx.set('subsetResult', Result);
                 face.destroy();
@@ -266,15 +264,15 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const { nameTable, subsetResult, input } = ctx.pick(
                     'input',
                     'nameTable',
-                    'subsetResult'
+                    'subsetResult',
                 );
                 const css = createCSS(subsetResult, nameTable, input.css);
                 await outputFile(
                     path.join(
                         input.destFold,
-                        input.cssFileName ?? 'result.css'
+                        input.cssFileName ?? 'result.css',
                     ),
-                    css
+                    css,
                 );
             },
             async function outputHTML(ctx) {
@@ -286,7 +284,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     const reporter = createTestHTML();
                     await outputFile(
                         path.join(input.destFold, 'index.html'),
-                        await reporter
+                        await reporter,
                     );
                 }
             },
@@ -296,7 +294,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         'input',
                         'nameTable',
                         'subsetResult',
-                        'bundleMessage'
+                        'bundleMessage',
                     );
                 if (!(input.testHTML === false && input.reporter === false)) {
                     const reporter = await createReporter(
@@ -304,11 +302,11 @@ export const fontSplit = async (opt: InputTemplate) => {
                         nameTable,
                         input,
                         exec.records,
-                        bundleMessage as BundleReporter
+                        bundleMessage as BundleReporter,
                     );
                     await outputFile(
                         path.join(input.destFold, 'reporter.json'),
-                        JSON.stringify(reporter)
+                        JSON.stringify(reporter),
                     );
                 }
             },
@@ -317,7 +315,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                 input.threads && input.threads?.service?.destroy();
             },
         ],
-        createContext(opt)
+        createContext(opt),
     );
     const ctx = await exec.run();
 };
