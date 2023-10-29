@@ -142,7 +142,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                     AllUnicodeSet,
                     subsetsToSet(UserSubsets)
                 ); //3
-                /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
+                /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const autoForceBundle: number[][] = (
                     opt.unicodeRank ?? [Latin, await getCN_SC_Rank()]
                 ).map((rank) =>
@@ -152,14 +152,13 @@ export const fontSplit = async (opt: InputTemplate) => {
                         return isIn;
                     })
                 ); // 4
-                const ForceSubsets = [...UserSubsets, ...autoForceBundle]; //5
                 const featureData = getFeatureData(fontTool);
                 const featureMap = getFeatureMap(featureData);
-                const ForcePartSubsets = forceSubset(ForceSubsets, featureMap); // 6
+                const ForcePartSubsets = forceSubset(UserSubsets, featureMap); // 5
                 CharsetTool.difference(
                     AllUnicodeSet,
                     subsetsToSet(ForcePartSubsets)
-                ); //7
+                ); // 6
 
                 const contoursMap = await createContoursMap();
                 /** 单包最大轮廓数值 */
