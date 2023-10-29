@@ -1,8 +1,8 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/10/24-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/10/29-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.9.2-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.10.0-green)
 [![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
@@ -25,18 +25,19 @@
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |
 | -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
-| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ✅ ^1.0.0 |
+| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ⏺️ ^1.0.4 |
 
 ### 新版本功能
 
-1. ✅ 🚀 多线程压缩，核心越多，速度越快！（1310ms -> 760ms）
-2. ✅ 🚀 使用 WASM 和原生工具解析与分包，提升打包速度。
-3. ✅ 🔒 依赖检查与重构，安全版本。
-4. ✅ 📦 更加可控的分包方式，支持细颗粒度的字符拆分。
-5. ✅ 🔔 支持 OTF 格式字体打包，支持复杂字形渲染。
-6. ✅ 🏞️ 字体预览图生成
-7. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，随处可使用！
-8. ✅ 🥳 不止中文，只要是包内的字符，统统分包
+1. ✅ 🔒 完备测试与版本发布流程！
+2. ✅ 🚀 多线程压缩，核心越多，速度越快！（1310ms -> 760ms）
+3. ✅ 🚀 使用 WASM 和原生工具解析与分包，提升打包速度。
+4. ✅ 🔒 依赖检查与重构，安全版本。
+5. ✅ 📦 更加可控的分包方式，支持细颗粒度的字符拆分。
+6. ✅ 🔔 支持 OTF 格式字体打包，支持复杂字形渲染。
+7. ✅ 🏞️ 字体预览图生成
+8. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，随处可使用！
+9. ✅ 🥳 不止中文，只要是包内的字符，统统分包
 
 ### 成品预览
 
@@ -168,10 +169,11 @@ fontSplit({
 
 ### Bun
 
-> version: ✅^1.0.4 [Bun 使用](/packages/subsets/test/bun.test.js)
+> version: ⏺️^1.0.4 [Bun 使用](/packages/subsets/test/bun.test.js)
 
-1. Bun 现在的版本只能跑在 linux 和 Mac 平台，Windows 似乎官方在支持
-2. Bun 运行速度比 Nodejs 要快 30% 左右（保守估计）。
+1. Bun 现在的版本只能跑在 Linux 和 Mac 平台，Windows 似乎官方在支持
+2. Bun 在我的 Mac 上运行良好，但是到某些 Linux 平台上，Web Worker 就会出问题。
+3. Bun 运行速度比 Nodejs 要快 30% 左右（保守估计）。
 
 ### 感谢
 
