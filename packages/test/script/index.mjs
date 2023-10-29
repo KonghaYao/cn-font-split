@@ -28,7 +28,7 @@ for (const i of features) {
         reporter: false,
         testHTML: false,
         css: {
-
+            localFamily: false,
             fontFamily: i.featureKey + '-demo',
             comment: {
                 base: false,
