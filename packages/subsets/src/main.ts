@@ -26,6 +26,7 @@ import {
     getNameTableFromTool,
 } from './subsetService/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
+import { CharsetTool } from './utils/CharSetTool';
 
 export const fontSplit = async (opt: InputTemplate) => {
     const outputFile = opt.outputFile ?? Assets.outputFile;
@@ -132,33 +133,33 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'bundleMessage',
                     'fontTool'
                 );
-
-                /** 根据 subsets 参数进行优先分包 */
-                const subsets = opt.subsets ?? [];
-                const featureData = getFeatureData(fontTool);
-                const featureMap = getFeatureMap(featureData);
-                const forcePart = forceSubset(subsets, featureMap);
-
+                const UserSubsets = opt.subsets ?? []; // 1
                 const totalChars = face.collectUnicodes();
                 ctx.trace('总字符数', totalChars.length);
                 bundleMessage.originSize = totalChars.length;
-
-                /** 已经在 forcePart 中分包的 unicode */
-                const forcePartSet = subsetsToSet(forcePart);
-
-                const codes = getUnForcedCodes(totalChars, forcePartSet);
-
-                const charsSet = new Set([...totalChars]);
+                const AllUnicodeSet = new Set([...totalChars]); // 2
+                CharsetTool.difference(
+                    AllUnicodeSet,
+                    subsetsToSet(UserSubsets)
+                ); //3
                 /** 自动分包内部的强制分包机制，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
-                const unicodeForceBundle: number[][] =
-                    opt.unicodeRank ??
-                    [Latin, await getCN_SC_Rank()].map((i) =>
-                        i.filter((ii) => charsSet.has(ii))
-                    );
-                const forceBundleSet = new Set([...unicodeForceBundle.flat()]);
-                unicodeForceBundle.push(
-                    codes.filter((i) => !forceBundleSet.has(i))
-                );
+                const autoForceBundle: number[][] = (
+                    opt.unicodeRank ?? [Latin, await getCN_SC_Rank()]
+                ).map((rank) =>
+                    rank.filter((char) => {
+                        const isIn = AllUnicodeSet.has(char);
+                        AllUnicodeSet.delete(char);
+                        return isIn;
+                    })
+                ); // 4
+                const ForceSubsets = [...UserSubsets, ...autoForceBundle]; //5
+                const featureData = getFeatureData(fontTool);
+                const featureMap = getFeatureMap(featureData);
+                const ForcePartSubsets = forceSubset(ForceSubsets, featureMap); // 6
+                CharsetTool.difference(
+                    AllUnicodeSet,
+                    subsetsToSet(ForcePartSubsets)
+                ); //7
 
                 const contoursMap = await createContoursMap();
                 /** 单包最大轮廓数值 */
@@ -168,18 +169,18 @@ export const fontSplit = async (opt: InputTemplate) => {
                     input.targetType ?? 'woff2',
                     contoursMap,
                     input.chunkSize ?? 70 * 1024,
-                    charsSet
+                    new Set([...totalChars])
                 );
 
-                const autoPart: number[][] = [];
+                const AutoPartSubsets: number[][] = [];
                 /** 计算合理的单个分包的理论字符上限，尽量保证不会出现超大分包 */
                 const maxCharSize =
                     ((opt.chunkSizeTolerance ?? 1.7) *
                         totalChars.length *
                         (input.chunkSize ?? 70 * 1024)) /
-                    ttfBufferSize;
+                    ttfBufferSize; // 8
 
-                for (const bundle of unicodeForceBundle) {
+                for (const bundle of autoForceBundle) {
                     const subset = getAutoSubset(
                         bundle,
                         contoursBorder,
@@ -187,8 +188,8 @@ export const fontSplit = async (opt: InputTemplate) => {
                         featureMap,
                         maxCharSize
                     );
-                    autoPart.push(...subset);
-                }
+                    AutoPartSubsets.push(...subset);
+                } // 9
                 // 检查 featureMap 中未使用的数据
                 for (const [key, iterator] of featureMap.entries()) {
                     if (iterator)
@@ -197,9 +198,9 @@ export const fontSplit = async (opt: InputTemplate) => {
                         );
                 }
 
-                const fullSubsets = [...forcePart, ...autoPart];
+                const FullSubsets = [...ForcePartSubsets, ...AutoPartSubsets];
 
-                const totalSubsets = reduceMinsPackage(fullSubsets, ctx);
+                const totalSubsets = reduceMinsPackage(FullSubsets, ctx); // 10
 
                 const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
                     col += cur.length;
@@ -211,7 +212,8 @@ export const fontSplit = async (opt: InputTemplate) => {
                         subsetCharsNumber,
                         totalChars.length
                     );
-                }
+                } // 11
+
                 if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600))
                     throw new Error(
                         '分包数为' +
