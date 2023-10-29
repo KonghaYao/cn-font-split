@@ -28,6 +28,7 @@ for (const i of features) {
         reporter: false,
         testHTML: false,
         css: {
+
             fontFamily: i.featureKey + '-demo',
             comment: {
                 base: false,
@@ -40,6 +41,7 @@ for (const i of features) {
             charset,
             i.splitCount ?? 3
         ),
+        subsets: [charset],
     });
 
 }
