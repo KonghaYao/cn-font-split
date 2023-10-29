@@ -15,9 +15,8 @@ cn-font-split 的预分包算法是一种组合算法，其中包括了强制分
 4. LanguageFirstSubsets（默认语言强制分包）=filter=> in AllUnicodeSet, AllUnicodeSet remove
     1. 默认语言强制分包用于隔离拉丁字符以增强单语言效率
     2. 用于中文使用率排序，保证单包字符间的粘合性
-5. ForceSubsets = UserSubsets + LanguageFirstSubsets
-6. ForceSubsets 进行 feature 装饰
-7. AllUnicodeSet - ForcePartSubsets
+5. UserSubsets 进行 feature 装饰
+6. AllUnicodeSet - ForcePartSubsets
 
 ### 自动分包流程
 
