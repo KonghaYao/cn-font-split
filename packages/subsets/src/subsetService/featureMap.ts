@@ -1,3 +1,4 @@
+import { subsetsToSet } from '../utils/subsetsToSet';
 import { FeatureList } from '../data/FeatureList';
 import { Subset } from '../interface';
 import {
