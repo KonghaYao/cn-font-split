@@ -16,7 +16,7 @@ jobs:
         node-version: 18
         registry-url: 'https://registry.npmjs.org'
     - run: npm install pnpm -g
-    - run: pnpm install
+    - run: pnpm install --no-frozen-lockfile
     - run: npm pkg set name=cn-font-split
       working-directory: packages/subsets
     - run: npm run prepublish
