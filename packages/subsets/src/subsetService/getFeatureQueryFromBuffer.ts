@@ -91,7 +91,7 @@ export function getGlyphIDToUnicodeMap(tool: FontBaseTool) {
 
     for (let i = 0; i < charCodes.length; i += 1) {
         const c = charCodes[i];
-        let glyphIndex = glyphIndexMap[c];
+        const glyphIndex = glyphIndexMap[c];
         if (!_IndexToUnicodeMap.has(glyphIndex)) {
             _IndexToUnicodeMap.set(glyphIndex, [parseInt(c)]);
         } else {
