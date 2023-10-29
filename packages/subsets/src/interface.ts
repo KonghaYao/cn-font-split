@@ -21,7 +21,7 @@ export type Subsets = Subset[];
 export type IOutputFile = (
     file: string,
     data: Uint8Array | string,
-    options?: string | WriteFileOptions | undefined
+    options?: WriteFileOptions | undefined,
 ) => Promise<void>;
 import { ConvertManager } from './convert/convert.manager';
 import { ISettingsParam } from 'tslog';
