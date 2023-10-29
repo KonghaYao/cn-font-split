@@ -16,7 +16,7 @@ export const templateReplace = (template: string, data: ReplaceProps) => {
     replacements.set('ext', createReplacer(data.ext));
     // hash
     const hashReplacer = createLengthReplacer(
-        createReplacer(() => md5(data.transferred))
+        createReplacer(() => md5(data.transferred)),
     );
     replacements.set('hash', hashReplacer);
     replacements.set('md5', hashReplacer);
@@ -53,11 +53,9 @@ const createReplacer = (value: string | (() => string)): IReplacer => {
 
 const createLengthReplacer = (replacer: IReplacer) => {
     const fn: IReplacer = (arg) => {
-        let result: string;
         const length = arg && parseInt(arg, 10);
         const hash = replacer();
-        result = length ? hash.slice(0, length) : hash;
-        return result;
+        return length ? hash.slice(0, length) : hash;
     };
     return fn;
 };

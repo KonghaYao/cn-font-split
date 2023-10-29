@@ -5,7 +5,7 @@ function shape(hb: HB.Handle, font: HB.Font, text: string) {
     const buffer = hb.createBuffer();
     buffer.addText(text);
     buffer.guessSegmentProperties();
-    // buffer.setDirection('ltr'); 
+    // buffer.setDirection('ltr');
     hb.shape(font, buffer);
     const result = buffer.json();
     const glyphs = result.map(function (x) {
@@ -20,11 +20,11 @@ export const makeImage = (
     hb: HB.Handle,
     font: HB.Font,
     input = '中文网字计划\nThe Project For Web',
-    { baseLine = 24, lineHeight = 1 } = {}
+    { baseLine = 24, lineHeight = 1 } = {},
 ) => {
     const path = shape(hb, font, input);
     const lineHeightPx = 100 * lineHeight;
-    let bounding = { height: lineHeightPx, width: 0 };
+    const bounding = { height: lineHeightPx, width: 0 };
     const maxBounding = { height: 0, width: 0 };
     const paths = path.map((i, index) => {
         if (i.g === 0) {
