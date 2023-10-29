@@ -26,7 +26,7 @@ export const makeImage = (
     const lineHeightPx = 100 * lineHeight;
     const bounding = { height: lineHeightPx, width: 0 };
     const maxBounding = { height: 0, width: 0 };
-    const paths = path.map((i, index) => {
+    const paths = path.map((i) => {
         if (i.g === 0) {
             bounding.height += lineHeightPx;
             bounding.width = 0;

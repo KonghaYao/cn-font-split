@@ -11,9 +11,9 @@ function parseOpenTypeTableEntries(data: DataView, numTables: number) {
         string,
         {
             tag: string;
-            checksum: any;
-            offset: any;
-            length: any;
+            checksum: number;
+            offset: number;
+            length: number;
             compression: boolean;
         }
     >();
@@ -46,8 +46,12 @@ export const createFontBaseTool = (buffer: ArrayBuffer) => {
         font: {
             tables: {},
             outlinesFormat: 'truetype',
-        } as any as Font,
-        getTable(parser: any, name: string, ...args: any[]) {
+        } as unknown as Font,
+        getTable(
+            parser: { parse: Function },
+            name: string,
+            ...args: unknown[]
+        ) {
             const binary = this.tableEntries.get(name)!;
             return binary && parser.parse(this.data, binary.offset, ...args);
         },
@@ -61,7 +65,7 @@ export const getFeatureQueryFromBuffer = (
     getFeature(i: string): { sub: number | number[]; by: number | number[] }[];
 } => {
     tool.font.tables.gsub = tool.getTable(gsub, 'GSUB');
-    return new Substitution(tool.font) as any;
+    return new Substitution(tool.font);
 };
 import name from '@konghayao/opentype.js/src/tables/name.js';
 import ltag from '@konghayao/opentype.js/src/tables/ltag.js';
@@ -91,7 +95,7 @@ export function getGlyphIDToUnicodeMap(tool: FontBaseTool) {
 
     for (let i = 0; i < charCodes.length; i += 1) {
         const c = charCodes[i];
-        let glyphIndex = glyphIndexMap[c];
+        const glyphIndex = glyphIndexMap[c];
         if (!_IndexToUnicodeMap.has(glyphIndex)) {
             _IndexToUnicodeMap.set(glyphIndex, [parseInt(c)]);
         } else {
