@@ -6,7 +6,7 @@ export const FeatureList = () => {
             <header>Feature 测试</header>
             <div>
                 {Features.map((i) => {
-                    const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
+                    const folderHead = `./temp/font/${i.featureKey}/${i.featureKey}`;
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
