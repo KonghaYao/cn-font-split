@@ -17,6 +17,7 @@ fontSplit({
     previewImage: {},
     chunkSize: 70 * 1024,
     css: {
+        // localFamily: false,
         // comment: false,
         // comment: {
         //     base: false,

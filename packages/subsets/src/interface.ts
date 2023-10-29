@@ -53,7 +53,7 @@ export type InputTemplate = {
         fontStyle: string;
         fontDisplay: string;
         /** 本地字体名称，优先级高于自动生成名称 */
-        localFamily: string | string[];
+        localFamily: string | string[] | false;
         /** 当 fontFamily 不支持一些 format 时，动用其它 format */
         polyfill: ({ name: string; format?: string } | string)[];
         comment:

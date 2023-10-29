@@ -38,11 +38,7 @@ export const createCSS = (
     const style =
         css.fontStyle || (isItalic(preferredSubFamily) ? 'italic' : 'normal');
 
-    const locals =
-        typeof css.localFamily === 'string'
-            ? [css.localFamily]
-            : css.localFamily ?? [];
-    locals.push(fontData.fontFamily);
+    const locals = createLocalsString(css, fontData);
 
     const polyfills =
         typeof css.polyfill === 'string'
@@ -69,7 +65,7 @@ export const createCSS = (
             let str = `@font-face {
 font-family: "${family}";
 src:${[
-                ...locals.map((i) => `local("${i}")`),
+                ...locals,
                 `url("./${path}") format("woff2")`,
                 ...polyfills.map(
                     (i) =>
@@ -96,3 +92,15 @@ unicode-range:${unicodeRange};
     const header = createHeaderComment(fontData, opts);
     return header + cssStyleSheet;
 };
+function createLocalsString(
+    css: NonNullable<InputTemplate['css']>,
+    fontData: Record<string, string>
+) {
+    if (css?.localFamily === false) return [];
+    const locals =
+        typeof css.localFamily === 'string'
+            ? [css.localFamily]
+            : css.localFamily ?? [];
+    locals.push(fontData.fontFamily);
+    return locals.map((i) => `local("${i}")`);
+}
