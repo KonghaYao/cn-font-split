@@ -49,7 +49,7 @@ export type InputTemplate = {
     /** 替换生成后的 CSS 文件的信息 */
     css?: Partial<{
         fontFamily: string;
-        fontWeight: number | string;
+        fontWeight: number | string | false;
         fontStyle: string;
         fontDisplay: string;
         /** 本地字体名称，优先级高于自动生成名称 */
