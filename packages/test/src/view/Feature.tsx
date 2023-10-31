@@ -1,4 +1,5 @@
-import Features from '../FeatureConfig.json';
+import Features from '../../FeatureConfig.json';
+import { StyleForFont } from '../components/createStyleForFont';
 const colorSet = ['#000000', '#00af6c'];
 export const FeatureList = () => {
     return (
@@ -6,7 +7,7 @@ export const FeatureList = () => {
             <header>Feature 测试</header>
             <div>
                 {Features.map((i) => {
-                    const folderHead = `./temp/font/${i.featureKey}/${i.featureKey}`;
+                    const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
@@ -54,26 +55,24 @@ export const FeatureList = () => {
                             })}
 
                             {/* 加载原始字体 */}
-                            <style>
-                                {` @font-face {font-family: '${
-                                    i.featureKey
-                                }';src: url(${
+                            <StyleForFont
+                                fontFamily={i.featureKey}
+                                url={
                                     folderHead +
                                     i.fontLink.replace(/.*\.(.*?)/g, '.$1')
-                                });}`}
-                            </style>
+                                }
+                            ></StyleForFont>
                             {/* 加载hb切割对照 */}
-                            <style>
-                                {` @font-face {font-family: '${
-                                    i.featureKey + '-hb'
-                                }';src: url(${folderHead + '-hb.ttf'});}`}
-                            </style>
+
+                            <StyleForFont
+                                fontFamily={i.featureKey + '-hb'}
+                                url={folderHead + '-hb.ttf'}
+                            ></StyleForFont>
                             {/* 加载hb wasm切割对照 */}
-                            <style>
-                                {` @font-face {font-family: '${
-                                    i.featureKey + '-hb-wasm'
-                                }';src: url(${folderHead + '-hb-wasm.ttf'});}`}
-                            </style>
+                            <StyleForFont
+                                fontFamily={i.featureKey + '-hb-wasm'}
+                                url={folderHead + '-hb-wasm.ttf'}
+                            ></StyleForFont>
                             {/** 加载打包后字体 */}
                             <link
                                 rel="stylesheet"

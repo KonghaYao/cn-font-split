@@ -10,9 +10,12 @@ $ playwright install
 ```
 
 ```bash
-$ node ./script/index.mjs
-$ pnpm dev
-$ pnpm test # 这个测试工具，第一次会生成数据，导致测试失败，再来一次就好了
+$ node ./script/downloadFonts.mjs # 先下载字体包，然后才能够本地测试
+$ node ./script/build.mjs # 使用 cn-font-split 进行切割
+$ node ./script/gen_hb_wasm.mjs # 【optional】使用 wasm 直接进行切割，对照实验作用
+$ node ./script/gen_hb.mjs # 【optional】使用 hb-subset 直接进行切割，对照实验作用
+$ pnpm dev # 开启服务， 测试之前要开启 Vite 打包服务
+$ pnpm test # 直接进行测试
 ```
 
 TODO

@@ -14,7 +14,7 @@ export function subsetFont(
     face: HB.Face,
     subsetUnicode: (number | [number, number])[],
     hb: HB.Handle,
-    { preserveNameIds, variationAxes }: SubsetFontOptions = {}
+    { preserveNameIds, variationAxes }: SubsetFontOptions = {},
 ) {
     if (subsetUnicode.length === 0) {
         throw new Error(' 发现空分包');

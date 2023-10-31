@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import fs from 'fs-extra';
 const features = fs.readJSONSync('./FeatureConfig.json');
-import { comparePictureBuffer } from './comparePictureBuffer';
+import { compareElAndSave, comparePictureBuffer } from './comparePictureBuffer';
 import P from 'pngjs';
 const PNG = P.PNG;
 
@@ -11,23 +11,15 @@ for (const iterator of features) {
         await page.waitForLoadState('networkidle');
         // 测试 harfbuzz 版本只需要将 -demo 替换为 -hb 即可
         // 测试 harfbuzz wasm 版本只需要将 -demo 替换为 -hb-wasm 即可
-        const item2 = await page
-            .locator('.' + iterator.featureKey + '-demo')
-            .screenshot();
-        const item1 = await page
-            .locator('.' + iterator.featureKey)
-            .screenshot();
-        const { pixelDiffCount, diff } = comparePictureBuffer(item1, item2, {
-            threshold: 0.2,
-        });
-        fs.writeFileSync(
+        await compareElAndSave(
+            page,
+            '.' + iterator.featureKey + '-demo',
+            '.' + iterator.featureKey,
             './temp/' +
                 iterator.featureKey +
                 '/' +
                 iterator.featureKey +
                 '-diff.png',
-            PNG.sync.write(diff),
         );
-        expect(pixelDiffCount).toBeLessThanOrEqual(50);
     });
 }
