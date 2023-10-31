@@ -52,10 +52,10 @@ export declare namespace HB {
  * @message copied from https://github.com/harfbuzz/harfbuzzjs/blob/main/hbjs.js
  * @author refactor and modify by konghayao
  */
-export function hbjs(instance: any) {
+export function hbjs(instance: WebAssembly.Instance) {
     'use strict';
 
-    const exports = instance.exports;
+    const exports = instance.exports as ANY;
     const heapu8 = new Uint8Array(exports.memory.buffer);
     const heapu32 = new Uint32Array(exports.memory.buffer);
     const heapi32 = new Int32Array(exports.memory.buffer);
@@ -121,7 +121,10 @@ export function hbjs(instance: any) {
         setPtr: number,
         arrayClass: typeof Uint8Array,
     ): InstanceType<typeof Uint8Array>;
-    function typedArrayFromSet(setPtr: number, arrayClass: any): any {
+    function typedArrayFromSet(
+        setPtr: number,
+        arrayClass: { BYTES_PER_ELEMENT: number },
+    ): unknown {
         let heap: Uint8Array | Uint32Array | Int32Array | Float32Array = heapu8;
         if (arrayClass === Uint32Array) {
             heap = heapu32;
@@ -492,7 +495,7 @@ export function hbjs(instance: any) {
                     ay: number;
                     dx: number;
                     dy: number;
-                    flags: any;
+                    flags: number;
                 }[] = [];
                 const infosPtr = exports.hb_buffer_get_glyph_infos(ptr, 0);
                 const infosPtr32 = infosPtr / 4;

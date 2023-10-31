@@ -24,12 +24,12 @@ declare module 'comlink/dist/esm/node-adapter.mjs' {
         on(
             type: string,
             listener: EventListenerOrEventListenerObject,
-            options?: {}
+            options?: {},
         ): void;
         off(
             type: string,
             listener: EventListenerOrEventListenerObject,
-            options?: {}
+            options?: {},
         ): void;
         start?: () => void;
     }
@@ -48,10 +48,11 @@ declare module '@konghayao/opentype.js/dist/opentype.module.js' {
 
 declare module '@chinese-fonts/wawoff2' {
     export const decompress: (
-        buffer: Buffer | Uint8Array
+        buffer: Buffer | Uint8Array,
     ) => Promise<Uint8Array>;
     export const compress: (buffer: Buffer | Uint8Array) => Promise<Uint8Array>;
 }
 
+declare type ANY = any;
 // 这个是全局的静态文件声明，不要进行模块化
 // export { }
