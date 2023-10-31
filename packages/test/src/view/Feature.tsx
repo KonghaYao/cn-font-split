@@ -1,4 +1,4 @@
-import Features from '../FeatureConfig.json';
+import Features from '../../FeatureConfig.json';
 const colorSet = ['#000000', '#00af6c'];
 export const FeatureList = () => {
     return (

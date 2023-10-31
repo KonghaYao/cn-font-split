@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import P from 'pngjs';
 const PNG = P.PNG;
 test('多构建方式：成品测试', async ({ page }) => {
-    await page.goto('http://localhost:5173/');
+    await page.goto('http://localhost:5173/#/article');
     await page.waitForLoadState('networkidle');
     const fonts = await page.locator('.example-font');
 
