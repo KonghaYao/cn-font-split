@@ -20,6 +20,7 @@
     "devDependencies": {
         "@konghayao/cn-font-split": "workspace:",
         "@playwright/test": "^1.39.0",
+        "@types/pngjs": "^6.0.3",
         "@types/shelljs": "^0.8.14",
         "vite": "^4.4.5",
         "vite-plugin-solid": "^2.7.0"

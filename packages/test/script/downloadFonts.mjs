@@ -11,6 +11,5 @@ const getFont = _.memoize((fontLink) => {
 features.map(i =>
     getFont(i.fontLink)
         .then(buffer => {
-            fs.outputFileSync('./temp/font/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1'), new Uint8Array(buffer))
+            fs.outputFileSync('./temp/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1'), new Uint8Array(buffer))
         }))
-fs.copyFileSync('../demo/public/SmileySans-Oblique.ttf', './temp/font/SmileySans-Oblique.ttf')

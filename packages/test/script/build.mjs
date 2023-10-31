@@ -13,7 +13,7 @@ features.forEach((i) => {
 for (const i of features) {
     console.log(i.featureKey);
     // if (fs.existsSync('./temp/' + i.featureKey)) continue
-    const buffer = fs.readFileSync('./temp/font/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1'))
+    const buffer = fs.readFileSync('./temp/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1'))
     const b = await convert(new Uint8Array(buffer), 'ttf');
     const charset = i.splitText.split('').filter(Boolean).map((i) => i.charCodeAt(0))
     await fontSplit({
