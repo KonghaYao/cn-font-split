@@ -71,7 +71,7 @@ export function hbjs(instance: any) {
      **/
     function createBlob(
         /** A blob of binary data (usually the contents of a font file). */
-        blob: Uint8Array
+        blob: Uint8Array,
     ) {
         const blobPtr = exports.malloc(blob.byteLength);
         heapu8.set(blob, blobPtr);
@@ -80,7 +80,7 @@ export function hbjs(instance: any) {
             blob.byteLength,
             HB_MEMORY_MODE_WRITABLE,
             blobPtr,
-            exports.free_ptr()
+            exports.free_ptr(),
         );
         return {
             ptr: ptr,
@@ -107,19 +107,19 @@ export function hbjs(instance: any) {
 
     function typedArrayFromSet(
         setPtr: number,
-        arrayClass: typeof Float32Array
+        arrayClass: typeof Float32Array,
     ): InstanceType<typeof Float32Array>;
     function typedArrayFromSet(
         setPtr: number,
-        arrayClass: typeof Int32Array
+        arrayClass: typeof Int32Array,
     ): InstanceType<typeof Int32Array>;
     function typedArrayFromSet(
         setPtr: number,
-        arrayClass: typeof Uint32Array
+        arrayClass: typeof Uint32Array,
     ): InstanceType<typeof Uint32Array>;
     function typedArrayFromSet(
         setPtr: number,
-        arrayClass: typeof Uint8Array
+        arrayClass: typeof Uint8Array,
     ): InstanceType<typeof Uint8Array>;
     function typedArrayFromSet(setPtr: number, arrayClass: any): any {
         let heap: Uint8Array | Uint32Array | Int32Array | Float32Array = heapu8;
@@ -140,7 +140,7 @@ export function hbjs(instance: any) {
             setPtr,
             HB_SET_VALUE_INVALID,
             arrayPtr,
-            setCount
+            setCount,
         );
         return array;
     }
@@ -174,7 +174,7 @@ export function hbjs(instance: any) {
             reference_table(table: string) {
                 const blob = exports.hb_face_reference_table(
                     ptr,
-                    hb_tag(table)
+                    hb_tag(table),
                 );
                 const length = exports.hb_blob_get_length(blob);
                 if (!length) {
@@ -223,18 +223,17 @@ export function hbjs(instance: any) {
         };
     }
 
-    const pathBufferSize = 65536; // should be enough for most glyphs
-    const pathBuffer = exports.malloc(pathBufferSize); // permanently allocated
-
-    const nameBufferSize = 256; // should be enough for most glyphs
-    const nameBuffer = exports.malloc(nameBufferSize); // permanently allocated
-
     /**
      * Create an object representing a Harfbuzz font.
      * @param  face An object returned from `createFace`.
      **/
     function createFont(face: ReturnType<typeof createFace>) {
         const ptr = exports.hb_font_create(face.ptr);
+        const pathBufferSize = 65536; // should be enough for most glyphs
+        const pathBuffer = exports.malloc(pathBufferSize); // permanently allocated
+
+        const nameBufferSize = 256; // should be enough for most glyphs
+        const nameBuffer = exports.malloc(nameBufferSize); // permanently allocated
 
         /**
          * Return a glyph as an SVG path string.
@@ -245,11 +244,11 @@ export function hbjs(instance: any) {
                 ptr,
                 glyphId,
                 pathBuffer,
-                pathBufferSize
+                pathBufferSize,
             );
             return svgLength > 0
                 ? utf8Decoder.decode(
-                      heapu8.subarray(pathBuffer, pathBuffer + svgLength)
+                      heapu8.subarray(pathBuffer, pathBuffer + svgLength),
                   )
                 : '';
         }
@@ -263,11 +262,11 @@ export function hbjs(instance: any) {
                 ptr,
                 glyphId,
                 nameBuffer,
-                nameBufferSize
+                nameBufferSize,
             );
             const array = heapu8.subarray(
                 nameBuffer,
-                nameBuffer + nameBufferSize
+                nameBuffer + nameBufferSize,
             );
             return utf8Decoder.decode(array.slice(0, array.indexOf(0)));
         }
@@ -390,7 +389,7 @@ export function hbjs(instance: any) {
                     str.ptr,
                     str.length,
                     0,
-                    str.length
+                    str.length,
                 );
                 str.free();
             },
@@ -414,7 +413,7 @@ export function hbjs(instance: any) {
                         rtl: 5,
                         ttb: 6,
                         btt: 7,
-                    }[dir] || 0
+                    }[dir] || 0,
                 );
             },
             /**
@@ -443,7 +442,7 @@ export function hbjs(instance: any) {
                 const str = createAsciiString(language);
                 exports.hb_buffer_set_language(
                     ptr,
-                    exports.hb_language_from_string(str.ptr, -1)
+                    exports.hb_language_from_string(str.ptr, -1),
                 );
                 str.free();
             },
@@ -455,7 +454,7 @@ export function hbjs(instance: any) {
                 const str = createAsciiString(script);
                 exports.hb_buffer_set_script(
                     ptr,
-                    exports.hb_script_from_string(str.ptr, -1)
+                    exports.hb_script_from_string(str.ptr, -1),
                 );
                 str.free();
             },
@@ -501,11 +500,11 @@ export function hbjs(instance: any) {
                     exports.hb_buffer_get_glyph_positions(ptr, 0) / 4;
                 const infos = heapu32.subarray(
                     infosPtr32,
-                    infosPtr32 + 5 * length
+                    infosPtr32 + 5 * length,
                 );
                 const positions = heapi32.subarray(
                     positionsPtr32,
-                    positionsPtr32 + 5 * length
+                    positionsPtr32 + 5 * length,
                 );
                 for (let i = 0; i < length; ++i) {
                     result.push({
@@ -516,7 +515,7 @@ export function hbjs(instance: any) {
                         dx: positions[i * 5 + 2],
                         dy: positions[i * 5 + 3],
                         flags: exports.hb_glyph_info_get_glyph_flags(
-                            infosPtr + i * 20
+                            infosPtr + i * 20,
                         ),
                     });
                 }
@@ -547,7 +546,7 @@ export function hbjs(instance: any) {
             font.ptr,
             buffer.ptr,
             featurestr.ptr,
-            featurestr.length
+            featurestr.length,
         );
         featurestr.free();
     }
@@ -575,7 +574,7 @@ export function hbjs(instance: any) {
         buffer: ReturnType<typeof createFont>,
         features: string,
         stop_at: number,
-        stop_phase: number
+        stop_phase: number,
     ) {
         const bufLen = 1024 * 1024;
         const traceBuffer = exports.malloc(bufLen);
@@ -587,11 +586,11 @@ export function hbjs(instance: any) {
             stop_at,
             stop_phase,
             traceBuffer,
-            bufLen
+            bufLen,
         );
         featurestr.free();
         const trace = utf8Decoder.decode(
-            heapu8.subarray(traceBuffer, traceBuffer + traceLen - 1)
+            heapu8.subarray(traceBuffer, traceBuffer + traceLen - 1),
         );
         exports.free(traceBuffer);
         return JSON.parse(trace);
@@ -601,12 +600,12 @@ export function hbjs(instance: any) {
     function createSubset(
         face: ReturnType<typeof createFace>,
         preserveNameIds?: number[],
-        variationAxes?: Record<string, number>
+        variationAxes?: Record<string, number>,
     ) {
         const ptr = exports.hb_subset_input_create_or_fail();
         if (ptr === 0) {
             throw new Error(
-                'hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure'
+                'hb_subset_input_create_or_fail (harfbuzz) returned zero, indicating failure',
             );
         }
 
@@ -618,8 +617,8 @@ export function hbjs(instance: any) {
                 exports.hb_set_clear(
                     exports.hb_subset_input_set(
                         ptr,
-                        3 /**HB_SUBSET_SETS_DROP_TABLE_TAG */
-                    )
+                        3 /**HB_SUBSET_SETS_DROP_TABLE_TAG */,
+                    ),
                 );
             },
             adjustLayout() {
@@ -627,7 +626,7 @@ export function hbjs(instance: any) {
                     // Do the equivalent of --font-features=*
                     const layoutFeatures = exports.hb_subset_input_set(
                         ptr,
-                        iterator
+                        iterator,
                     );
                     exports.hb_set_clear(layoutFeatures);
                     exports.hb_set_invert(layoutFeatures);
@@ -636,7 +635,7 @@ export function hbjs(instance: any) {
                 if (preserveNameIds) {
                     const inputNameIds = exports.hb_subset_input_set(
                         ptr,
-                        4 // HB_SUBSET_SETS_NAME_ID
+                        4, // HB_SUBSET_SETS_NAME_ID
                     );
                     for (const nameId of preserveNameIds) {
                         exports.hb_set_add(inputNameIds, nameId);
@@ -644,13 +643,13 @@ export function hbjs(instance: any) {
                 }
                 if (variationAxes) {
                     for (const [axisName, value] of Object.entries(
-                        variationAxes
+                        variationAxes,
                     )) {
                         exports.hb_subset_input_pin_axis_location(
                             ptr,
                             face.ptr,
                             HB_TAG(axisName),
-                            value
+                            value,
                         );
                     }
                 }
@@ -679,7 +678,7 @@ export function hbjs(instance: any) {
                 resultPtr = exports.hb_subset_or_fail(face.ptr, ptr);
                 if (resultPtr === 0) {
                     throw new Error(
-                        'hb_subset_or_fail (harfbuzz) returned zero, indicating failure. Maybe the input file is corrupted?'
+                        'hb_subset_or_fail (harfbuzz) returned zero, indicating failure. Maybe the input file is corrupted?',
                     );
                 }
                 return resultPtr;
@@ -698,7 +697,7 @@ export function hbjs(instance: any) {
                 if (subsetByteLength === 0) {
                     exports.hb_blob_destroy(blobPtr);
                     throw new Error(
-                        'Failed to create subset font, maybe the input file is corrupted?'
+                        'Failed to create subset font, maybe the input file is corrupted?',
                     );
                 }
 
