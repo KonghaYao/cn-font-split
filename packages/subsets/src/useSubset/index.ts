@@ -15,7 +15,7 @@ export const useSubset = async (
     totalChunk: number[][],
     outputFile: IOutputFile,
     targetType: FontType,
-    ctx: IContext
+    ctx: IContext,
 ) => {
     const { input } = ctx.pick('input');
     const ext = getExtensionsByFontType(targetType);
@@ -37,9 +37,11 @@ export const useSubset = async (
                     ext,
                     subsetMessage,
                     ctx,
-                    index
-                )
-            )
+                    index,
+                ).catch((e: Error) => {
+                    ctx.warn('分包失败 ' + index + ' ' + e.message);
+                }),
+            ),
         );
     } else {
         let index = 0;
@@ -54,7 +56,7 @@ export const useSubset = async (
                 ext,
                 subsetMessage,
                 ctx,
-                index
+                index,
             );
             index++;
         }
@@ -72,7 +74,7 @@ async function runSubSet(
     ext: string,
     subsetMessage: SubsetResult,
     ctx: IContext,
-    index: number
+    index: number,
 ) {
     const hbStart = performance.now();
     if (chunk.length === 0) {
@@ -103,7 +105,7 @@ async function runSubSet(
         chunk, // 理论分包
         Array.from(arr), // 实际分包
         input,
-        index
+        index,
     );
     // console.log(chunk.length - arr.length) // 记录理论分包和实际分包的数目差距
     subsetMessage.push(outputMessage);
@@ -114,7 +116,7 @@ async function runSubSet(
         woff2Time,
         arr,
         index,
-        outputMessage.path
+        outputMessage.path,
     );
 }
 import {
@@ -127,7 +129,7 @@ export const getAutoSubset = (
     contoursBorder: number,
     contoursMap: Map<number, number>,
     featureMap: FeatureMap,
-    maxCharSize: number
+    maxCharSize: number,
 ) => {
     let count = 0;
     let cache: number[] = [];
@@ -140,7 +142,7 @@ export const getAutoSubset = (
 
         const sum = unicodeSet.reduce(
             (col, cur) => col + (contoursMap.get(cur) ?? defaultVal),
-            0
+            0,
         );
         // contoursMap 0 是平均值
         count += sum;
