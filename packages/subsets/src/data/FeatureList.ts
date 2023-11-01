@@ -19,7 +19,9 @@ export const FeatureList = [
     'cpsp',
     'cswh',
     'curs',
-    "cv01 – 'cv99'",
+    ...[...Array(99).keys()].map(
+        (i) => 'cv' + (i + 1).toString().padStart(2, '0'),
+    ),
     'c2pc',
     'c2sc',
     'dist',
