@@ -8,8 +8,12 @@ const getFont = _.memoize((fontLink) => {
 })
 
 // 下载测试所需要的所有字体
-features.map(i =>
-    getFont(i.fontLink)
+for (const i of features) {
+    const path = './temp/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1')
+    if (fs.existsSync(path)) continue
+    console.log(i.featureKey)
+    await getFont(i.fontLink)
         .then(buffer => {
-            fs.outputFileSync('./temp/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1'), new Uint8Array(buffer))
-        }))
+            fs.outputFileSync(path, new Uint8Array(buffer))
+        })
+}
