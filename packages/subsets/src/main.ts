@@ -19,7 +19,6 @@ import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
 import { forceSubset } from './subsetService/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
-import { getUnForcedCodes } from './useSubset/getUnForcedCodes';
 import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
 import {
     createFontBaseTool,
