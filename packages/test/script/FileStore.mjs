@@ -16,20 +16,22 @@ export class FileStore {
         const key = this.urlToKey(url);
         const isExist = await this.isExist(key);
         if (isExist) {
-            return this.getWithoutCache(key);
+            return this.getWithoutCache(key).then(() => './temp/font/' + key);
         } else {
             console.log(key);
             return this.cacheFetch(url).then((res) => {
                 fs.outputFileSync('./temp/font/' + key, res);
-                return res;
+                return './temp/font/' + key;
             });
         }
     }
     cacheFetch(url) {
-        return fetch(url).then((res) => res.arrayBuffer()).then(res=>new Uint8Array(res));
+        return fetch(url)
+            .then((res) => res.arrayBuffer())
+            .then((res) => new Uint8Array(res));
     }
 
-    getWithoutCache(key) {
+    async getWithoutCache(key) {
         return fs.readFileSync('./temp/font/' + key);
     }
 }
