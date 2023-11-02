@@ -1,9 +1,15 @@
 # 对于 OpenType Feature 的支持情况
 
+｜2023 年 11 月 02 日｜
+
+为了检测 cn-font-split 和最先进的浏览器对于各种 Opentype Feature 的支持程度，我们对非常多款字体进行了相应的视觉测试，保证其实现的严谨性。
+
+下表来源为 [Registered Features](https://learn.microsoft.com/en-us/typography/opentype/spec/featurelist)，我们用于记录测试进度。
+
 > 状态解释
 >
 > 1. ✅ 支持，并通过测试
-> 2. ❌ 不支持
+> 2. ❌ 未进行测试，可能不支持
 > 3. ⏺️ 部分支持，待验证
 
 | Status | Feature Tag                                                                                         | Friendly Name                                  |

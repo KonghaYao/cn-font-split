@@ -10,9 +10,6 @@ export default defineConfig({
     // Retry on CI only.
     retries: 2,
 
-    // Opt out of parallel tests on CI.
-    workers: 4,
-
     projects: [
         {
             name: 'chromium',
