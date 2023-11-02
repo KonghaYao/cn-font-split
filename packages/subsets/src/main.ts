@@ -194,7 +194,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                         );
                 }
 
-                const FullSubsets = [...ForcePartSubsets, ...AutoPartSubsets];
+                const FullSubsets =
+                    input.autoChunk !== false
+                        ? [...ForcePartSubsets, ...AutoPartSubsets]
+                        : ForcePartSubsets;
 
                 const totalSubsets = reduceMinsPackage(FullSubsets, ctx); // 10
 
@@ -202,7 +205,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                     col += cur.length;
                     return col;
                 }, 0);
-                if (subsetCharsNumber < totalChars.length) {
+                if (
+                    input.autoChunk !== false &&
+                    subsetCharsNumber < totalChars.length
+                ) {
                     console.log(
                         '字符缺漏',
                         subsetCharsNumber,
