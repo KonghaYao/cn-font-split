@@ -19,7 +19,7 @@ const VFTest = () => {
                                 'font-variation-settings': '"wght" ' + i,
                             }}
                         >
-                            这是一个可变字体
+                            测试代码, 这是一段关于 Variable Font 的测试文本
                         </div>
                     );
                 })}
@@ -33,7 +33,7 @@ const VFTest = () => {
                                 'font-variation-settings': '"wght" ' + i,
                             }}
                         >
-                            这是一个可变字体
+                            测试代码, 这是一段关于 Variable Font 的测试文本
                         </div>
                     );
                 })}

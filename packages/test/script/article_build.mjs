@@ -15,6 +15,7 @@ await fontSplit({
         },
         fontWeight: false
     },
+    autoChunk: false,
     targetType: 'woff2',
     subsets: ['测试代码, 这是一段关于 Variable Font 的测试文本'.split('').map(i => i.charCodeAt(0))]
 });
