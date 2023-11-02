@@ -15,3 +15,7 @@ for (const i of features) {
         fs.createSymlinkSync(resPath, path, 'file');
     });
 }
+fs.copyFileSync(
+    '../demo/public/SmileySans-Oblique.ttf',
+    './temp/font/SmileySans-Oblique.ttf',
+);

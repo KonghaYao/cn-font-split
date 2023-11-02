@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import _ from 'lodash-es'
+import _ from 'lodash-es';
 import { fontSplit, convert } from '@konghayao/cn-font-split';
 const features = fs.readJSONSync('./FeatureConfig.json');
 const allKey = new Set();
@@ -13,9 +13,18 @@ features.forEach((i) => {
 for (const i of features) {
     console.log(i.featureKey);
     // if (fs.existsSync('./temp/' + i.featureKey)) continue
-    const buffer = fs.readFileSync('./temp/' + i.featureKey + "/" + i.featureKey + i.fontLink.replace(/.*\.(.*?)/g, '.$1'))
+    const buffer = fs.readFileSync(
+        './temp/' +
+            i.featureKey +
+            '/' +
+            i.featureKey +
+            i.fontLink.replace(/.*\.(.*?)/g, '.$1'),
+    );
     const b = await convert(new Uint8Array(buffer), 'ttf');
-    const charset = i.splitText.split('').filter(Boolean).map((i) => i.charCodeAt(0))
+    const charset = i.splitText
+        .split('')
+        .filter(Boolean)
+        .map((i) => i.charCodeAt(0));
     await fontSplit({
         destFold: './temp/' + i.featureKey,
         FontPath: Buffer.from(b),
@@ -27,9 +36,10 @@ for (const i of features) {
             comment: {
                 base: false,
                 nameTable: false,
-                unicodes: true
-            }
+                unicodes: true,
+            },
         },
+        autoChunk: false,
         targetType: 'woff2',
         // subsets: chunk(
         //     charset,
@@ -37,5 +47,4 @@ for (const i of features) {
         // ),
         // subsets: [charset],
     });
-
 }
