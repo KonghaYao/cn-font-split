@@ -45,6 +45,6 @@ for (const i of features) {
         //     charset,
         //     i.splitCount ?? 3
         // ),
-        // subsets: [charset],
+        subsets: [charset],
     });
 }
