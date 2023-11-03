@@ -256,6 +256,17 @@
         "splitText": "︵ ︶ ︷ ︸ ︽ ︾ ﹀ ﹂ ＾"
     },
     {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
+        "featureKey": "halt",
+        "splitText": "文本（测试），新？难怪！"
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
+        "featureKey": "vhal",
+        "writing-mode": "vertical-rl",
+        "splitText": "文本（测试），新？难怪！"
+    },
+    {
         "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/bxzlzt/fonts/%E6%A0%87%E5%B0%8F%E6%99%BA%E9%BE%99%E7%8F%A0%E4%BD%93.ttf",
         "featureKey": "expt",
         "splitText": "唖 嘘 焔 鴎 噛 澗 侠 鹸 柵 屡 繍 醤 靭 蝉 掻 騨 箪 掴 填 顛 涜 嚢 剥 溌 醗 媛 頬 麺 莱 埬 蓮 蝋 僊 兔 寃 屏 廏 攅 曁 龝 箙 舮 麪"
