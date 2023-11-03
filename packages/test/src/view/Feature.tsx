@@ -1,12 +1,19 @@
+import { useContext } from 'solid-js';
 import Features from '../../FeatureConfig.json';
 import { StyleForFont } from '../components/createStyleForFont';
+import { RouteContext } from '../simpleRoute';
 const colorSet = ['#000000', '#00af6c'];
 export const FeatureList = () => {
+    const route = useContext(RouteContext);
     return (
         <section>
             <header>Feature 测试</header>
             <div>
-                {Features.map((i) => {
+                {Features.filter(
+                    (i) =>
+                        i.featureKey ===
+                        route?.route().searchParams.get('feature'),
+                ).map((i) => {
                     const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
                     return (
                         <details open class={i.featureKey + '_total'}>
@@ -40,7 +47,8 @@ export const FeatureList = () => {
                                                             ],
                                                             height: i.height,
                                                             width: '100%',
-                                                            "vertical-align": "baseline",
+                                                            'vertical-align':
+                                                                'baseline',
                                                             direction:
                                                                 i.direction ??
                                                                 'initial',
