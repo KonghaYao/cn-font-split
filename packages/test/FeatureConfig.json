@@ -351,5 +351,45 @@
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
         "featureKey": "ss15",
         "splitText": " a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  á  æ  ð  þ  ę  ı  œ  ſ  ȷ  ꜳ  ꜵ    "
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv01",
+        "splitText": "6"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv02",
+        "splitText": "9"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv03",
+        "splitText": "4"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv04",
+        "splitText": ":"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv05",
+        "splitText": " I  İ  Ì  Ȉ  Í  Î  Ǐ  Ï  Ḯ  Ĭ  Ị  Ȋ  Ī  Ḭ  Ỉ  Ĩ  Į  Ι  Ί  Ϊ  Ӏ  І  Ї"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv06",
+        "splitText": " l  ĺ  ḽ  ḷ  ḹ  ḻ  ļ  ľ  ł  ǉ  ﬂ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv07",
+        "splitText": "a  à  á  ä  ǟ  å  ǻ  ã  ằ  ǡ  ḁ  â  ậ  ấ  ẫ  ầ  ẩ  ă  ắ  ẵ  ẳ  ặ  ȃ  ǎ  ȧ  ạ  ả  ȁ  ā  ą"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv08",
+        "splitText": " 0    ₀  ⁰"
     }
 ]
