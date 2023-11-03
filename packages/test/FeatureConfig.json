@@ -227,11 +227,6 @@
     },
     {
         "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/dyh/fonts/SmileySans-Oblique.ttf",
-        "featureKey": "ss01",
-        "splitText": "J K Q a f r & №"
-    },
-    {
-        "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/dyh/fonts/SmileySans-Oblique.ttf",
         "featureKey": "fwid",
         "splitText": "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 . , : ; ! ? * # / - _ ( ) { } [ ] "
     },
@@ -271,5 +266,85 @@
         "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/bxzlzt/fonts/%E6%A0%87%E5%B0%8F%E6%99%BA%E9%BE%99%E7%8F%A0%E4%BD%93.ttf",
         "featureKey": "expt",
         "splitText": "唖 嘘 焔 鴎 噛 澗 侠 鹸 柵 屡 繍 醤 靭 蝉 掻 騨 箪 掴 填 顛 涜 嚢 剥 溌 醗 媛 頬 麺 莱 埬 蓮 蝋 僊 兔 寃 屏 廏 攅 曁 龝 箙 舮 麪"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "fina",
+        "splitText": "اأإآٱٮبپتثٹجچحخدذڈرزڑژسشصضطظعغفڤڡٯقكکگلمنںهہۂھةۃوؤىيئیےۓﻻﻷﻹﻵ\x00ﴎﳻﳼﴍﳽﳾﴏﴅﴆﴐﴇﴈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "ccmp",
+        "splitText": "'ًًًًٌٌٌٌٍٍٍٍََََُُُُِِِِّّّّّّّّّّّّّّْْٰٰٕٕٕٕٔٔٔٔٔٔٔٔٔٔ'"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss01",
+        "splitText": " ̀  ́  ̂  ̃  ̄  ̅  ̊  ̋  ̌  ̍  ̐  ̓  ̔  ̛  ̜  ̝  Α  Β  Γ  ∆  Ε  Ζ  Η  Θ  Ι  Κ  Λ  Μ  Ν  Ξ  Ο  Π  Ρ  Σ  Τ  Υ  Φ  Χ  Ψ  Ω  Ϙ  Ϛ  Ϝ  Ϡ  Ϸ  Ϲ  Ϻ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss02",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss03",
+        "splitText": "ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss04",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss05",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss06",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss07",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss08",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss09",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss10",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss11",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss12",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss13",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss15",
+        "splitText": " a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  á  æ  ð  þ  ę  ı  œ  ſ  ȷ  ꜳ  ꜵ    "
     }
 ]
