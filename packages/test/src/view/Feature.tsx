@@ -41,6 +41,10 @@ export const FeatureList = () => {
                                                             direction:
                                                                 i.direction ??
                                                                 'initial',
+                                                            'writing-mode':
+                                                                i[
+                                                                    'writing-mode'
+                                                                ],
                                                             'font-feature-settings': `"${i.featureKey}" ${val}`,
                                                         }}
                                                         lang={i.lang}
