@@ -13,10 +13,17 @@ export function Lazy<T extends Component<any>, Key extends string = 'default'>(
 }
 export default () => {
     return (
-        <section class='clear-font-features'>
+        <section class="clear-font-features">
+            <a href="/">
+                <h1>这是 cn-font-type 的测试系统</h1>
+            </a>
             <SimpleRouter
                 routes={{
-                    index: Lazy(() => import('./view/Feature'), 'FeatureList'),
+                    index: Lazy(() => import('./view/Index'), 'Index'),
+                    '/feature': Lazy(
+                        () => import('./view/Feature'),
+                        'FeatureList',
+                    ),
                     '/article': Lazy(() => import('./view/Article'), 'Article'),
                 }}
             ></SimpleRouter>

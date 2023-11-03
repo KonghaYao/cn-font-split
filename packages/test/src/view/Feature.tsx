@@ -7,7 +7,6 @@ export const FeatureList = () => {
     const route = useContext(RouteContext);
     return (
         <section>
-            <header>Feature 测试</header>
             <div>
                 {Features.filter(
                     (i) =>
