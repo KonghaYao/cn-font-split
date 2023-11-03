@@ -25,7 +25,7 @@
 | ❌     | ['blws'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#blws)               | Below-base Substitutions                       |
 | ✅     | ['calt'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#calt)               | Contextual Alternates                          |
 | ✅     | ['case'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#case)               | Case-Sensitive Forms                           |
-| ❌     | ['ccmp'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#ccmp)               | Glyph Composition / Decomposition              |
+| ✅     | ['ccmp'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#ccmp)               | Glyph Composition / Decomposition              |
 | ❌     | ['cfar'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#cfar)               | Conjunct Form After Ro                         |
 | ❌     | ['chws'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#chws)               | Contextual Half-width Spacing                  |
 | ❌     | ['cjct'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_ae#cjct)               | Conjunct Forms                                 |
@@ -114,20 +114,20 @@
 | ✅     | ['smcp'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#smcp)               | Small Capitals                                 |
 | ❌     | ['smpl'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#smpl)               | Simplified Forms                               |
 | ✅     | ['ss01'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 1                                |
-| ❌     | ['ss02'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 2                                |
-| ❌     | ['ss03'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 3                                |
-| ❌     | ['ss04'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 4                                |
-| ❌     | ['ss05'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 5                                |
-| ❌     | ['ss06'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 6                                |
-| ❌     | ['ss07'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 7                                |
-| ❌     | ['ss08'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 8                                |
-| ❌     | ['ss09'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 9                                |
-| ❌     | ['ss10'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 10                               |
-| ❌     | ['ss11'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 11                               |
-| ❌     | ['ss12'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 12                               |
-| ❌     | ['ss13'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 13                               |
+| ✅     | ['ss02'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 2                                |
+| ✅     | ['ss03'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 3                                |
+| ✅     | ['ss04'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 4                                |
+| ✅     | ['ss05'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 5                                |
+| ✅     | ['ss06'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 6                                |
+| ✅     | ['ss07'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 7                                |
+| ✅     | ['ss08'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 8                                |
+| ✅     | ['ss09'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 9                                |
+| ✅     | ['ss10'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 10                               |
+| ✅     | ['ss11'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 11                               |
+| ✅     | ['ss12'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 12                               |
+| ✅     | ['ss13'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 13                               |
 | ❌     | ['ss14'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 14                               |
-| ❌     | ['ss15'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 15                               |
+| ✅     | ['ss15'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 15                               |
 | ❌     | ['ss16'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 16                               |
 | ❌     | ['ss17'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 17                               |
 | ❌     | ['ss18'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_pt#ssxx)               | Stylistic Set 18                               |
@@ -149,7 +149,7 @@
 | ❌     | ['vatu'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vatu)               | Vattu Variants                                 |
 | ❌     | ['vchw'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vchw)               | Vertical Contextual Half-width Spacing         |
 | ❌     | ['vert'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vert)               | Vertical Writing                               |
-| ❌     | ['vhal'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vhal)               | Alternate Vertical Half Metrics                |
+| ⏺️     | ['vhal'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vhal)               | Alternate Vertical Half Metrics                |
 | ❌     | ['vjmo'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vjmo)               | Vowel Jamo Forms                               |
 | ✅     | ['vkna'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vkna)               | Vertical Kana Alternates                       |
 | ❌     | ['vkrn'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_uz#vkrn)               | Vertical Kerning                               |
