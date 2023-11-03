@@ -51,7 +51,7 @@
 | ✅     | ['fwid'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#fwid)               | Full Widths                                    |
 | ❌     | ['half'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#half)               | Half Forms                                     |
 | ❌     | ['haln'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#haln)               | Halant Forms                                   |
-| ❌     | ['halt'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#halt)               | Alternate Half Widths                          |
+| ✅     | ['halt'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#halt)               | Alternate Half Widths                          |
 | ✅     | ['hist'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#hist)               | Historical Forms                               |
 | ❌     | ['hkna'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#hkna)               | Horizontal Kana Alternates                     |
 | ✅     | ['hlig'](https://learn.microsoft.com/zh-cn/typography/opentype/spec/features_fj#hlig)               | Historical Ligatures                           |

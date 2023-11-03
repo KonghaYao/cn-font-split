@@ -9,8 +9,14 @@ const { instance: { exports } } = await WebAssembly.instantiate(wasmBlob);
 
 // fs.emptyDirSync('./temp');
 for (const i of features) {
-    const head = `./temp/font/${i.featureKey}/${i.featureKey}`
-    const buffer = fs.readFileSync(head + `.woff2`)
+    const head = `./temp/${i.featureKey}/${i.featureKey}`
+    const buffer = fs.readFileSync(
+        './temp/' +
+            i.featureKey +
+            '/' +
+            i.featureKey +
+            i.fontLink.replace(/.*\.(.*?)/g, '.$1'),
+    );
     const fontBlob = await convert(new Uint8Array(buffer), 'ttf');
     fs.writeFileSync(head + `.ttf`, fontBlob)
 

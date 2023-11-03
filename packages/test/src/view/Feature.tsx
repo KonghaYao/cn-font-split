@@ -38,6 +38,9 @@ export const FeatureList = () => {
                                                             color: colorSet[
                                                                 index
                                                             ],
+                                                            height: i.height,
+                                                            width: '100%',
+                                                            "vertical-align": "baseline",
                                                             direction:
                                                                 i.direction ??
                                                                 'initial',

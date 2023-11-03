@@ -14,6 +14,8 @@ for (const iterator of features) {
         await compareElAndSave(
             page,
             '.' + iterator.featureKey + '-demo',
+            // '.' + iterator.featureKey + '-hb',
+            // '.' + iterator.featureKey + '-hb-wasm',
             '.' + iterator.featureKey,
             './temp/' +
                 iterator.featureKey +

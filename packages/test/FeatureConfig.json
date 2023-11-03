@@ -264,7 +264,8 @@
         "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
         "featureKey": "vhal",
         "writing-mode": "vertical-rl",
-        "splitText": "文本（测试），新？难怪！"
+        "splitText": "文本（测试），新？难怪！",
+        "height": "360px"
     },
     {
         "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/bxzlzt/fonts/%E6%A0%87%E5%B0%8F%E6%99%BA%E9%BE%99%E7%8F%A0%E4%BD%93.ttf",
