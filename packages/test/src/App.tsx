@@ -13,11 +13,13 @@ export function Lazy<T extends Component<any>, Key extends string = 'default'>(
 }
 export default () => {
     return (
-        <SimpleRouter
-            routes={{
-                index: Lazy(() => import('./view/Feature'), 'FeatureList'),
-                '/article': Lazy(() => import('./view/Article'), 'Article'),
-            }}
-        ></SimpleRouter>
+        <section class='clear-font-features'>
+            <SimpleRouter
+                routes={{
+                    index: Lazy(() => import('./view/Feature'), 'FeatureList'),
+                    '/article': Lazy(() => import('./view/Article'), 'Article'),
+                }}
+            ></SimpleRouter>
+        </section>
     );
 };
