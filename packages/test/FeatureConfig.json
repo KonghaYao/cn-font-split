@@ -258,7 +258,7 @@
     {
         "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
         "featureKey": "vhal",
-        "writing-mode": "vertical-rl",
+        "writing-mode": "tb-rl",
         "splitText": "文本（测试），新？难怪！",
         "height": "360px"
     },
