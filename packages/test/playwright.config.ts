@@ -9,6 +9,7 @@ export default defineConfig({
 
     // Retry on CI only.
     retries: 2,
+    timeout: 5 * 1000,
 
     projects: [
         {
