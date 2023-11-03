@@ -270,16 +270,21 @@
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
         "featureKey": "fina",
-        "splitText": "اأإآٱٮبپتثٹجچحخدذڈرزڑژسشصضطظعغفڤڡٯقكکگلمنںهہۂھةۃوؤىيئیےۓﻻﻷﻹﻵ\x00ﴎﳻﳼﴍﳽﳾﴏﴅﴆﴐﴇﴈ"
+        "direction": "rtl",
+        "lang": "ar",
+        "splitText": "ا  ‍‍أ  ‍‍إ  ‍‍آ  ‍‍ٱ  ‍‍ٮ  ‍‍ب  ‍‍پ  ‍‍ت  ‍‍ث  ‍‍ٹ  ‍‍ج  ‍‍چ  ‍‍ح  ‍‍خ  ‍‍د  ‍‍ذ  ‍‍ڈ  ‍‍ر  ‍‍ز  ‍‍ڑ  ‍‍ژ  ‍‍س  ‍‍ش  ‍‍ص  ‍‍ض  ‍‍ط  ‍‍ظ  ‍‍ع  ‍‍غ  ‍‍ف  ‍‍ڤ  ‍‍ڡ  ‍‍ٯ  ‍‍ق  ‍‍ك  ‍‍ک  ‍‍گ  ‍‍ل  ‍‍م  ‍‍ن  ‍‍ں  ‍‍ه  ‍‍ہ  ‍‍ۂ  ‍‍ھ  ‍‍ة  ‍‍ۃ  ‍‍و  ‍‍ؤ  ‍‍ى  ‍‍ي  ‍‍ئ  ‍‍ی  ‍‍ے  ‍‍ۓ  ‍‍ﻻ  ‍‍ﻷ  ‍‍ﻹ  ‍‍ﻵ  ‍‍  ‍‍ﴎ  ‍‍ﳻ  ‍‍ﳼ  ‍‍ﴍ  ‍‍ﳽ  ‍‍ﳾ  ‍‍ﴏ  ‍‍ﴅ  ‍‍ﴆ  ‍‍ﴐ  ‍‍ﴇ  ‍‍ﴈ "
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
         "featureKey": "ccmp",
-        "splitText": "'ًًًًٌٌٌٌٍٍٍٍََََُُُُِِِِّّّّّّّّّّّّّّْْٰٰٕٕٕٕٔٔٔٔٔٔٔٔٔٔ'"
+        "direction": "rtl",
+        "lang": "ar",
+        "splitText": "ّٰ ًٔ ٌٔ َٔ ُٔ ْٔ ٍٕ ِٕ ًٔ ًّ ٌٔ ٌّ ٍٕ ٍّ َٔ َّ ُٔ ُّ ِٕ ِّ ّٰ ًّ ٌّ ٍّ َّ ُّ ِّ ْٔ"
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
         "featureKey": "ss01",
+        "direction": "rtl",
         "splitText": " ̀  ́  ̂  ̃  ̄  ̅  ̊  ̋  ̌  ̍  ̐  ̓  ̔  ̛  ̜  ̝  Α  Β  Γ  ∆  Ε  Ζ  Η  Θ  Ι  Κ  Λ  Μ  Ν  Ξ  Ο  Π  Ρ  Σ  Τ  Υ  Φ  Χ  Ψ  Ω  Ϙ  Ϛ  Ϝ  Ϡ  Ϸ  Ϲ  Ϻ"
     },
     {
