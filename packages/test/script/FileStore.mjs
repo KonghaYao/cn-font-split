@@ -11,9 +11,9 @@ export class FileStore {
         return fs.exists('./temp/font/' + key);
     }
 
-    async get(url) {
+    async get(url, Key) {
         url = (this.proxyURL ?? '') + url;
-        const key = this.urlToKey(url);
+        const key = Key ?? this.urlToKey(url);
         const isExist = await this.isExist(key);
         if (isExist) {
             return this.getWithoutCache(key).then(() => './temp/font/' + key);
