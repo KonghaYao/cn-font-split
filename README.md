@@ -1,8 +1,8 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/10/29-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/11/4-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.10.0-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.10.5-green)
 [![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
@@ -21,6 +21,10 @@
 -   🚀 `自研多线程`+ (`WebAssembly`｜`Native`) 分包速度极快；
 -   💻 坚持 Web 平台为基底，兼容性极强，浏览器、Node、Deno，统统可以运行。
 -   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
+
+> 我们正在对 cn-font-split 的实战效果进行测试，并积极提升分包效果！
+>
+> [Opentype Feature 测试情况](/packages/test/SUPPORT_FEATURE.md) 支持 72 ｜ 部分支持 2｜ 等待测试 70
 
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |
@@ -185,6 +189,4 @@ fontSplit({
 
 ## 开源许可证
 
-2.0.5 及以后 Apache-2.0
-
-2.0.4 版本以前 MIT License
+Apache-2.0
