@@ -56,7 +56,7 @@
 | ✅     | hkna        | Horizontal Kana Alternates                          |                                                       |
 | ✅     | hlig        | Historical Ligatures                                |                                                       |
 | ❌     | hngl        | Hangul                                              |                                                       |
-| ❌     | hojo        | Hojo Kanji Forms <br/>(JIS X 0212-1990 Kanji Forms) |                                                       |
+| ✅     | hojo        | Hojo Kanji Forms <br/>(JIS X 0212-1990 Kanji Forms) |                                                       |
 | ✅     | hwid        | Half Widths                                         |                                                       |
 | ✅     | init        | Initial Forms                                       |                                                       |
 | ❌     | isol        | Isolated Forms                                      |                                                       |
@@ -65,7 +65,7 @@
 | ✅     | jp78        | JIS78 Forms                                         |                                                       |
 | ✅     | jp83        | JIS83 Forms                                         |                                                       |
 | ✅     | jp90        | JIS90 Forms                                         |                                                       |
-| ❌     | jp04        | JIS2004 Forms                                       |                                                       |
+| ✅     | jp04        | JIS2004 Forms                                       |                                                       |
 | ✅     | kern        | Kerning                                             |                                                       |
 | ❌     | lfbd        | Left Bounds                                         |                                                       |
 | ✅     | liga        | Standard Ligatures                                  |                                                       |
