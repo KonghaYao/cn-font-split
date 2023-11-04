@@ -14,59 +14,67 @@ export const FeatureList = () => {
                         route?.route().searchParams.get('feature'),
                 ).map((i) => {
                     const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
+                    const wasm = route?.route().searchParams.get('wasm');
+                    const hb = route?.route().searchParams.get('hb');
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
                             {[
                                 i.featureKey,
-                                // i.featureKey + '-hb',
-                                // i.featureKey + '-hb-wasm',
-                                i.featureKey + '-demo',
-                            ].map((fontFamily) => {
-                                return (
-                                    <div>
-                                        <header style={{ color: 'gray' }}>
-                                            {fontFamily}
-                                        </header>
-                                        <section
-                                            class={fontFamily}
-                                            style={`font-family:"${fontFamily}";`}
-                                        >
-                                            {(
-                                                i.featureValues ?? ['off', 'on']
-                                            ).map((val, index) => {
-                                                return (
-                                                    <div
-                                                        style={{
-                                                            'font-size':
-                                                                (i.fontSize ??
-                                                                    48) + 'px',
-                                                            color: colorSet[
-                                                                index
-                                                            ],
-                                                            height: i.height,
-                                                            width: '100%',
-                                                            'vertical-align':
-                                                                'baseline',
-                                                            direction:
-                                                                i.direction ??
-                                                                'initial',
-                                                            'writing-mode':
-                                                                i[
-                                                                    'writing-mode'
+                                hb && i.featureKey + '-hb',
+                                wasm && i.featureKey + '-hb-wasm',
+                                !hb && !wasm && i.featureKey + '-demo',
+                            ]
+                                .filter(Boolean)
+                                .map((fontFamily) => {
+                                    return (
+                                        <div>
+                                            <header style={{ color: 'gray' }}>
+                                                {fontFamily}
+                                            </header>
+                                            <section
+                                                class={fontFamily}
+                                                style={`font-family:"${fontFamily}";`}
+                                            >
+                                                {(
+                                                    i.featureValues ?? [
+                                                        'off',
+                                                        'on',
+                                                    ]
+                                                ).map((val, index) => {
+                                                    return (
+                                                        <div
+                                                            style={{
+                                                                'font-size':
+                                                                    (i.fontSize ??
+                                                                        48) +
+                                                                    'px',
+                                                                color: colorSet[
+                                                                    index
                                                                 ],
-                                                            'font-feature-settings': `"${i.featureKey}" ${val}`,
-                                                        }}
-                                                        lang={i.lang}
-                                                    >
-                                                        {i.splitText}
-                                                    </div>
-                                                );
-                                            })}
-                                        </section>
-                                    </div>
-                                );
-                            })}
+                                                                height: i.height,
+                                                                width: '100%',
+                                                                'vertical-align':
+                                                                    'baseline',
+                                                                direction:
+                                                                    i.direction ??
+                                                                    'initial',
+                                                                'writing-mode':
+                                                                    i[
+                                                                        'writing-mode'
+                                                                    ],
+                                                                'font-feature-settings': `"${i.featureKey}" ${val}`,
+                                                            }}
+                                                            lang={i.lang}
+                                                        >
+                                                            {i.splitText}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </section>
+                                        </div>
+                                    );
+                                })}
 
                             {/* 加载原始字体 */}
                             <StyleForFont

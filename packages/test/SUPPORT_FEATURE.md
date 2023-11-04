@@ -53,18 +53,18 @@
 | ❌     | haln        | Halant Forms                                        |                                                       |
 | ✅     | halt        | Alternate Half Widths                               |                                                       |
 | ✅     | hist        | Historical Forms                                    |                                                       |
-| ❌     | hkna        | Horizontal Kana Alternates                          |                                                       |
+| ✅     | hkna        | Horizontal Kana Alternates                          |                                                       |
 | ✅     | hlig        | Historical Ligatures                                |                                                       |
 | ❌     | hngl        | Hangul                                              |                                                       |
 | ❌     | hojo        | Hojo Kanji Forms <br/>(JIS X 0212-1990 Kanji Forms) |                                                       |
 | ✅     | hwid        | Half Widths                                         |                                                       |
 | ✅     | init        | Initial Forms                                       |                                                       |
 | ❌     | isol        | Isolated Forms                                      |                                                       |
-| ❌     | ital        | Italics                                             |                                                       |
+| ✅     | ital        | Italics                                             |                                                       |
 | ❌     | jalt        | Justification Alternates                            |                                                       |
-| ❌     | jp78        | JIS78 Forms                                         |                                                       |
-| ❌     | jp83        | JIS83 Forms                                         |                                                       |
-| ❌     | jp90        | JIS90 Forms                                         |                                                       |
+| ✅     | jp78        | JIS78 Forms                                         |                                                       |
+| ✅     | jp83        | JIS83 Forms                                         |                                                       |
+| ✅     | jp90        | JIS90 Forms                                         |                                                       |
 | ❌     | jp04        | JIS2004 Forms                                       |                                                       |
 | ✅     | kern        | Kerning                                             |                                                       |
 | ❌     | lfbd        | Left Bounds                                         |                                                       |
@@ -80,8 +80,8 @@
 | ✅     | mgrk        | Mathematical Greek                                  |                                                       |
 | ❌     | mkmk        | Mark to Mark Positioning                            |                                                       |
 | ❌     | mset        | Mark Positioning via Substitution                   |                                                       |
-| ❌     | nalt        | Alternate Annotation Forms                          |                                                       |
-| ❌     | nlck        | NLC Kanji Forms                                     |                                                       |
+| ✅     | nalt        | Alternate Annotation Forms                          |                                                       |
+| ✅     | nlck        | NLC Kanji Forms                                     |                                                       |
 | ❌     | nukt        | Nukta Forms                                         |                                                       |
 | ✅     | numr        | Numerators                                          |                                                       |
 | ✅     | onum        | Oldstyle Figures                                    |                                                       |
@@ -90,14 +90,14 @@
 | ✅     | ornm        | Ornaments                                           |                                                       |
 | ✅     | palt        | Proportional Alternate Widths                       |                                                       |
 | ✅     | pcap        | Petite Capitals                                     |                                                       |
-| ❌     | pkna        | Proportional Kana                                   |                                                       |
+| ✅     | pkna        | Proportional Kana                                   |                                                       |
 | ✅     | pnum        | Proportional Figures                                |                                                       |
 | ❌     | pref        | Pre-Base Forms                                      |                                                       |
 | ❌     | pres        | Pre-base Substitutions                              |                                                       |
 | ❌     | pstf        | Post-base Forms                                     |                                                       |
 | ❌     | psts        | Post-base Substitutions                             |                                                       |
 | ✅     | pwid        | Proportional Widths                                 |                                                       |
-| ❌     | qwid        | Quarter Widths                                      |                                                       |
+| ✅     | qwid        | Quarter Widths                                      |                                                       |
 | ✅     | rand        | Randomize                                           |                                                       |
 | ❌     | rclt        | Required Contextual Alternates                      |                                                       |
 | ❌     | rkrf        | Rakar Forms                                         |                                                       |
@@ -106,7 +106,7 @@
 | ❌     | rtbd        | Right Bounds                                        |                                                       |
 | ❌     | rtla        | Right-to-left alternates                            |                                                       |
 | ❌     | rtlm        | Right-to-left mirrored forms                        |                                                       |
-| ❌     | ruby        | Ruby Notation Forms                                 |                                                       |
+| ✅     | ruby        | Ruby Notation Forms                                 |                                                       |
 | ❌     | rvrn        | Required Variation Alternates                       |                                                       |
 | ✅     | salt        | Stylistic Alternates                                |                                                       |
 | ✅     | sinf        | Scientific Inferiors                                |                                                       |
@@ -142,13 +142,13 @@
 | ❌     | tjmo        | Trailing Jamo Forms                                 |                                                       |
 | ❌     | tnam        | Traditional Name Forms                              |                                                       |
 | ❌     | tnum        | Tabular Figures                                     |                                                       |
-| ❌     | trad        | Traditional Forms                                   |                                                       |
-| ❌     | twid        | Third Widths                                        |                                                       |
+| ✅     | trad        | Traditional Forms                                   |                                                       |
+| ✅     | twid        | Third Widths                                        |                                                       |
 | ✅     | unic        | Unicase                                             |                                                       |
 | ❌     | valt        | Alternate Vertical Metrics                          |                                                       |
 | ❌     | vatu        | Vattu Variants                                      |                                                       |
 | ❌     | vchw        | Vertical Contextual Half-width Spacing              |                                                       |
-| ❌     | vert        | Vertical Writing                                    |                                                       |
+| ⏺️     | vert        | Vertical Writing                                    | harfbuzz wasm 打包错误                                |
 | ⏺️     | vhal        | Alternate Vertical Half Metrics                     | 浏览器对于 unicode-range 支持有问题，导致部分形态位移 |
 | ❌     | vjmo        | Vowel Jamo Forms                                    |                                                       |
 | ✅     | vkna        | Vertical Kana Alternates                            |                                                       |
