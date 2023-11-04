@@ -27,21 +27,6 @@ import { ConvertManager } from './convert/convert.manager';
 import { ISettingsParam } from 'tslog';
 import { WorkerPoolOptions } from 'workerpool';
 export type InputTemplate = {
-    threads?:
-        | {
-              service?: ConvertManager;
-              /** 多线程切割 */
-              split?: boolean;
-              options?: WorkerPoolOptions;
-          }
-        | false;
-
-    /**
-     * 字体复杂字形等特性的支持
-     * @todo
-     */
-    fontFeature?: boolean;
-
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;
     /** 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数 */
@@ -108,7 +93,6 @@ export type InputTemplate = {
         text?: string;
         /** 预览图的文件名，不用带后缀名 */
         name?: string;
-        compressLevel?: number;
     };
     /**
      * 日志输出<副作用>
@@ -122,4 +106,22 @@ export type InputTemplate = {
     renameOutputFont?: string | ((replaceProps: ReplaceProps) => string);
     /** 输出文件的方式，如果你需要在特定的平台使用，那么需要适配这个函数 */
     outputFile?: IOutputFile;
+    threads?:
+        | {
+              /**
+               * 服务对象，用于多线程处理
+               * @protected
+               */
+              service?: ConvertManager;
+              /* 是否进行多线程切割 */
+              split?: boolean;
+              /* workerpool 允许的配置项 */
+              options?: WorkerPoolOptions;
+          }
+        | false;
+    /**
+     * 字体复杂字形等特性的支持
+     * @todo
+     */
+    fontFeature?: boolean;
 };
