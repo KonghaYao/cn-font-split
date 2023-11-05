@@ -43,8 +43,8 @@
 | ❌     | dtls        | Dotless Forms                                       |                                                       |
 | ✅     | expt        | Expert Forms                                        |                                                       |
 | ❌     | falt        | Final Glyph on Line Alternates **deprecated**       |                                                       |
-| ❌     | fin2        | Terminal Forms #2                                   |                                                       |
-| ❌     | fin3        | Terminal Forms #3                                   |                                                       |
+| ✅     | fin2        | Terminal Forms #2                                   |                                                       |
+| ✅     | fin3        | Terminal Forms #3                                   |                                                       |
 | ✅     | fina        | Terminal Forms                                      |                                                       |
 | ❌     | flac        | Flattened accent forms                              |                                                       |
 | ✅     | frac        | Fractions                                           |                                                       |
@@ -59,9 +59,9 @@
 | ✅     | hojo        | Hojo Kanji Forms <br/>(JIS X 0212-1990 Kanji Forms) |                                                       |
 | ✅     | hwid        | Half Widths                                         |                                                       |
 | ✅     | init        | Initial Forms                                       |                                                       |
-| ❌     | isol        | Isolated Forms                                      |                                                       |
+| ✅     | isol        | Isolated Forms                                      |                                                       |
 | ✅     | ital        | Italics                                             |                                                       |
-| ❌     | jalt        | Justification Alternates                            |                                                       |
+| ✅     | jalt        | Justification Alternates                            |                                                       |
 | ✅     | jp78        | JIS78 Forms                                         |                                                       |
 | ✅     | jp83        | JIS83 Forms                                         |                                                       |
 | ✅     | jp90        | JIS90 Forms                                         |                                                       |
@@ -70,15 +70,15 @@
 | ❌     | lfbd        | Left Bounds                                         |                                                       |
 | ✅     | liga        | Standard Ligatures                                  |                                                       |
 | ❌     | ljmo        | Leading Jamo Forms                                  |                                                       |
-| ❌     | lnum        | Lining Figures                                      |                                                       |
+| ✅     | lnum        | Lining Figures                                      |                                                       |
 | ✅     | locl        | Localized Forms                                     |                                                       |
 | ❌     | ltra        | Left-to-right alternates                            |                                                       |
 | ❌     | ltrm        | Left-to-right mirrored forms                        |                                                       |
 | ❌     | mark        | Mark Positioning                                    |                                                       |
-| ❌     | med2        | Medial Forms #2                                     |                                                       |
+| ✅     | med2        | Medial Forms #2                                     |                                                       |
 | ✅     | medi        | Medial Forms                                        |                                                       |
 | ✅     | mgrk        | Mathematical Greek                                  |                                                       |
-| ❌     | mkmk        | Mark to Mark Positioning                            |                                                       |
+| ✅     | mkmk        | Mark to Mark Positioning                            |                                                       |
 | ❌     | mset        | Mark Positioning via Substitution                   |                                                       |
 | ✅     | nalt        | Alternate Annotation Forms                          |                                                       |
 | ✅     | nlck        | NLC Kanji Forms                                     |                                                       |
@@ -86,16 +86,16 @@
 | ✅     | numr        | Numerators                                          |                                                       |
 | ✅     | onum        | Oldstyle Figures                                    |                                                       |
 | ❌     | opbd        | Optical Bounds                                      |                                                       |
-| ❌     | ordn        | Ordinals                                            |                                                       |
+| ✅     | ordn        | Ordinals                                            |                                                       |
 | ✅     | ornm        | Ornaments                                           |                                                       |
 | ✅     | palt        | Proportional Alternate Widths                       |                                                       |
 | ✅     | pcap        | Petite Capitals                                     |                                                       |
 | ✅     | pkna        | Proportional Kana                                   |                                                       |
 | ✅     | pnum        | Proportional Figures                                |                                                       |
 | ❌     | pref        | Pre-Base Forms                                      |                                                       |
-| ❌     | pres        | Pre-base Substitutions                              |                                                       |
-| ❌     | pstf        | Post-base Forms                                     |                                                       |
-| ❌     | psts        | Post-base Substitutions                             |                                                       |
+| ✅     | pres        | Pre-base Substitutions                              |                                                       |
+| ✅     | pstf        | Post-base Forms                                     |                                                       |
+| ✅     | psts        | Post-base Substitutions                             |                                                       |
 | ✅     | pwid        | Proportional Widths                                 |                                                       |
 | ✅     | qwid        | Quarter Widths                                      |                                                       |
 | ✅     | rand        | Randomize                                           |                                                       |
@@ -104,13 +104,13 @@
 | ✅     | rlig        | Required Ligatures                                  |                                                       |
 | ❌     | rphf        | Reph Forms                                          |                                                       |
 | ❌     | rtbd        | Right Bounds                                        |                                                       |
-| ❌     | rtla        | Right-to-left alternates                            |                                                       |
-| ❌     | rtlm        | Right-to-left mirrored forms                        |                                                       |
+| ✅     | rtla        | Right-to-left alternates                            |                                                       |
+| ✅     | rtlm        | Right-to-left mirrored forms                        |                                                       |
 | ✅     | ruby        | Ruby Notation Forms                                 |                                                       |
 | ❌     | rvrn        | Required Variation Alternates                       |                                                       |
 | ✅     | salt        | Stylistic Alternates                                |                                                       |
 | ✅     | sinf        | Scientific Inferiors                                |                                                       |
-| ❌     | size        | Optical size                                        |                                                       |
+| ❌     | size        | Optical size **deprecated**                         |                                                       |
 | ✅     | smcp        | Small Capitals                                      |                                                       |
 | ❌     | smpl        | Simplified Forms                                    |                                                       |
 | ✅     | ss01        | Stylistic Set 1                                     |                                                       |
@@ -141,7 +141,7 @@
 | ✅     | titl        | Titling                                             |                                                       |
 | ❌     | tjmo        | Trailing Jamo Forms                                 |                                                       |
 | ❌     | tnam        | Traditional Name Forms                              |                                                       |
-| ❌     | tnum        | Tabular Figures                                     |                                                       |
+| ✅     | tnum        | Tabular Figures                                     |                                                       |
 | ✅     | trad        | Traditional Forms                                   |                                                       |
 | ✅     | twid        | Third Widths                                        |                                                       |
 | ✅     | unic        | Unicase                                             |                                                       |
