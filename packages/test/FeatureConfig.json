@@ -1,5 +1,55 @@
 [
     {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "abvs",
+        "splitText": "ं"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "akhn",
+        "splitText": "क्क्ष"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "blwf",
+        "splitText": "्र र्"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Khmer.ttf",
+        "featureKey": "abvf",
+        "splitText": "យល់ឃើញ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "abvm",
+        "splitText": "कंसं"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "half",
+        "splitText": "क् ग् त् र् ष् स्"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "haln",
+        "splitText": "र््"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "pres",
+        "splitText": "त्ति"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "rkrf",
+        "splitText": "क्र ग्र त्र स्र"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "rphf",
+        "splitText": "र्"
+    },
+    {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
         "featureKey": "aalt",
         "outputKey": "sorts-mill-goudy",

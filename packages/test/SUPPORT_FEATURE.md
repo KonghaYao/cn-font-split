@@ -15,12 +15,12 @@
 | Status | Feature Tag | Friendly Name                                       | 测试说明                                              |
 | ------ | ----------- | --------------------------------------------------- | ----------------------------------------------------- |
 | ✅     | aalt        | Access All Alternates                               |                                                       |
-| ❌     | abvf        | Above-base Forms                                    |                                                       |
-| ❌     | abvm        | Above-base Mark Positioning                         |                                                       |
-| ❌     | abvs        | Above-base Substitutions                            |                                                       |
+| ✅     | abvf        | Above-base Forms                                    |                                                       |
+| ✅     | abvm        | Above-base Mark Positioning                         |                                                       |
+| ✅     | abvs        | Above-base Substitutions                            |                                                       |
 | ✅     | afrc        | Alternative Fractions                               |                                                       |
-| ❌     | akhn        | Akhand                                              |                                                       |
-| ❌     | blwf        | Below-base Forms                                    |                                                       |
+| ✅     | akhn        | Akhand                                              |                                                       |
+| ✅     | blwf        | Below-base Forms                                    |                                                       |
 | ❌     | blwm        | Below-base Mark Positioning                         |                                                       |
 | ❌     | blws        | Below-base Substitutions                            |                                                       |
 | ✅     | calt        | Contextual Alternates                               |                                                       |
@@ -49,8 +49,8 @@
 | ❌     | flac        | Flattened accent forms                              |                                                       |
 | ✅     | frac        | Fractions                                           |                                                       |
 | ✅     | fwid        | Full Widths                                         |                                                       |
-| ❌     | half        | Half Forms                                          |                                                       |
-| ❌     | haln        | Halant Forms                                        |                                                       |
+| ✅     | half        | Half Forms                                          |                                                       |
+| ✅     | haln        | Halant Forms                                        |                                                       |
 | ✅     | halt        | Alternate Half Widths                               |                                                       |
 | ✅     | hist        | Historical Forms                                    |                                                       |
 | ✅     | hkna        | Horizontal Kana Alternates                          |                                                       |
@@ -99,8 +99,8 @@
 | ✅     | pwid        | Proportional Widths                                 |                                                       |
 | ✅     | qwid        | Quarter Widths                                      |                                                       |
 | ✅     | rand        | Randomize                                           |                                                       |
-| ❌     | rclt        | Required Contextual Alternates                      |                                                       |
-| ❌     | rkrf        | Rakar Forms                                         |                                                       |
+| ✅     | rclt        | Required Contextual Alternates                      |                                                       |
+| ✅     | rkrf        | Rakar Forms                                         |                                                       |
 | ✅     | rlig        | Required Ligatures                                  |                                                       |
 | ❌     | rphf        | Reph Forms                                          |                                                       |
 | ❌     | rtbd        | Right Bounds                                        |                                                       |
