@@ -28,21 +28,21 @@
 | ✅     | ccmp        | Glyph Composition / Decomposition                   |                                                       |
 | ❌     | cfar        | Conjunct Form After Ro                              |                                                       |
 | ❌     | chws        | Contextual Half-width Spacing                       |                                                       |
-| ❌     | cjct        | Conjunct Forms                                      |                                                       |
+| ✅     | cjct        | Conjunct Forms                                      |                                                       |
 | ❌     | clig        | Contextual Ligatures                                |                                                       |
-| ❌     | cpct        | Centered CJK Punctuation                            |                                                       |
+| ⏺️     | cpct        | Centered CJK Punctuation                            |                                                       |
 | ✅     | cpsp        | Capital Spacing                                     |                                                       |
 | ✅     | cswh        | Contextual Swash                                    |                                                       |
-| ❌     | curs        | Cursive Positioning                                 |                                                       |
+| ✅     | curs        | Cursive Positioning                                 |                                                       |
 | ✅     | cv01 –cv99  | Character Variants                                  |                                                       |
 | ✅     | c2pc        | Petite Capitals From Capitals                       |                                                       |
 | ✅     | c2sc        | Small Capitals From Capitals                        |                                                       |
-| ❌     | dist        | Distances                                           |                                                       |
+| ✅     | dist        | Distances                                           |                                                       |
 | ✅     | dlig        | Discretionary Ligatures                             |                                                       |
 | ✅     | dnom        | Denominators                                        |                                                       |
 | ❌     | dtls        | Dotless Forms                                       |                                                       |
 | ✅     | expt        | Expert Forms                                        |                                                       |
-| ❌     | falt        | Final Glyph on Line Alternates                      |                                                       |
+| ❌     | falt        | Final Glyph on Line Alternates **deprecated**       |                                                       |
 | ❌     | fin2        | Terminal Forms #2                                   |                                                       |
 | ❌     | fin3        | Terminal Forms #3                                   |                                                       |
 | ✅     | fina        | Terminal Forms                                      |                                                       |
@@ -55,7 +55,7 @@
 | ✅     | hist        | Historical Forms                                    |                                                       |
 | ✅     | hkna        | Horizontal Kana Alternates                          |                                                       |
 | ✅     | hlig        | Historical Ligatures                                |                                                       |
-| ❌     | hngl        | Hangul                                              |                                                       |
+| ❌     | hngl        | Hangul **deprecated**                               |                                                       |
 | ✅     | hojo        | Hojo Kanji Forms <br/>(JIS X 0212-1990 Kanji Forms) |                                                       |
 | ✅     | hwid        | Half Widths                                         |                                                       |
 | ✅     | init        | Initial Forms                                       |                                                       |

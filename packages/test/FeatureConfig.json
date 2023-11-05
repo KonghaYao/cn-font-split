@@ -1,5 +1,25 @@
 [
     {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "cjct",
+        "splitText": "ङ्म"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "dist",
+        "splitText": "दॗकॗ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Feature%20Sans.ttf",
+        "featureKey": "cpct",
+        "splitText": "か、か"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Aref%20Ruqaa.ttf",
+        "featureKey": "curs",
+        "splitText": "سمر"
+    },
+    {
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
         "featureKey": "abvs",
         "splitText": "ं"
