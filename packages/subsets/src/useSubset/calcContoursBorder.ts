@@ -10,9 +10,10 @@ export async function calcContoursBorder(
     targetType: FontType,
     contoursMap: Map<number, number>,
     maxSize: number,
-    totalChars: Set<number>
+    totalChars: Set<number>,
 ) {
-    const space = Math.floor(totalChars.size / 100);
+    let space = Math.floor(totalChars.size / 100);
+    space = Math.max(space, 1);
     const sampleUnicode: number[] = [];
     let index = 0;
     for (const iterator of totalChars) {
@@ -21,14 +22,13 @@ export async function calcContoursBorder(
         }
         index++;
     }
-
     const [buffer, arr] = subsetFont(face, sampleUnicode, hb, {
         threads: false,
     });
     if (!buffer) throw new Error('尝试测试分包比率时，分包失败');
     const transferred = await convert(
         new Uint8Array(buffer.buffer),
-        targetType
+        targetType,
     );
 
     const totalContours: number = arr.reduce((col, cur) => {
