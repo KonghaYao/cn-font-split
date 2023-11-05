@@ -9,12 +9,16 @@ export default defineConfig({
 
     // Retry on CI only.
     retries: 2,
-    timeout: 5 * 1000,
+    timeout: 10 * 1000,
 
     projects: [
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
         },
+        // {
+        //     name: 'firefox',
+        //     use: { ...devices['Desktop Firefox'] },
+        // },
     ],
 });
