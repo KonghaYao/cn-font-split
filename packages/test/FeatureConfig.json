@@ -1,5 +1,45 @@
 [
     {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Lohit%20Bengali.ttf",
+        "featureKey": "pstf",
+        "splitText": "ব্য্"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Javanese.ttf",
+        "featureKey": "psts",
+        "splitText": "ꦏꦿꦛꦿ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Tifinagh.ttf",
+        "featureKey": "rtla",
+        "splitText": "ⵎⵉⴷⴷⵏ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Math.ttf",
+        "featureKey": "rtlm",
+        "splitText": " ∫√x"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Work%20Sans.ttf",
+        "featureKey": "tnum",
+        "splitText": " |1|2|3|4|"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Syriac.ttf",
+        "featureKey": "fin2",
+        "splitText": "ܒܐ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Syriac.ttf",
+        "featureKey": "med2",
+        "splitText": "ܒܐ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Syriac.ttf",
+        "featureKey": "fin3",
+        "splitText": "ܕܐ"
+    },
+    {
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
         "featureKey": "cjct",
         "splitText": "ङ्म"
@@ -20,8 +60,38 @@
         "splitText": "سمر"
     },
     {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Aref%20Ruqaa.ttf",
+        "featureKey": "isol",
+        "splitText": "یڽہ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Aref%20Ruqaa.ttf",
+        "featureKey": "jalt",
+        "splitText": "سارق الغنم"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Baskervville.ttf",
+        "featureKey": "lnum",
+        "splitText": "ABC1234"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Markazi%20Text.ttf",
+        "featureKey": "mark",
+        "splitText": "تَشْكِيل"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Work%20Sans.ttf",
+        "featureKey": "mkmk",
+        "splitText": "é̤̤̱̃̃"
+    },
+    {
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
         "featureKey": "abvs",
+        "splitText": "ं"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "featureKey": "pres",
         "splitText": "ं"
     },
     {
@@ -53,11 +123,6 @@
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
         "featureKey": "haln",
         "splitText": "र््"
-    },
-    {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
-        "featureKey": "pres",
-        "splitText": "त्ति"
     },
     {
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
