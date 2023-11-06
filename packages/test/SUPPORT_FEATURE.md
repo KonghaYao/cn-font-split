@@ -21,8 +21,8 @@
 | ✅     | afrc        | Alternative Fractions                               |                                   |
 | ✅     | akhn        | Akhand                                              |                                   |
 | ✅     | blwf        | Below-base Forms                                    |                                   |
-| ❌     | blwm        | Below-base Mark Positioning                         |                                   |
-| ❌     | blws        | Below-base Substitutions                            |                                   |
+| ✅     | blwm        | Below-base Mark Positioning                         |                                   |
+| ✅     | blws        | Below-base Substitutions                            |                                   |
 | ✅     | calt        | Contextual Alternates                               |                                   |
 | ✅     | case        | Case-Sensitive Forms                                |                                   |
 | ✅     | ccmp        | Glyph Composition / Decomposition                   |                                   |
@@ -146,7 +146,7 @@
 | ✅     | twid        | Third Widths                                        |                                   |
 | ✅     | unic        | Unicase                                             |                                   |
 | ❌     | valt        | Alternate Vertical Metrics                          |                                   |
-| ❌     | vatu        | Vattu Variants                                      |                                   |
+| ✅     | vatu        | Vattu Variants                                      |                                   |
 | ❌     | vchw        | Vertical Contextual Half-width Spacing              |                                   |
 | ⏺️     | vert        | Vertical Writing                                    | harfbuzz wasm 打包错误            |
 | ⏺️     | vhal        | Alternate Vertical Half Metrics                     | 浏览器 unicode-range 部分形态位移 |
@@ -154,6 +154,6 @@
 | ✅     | vkna        | Vertical Kana Alternates                            |                                   |
 | ❌     | vkrn        | Vertical Kerning                                    |                                   |
 | ✅     | vpal        | Proportional Alternate Vertical Metrics             |                                   |
-| ❌     | vrt2        | Vertical Alternates and Rotation                    |                                   |
+| ✅     | vrt2        | Vertical Alternates and Rotation                    |                                   |
 | ❌     | vrtr        | Vertical Alternates for Rotation                    |                                   |
 | ✅     | zero        | Slashed Zero                                        |                                   |
