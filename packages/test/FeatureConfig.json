@@ -1,5 +1,20 @@
 [
     {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "blws",
+        "splitText": "रू रु हू हु दृ शृ हृ"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "blwm",
+        "splitText": "छ्"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "vatu",
+        "splitText": "क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य व श स ह क़ ख़ ग़ ज़ ड़ ढ़ फ़"
+    },
+    {
         "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
         "featureKey": "ss18",
         "splitText": "·  …"
@@ -105,22 +120,22 @@
         "splitText": "é̤̤̱̃̃"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "abvs",
         "splitText": "ं"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "pres",
         "splitText": "ं"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "akhn",
         "splitText": "क्क्ष"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "blwf",
         "splitText": "्र र्"
     },
@@ -130,27 +145,27 @@
         "splitText": "យល់ឃើញ"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "abvm",
         "splitText": "कंसं"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "half",
         "splitText": "क् ग् त् र् ष् स्"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "haln",
         "splitText": "र््"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "rkrf",
         "splitText": "क्र ग्र त्र स्र"
     },
     {
-        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Hind.ttf",
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "rphf",
         "splitText": "र्"
     },
