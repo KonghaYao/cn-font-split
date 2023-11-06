@@ -1,5 +1,25 @@
 [
     {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "ss18",
+        "splitText": "·  …"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "ss19",
+        "splitText": " ˇ  ˉ  ˊ  ˋ  ˙  、  。  ，  ‘  ’  “  ”  ！  ：  ；  ？"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "ss20",
+        "splitText": "ㄓㄨˋ ㄧㄣˉ"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "smpl",
+        "splitText": "綵  著  藉  蘋  託  讎  鍾  餘  鯰  鹼  麼  鼕  㘭  㨪  㩗  䥑  並  乗  亂  亙  亞  佇  佈  佔  併  來  侖  侶  係  俔  俠  俥  倀  倆  倉  個  們  倖"
+    },
+    {
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Lohit%20Bengali.ttf",
         "featureKey": "pstf",
         "splitText": "ব্য্"
