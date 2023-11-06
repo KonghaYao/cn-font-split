@@ -1,5 +1,6 @@
 import _ from 'lodash-es';
 import fs from 'fs-extra';
+
 export class FileStore {
     constructor(proxyURL) {
         this.proxyURL = proxyURL;
@@ -10,7 +11,7 @@ export class FileStore {
     isExist(key) {
         return fs.exists('./temp/font/' + key);
     }
-
+    gettingCache = new Map();
     async get(url, Key) {
         url = (this.proxyURL ?? '') + url;
         const key = Key ?? this.urlToKey(url);
@@ -18,11 +19,14 @@ export class FileStore {
         if (isExist) {
             return this.getWithoutCache(key).then(() => './temp/font/' + key);
         } else {
+            if (this.gettingCache.has(key)) return this.gettingCache.get(key);
             console.log(key);
-            return this.cacheFetch(url).then((res) => {
+            const p = this.cacheFetch(url).then((res) => {
                 fs.outputFileSync('./temp/font/' + key, res);
                 return './temp/font/' + key;
             });
+            this.gettingCache.set(key, p);
+            return p;
         }
     }
     cacheFetch(url) {
