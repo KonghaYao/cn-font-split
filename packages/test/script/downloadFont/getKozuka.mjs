@@ -5,7 +5,7 @@ const commonHeader = {
     "User-Agent":
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
 }
-fontStore.isExist('Kozuka Mincho Pro.otf').then(async res => {
+await fontStore.isExist('Kozuka Mincho Pro.otf').then(async res => {
     if (res)
         return
     const { data: { url } } = await fetch("https://www.fonts.net.cn/font-download.html", {
