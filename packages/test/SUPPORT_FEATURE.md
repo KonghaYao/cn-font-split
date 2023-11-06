@@ -11,6 +11,7 @@
 > 1. ✅ 支持，并通过测试
 > 2. ❌ 未进行测试，可能不支持
 > 3. ⏺️ 部分支持，待验证
+> 4. ⭕ 浏览器不支持
 
 | Status | Feature Tag | Friendly Name                                       | 测试说明                          |
 | ------ | ----------- | --------------------------------------------------- | --------------------------------- |
@@ -30,7 +31,7 @@
 | ❌     | chws        | Contextual Half-width Spacing                       |                                   |
 | ✅     | cjct        | Conjunct Forms                                      |                                   |
 | ❌     | clig        | Contextual Ligatures                                |                                   |
-| ⏺️     | cpct        | Centered CJK Punctuation                            |                                   |
+| ⏺️     | cpct        | Centered CJK Punctuation                            | 浏览器 unicode-range 部分形态位移 |
 | ✅     | cpsp        | Capital Spacing                                     |                                   |
 | ✅     | cswh        | Contextual Swash                                    |                                   |
 | ✅     | curs        | Cursive Positioning                                 |                                   |
@@ -93,7 +94,7 @@
 | ✅     | pkna        | Proportional Kana                                   |                                   |
 | ✅     | pnum        | Proportional Figures                                |                                   |
 | ❌     | pref        | Pre-Base Forms                                      |                                   |
-| ✅     | pres        | Pre-base Substitutions                              |                                   |
+| ⭕     | pres        | Pre-base Substitutions                              |                                   |
 | ✅     | pstf        | Post-base Forms                                     |                                   |
 | ✅     | psts        | Post-base Substitutions                             |                                   |
 | ✅     | pwid        | Proportional Widths                                 |                                   |
@@ -146,9 +147,9 @@
 | ✅     | twid        | Third Widths                                        |                                   |
 | ✅     | unic        | Unicase                                             |                                   |
 | ❌     | valt        | Alternate Vertical Metrics                          |                                   |
-| ✅     | vatu        | Vattu Variants                                      |                                   |
+| ⭕     | vatu        | Vattu Variants                                      |                                   |
 | ❌     | vchw        | Vertical Contextual Half-width Spacing              |                                   |
-| ⏺️     | vert        | Vertical Writing                                    | harfbuzz wasm 打包错误            |
+| ⏺️     | vert        | Vertical Writing                                    | 浏览器 unicode-range 部分形态位移 |
 | ⏺️     | vhal        | Alternate Vertical Half Metrics                     | 浏览器 unicode-range 部分形态位移 |
 | ❌     | vjmo        | Vowel Jamo Forms                                    |                                   |
 | ✅     | vkna        | Vertical Kana Alternates                            |                                   |
