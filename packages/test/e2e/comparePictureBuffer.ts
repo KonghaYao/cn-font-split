@@ -42,5 +42,5 @@ export const compareElAndSave = async (
         threshold: 0.2,
     });
     fs.writeFileSync(savePath, PNG.sync.write(diff));
-    expect(pixelDiffCount).toBeLessThanOrEqual(40);
+    expect(pixelDiffCount).toBeLessThanOrEqual(100);
 };

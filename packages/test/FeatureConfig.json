@@ -1,5 +1,13 @@
 [
     {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "vkrn",
+        "withFeature": ["vpal"],
+        "writing-mode": "tb-rl",
+        "fontSize": 64,
+        "splitText": "スト ヘト スペース”"
+    },
+    {
         "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "blws",
         "splitText": "रू रु हू हु दृ शृ हृ"

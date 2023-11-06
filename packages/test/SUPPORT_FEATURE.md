@@ -153,7 +153,7 @@
 | ⏺️     | vhal        | Alternate Vertical Half Metrics                     | 浏览器 unicode-range 部分形态位移 |
 | ❌     | vjmo        | Vowel Jamo Forms                                    |                                   |
 | ✅     | vkna        | Vertical Kana Alternates                            |                                   |
-| ❌     | vkrn        | Vertical Kerning                                    |                                   |
+| ✅     | vkrn        | Vertical Kerning                                    |                                   |
 | ✅     | vpal        | Proportional Alternate Vertical Metrics             |                                   |
 | ✅     | vrt2        | Vertical Alternates and Rotation                    |                                   |
 | ❌     | vrtr        | Vertical Alternates for Rotation                    |                                   |

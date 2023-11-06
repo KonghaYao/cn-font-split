@@ -63,7 +63,21 @@ export const FeatureList = () => {
                                                                     i[
                                                                         'writing-mode'
                                                                     ],
-                                                                'font-feature-settings': `"${i.featureKey}" ${val}`,
+                                                                'font-feature-settings':
+                                                                    `"${i.featureKey}" ${val}` +
+                                                                    ((i.withFeature &&
+                                                                        ',' +
+                                                                            i.withFeature
+                                                                                .map(
+                                                                                    (
+                                                                                        f,
+                                                                                    ) =>
+                                                                                        `"${f}"`,
+                                                                                )
+                                                                                .join(
+                                                                                    ',',
+                                                                                )) ||
+                                                                        ''),
                                                             }}
                                                             lang={i.lang}
                                                         >
