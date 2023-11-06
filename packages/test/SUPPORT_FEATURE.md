@@ -112,7 +112,7 @@
 | ✅     | sinf        | Scientific Inferiors                                |                                   |
 | ❌     | size        | Optical size **deprecated**                         |                                   |
 | ✅     | smcp        | Small Capitals                                      |                                   |
-| ❌     | smpl        | Simplified Forms                                    |                                   |
+| ✅     | smpl        | Simplified Forms                                    |                                   |
 | ✅     | ss01        | Stylistic Set 1                                     |                                   |
 | ✅     | ss02        | Stylistic Set 2                                     |                                   |
 | ✅     | ss03        | Stylistic Set 3                                     |                                   |
@@ -130,9 +130,9 @@
 | ✅     | ss15        | Stylistic Set 15                                    |                                   |
 | ❌     | ss16        | Stylistic Set 16                                    |                                   |
 | ❌     | ss17        | Stylistic Set 17                                    |                                   |
-| ❌     | ss18        | Stylistic Set 18                                    |                                   |
-| ❌     | ss19        | Stylistic Set 19                                    |                                   |
-| ❌     | ss20        | Stylistic Set 20                                    |                                   |
+| ✅     | ss18        | Stylistic Set 18                                    |                                   |
+| ✅     | ss19        | Stylistic Set 19                                    |                                   |
+| ✅     | ss20        | Stylistic Set 20                                    |                                   |
 | ❌     | ssty        | Math script style alternates                        |                                   |
 | ❌     | stch        | Stretching Glyph Decomposition                      |                                   |
 | ✅     | subs        | Subscript                                           |                                   |
