@@ -33,11 +33,6 @@
         "splitText": "छ्"
     },
     {
-        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
-        "featureKey": "vatu",
-        "splitText": "क\u0000"
-    },
-    {
         "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
         "featureKey": "ss18",
         "splitText": "·  …"
