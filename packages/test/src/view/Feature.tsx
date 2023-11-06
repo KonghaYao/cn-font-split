@@ -54,8 +54,6 @@ export const FeatureList = () => {
                                                                 ],
                                                                 height: i.height,
                                                                 width: '100%',
-                                                                'vertical-align':
-                                                                    'baseline',
                                                                 direction:
                                                                     i.direction ??
                                                                     'initial',
