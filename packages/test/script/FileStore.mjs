@@ -13,7 +13,6 @@ export class FileStore {
     }
     gettingCache = new Map();
     async get(url, Key) {
-        url = (this.proxyURL ?? '') + url;
         const key = Key ?? this.urlToKey(url);
         const isExist = await this.isExist(key);
         if (isExist) {
@@ -21,7 +20,7 @@ export class FileStore {
         } else {
             if (this.gettingCache.has(key)) return this.gettingCache.get(key);
             console.log(key);
-            const p = this.cacheFetch(url).then((res) => {
+            const p = this.cacheFetch((this.proxyURL ?? '') + url).then((res) => {
                 fs.outputFileSync('./temp/font/' + key, res);
                 return './temp/font/' + key;
             });
@@ -40,4 +39,4 @@ export class FileStore {
     }
 }
 
-export const fontStore = new FileStore();
+export const fontStore = new FileStore('https://cors-cdn.deno.dev/?url=');
