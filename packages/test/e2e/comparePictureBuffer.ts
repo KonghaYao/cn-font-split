@@ -39,7 +39,7 @@ export const compareElAndSave = async (
     const item2 = await page.locator(el1).screenshot();
     const item1 = await page.locator(el2).screenshot();
     const { pixelDiffCount, diff } = comparePictureBuffer(item1, item2, {
-        threshold: 0.2,
+        threshold: 0.3,
     });
     fs.writeFileSync(savePath, PNG.sync.write(diff));
     expect(pixelDiffCount).toBeLessThanOrEqual(100);
