@@ -34,7 +34,11 @@ export const FeatureList = () => {
                                             </header>
                                             <section
                                                 class={fontFamily}
-                                                style={`font-family:"${fontFamily}";`}
+                                                style={{
+                                                    'font-family': `"${fontFamily}"`,
+                                                    width: 'fit-content',
+                                                    height: 'fit-content',
+                                                }}
                                             >
                                                 {(
                                                     i.featureValues ?? [
