@@ -53,7 +53,7 @@ export const FeatureList = () => {
                                                                     index
                                                                 ],
                                                                 height: i.height,
-                                                                width: '100%',
+                                                                // width: '100%',
                                                                 direction:
                                                                     i.direction ??
                                                                     'initial',

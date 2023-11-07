@@ -70,7 +70,7 @@
 | ✅     | kern        | Kerning                                             |                                   |
 | ❌     | lfbd        | Left Bounds                                         |                                   |
 | ✅     | liga        | Standard Ligatures                                  |                                   |
-| ❌     | ljmo        | Leading Jamo Forms                                  |                                   |
+| ✅     | ljmo        | Leading Jamo Forms                                  |                                   |
 | ✅     | lnum        | Lining Figures                                      |                                   |
 | ✅     | locl        | Localized Forms                                     |                                   |
 | ❌     | ltra        | Left-to-right alternates                            |                                   |
@@ -94,7 +94,7 @@
 | ✅     | pkna        | Proportional Kana                                   |                                   |
 | ✅     | pnum        | Proportional Figures                                |                                   |
 | ❌     | pref        | Pre-Base Forms                                      |                                   |
-| ⭕     | pres        | Pre-base Substitutions                              |                                   |
+| ✅    | pres        | Pre-base Substitutions                              |                                   |
 | ✅     | pstf        | Post-base Forms                                     |                                   |
 | ✅     | psts        | Post-base Substitutions                             |                                   |
 | ✅     | pwid        | Proportional Widths                                 |                                   |
@@ -114,44 +114,25 @@
 | ❌     | size        | Optical size **deprecated**                         |                                   |
 | ✅     | smcp        | Small Capitals                                      |                                   |
 | ✅     | smpl        | Simplified Forms                                    |                                   |
-| ✅     | ss01        | Stylistic Set 1                                     |                                   |
-| ✅     | ss02        | Stylistic Set 2                                     |                                   |
-| ✅     | ss03        | Stylistic Set 3                                     |                                   |
-| ✅     | ss04        | Stylistic Set 4                                     |                                   |
-| ✅     | ss05        | Stylistic Set 5                                     |                                   |
-| ✅     | ss06        | Stylistic Set 6                                     |                                   |
-| ✅     | ss07        | Stylistic Set 7                                     |                                   |
-| ✅     | ss08        | Stylistic Set 8                                     |                                   |
-| ✅     | ss09        | Stylistic Set 9                                     |                                   |
-| ✅     | ss10        | Stylistic Set 10                                    |                                   |
-| ✅     | ss11        | Stylistic Set 11                                    |                                   |
-| ✅     | ss12        | Stylistic Set 12                                    |                                   |
-| ✅     | ss13        | Stylistic Set 13                                    |                                   |
-| ❌     | ss14        | Stylistic Set 14                                    |                                   |
-| ✅     | ss15        | Stylistic Set 15                                    |                                   |
-| ❌     | ss16        | Stylistic Set 16                                    |                                   |
-| ❌     | ss17        | Stylistic Set 17                                    |                                   |
-| ✅     | ss18        | Stylistic Set 18                                    |                                   |
-| ✅     | ss19        | Stylistic Set 19                                    |                                   |
-| ✅     | ss20        | Stylistic Set 20                                    |                                   |
+| ✅     | ss01 -ss20  | Stylistic Set                                       |                                   |
 | ❌     | ssty        | Math script style alternates                        |                                   |
 | ❌     | stch        | Stretching Glyph Decomposition                      |                                   |
 | ✅     | subs        | Subscript                                           |                                   |
 | ✅     | sups        | Superscript                                         |                                   |
 | ✅     | swsh        | Swash                                               |                                   |
 | ✅     | titl        | Titling                                             |                                   |
-| ❌     | tjmo        | Trailing Jamo Forms                                 |                                   |
+| ✅     | tjmo        | Trailing Jamo Forms                                 |                                   |
 | ❌     | tnam        | Traditional Name Forms                              |                                   |
 | ✅     | tnum        | Tabular Figures                                     |                                   |
 | ✅     | trad        | Traditional Forms                                   |                                   |
 | ✅     | twid        | Third Widths                                        |                                   |
 | ✅     | unic        | Unicase                                             |                                   |
 | ❌     | valt        | Alternate Vertical Metrics                          |                                   |
-| ⭕     | vatu        | Vattu Variants                                      |                                   |
+| ❌     | vatu        | Vattu Variants                                      |                                   |
 | ❌     | vchw        | Vertical Contextual Half-width Spacing              |                                   |
 | ⏺️     | vert        | Vertical Writing                                    | 浏览器 unicode-range 部分形态位移 |
 | ⏺️     | vhal        | Alternate Vertical Half Metrics                     | 浏览器 unicode-range 部分形态位移 |
-| ❌     | vjmo        | Vowel Jamo Forms                                    |                                   |
+| ✅     | vjmo        | Vowel Jamo Forms                                    |                                   |
 | ✅     | vkna        | Vertical Kana Alternates                            |                                   |
 | ✅     | vkrn        | Vertical Kerning                                    |                                   |
 | ✅     | vpal        | Proportional Alternate Vertical Metrics             |                                   |
