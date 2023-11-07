@@ -47,7 +47,7 @@ export const FeatureList = () => {
                                                     ]
                                                 ).map((val, index) => {
                                                     return (
-                                                        <div
+                                                        <p
                                                             style={{
                                                                 'font-size':
                                                                     (i.fontSize ??
@@ -56,6 +56,8 @@ export const FeatureList = () => {
                                                                 color: colorSet[
                                                                     index
                                                                 ],
+                                                                'text-rendering':
+                                                                    'geometricPrecision',
                                                                 height: i.height,
                                                                 // width: '100%',
                                                                 direction:
@@ -84,7 +86,7 @@ export const FeatureList = () => {
                                                             lang={i.lang}
                                                         >
                                                             {i.splitText}
-                                                        </div>
+                                                        </p>
                                                     );
                                                 })}
                                             </section>
