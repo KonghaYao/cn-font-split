@@ -1,5 +1,25 @@
 [
     {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "vatu",
+        "splitText": "क्र ङ्र ट्र"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "nukt",
+        "splitText": "क़ ङ़ ट़"
+    },
+    {
+        "fontLink": "https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansMath/full/otf/NotoSansMath-Regular.otf",
+        "featureKey": "ssty",
+        "splitText":"Α   B  Β  ≠  ℬ  C  ℭ   ℂ  Χ    ℎ  +  ⊕ "
+    },
+    {
+        "fontLink": "https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansMath/full/otf/NotoSansMath-Regular.otf",
+        "featureKey": "dtls",
+        "splitText":"i ⅈ j ⅉ"
+    },
+    {
         "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/Subset/SourceHanSerifKR-VF.otf",
         "featureKey": "ljmo",
         "splitText": "ᄀ\\nᄁ\\nᄂ\\nᄓ\\nᄔ\\nᄕ\\nᄖ\\nᄂᄉᄉ\\nᄂᄌᄌ\\nᄂᄒᄒ\\nᄃ\\nᄗ\\nᄄ\\nᄃᄅᄅ\\nᄃᄆᄆ\\nᄃᄇᄇ\\nᄃᄉᄉ\\nᄃᄌᄌ\\nᄅ\\nᄅᄀᄀ\\nᄅᄀᄀ\\nᄘ\\nᄅᄃᄃ\\nᄅᄃᄃ\\nᄙ\\nᄅᄆᄆ\\nᄅᄇᄇ\\nᄅᄇᄇ\\nᄅᄫᄫ\\nᄅᄉᄉ\\nᄅᄌᄌ\\nᄅᄏᄏ\\nᄚ\\nᄛ\\nᄆ\\nᄆᄀᄀ\\nᄆᄃᄃ\\nᄜ\\nᄆᄉᄉ\\nᄝ\\nᄇ\\nᄞ\\nᄟ\\nᄠ\\nᄈ\\nᄡ\\nᄢ\\nᄣ\\nᄤ\\nᄥ\\nᄦ\\nᄇᄉᄉ\\nᄧ\\nᄨ\\nᄇᄏᄏ\\nᄩ\\nᄪ\\nᄇᄒᄒ\\nᄫ\\nᄬ\\nᄉ\\nᄭ\\nᄮ\\nᄯ\\nᄰ\\nᄱ\\nᄲ\\nᄳ\\nᄊ\\nᄉᄉᄉ\\nᄴ\\nᄵ\\nᄶ\\nᄷ\\nᄸ\\nᄹ\\nᄺ\\nᄻ\\nᄼ\\nᄽ\\nᄾ\\nᄿ\\nᅀ\\nᄋ\\nᅁ\\nᅂ\\nᄋᄅᄅ\\nᅃ\\nᅄ\\nᅅ\\nᅆ\\nᅇ\\nᅈ\\nᅉ\\nᅊ\\nᅋ\\nᄋᄒᄒ\\nᅌ\\nᄌ\\nᅍ\\nᄍ\\nᄌᄌᄌ\\nᅎ\\nᅏ\\nᅐ\\nᅑ\\nᄎ\\nᅒ\\nᅓ\\nᅔ\\nᅕ\\nᄏ\\nᄐ\\nᄐᄐᄐ\\nᄑ\\nᅖ\\nᄑᄒᄒ\\nᅗ\\nᄒ\\nᄒᄉᄉ\\nᅘ\\nᅙ\\nᅙᅙᅙ"
@@ -18,7 +38,9 @@
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vkrn",
         "withFeature": ["vpal"],
-        "writing-mode": "tb-rl",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
         "fontSize": 32,
         "height": "360px",
         "splitText": "スト ヘト スペース”"
@@ -154,9 +176,19 @@
         "splitText": "क्क्ष"
     },
     {
-        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "fontLink": "https://notofonts.github.io/khmer/fonts/NotoSansKhmer/full/otf/NotoSansKhmer-Regular.otf",
         "featureKey": "blwf",
-        "splitText": "र् र ्र "
+        "splitText": "ង៉ិ  ង៉ី  ង៉ឹ  ង៉ឺ  ង៉ើ  ង៉័  ងិ  ងី  ងឹ  ងឺ  ងើ  ង័  ញ៉ិ  ញ៉ី  ញ៉ឹ  ញ៉ឺ  ញ៉ើ  ញ៉័  ញិ  ញី  ញឹ  ញឺ  ញើ  ញ័  ន៉ិ  ន៉ី  ន៉ឹ  ន៉ឺ  ន៉ើ  ន៉័  និ  នី  នឹ  នឺ  នើ  ន័  ប៉ិ  ប៉ី  ប៉ឹ  ប៉ឺ  ប៉ើ  ប៉័  បិ  បី  បឹ  បឺ  បើ  ប័  ម៉ិ  ម៉ី  ម៉ឹ  ម៉ឺ  ម៉ើ  ម៉័  មិ  មី  មឹ  មឺ  មើ  ម័  យ៉ិ  យ៉ី  យ៉ឹ  យ៉ឺ  យ៉ើ  យ៉័  យិ  យី  យឹ  យឺ  យើ  យ័  រ៉ិ  រ៉ី  រ៉ឹ  រ៉ឺ  រ៉ើ  រ៉័  រិ  រី  រឹ  រឺ  រើ  រ័  ល៉ិ  ល៉ី  ល៉ឹ  ល៉ឺ  ល៉ើ  ល៉័  លិ  លី  លឹ  លឺ  លើ  ល័  វ៉ិ  វ៉ី  វ៉ឹ "
+    },
+    {
+        "fontLink": "https://notofonts.github.io/khmer/fonts/NotoSansKhmer/full/otf/NotoSansKhmer-Regular.otf",
+        "featureKey": "clig",
+        "splitText": "កា ក ខា ខ គា គ ឃា ឃ ងា ង ចា ច ឆា ឆ ជា ជ ឈា ឈ ញា ញ ា "
+    },
+    {
+        "fontLink": "https://notofonts.github.io/khmer/fonts/NotoSansKhmer/full/otf/NotoSansKhmer-Regular.otf",
+        "featureKey": "pref",
+        "splitText": "្រ"
     },
     {
         "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Khmer.ttf",
@@ -401,7 +433,9 @@
     {
         "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
         "featureKey": "vhal",
-        "writing-mode": "tb-rl",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
         "splitText": "きょう、『広辞苑』を買いたいです。",
         "height": "360px"
     },
@@ -609,7 +643,9 @@
     {
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vert",
-        "writing-mode": "tb-rl",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
         "fontSize": 32,
         "height": "360px",
         "splitText": "、  。  ，  ．  ：  ゛  ゜  ￣  ＿  ー  ―  ‐  ～  ‖  ｜  …  ‥    （  ）  〔  〕  ［  ］  ｛  ｝  〈  〉  《  》  「  」  『  』  【  】  ＝  °  ′  ″  →  ←  ↑  ↓  ぁ  ぃ  ぅ  ぇ  ぉ  っ  ゃ  ゅ  ょ  ゎ  ァ  ィ  ゥ  ェ  ォ  ッ  ャ  ュ  ョ  ヮ  ヵ  ヶ  ─  ━  │  ┃  ┄  ┅  ┆  ┇"
@@ -617,7 +653,9 @@
     {
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vkna",
-        "writing-mode": "tb-rl",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
         "fontSize": 24,
         "height": "10em",
         "splitText": "ヽヾゝゞあいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんアイウ"
@@ -630,7 +668,9 @@
     {
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vrt2",
-        "writing-mode": "tb-rl",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
         "fontSize": 32,
         "height": "360px",
         "splitText": "!  #  $  %  &  '  (  )  *  +  ,  ‑  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  ¥  ]  ^  ̲  ̀  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u "
