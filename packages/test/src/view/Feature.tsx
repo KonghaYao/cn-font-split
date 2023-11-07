@@ -48,6 +48,7 @@ export const FeatureList = () => {
                                                 ).map((val, index) => {
                                                     return (
                                                         <p
+                                                            class="clear-font-style"
                                                             style={{
                                                                 'font-size':
                                                                     (i.fontSize ??
@@ -56,13 +57,16 @@ export const FeatureList = () => {
                                                                 color: colorSet[
                                                                     index
                                                                 ],
-                                                                'text-rendering':
-                                                                    'geometricPrecision',
+
                                                                 height: i.height,
                                                                 // width: '100%',
                                                                 direction:
                                                                     i.direction ??
                                                                     'initial',
+                                                                textOrientation:
+                                                                    i[
+                                                                        'text-orientation'
+                                                                    ],
                                                                 'writing-mode':
                                                                     i[
                                                                         'writing-mode'
