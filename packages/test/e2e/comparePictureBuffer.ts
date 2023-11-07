@@ -12,8 +12,8 @@ export const comparePictureBuffer = (
     const width = Math.max(img1.width, img2.width);
     const height = Math.max(img1.height, img2.height);
 
-    // expect(img1.width).toEqual(img2.width);
-    // expect(img1.height).toEqual(img2.height);
+    expect(img1.width).toEqual(img2.width);
+    expect(img1.height).toEqual(img2.height);
     const diff = new PNG({ width, height });
 
     const pixelDiffCount = pixelmatch(

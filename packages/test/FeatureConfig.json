@@ -19,7 +19,8 @@
         "featureKey": "vkrn",
         "withFeature": ["vpal"],
         "writing-mode": "tb-rl",
-        "fontSize": 64,
+        "fontSize": 32,
+        "height": "360px",
         "splitText": "スト ヘト スペース”"
     },
     {
@@ -31,11 +32,6 @@
         "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
         "featureKey": "blwm",
         "splitText": "छ्"
-    },
-    {
-        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
-        "featureKey": "vatu",
-        "splitText": "क\u0000"
     },
     {
         "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
@@ -398,21 +394,21 @@
         "splitText": "︵ ︶ ︷ ︸ ︽ ︾ ﹀ ﹂ ＾"
     },
     {
-        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
+        "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "halt",
-        "splitText": "文本（测试），新？难怪！"
+        "splitText": "きょう、『広辞苑』を買いたいです。"
     },
     {
         "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
         "featureKey": "vhal",
         "writing-mode": "tb-rl",
-        "splitText": "文本（测试），新？难怪！",
+        "splitText": "きょう、『広辞苑』を買いたいです。",
         "height": "360px"
     },
     {
-        "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/bxzlzt/fonts/%E6%A0%87%E5%B0%8F%E6%99%BA%E9%BE%99%E7%8F%A0%E4%BD%93.ttf",
+        "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "expt",
-        "splitText": "唖 嘘 焔 鴎 噛 澗 侠 鹸 柵 屡 繍 醤 靭 蝉 掻 騨 箪 掴 填 顛 涜 嚢 剥 溌 醗 媛 頬 麺 莱 埬 蓮 蝋 僊 兔 寃 屏 廏 攅 曁 龝 箙 舮 麪"
+        "splitText": "唖  芦  飴  溢  茨  鰯  淫  迂  嘘  欝  厩  噂  餌  焔  襖  鴎  迦  牙  恢  晦  葛  鞄  噛  澗  翰  翫  徽  祇  汲  笈  侠  卿  饗  僅  躯  喰  櫛  屑  祁  繋  倦  拳  捲  鹸  諺  巷  麹  鵠  甑  采  榊  柵  薩  鯖  錆  珊  餐  屡  杓  灼  繍  酋  曙  薯  藷  哨  廠  蒋  醤  鞘  蝕  靭  逗  摺  蝉  撰  煎  煽  穿  箭  詮  噌  遡  創  掻  痩  揃  遜  騨  腿  黛  啄  蛸  巽  辿  鱈  樽  箪  註  瀦  凋  捗  槌  鎚  掴  鄭  擢  溺  填  顛  堵  屠  菟  賭  塘  祷  涜  瀞  遁  謎  灘  楢  禰  祢  嚢  牌  這  秤  剥  箸  溌  醗  叛  挽  樋  柊  稗  逼  媛  謬  廟  瀕  蔽  瞥  篇  娩  庖  蓬  頬  鱒  迄  麺  儲  餅  籾  鑓  愈  猷  熔  耀  莱  漣  煉  簾  蓮  榔  蝋  僊  兔  冤  匕  唹  唳  喩  嘲  嚥  嚮  堋  堙  夛 "
     },
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
@@ -614,13 +610,17 @@
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vert",
         "writing-mode": "tb-rl",
+        "fontSize": 32,
+        "height": "360px",
         "splitText": "、  。  ，  ．  ：  ゛  ゜  ￣  ＿  ー  ―  ‐  ～  ‖  ｜  …  ‥    （  ）  〔  〕  ［  ］  ｛  ｝  〈  〉  《  》  「  」  『  』  【  】  ＝  °  ′  ″  →  ←  ↑  ↓  ぁ  ぃ  ぅ  ぇ  ぉ  っ  ゃ  ゅ  ょ  ゎ  ァ  ィ  ゥ  ェ  ォ  ッ  ャ  ュ  ョ  ヮ  ヵ  ヶ  ─  ━  │  ┃  ┄  ┅  ┆  ┇"
     },
     {
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vkna",
         "writing-mode": "tb-rl",
-        "splitText": "ヽ  ヾ  ゝ  ゞ  あ  い  う  え  お  か  が  き  ぎ  く  ぐ  け  げ  こ  ご  さ  ざ  し  じ  す  ず  せ  ぜ  そ  ぞ  た  だ  ち  ぢ  つ  づ  て  で  と  ど  な  に  ぬ  ね  の  は  ば  ぱ  ひ  び  ぴ  ふ  ぶ  ぷ  へ  べ  ぺ  ほ  ぼ  ぽ  ま  み  む  め  も  や  ゆ  よ  ら  り  る  れ  ろ  わ  ゐ  ゑ  を  ん  ア  イ  ウ  エ  オ  カ  ガ  キ  ギ  ク  グ  ケ  ゲ  コ  ゴ  サ  ザ  シ  ジ  ス  ズ  セ  ゼ  ソ  ゾ  タ  ダ  チ  ヂ  ツ  ヅ  テ  デ "
+        "fontSize": 24,
+        "height": "10em",
+        "splitText": "ヽヾゝゞあいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんアイウ"
     },
     {
         "fontLink": "Kozuka Mincho Pro.otf",
@@ -631,6 +631,8 @@
         "fontLink": "Kozuka Mincho Pro.otf",
         "featureKey": "vrt2",
         "writing-mode": "tb-rl",
+        "fontSize": 32,
+        "height": "360px",
         "splitText": "!  #  $  %  &  '  (  )  *  +  ,  ‑  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  ¥  ]  ^  ̲  ̀  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u "
     }
 ]
