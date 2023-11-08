@@ -36,7 +36,7 @@ export const FeatureList = () => {
                                                 class={fontFamily}
                                                 style={{
                                                     'font-family': `"${fontFamily}"`,
-                                                    width: 'fit-content',
+                                                    // width: 'fit-content', // 竖排的时候，添加这个会导致 webkit 失去宽度
                                                     height: 'fit-content',
                                                 }}
                                             >
