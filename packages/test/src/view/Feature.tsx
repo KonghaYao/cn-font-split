@@ -16,6 +16,7 @@ export const FeatureList = () => {
                     const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
                     const wasm = route?.route().searchParams.get('wasm');
                     const hb = route?.route().searchParams.get('hb');
+                    const isTest = route?.route().searchParams.get('test');
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
@@ -61,9 +62,11 @@ export const FeatureList = () => {
                                                                     (i.fontSize ??
                                                                         48) +
                                                                     'px',
-                                                                color: colorSet[
-                                                                    index
-                                                                ],
+                                                                color:
+                                                                    !isTest &&
+                                                                    colorSet[
+                                                                        index
+                                                                    ],
 
                                                                 height: i.height,
                                                                 // width: '100%',
