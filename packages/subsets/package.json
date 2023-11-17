@@ -41,8 +41,8 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@chinese-fonts/font-contours": "^1.0.0",
-        "@japont/unicode-range": "^1.0.0",
         "@chinese-fonts/wawoff2": "2.0.4",
+        "@japont/unicode-range": "^1.0.0",
         "@konghayao/harfbuzzjs": "8.2.2",
         "@konghayao/opentype.js": "2023.11.1",
         "@napi-rs/ttf2woff2": "^0.0.5",
@@ -54,6 +54,7 @@
         "workerpool": "^8.0.0"
     },
     "devDependencies": {
+        "@rollup/plugin-terser": "^0.4.4",
         "@types/byte-size": "^8.1.1",
         "@types/md5": "^2.3.4",
         "@types/opentype.js": "^1.3.7",
