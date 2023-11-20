@@ -24,7 +24,7 @@
 
 > 我们正在对 cn-font-split 的实战效果进行测试，并积极提升分包效果！
 >
-> [Opentype Feature 测试情况](/packages/test/SUPPORT_FEATURE.md) 支持 100 ｜ 部分支持 4｜ 等待测试 39
+> [Opentype Feature 测试情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
 
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |

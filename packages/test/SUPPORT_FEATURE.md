@@ -6,6 +6,8 @@
 
 下表来源为 [Registered Features](https://learn.microsoft.com/en-us/typography/opentype/spec/featurelist)，我们用于记录测试进度。
 
+我们的测试浏览器核心为 Webkit。它对 OpenType 的支持是最为全面和可靠的，Chromium 和 FireFox 都在不同程度上对字体排版的渲染进行了一些自定义的变更导致测试失败。
+
 > 状态解释
 >
 > 1. ✅ 支持，并通过测试
