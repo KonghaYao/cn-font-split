@@ -16,6 +16,7 @@ export const FeatureList = () => {
                     const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
                     const wasm = route?.route().searchParams.get('wasm');
                     const hb = route?.route().searchParams.get('hb');
+                    const isTest = route?.route().searchParams.get('test');
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
@@ -36,7 +37,9 @@ export const FeatureList = () => {
                                                 class={fontFamily}
                                                 style={{
                                                     'font-family': `"${fontFamily}"`,
-                                                    // width: 'fit-content', // 竖排的时候，添加这个会导致 webkit 失去宽度
+                                                    width:
+                                                        i.direction !== 'rtl' &&
+                                                        'fit-content', // 竖排的时候，添加这个会导致 webkit 失去宽度
                                                     height: 'fit-content',
                                                 }}
                                             >
@@ -48,15 +51,22 @@ export const FeatureList = () => {
                                                 ).map((val, index) => {
                                                     return (
                                                         <p
-                                                            class="clear-font-style"
+                                                            class={[
+                                                                'clear-font-style',
+                                                                fontFamily +
+                                                                    '-' +
+                                                                    val,
+                                                            ].join(' ')}
                                                             style={{
                                                                 'font-size':
                                                                     (i.fontSize ??
                                                                         48) +
                                                                     'px',
-                                                                color: colorSet[
-                                                                    index
-                                                                ],
+                                                                color:
+                                                                    !isTest &&
+                                                                    colorSet[
+                                                                        index
+                                                                    ],
 
                                                                 height: i.height,
                                                                 // width: '100%',
