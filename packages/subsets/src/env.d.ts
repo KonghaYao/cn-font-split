@@ -19,6 +19,7 @@ declare module 'https://deno.land/std@0.170.0/node/url.ts' {
 }
 declare module 'comlink/dist/esm/node-adapter.mjs' {
     import { Endpoint } from 'comlink/dist/esm/protocol';
+    import { tinf_uncompress as inflate } from '@konghayao/opentype.js/src/tiny-inflate@1.0.3.esm.js';
     export interface NodeEndpoint {
         postMessage(message: any, transfer?: any[]): void;
         on(
@@ -44,6 +45,9 @@ declare module '@konghayao/opentype.js/src/*' {
 }
 declare module '@konghayao/opentype.js/dist/opentype.module.js' {
     export * from '@types/opentype.js';
+}
+declare module '@konghayao/opentype.js/src/tiny-inflate@1.0.3.esm.js' {
+    export const tinf_uncompress: any;
 }
 
 declare module '@chinese-fonts/wawoff2' {
