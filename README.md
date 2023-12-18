@@ -1,16 +1,14 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/11/20-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/12/18-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.10.6-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.11.0-green)
 [![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
-![downloadCount](https://img.shields.io/npm/dw/%40konghayao%2Fcn-font-split)
-
-| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
-| ------------------------------------------------- | ---------------------------------------------------- |
+| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/online-split/)|
+| ------------------------------------------------- | ---------------------------------------------------- |---------------------------------------------------- |
 
 ## 简介
 
