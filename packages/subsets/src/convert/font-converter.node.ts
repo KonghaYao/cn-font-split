@@ -43,5 +43,7 @@ export const convert = async function (
     if (toFormat === 'woff2') {
         buffer = await convertTTFToWOFF2Async(buffer as Buffer);
     }
+
+    buffer = new Uint8Array(buffer);
     return buffer;
 };
