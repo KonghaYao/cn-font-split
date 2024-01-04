@@ -40,12 +40,14 @@ const tag = [
     'Symbols',
     'Flags',
 ];
-for (const iterator of tag) {
+for (let iterator of tag) {
     test('表情包字体' + iterator, async ({ page }) => {
+        iterator = iterator.replace(/\s/g, '-');
         await page.goto(
-            'http://localhost:5173/#/article?type=noto-color-emoji',
+            'http://localhost:5173/#/article?type=noto-color-emoji&group=' +
+                iterator,
         );
-        await page.waitForLoadState('networkidle');
+        await page.waitForLoadState('load');
 
         await compareElAndSave(
             page,
