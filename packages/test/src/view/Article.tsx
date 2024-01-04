@@ -1,4 +1,4 @@
-import { resource } from '@cn-ui/reactive';
+import { reflect, resource } from '@cn-ui/reactive';
 import linkURL from '../style/baseFont.css?url';
 import { StyleForFont } from '../components/createStyleForFont';
 import { Match, Switch, createMemo, useContext } from 'solid-js';
@@ -30,6 +30,15 @@ const NotoColorEmoji = () => {
             'https://jsdelivr.deno.dev/gh/googlefonts/emoji-metadata@main/emoji_15_0_ordering.json',
         ).then((res) => res.json()),
     );
+    const route = useContext(RouteContext);
+    const groupName = createMemo(
+        () => route?.route().searchParams.get('group'),
+    );
+    const info = reflect(() => {
+        const item = data()?.find((i) => i.group === groupName());
+        if (item) return [item];
+        return data();
+    });
     return (
         <div class="flex gap-2">
             <StyleForFont
@@ -37,16 +46,16 @@ const NotoColorEmoji = () => {
                 url={'./temp/font/NotoColorEmoji.ttf'}
             ></StyleForFont>
             <link rel="stylesheet" href={`./temp/NotoColorEmoji/result.css`} />
-            <div class="noto-color-emoji-base">
+            <div class="noto-color-emoji-base flex-1">
                 <Emoji
-                    data={data()}
+                    data={info()}
                     fontFamily="NotoColorEmoji"
                     suffix="base"
                 ></Emoji>
             </div>
-            <div class="noto-color-emoji-demo">
+            <div class="noto-color-emoji-demo flex-1">
                 <Emoji
-                    data={data()}
+                    data={info()}
                     fontFamily="NotoColorEmoji-demo"
                     suffix="demo"
                 ></Emoji>
@@ -75,7 +84,7 @@ const Emoji = (props: {
                 <section>
                     <h3> {i.group}</h3>
                     <ul
-                        id={i.group + '-' + props.suffix}
+                        id={i.group.replace(/\s/g, '-') + '-' + props.suffix}
                         style={{
                             'font-family': props.fontFamily,
                         }}
