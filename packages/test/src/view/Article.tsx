@@ -40,20 +40,20 @@ const NotoColorEmoji = () => {
         return data();
     });
     return (
-        <div class="flex gap-2">
+        <div class="flex" style={"font-feature-settings: 'liga' 1;"}>
             <StyleForFont
                 fontFamily={'NotoColorEmoji'}
                 url={'./temp/font/NotoColorEmoji.ttf'}
             ></StyleForFont>
             <link rel="stylesheet" href={`./temp/NotoColorEmoji/result.css`} />
-            <div class="noto-color-emoji-base flex-1">
+            <div class="noto-color-emoji-base flex-none w-suit">
                 <Emoji
                     data={info()}
                     fontFamily="NotoColorEmoji"
                     suffix="base"
                 ></Emoji>
             </div>
-            <div class="noto-color-emoji-demo flex-1">
+            <div class="noto-color-emoji-demo flex-none w-suit">
                 <Emoji
                     data={info()}
                     fontFamily="NotoColorEmoji-demo"
@@ -91,18 +91,25 @@ const Emoji = (props: {
                     >
                         {i.emoji.map((emoji) => {
                             return (
-                                <span>
-                                    {emoji.base
-                                        .map((ii) => String.fromCodePoint(ii))
-                                        .join('')}
-                                    {emoji.alternates.map((emoji) =>
-                                        emoji
+                                <>
+                                    <span>
+                                        {emoji.base
                                             .map((ii) =>
                                                 String.fromCodePoint(ii),
                                             )
-                                            .join(''),
-                                    )}
-                                </span>
+                                            .join('')}
+                                    </span>
+
+                                    {emoji.alternates.map((emoji) => (
+                                        <span>
+                                            {emoji
+                                                .map((ii) =>
+                                                    String.fromCodePoint(ii),
+                                                )
+                                                .join('')}
+                                        </span>
+                                    ))}
+                                </>
                             );
                         })}
                     </ul>

@@ -4,3 +4,9 @@
 .flex-1 {
     flex: 1;
 }
+.flex-none {
+    flex: none;
+}
+.w-suit {
+    width: 800px;
+}
