@@ -42,13 +42,13 @@ const tag = [
 ];
 for (let iterator of tag) {
     test('表情包字体' + iterator, async ({ page }) => {
-        iterator = iterator.replace(/\s/g, '-');
         await page.goto(
             'http://localhost:5173/#/article?type=noto-color-emoji&group=' +
                 iterator,
         );
         await page.waitForLoadState('load');
 
+        iterator = iterator.replace(/\s/g, '-');
         await compareElAndSave(
             page,
             `#${iterator}-base`,
