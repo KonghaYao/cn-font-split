@@ -12,12 +12,12 @@ export const calcCharset = (charset: Charset) => {
     }, 0);
 };
 
-/** 字符集判断 */
+/** 判断字体中是否包含 json 文件的 unicode 字符 */
 export const FontSetMatch = (
     font: Font,
     items: Set<number>,
     charset: Charset,
-    name: string
+    name: string,
 ): CharsetReporter => {
     let support_count = 0;
     let area_count = 0;
