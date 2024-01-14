@@ -5,8 +5,8 @@ import crypto from 'node:crypto'
 fs.emptyDirSync('./temp/node');
 fontSplit({
     destFold: './temp/node',
-    FontPath: '../demo/public/SmileySans-Oblique.ttf',
-    // FontPath: './test/temp/江西拙楷.ttf',
+    // FontPath: '../demo/public/SmileySans-Oblique.ttf',
+    FontPath: './test/temp/NotoColorEmoji.ttf',
     // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
     // FontPath: './test/temp/字魂扁桃体.ttf',
     // FontPath: './test/temp/京華老宋体v1.007.ttf',
