@@ -61,8 +61,8 @@ importers:
   packages/font-analyze:
     dependencies:
       '@konghayao/opentype.js':
-        specifier: ^2023.10.5
-        version: 2023.10.5
+        specifier: ^2023.11.20
+        version: 2023.11.20
       '@types/opentype.js':
         specifier: ^1.3.4
         version: 1.3.4
@@ -187,11 +187,11 @@ importers:
         specifier: ^0.8.14
         version: 0.8.14
       vite:
-        specifier: ^4.4.12
-        version: 4.4.12(@types/node@20.4.2)
+        specifier: ^4.5.2
+        version: 4.5.2(@types/node@20.4.2)
       vite-plugin-solid:
         specifier: ^2.7.0
-        version: 2.7.0(solid-js@1.8.3)(vite@4.4.12)
+        version: 2.7.0(solid-js@1.8.3)(vite@4.5.2)
 
 packages:
 
@@ -823,13 +823,6 @@ packages:
 
   /@konghayao/harfbuzzjs@8.2.2:
     resolution: {integrity: sha512-fWz2KcZX9qLmYZtd5F1mX3maaeqsF2iSNriXe23IZGirlIodunEvtphz18FJkDhPRBgNs7yBkZ+YzdVIRpiLOA==}
-    dev: false
-
-  /@konghayao/opentype.js@2023.10.5:
-    resolution: {integrity: sha512-48Dt3U9lbLrBSkd11kfpO191z0mXh7Ra/qLoFDFUxep8793YLAClBfIpDkjPYgNnOd3PVaXqg2j97OHkwr7f9g==}
-    hasBin: true
-    dependencies:
-      eslint-plugin-local-rules: 1.3.2
     dev: false
 
   /@konghayao/opentype.js@2023.11.20:
@@ -2692,10 +2685,6 @@ packages:
     optionalDependencies:
       source-map: 0.6.1
     dev: true
-
-  /eslint-plugin-local-rules@1.3.2:
-    resolution: {integrity: sha512-X4ziX+cjlCYnZa+GB1ly3mmj44v2PeIld3tQVAxelY6AMrhHSjz6zsgsT6nt0+X5b7eZnvL/O7Q3pSSK2kF/+Q==}
-    dev: false
 
   /eslint-plugin-local-rules@2.0.0:
     resolution: {integrity: sha512-sWueme0kUcP0JC1+6OBDQ9edBDVFJR92WJHSRbhiRExlenMEuUisdaVBPR+ItFBFXo2Pdw6FD2UfGZWkz8e93g==}
@@ -5880,7 +5869,7 @@ packages:
       mlly: 1.4.0
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 4.4.12(@types/node@20.4.2)
+      vite: 4.5.2(@types/node@20.4.2)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -5892,7 +5881,7 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-solid@2.7.0(solid-js@1.8.3)(vite@4.4.12):
+  /vite-plugin-solid@2.7.0(solid-js@1.8.3)(vite@4.5.2):
     resolution: {integrity: sha512-avp/Jl5zOp/Itfo67xtDB2O61U7idviaIp4mLsjhCa13PjKNasz+IID0jYTyqUp9SFx6/PmBr6v4KgDppqompg==}
     peerDependencies:
       solid-js: ^1.7.2
@@ -5905,8 +5894,8 @@ packages:
       merge-anything: 5.1.7
       solid-js: 1.8.3
       solid-refresh: 0.5.3(solid-js@1.8.3)
-      vite: 4.4.12(@types/node@20.4.2)
-      vitefu: 0.2.5(vite@4.4.12)
+      vite: 4.5.2(@types/node@20.4.2)
+      vitefu: 0.2.5(vite@4.5.2)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5947,8 +5936,8 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vite@4.4.5(@types/node@20.4.2):
-    resolution: {integrity: sha512-4m5kEtAWHYr0O1Fu7rZp64CfO1PsRGZlD3TAB32UmQlpd7qg15VF7ROqGN5CyqN7HFuwr7ICNM2+fDWRqFEKaA==}
+  /vite@4.5.2(@types/node@20.4.2):
+    resolution: {integrity: sha512-tBCZBNSBbHQkaGyhGCDUGqeo2ph8Fstyp6FMSvTtsXeZSPpSMGlviAOav2hxVTqFcx8Hj/twtWKsMJXNY0xI8w==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -5983,7 +5972,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitefu@0.2.5(vite@4.4.12):
+  /vitefu@0.2.5(vite@4.5.2):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0 || ^5.0.0
@@ -5991,7 +5980,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.4.12(@types/node@20.4.2)
+      vite: 4.5.2(@types/node@20.4.2)
     dev: true
 
   /vitest@0.34.6(@vitest/browser@0.34.6)(webdriverio@8.20.4):
@@ -6047,7 +6036,7 @@ packages:
       strip-literal: 1.0.1
       tinybench: 2.5.0
       tinypool: 0.7.0
-      vite: 4.4.5(@types/node@20.4.2)
+      vite: 4.4.12(@types/node@20.4.2)
       vite-node: 0.34.6(@types/node@20.4.2)
       webdriverio: 8.20.4(typescript@5.2.2)
       why-is-node-running: 2.2.2
