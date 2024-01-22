@@ -1,6 +1,123 @@
-import { resource } from '@cn-ui/reactive';
+import { reflect, resource } from '@cn-ui/reactive';
 import linkURL from '../style/baseFont.css?url';
 import { StyleForFont } from '../components/createStyleForFont';
+import { Match, Switch, createMemo, useContext } from 'solid-js';
+import { RouteContext } from '../simpleRoute';
+import '../style/baseFn.css';
+export const Article = () => {
+    const route = useContext(RouteContext);
+    const showingType = createMemo(
+        () => route?.route().searchParams.get('type'),
+    );
+    return (
+        <Switch>
+            <Match when={showingType() === 'vf'}>
+                <VFTest></VFTest>
+            </Match>
+            <Match when={showingType() === 'multi-platform'}>
+                <SimpleText></SimpleText>
+            </Match>
+            <Match when={showingType() === 'noto-color-emoji'}>
+                <NotoColorEmoji></NotoColorEmoji>
+            </Match>
+        </Switch>
+    );
+};
+
+const NotoColorEmoji = () => {
+    const data = resource<EmojiGroup[]>(() =>
+        fetch(
+            'https://jsdelivr.deno.dev/gh/googlefonts/emoji-metadata@main/emoji_15_0_ordering.json',
+        ).then((res) => res.json()),
+    );
+    const route = useContext(RouteContext);
+    const groupName = createMemo(
+        () => route?.route().searchParams.get('group'),
+    );
+    const info = reflect(() => {
+        const item = data()?.find((i) => i.group === groupName());
+        if (item) return [item];
+        return data();
+    });
+    return (
+        <div class="flex" style={"font-feature-settings: 'liga' 1;"}>
+            <StyleForFont
+                fontFamily={'NotoColorEmoji'}
+                url={'./temp/font/NotoColorEmoji.ttf'}
+            ></StyleForFont>
+            <link rel="stylesheet" href={`./temp/NotoColorEmoji/result.css`} />
+            <div class="noto-color-emoji-base flex-none w-suit">
+                <Emoji
+                    data={info()}
+                    fontFamily="NotoColorEmoji"
+                    suffix="base"
+                ></Emoji>
+            </div>
+            <div class="noto-color-emoji-demo flex-none w-suit">
+                <Emoji
+                    data={info()}
+                    fontFamily="NotoColorEmoji-demo"
+                    suffix="demo"
+                ></Emoji>
+            </div>
+        </div>
+    );
+};
+
+type EmojiGroup = {
+    group: string;
+    emoji: {
+        base: number[];
+        alternates: number[][];
+        emoticons: string[];
+        shortcodes: string[];
+    }[];
+};
+const Emoji = (props: {
+    data: EmojiGroup[];
+    fontFamily: string;
+    suffix: string;
+}) => (
+    <>
+        {(props.data ?? []).map((i) => {
+            return (
+                <section>
+                    <h3> {i.group}</h3>
+                    <ul
+                        id={i.group.replace(/\s/g, '-') + '-' + props.suffix}
+                        style={{
+                            'font-family': props.fontFamily,
+                        }}
+                    >
+                        {i.emoji.map((emoji) => {
+                            return (
+                                <>
+                                    <span>
+                                        {emoji.base
+                                            .map((ii) =>
+                                                String.fromCodePoint(ii),
+                                            )
+                                            .join('')}
+                                    </span>
+
+                                    {emoji.alternates.map((emoji) => (
+                                        <span>
+                                            {emoji
+                                                .map((ii) =>
+                                                    String.fromCodePoint(ii),
+                                                )
+                                                .join('')}
+                                        </span>
+                                    ))}
+                                </>
+                            );
+                        })}
+                    </ul>
+                </section>
+            );
+        })}
+    </>
+);
 
 const VFTest = () => {
     const fontWeight = [100, 200, 300, 400, 500, 600, 700, 800, 900];
@@ -48,15 +165,6 @@ const VFTest = () => {
                 href="./temp/SourceHanSerifSC-VF/result.css"
             />
         </section>
-    );
-};
-
-export const Article = () => {
-    return (
-        <>
-            <VFTest></VFTest>
-            <SimpleText></SimpleText>
-        </>
     );
 };
 export const SimpleText = () => {

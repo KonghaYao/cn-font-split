@@ -8,7 +8,7 @@ const PNG = P.PNG;
 for (const iterator of features) {
     test('feature 测试 ' + iterator.featureKey, async ({ page }) => {
         await page.goto(
-            'http://localhost:5173/#/feature?feature=' + iterator.featureKey,
+            'http://localhost:5173/#/feature?test=true&feature=' + iterator.featureKey,
         );
         await page.waitForLoadState('networkidle');
         // 测试 harfbuzz 版本只需要将 -demo 替换为 -hb 即可

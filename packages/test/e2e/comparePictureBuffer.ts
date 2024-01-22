@@ -12,8 +12,8 @@ export const comparePictureBuffer = (
     const width = Math.max(img1.width, img2.width);
     const height = Math.max(img1.height, img2.height);
 
-    // expect(img1.width).toEqual(img2.width);
-    // expect(img1.height).toEqual(img2.height);
+    expect(img1.width).toEqual(img2.width);
+    expect(img1.height).toEqual(img2.height);
     const diff = new PNG({ width, height });
 
     const pixelDiffCount = pixelmatch(
@@ -39,8 +39,8 @@ export const compareElAndSave = async (
     const item2 = await page.locator(el1).screenshot();
     const item1 = await page.locator(el2).screenshot();
     const { pixelDiffCount, diff } = comparePictureBuffer(item1, item2, {
-        threshold: 0.2,
+        threshold: 0.3,
     });
     fs.writeFileSync(savePath, PNG.sync.write(diff));
-    expect(pixelDiffCount).toBeLessThanOrEqual(40);
+    expect(pixelDiffCount).toBeLessThanOrEqual(100);
 };

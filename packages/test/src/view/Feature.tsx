@@ -16,6 +16,7 @@ export const FeatureList = () => {
                     const folderHead = `./temp/${i.featureKey}/${i.featureKey}`;
                     const wasm = route?.route().searchParams.get('wasm');
                     const hb = route?.route().searchParams.get('hb');
+                    const isTest = route?.route().searchParams.get('test');
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
@@ -34,7 +35,13 @@ export const FeatureList = () => {
                                             </header>
                                             <section
                                                 class={fontFamily}
-                                                style={`font-family:"${fontFamily}";`}
+                                                style={{
+                                                    'font-family': `"${fontFamily}"`,
+                                                    width:
+                                                        i.direction !== 'rtl' &&
+                                                        'fit-content', // 竖排的时候，添加这个会导致 webkit 失去宽度
+                                                    height: 'fit-content',
+                                                }}
                                             >
                                                 {(
                                                     i.featureValues ?? [
@@ -43,32 +50,57 @@ export const FeatureList = () => {
                                                     ]
                                                 ).map((val, index) => {
                                                     return (
-                                                        <div
+                                                        <p
+                                                            class={[
+                                                                'clear-font-style',
+                                                                fontFamily +
+                                                                    '-' +
+                                                                    val,
+                                                            ].join(' ')}
                                                             style={{
                                                                 'font-size':
                                                                     (i.fontSize ??
                                                                         48) +
                                                                     'px',
-                                                                color: colorSet[
-                                                                    index
-                                                                ],
+                                                                color:
+                                                                    !isTest &&
+                                                                    colorSet[
+                                                                        index
+                                                                    ],
+
                                                                 height: i.height,
-                                                                width: '100%',
-                                                                'vertical-align':
-                                                                    'baseline',
+                                                                // width: '100%',
                                                                 direction:
                                                                     i.direction ??
                                                                     'initial',
+                                                                textOrientation:
+                                                                    i[
+                                                                        'text-orientation'
+                                                                    ],
                                                                 'writing-mode':
                                                                     i[
                                                                         'writing-mode'
                                                                     ],
-                                                                'font-feature-settings': `"${i.featureKey}" ${val}`,
+                                                                'font-feature-settings':
+                                                                    `"${i.featureKey}" ${val}` +
+                                                                    ((i.withFeature &&
+                                                                        ',' +
+                                                                            i.withFeature
+                                                                                .map(
+                                                                                    (
+                                                                                        f,
+                                                                                    ) =>
+                                                                                        `"${f}"`,
+                                                                                )
+                                                                                .join(
+                                                                                    ',',
+                                                                                )) ||
+                                                                        ''),
                                                             }}
                                                             lang={i.lang}
                                                         >
                                                             {i.splitText}
-                                                        </div>
+                                                        </p>
                                                     );
                                                 })}
                                             </section>

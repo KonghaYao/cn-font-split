@@ -13,6 +13,7 @@ export default {
         dir: './dist/',
         format: 'es',
         paths: {},
+        sourcemap: true,
     },
     plugins: [
         condition({ env: 'node' }),

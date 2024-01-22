@@ -6,7 +6,7 @@ import {
 import {
     convertTTFToWOFF2Async,
     convertWOFF2ToTTFAsync,
-} from '@napi-rs/ttf2woff2';
+} from '@napi-rs/woff-build';
 
 /** 字体格式转化, node 特供版本，速度非常快 */
 export const convert = async function (
@@ -43,5 +43,7 @@ export const convert = async function (
     if (toFormat === 'woff2') {
         buffer = await convertTTFToWOFF2Async(buffer as Buffer);
     }
+
+    buffer = new Uint8Array(buffer);
     return buffer;
 };

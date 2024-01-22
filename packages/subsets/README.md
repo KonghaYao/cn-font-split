@@ -1,16 +1,14 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/11/4-green)
+![updateTime](https://img.shields.io/badge/更新时间-2023/12/18-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.10.5-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.11.0-green)
 [![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
-![downloadCount](https://img.shields.io/npm/dw/%40konghayao%2Fcn-font-split)
-
-| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) |
-| ------------------------------------------------- | ---------------------------------------------------- |
+| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/online-split/)|
+| ------------------------------------------------- | ---------------------------------------------------- |---------------------------------------------------- |
 
 ## 简介
 
@@ -24,7 +22,7 @@
 
 > 我们正在对 cn-font-split 的实战效果进行测试，并积极提升分包效果！
 >
-> [Opentype Feature 测试情况](/packages/test/SUPPORT_FEATURE.md) 支持 100 ｜ 部分支持 4｜ 等待测试 39
+> [Opentype Feature 测试情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
 
 [详见兼容性章节](#兼容性提醒)。
 | [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |

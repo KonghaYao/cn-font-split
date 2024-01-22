@@ -50,7 +50,7 @@ export default {
         globals: {
             process: 'globalThis.process',
         },
-        // sourcemap: true,
+        sourcemap: true,
     },
 
     plugins: [

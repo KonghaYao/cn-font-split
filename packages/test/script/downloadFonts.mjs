@@ -1,8 +1,9 @@
 import fs from 'fs-extra';
 const features = fs.readJSONSync('./FeatureConfig.json');
 import _ from 'lodash-es';
-import { FileStore, fontStore } from './FileStore.mjs';
+import { fontStore } from './FileStore.mjs';
 await import('./downloadFont/getKozuka.mjs')
+await import('./downloadFont/getNotoColorEmoji.mjs')
 // 下载测试所需要的所有字体
 for (const i of features) {
     fontStore.get(i.fontLink).then((resPath) => {
@@ -13,6 +14,8 @@ for (const i of features) {
             i.featureKey +
             i.fontLink.replace(/.*\.(.*?)/g, '.$1');
         fs.createSymlinkSync(resPath, path, 'file');
+    }).catch(e => {
+        console.log('download Error ', i.fontLink, e)
     });
 }
 

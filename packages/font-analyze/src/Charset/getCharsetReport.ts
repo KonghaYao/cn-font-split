@@ -1,3 +1,4 @@
+import { Font } from '@konghayao/opentype.js';
 import { Charset, FontSetMatch } from './FontSetMatch.js';
 import { UnicodeCharset, UnicodeMatch } from './UnicodeMatch.js';
 import { CharsetLoader } from './defaultCharsetLoader.js';
@@ -5,8 +6,8 @@ import { CharsetLoader } from './defaultCharsetLoader.js';
 /** 获取 unicode 字符集检测报告 */
 export async function getCharsetReport(
     charsetLoader: CharsetLoader,
-    font: any,
-    unicodeSet: Set<number>
+    font: Font,
+    unicodeSet: Set<number>,
 ) {
     const standard = await getCharsetStandard(charsetLoader, font, unicodeSet);
     // console.table(standard);
@@ -14,15 +15,15 @@ export async function getCharsetReport(
     const unicodeReport = UnicodeMatch(
         font,
         unicodeSet,
-        Unicode as UnicodeCharset
+        Unicode as UnicodeCharset,
     );
     return { unicodeReport, standard };
 }
 /** 获取标准字符集数据 */
 async function getCharsetStandard(
     charsetLoader: CharsetLoader,
-    font: any,
-    unicodeSet: Set<number>
+    font: Font,
+    unicodeSet: Set<number>,
 ) {
     return await Promise.all(
         [
@@ -45,6 +46,6 @@ async function getCharsetStandard(
         ].map(async ([_path, name]) => {
             const set = await charsetLoader(_path);
             return FontSetMatch(font, unicodeSet, set as Charset, name);
-        })
+        }),
     );
 }

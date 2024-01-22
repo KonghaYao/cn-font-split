@@ -30,6 +30,10 @@ export const Index = () => {
                             key: 'multi-platform',
                             label: '多平台打包结果测试',
                         },
+                        {
+                            key: 'noto-color-emoji',
+                            label: '表情包字体',
+                        },
                     ].map((i) => {
                         return (
                             <a href={'#/article?type=' + i.key}>{i.label}</a>

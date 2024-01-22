@@ -1,6 +1,6 @@
 ## Usage
 
-1. 先在 subsets 文件夹 build 所有的 test 文件
+1. 先在 subsets 文件夹 build `pnpm prepublish`
 
 2. 安装依赖
 

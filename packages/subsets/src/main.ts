@@ -59,7 +59,10 @@ export const fontSplit = async (opt: InputTemplate) => {
                     'originFile',
                     'bundleMessage',
                 );
-                const ttfFile = await convert(originFile, 'truetype');
+                const ttfFile = (await convert(originFile, 'truetype')).slice(
+                    0,
+                );
+
                 bundleMessage.ttfLength = ttfFile.byteLength;
                 ctx.set('ttfBufferSize', ttfFile.byteLength);
                 ctx.set('ttfFile', ttfFile);
