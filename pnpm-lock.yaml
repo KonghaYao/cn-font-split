@@ -89,8 +89,8 @@ importers:
         specifier: 8.2.2
         version: 8.2.2
       '@konghayao/opentype.js':
-        specifier: 2023.11.20
-        version: 2023.11.20
+        specifier: 2024.1.22
+        version: 2024.1.22
       '@napi-rs/woff-build':
         specifier: ^0.1.1
         version: 0.1.1
@@ -827,6 +827,13 @@ packages:
 
   /@konghayao/opentype.js@2023.11.20:
     resolution: {integrity: sha512-08iEkCdIZiZiLrKCZ2V57jg/tHX2PnJpgc7aSFFm84q4GT5ZeKjVWKVw4YKg5iAfc/OVkXceNP5+i4L4oCoB+A==}
+    hasBin: true
+    dependencies:
+      eslint-plugin-local-rules: 2.0.0
+    dev: false
+
+  /@konghayao/opentype.js@2024.1.22:
+    resolution: {integrity: sha512-36RuSIlKhMM5reu0/zBhN08WCZFq5YkPcAiJRSVSHBgIODFB1nXpfQ7CiNSi8bdm3Ys/l5qm4x3U7FtHWIfeRQ==}
     hasBin: true
     dependencies:
       eslint-plugin-local-rules: 2.0.0
