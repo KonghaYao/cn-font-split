@@ -2,6 +2,7 @@ import { useContext } from 'solid-js';
 import Features from '../../FeatureConfig.json';
 import { StyleForFont } from '../components/createStyleForFont';
 import { RouteContext } from '../simpleRoute';
+import { AbsoluteLayout } from '../components/AbsoluteLayout';
 const colorSet = ['#000000', '#00af6c'];
 export const FeatureList = () => {
     const route = useContext(RouteContext);
@@ -27,86 +28,74 @@ export const FeatureList = () => {
                                 !hb && !wasm && i.featureKey + '-demo',
                             ]
                                 .filter(Boolean)
-                                .map((fontFamily) => {
-                                    return (
-                                        <div>
-                                            <header style={{ color: 'gray' }}>
-                                                {fontFamily}
-                                            </header>
-                                            <section
-                                                class={fontFamily}
+                                .flatMap((fontFamily) => {
+                                    return <AbsoluteLayout render={() => (
+                                        i.featureValues ?? [
+                                            'off',
+                                            'on',
+                                        ]
+                                    ).map((val, index) => {
+                                        return (
+                                            <div
+                                                class={[
+
+                                                    'clear-font-style',
+                                                    fontFamily +
+                                                    '-' +
+                                                    val,
+                                                ].join(' ')}
                                                 style={{
                                                     'font-family': `"${fontFamily}"`,
-                                                    width:
-                                                        i.direction !== 'rtl' &&
-                                                        'fit-content', // 竖排的时候，添加这个会导致 webkit 失去宽度
-                                                    height: 'fit-content',
-                                                }}
-                                            >
-                                                {(
-                                                    i.featureValues ?? [
-                                                        'off',
-                                                        'on',
-                                                    ]
-                                                ).map((val, index) => {
-                                                    return (
-                                                        <p
-                                                            class={[
-                                                                'clear-font-style',
-                                                                fontFamily +
-                                                                    '-' +
-                                                                    val,
-                                                            ].join(' ')}
-                                                            style={{
-                                                                'font-size':
-                                                                    (i.fontSize ??
-                                                                        48) +
-                                                                    'px',
-                                                                color:
-                                                                    !isTest &&
-                                                                    colorSet[
-                                                                        index
-                                                                    ],
+                                                    padding: "10px",
+                                                    'font-size':
+                                                        (i.fontSize ??
+                                                            48) +
+                                                        'px',
+                                                    color:
+                                                        !isTest &&
+                                                        colorSet[
+                                                        index
+                                                        ],
 
-                                                                height: i.height,
-                                                                // width: '100%',
-                                                                direction:
-                                                                    i.direction ??
-                                                                    'initial',
-                                                                textOrientation:
-                                                                    i[
-                                                                        'text-orientation'
-                                                                    ],
-                                                                'writing-mode':
-                                                                    i[
-                                                                        'writing-mode'
-                                                                    ],
-                                                                'font-feature-settings':
-                                                                    `"${i.featureKey}" ${val}` +
-                                                                    ((i.withFeature &&
-                                                                        ',' +
-                                                                            i.withFeature
-                                                                                .map(
-                                                                                    (
-                                                                                        f,
-                                                                                    ) =>
-                                                                                        `"${f}"`,
-                                                                                )
-                                                                                .join(
-                                                                                    ',',
-                                                                                )) ||
-                                                                        ''),
-                                                            }}
-                                                            lang={i.lang}
-                                                        >
-                                                            {i.splitText}
-                                                        </p>
-                                                    );
-                                                })}
-                                            </section>
-                                        </div>
-                                    );
+                                                    height: i.height,
+                                                    // width: '100%',
+                                                    direction:
+                                                        i.direction ??
+                                                        'initial',
+                                                    textOrientation:
+                                                        i[
+                                                        'text-orientation'
+                                                        ],
+                                                    'writing-mode':
+                                                        i[
+                                                        'writing-mode'
+                                                        ],
+                                                    'font-feature-settings':
+                                                        `"${i.featureKey}" ${val}` +
+                                                        ((i.withFeature &&
+                                                            ',' +
+                                                            i.withFeature
+                                                                .map(
+                                                                    (
+                                                                        f,
+                                                                    ) =>
+                                                                        `"${f}"`,
+                                                                )
+                                                                .join(
+                                                                    ',',
+                                                                )) ||
+                                                            ''),
+                                                }}
+                                                lang={i.lang}
+                                            >
+                                                {i.splitText}
+                                            </div>
+                                        );
+                                    })} ></AbsoluteLayout>
+
                                 })}
+
+
 
                             {/* 加载原始字体 */}
                             <StyleForFont
