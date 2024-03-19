@@ -1,8 +1,8 @@
 # 中文 Web Font 切割工具
 
-![updateTime](https://img.shields.io/badge/更新时间-2023/12/18-green)
+![updateTime](https://img.shields.io/badge/更新时间-2024/03/19-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.11.0-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.11.2-green)
 [![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
@@ -144,6 +144,9 @@ fontSplit({
     1. 例如：使用一个只有大致 6373 字符的字体，但是采用 Noto-Serif-SC 分包策略，那么部分包内会有缺失字体的现象，这是正常的。
     2. 这个特性，插件将不会进行干涉。
     3. 建议较全的字体包可以使用 Google 字体的中文分包方式，而小字体包使用自动分包策略就好了。
+3. 部分字体开发的时候用了比较奇怪的字体编辑器，可能最终的字体会报错。
+    1. 这种情况最好找字体设计师再导出一份可用版本
+    2. 或者自己用 FontForge 进行修复，这个就比较麻烦了
 
 ## 兼容性提醒
 
