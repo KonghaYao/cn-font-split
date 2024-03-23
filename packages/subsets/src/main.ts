@@ -14,7 +14,7 @@ import { Latin, getCN_SC_Rank } from './data/Ranks';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
-import { makeImage } from './makeImage/index';
+import { makeImage } from 'font-sharp/dist/font-sharp/src/makeImage.js';
 import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
 import { forceSubset } from './subsetService/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
