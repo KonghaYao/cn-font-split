@@ -37,7 +37,7 @@ await Promise.all(
         ].map((i) => require.resolve(i)),
     ].map((i) => {
         return fse.copy(i, './dist/browser/' + path.basename(i));
-    })
+    }),
 );
 import { createTypeForBrowser } from './scripts/createTypeForBrowser.mjs';
 

@@ -22,7 +22,7 @@ export const getFeatureData = (fontTool: FontBaseTool) => {
                         .map((id) => {
                             return glyphIDToUnicodeMap.get(id) ?? [];
                         })
-                        .flat()
+                        .flat(),
                 ) ?? []
         );
     }).filter((i) => i.length > 1);
@@ -50,7 +50,7 @@ export type FeatureMap = Map<number, Set<number> | null>;
 /** 从单个 unicode 中找出 feature 相关的数据 */
 export const processSingleUnicodeWithFeature = (
     i: number,
-    featureMap: FeatureMap
+    featureMap: FeatureMap,
 ) => {
     const item = featureMap.get(i);
     if (item === undefined) {
@@ -80,7 +80,7 @@ export const decorateSubset = (subset: Subset, featureMap: FeatureMap) => {
             const res = new Set<number>();
             for (let index = start; index <= end; index++) {
                 processSingleUnicodeWithFeature(index, featureMap).forEach(
-                    (codepoint) => res.add(codepoint)
+                    (codepoint) => res.add(codepoint),
                 );
             }
             return [...res.values()];
