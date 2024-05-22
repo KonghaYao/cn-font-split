@@ -1,11 +1,16 @@
-import { HB } from '../hb';
-function shape(hb: HB.Handle, font: HB.Font, text: string) {
+import type { HB } from '../../subsets/src/hb.js';
+function shape(
+    hb: HB.Handle,
+    font: HB.Font,
+    text: string,
+    options: Font2SVGOptions,
+) {
     font.setScale(100, -100);
 
     const buffer = hb.createBuffer();
     buffer.addText(text);
     buffer.guessSegmentProperties();
-    // buffer.setDirection('ltr');
+    buffer.setDirection(options.direction ?? 'ltr');
     hb.shape(font, buffer);
     const result = buffer.json();
     const glyphs = result.map(function (x) {
@@ -13,21 +18,41 @@ function shape(hb: HB.Handle, font: HB.Font, text: string) {
     });
 
     buffer.destroy();
-
     return glyphs;
 }
+
+export interface Font2SVGOptions {
+    baseLine?: number;
+    lineHeight?: number;
+    direction?: 'ltr' | 'rtl' | 'ttb' | 'btt';
+}
+
+/** render harfbuzz info to svg */
 export const makeImage = (
     hb: HB.Handle,
     font: HB.Font,
     input = '中文网字计划\nThe Project For Web',
-    { baseLine = 24, lineHeight = 1 } = {},
+    options: Font2SVGOptions = {},
 ) => {
-    const path = shape(hb, font, input);
+    const { baseLine = 24, lineHeight = 1 } = options;
+    const path = input
+        .split('\n')
+        .map((t) => shape(hb, font, t, options))
+        .reduce((col, cur) => {
+            col.push(
+                ...cur,
+                /** @ts-ignore 换行标识 */
+                { g: 0, glyph: undefined } as unknown as any,
+            );
+            return col;
+        }, []);
     const lineHeightPx = 100 * lineHeight;
+    /** 每一行相关的大小 */
     const bounding = { height: lineHeightPx, width: 0 };
+    /** 画布大小 */
     const maxBounding = { height: 0, width: 0 };
-    const paths = path.map((i) => {
-        if (i.g === 0) {
+    const paths = path.map((i, index) => {
+        if (i.glyph === undefined) {
             bounding.height += lineHeightPx;
             bounding.width = 0;
             maxBounding.height = Math.max(maxBounding.height, bounding.height);
@@ -41,10 +66,9 @@ export const makeImage = (
         maxBounding.width = Math.max(maxBounding.width, bounding.width);
         return path;
     });
-
     return `<svg  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${
-        bounding.width
-    }" height="${bounding.height}" viewBox="${0} ${0} ${
-        bounding.width + baseLine
-    } ${bounding.height + baseLine}">${paths.join('')}</svg>`;
+        maxBounding.width
+    }" height="${maxBounding.height}" viewBox="${0} ${0} ${
+        maxBounding.width + baseLine
+    } ${maxBounding.height + baseLine}">${paths.join('')}</svg>`;
 };
