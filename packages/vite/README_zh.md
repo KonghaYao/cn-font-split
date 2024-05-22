@@ -39,11 +39,11 @@ export const App = () => {
 
 源码中包含 `src/font.d.ts` 文件，你可以将其加入 tsconfig.json 中。
 
-```ts
+```json
 {
-  "compilerOptions": {
-    "types": ["vite-plugin-font/src/font.d"]
-  }
+    "compilerOptions": {
+        "types": ["vite-plugin-font/src/font.d"]
+    }
 }
 ```
 
