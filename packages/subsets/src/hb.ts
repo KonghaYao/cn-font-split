@@ -55,7 +55,7 @@ export declare namespace HB {
 export function hbjs(instance: WebAssembly.Instance) {
     'use strict';
 
-    const exports = instance.exports as ANY;
+    const exports = instance.exports as any;
     const heapu8 = new Uint8Array(exports.memory.buffer);
     const heapu32 = new Uint32Array(exports.memory.buffer);
     const heapi32 = new Int32Array(exports.memory.buffer);
