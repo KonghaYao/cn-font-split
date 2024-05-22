@@ -1,73 +1,73 @@
 {
-    "name": "@konghayao/cn-font-split",
-    "version": "4.12.0",
-    "description": "中文 web font 切割工具",
-    "main": "dist/index.js",
-    "browser": "dist/browser/index.js",
-    "type": "module",
-    "bin": {
-        "cn-font-split": "bin/cn-font-split.mjs"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
-    },
-    "homepage": "https://chinese-font.netlify.app/",
-    "scripts": {
-        "build": "rollup -c ",
-        "dev": "rollup -c -w",
-        "build:browser": "rollup -c rollup.config.browser.mjs ",
-        "dev:browser": "rollup -c rollup.config.browser.mjs -w",
-        "test": "vitest",
-        "test:node": "node ./test/node.test.mjs",
-        "test:deno": "deno run -A --no-npm ./test/deno.test.js",
-        "test:bun": "bun run ./test/bun.test.mjs",
-        "test:browser": "live-server --port=9000 --cors --no-browser ./dist/browser&&vitest --mode browser test/browser.test.js",
-        "coverage": "vitest run --coverage",
-        "prepublish": "tsc && pnpm build && pnpm build:browser && tsc"
-    },
-    "keywords": [
-        "font",
-        "converter",
-        "performance",
-        "wasm",
-        "woff2",
-        "ttf",
-        "otf",
-        "opentype-fonts",
-        "font-subsetter",
-        "font-subset",
-        "cjk"
-    ],
-    "author": "KonghaYao<dongzhongzhidong@qq.com>",
-    "license": "Apache-2.0",
-    "dependencies": {
-        "@chinese-fonts/font-contours": "^1.0.0",
-        "@chinese-fonts/wawoff2": "2.0.5",
-        "@japont/unicode-range": "^1.0.0",
-        "@konghayao/harfbuzzjs": "8.3.1",
-        "@konghayao/opentype.js": "2024.3.19",
-        "@napi-rs/woff-build": "^0.2.0",
-        "byte-size": "^8.1.1",
-        "font-sharp": "workspace:^",
-        "fs-extra": "^11.1.1",
-        "md5": "^2.3.0",
-        "os-locale": "^6.0.2",
-        "tslog": "^4.9.2",
-        "workerpool": "^9.1.1"
-    },
-    "devDependencies": {
-        "@rollup/plugin-terser": "^0.4.4",
-        "@types/byte-size": "^8.1.1",
-        "@types/md5": "^2.3.4",
-        "@types/opentype.js": "^1.3.7",
-        "@types/workerpool": "^6.4.5",
-        "@vitest/browser": "^1.6.0",
-        "comlink": "^4.4.1",
-        "live-server": "^1.2.2",
-        "path-browserify": "^1.0.1",
-        "resolve": "^1.22.8",
-        "vitest": "^1.6.0",
-        "webdriverio": "^8.20.4"
-    }
+	"name": "@konghayao/cn-font-split",
+	"version": "4.13.0",
+	"description": "中文 web font 切割工具",
+	"main": "dist/index.js",
+	"browser": "dist/browser/index.js",
+	"type": "module",
+	"bin": {
+		"cn-font-split": "bin/cn-font-split.mjs"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
+	},
+	"homepage": "https://chinese-font.netlify.app/",
+	"scripts": {
+		"build": "rollup -c ",
+		"dev": "rollup -c -w",
+		"build:browser": "rollup -c rollup.config.browser.mjs ",
+		"dev:browser": "rollup -c rollup.config.browser.mjs -w",
+		"test": "vitest",
+		"test:node": "node ./test/node.test.mjs",
+		"test:deno": "deno run -A --no-npm ./test/deno.test.js",
+		"test:bun": "bun run ./test/bun.test.mjs",
+		"test:browser": "live-server --port=9000 --cors --no-browser ./dist/browser&&vitest --mode browser test/browser.test.js",
+		"coverage": "vitest run --coverage",
+		"prepublish": "tsc && pnpm build && pnpm build:browser && tsc"
+	},
+	"keywords": [
+		"font",
+		"converter",
+		"performance",
+		"wasm",
+		"woff2",
+		"ttf",
+		"otf",
+		"opentype-fonts",
+		"font-subsetter",
+		"font-subset",
+		"cjk"
+	],
+	"author": "KonghaYao<dongzhongzhidong@qq.com>",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"@chinese-fonts/font-contours": "^1.0.0",
+		"@chinese-fonts/wawoff2": "2.0.5",
+		"@japont/unicode-range": "^1.0.0",
+		"@konghayao/harfbuzzjs": "8.3.1",
+		"@konghayao/opentype.js": "2024.3.19",
+		"@napi-rs/woff-build": "^0.2.0",
+		"byte-size": "^8.1.1",
+		"font-sharp": "workspace:^",
+		"fs-extra": "^11.1.1",
+		"md5": "^2.3.0",
+		"os-locale": "^6.0.2",
+		"tslog": "^4.9.2",
+		"workerpool": "^9.1.1"
+	},
+	"devDependencies": {
+		"@rollup/plugin-terser": "^0.4.4",
+		"@types/byte-size": "^8.1.1",
+		"@types/md5": "^2.3.4",
+		"@types/opentype.js": "^1.3.7",
+		"@types/workerpool": "^6.4.5",
+		"@vitest/browser": "^1.6.0",
+		"comlink": "^4.4.1",
+		"live-server": "^1.2.2",
+		"path-browserify": "^1.0.1",
+		"resolve": "^1.22.8",
+		"vitest": "^1.6.0",
+		"webdriverio": "^8.20.4"
+	}
 }
