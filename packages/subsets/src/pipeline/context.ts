@@ -23,7 +23,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
                 settings?: ISettingsParam<LogObj>;
                 logObj?: LogObj;
             };
-        } = {}
+        } = {},
     ) {
         super(opts?.log?.settings, opts?.log?.logObj);
     }
@@ -40,7 +40,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
             log(
                 // 因为这里被标记为了 private，但是可以访问到，所以需要防止 ts 报错
                 (this as any)._prettyFormatLogObjMeta(obj._meta),
-                ...params
+                ...params,
             );
         });
     }
@@ -67,7 +67,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
     pick<K extends keyof T>(...keys: K[]): Pick<T, K> {
         if (keys.length === 0)
             throw new Error(
-                'Context pick: please send some name to access the keys you sure to be existed!'
+                'Context pick: please send some name to access the keys you sure to be existed!',
             );
         // 创建一个新的对象，用于存储选取的属性
         const pickedObj = {} as Pick<T, K>;
@@ -80,7 +80,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
                 console.warn(
                     `[Warning] Context: ${
                         key as string
-                    } isn't found in context, It could cause Error`
+                    } isn't found in context, It could cause Error`,
                 );
             }
         });

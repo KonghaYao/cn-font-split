@@ -15,7 +15,7 @@ export default () => {
     return (
         <section class="clear-font-features">
             <a href="/">
-                <h1>这是 cn-font-type 的测试系统</h1>
+                <h1>这是 cn-font-split 的测试系统</h1>
             </a>
             <SimpleRouter
                 routes={{

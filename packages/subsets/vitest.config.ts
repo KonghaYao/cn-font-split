@@ -18,9 +18,9 @@ export default defineConfig(({ mode }) => {
                           name: 'chrome',
                           headless: false,
                       },
-                      server:{
-                        host:"0.0.0.0"
-                      }
+                      server: {
+                          host: '0.0.0.0',
+                      },
                   }
                 : {},
     };

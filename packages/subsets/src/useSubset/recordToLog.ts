@@ -9,7 +9,7 @@ export async function recordToLog(
     woff2Time: readonly [number, number],
     unicodeInFont: Uint32Array,
     index: number,
-    filename: string
+    filename: string,
 ) {
     const arr = unicodeInFont;
     ctx.trace(
@@ -19,6 +19,6 @@ export async function recordToLog(
             timeRecordFormat(...woff2Time),
             byteSize(transferred.byteLength) + '/' + arr.length,
             filename.slice(0, 7),
-        ].join(' \t')
+        ].join(' \t'),
     );
 }

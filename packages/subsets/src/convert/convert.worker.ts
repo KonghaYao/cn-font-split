@@ -9,7 +9,7 @@ import { worker, Transfer } from 'workerpool';
 let convert: (
     buffer: Uint8Array,
     toFormat: FontType,
-    fromFormat?: FontType
+    fromFormat?: FontType,
 ) => Promise<Uint8Array>;
 //ifdef node
 import { convert as nodeConvert } from './font-converter.node';
