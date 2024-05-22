@@ -17,7 +17,7 @@ export const getSubsetsFromCSS = (css: string): Subsets => {
                 if (i.includes('-')) {
                     return i.split('-').map((i) => parseInt('0x' + i)) as [
                         number,
-                        number
+                        number,
                     ];
                 } else {
                     return parseInt('0x' + i);

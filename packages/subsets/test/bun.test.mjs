@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import { fontSplit } from '../dist/index.js';
 
-
 fs.emptyDirSync('./temp/bun');
 fontSplit({
     destFold: './temp/bun',

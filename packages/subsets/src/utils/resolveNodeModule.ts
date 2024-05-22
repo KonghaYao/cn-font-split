@@ -12,7 +12,7 @@ export const resolveNodeModule = async (path: string) => {
             const { fileURLToPath } = await import('node:url');
             const absolutePath = resolve(
                 dirname(fileURLToPath(import.meta.url)),
-                path.slice(1)
+                path.slice(1),
             );
             return absolutePath;
         default:

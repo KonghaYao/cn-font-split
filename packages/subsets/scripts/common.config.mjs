@@ -17,5 +17,5 @@ export default [
     replace({
         __cn_font_split_version__: () => JSON.stringify(packages.version),
     }),
-    terser()
+    terser(),
 ];

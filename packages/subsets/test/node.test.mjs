@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import { fontSplit } from '../dist/index.js';
-import crypto from 'node:crypto'
+import crypto from 'node:crypto';
 
 fs.emptyDirSync('./temp/node');
 fontSplit({
@@ -26,7 +26,7 @@ fontSplit({
         //     nameTable: false,
         //     unicodes: true
         // }
-    }
+    },
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},

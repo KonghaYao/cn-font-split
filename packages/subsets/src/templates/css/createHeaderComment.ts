@@ -3,7 +3,7 @@ import { InputTemplate } from '../../interface';
 /** 创建头部的注释字符串 */
 export const createHeaderComment = (
     fontData: Record<string, string>,
-    opts: InputTemplate['css']
+    opts: InputTemplate['css'],
 ) => {
     const commentSetting = opts?.comment || {};
     if (opts?.comment === false) return '';

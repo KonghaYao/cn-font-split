@@ -280,8 +280,9 @@ export const fontSplit = async (opt: InputTemplate) => {
                         input.destFold,
                         input.cssFileName ?? 'result.css',
                     ),
-                    css,
+                    css.css,
                 );
+                ctx.set('cssMessage', css);
             },
             async function outputHTML(ctx) {
                 const { input } = ctx.pick('input');
@@ -297,25 +298,35 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
             },
             async function outputReporter(ctx) {
-                const { nameTable, subsetResult, input, bundleMessage } =
-                    ctx.pick(
-                        'input',
-                        'nameTable',
-                        'subsetResult',
-                        'bundleMessage',
-                    );
+                const {
+                    nameTable,
+                    subsetResult,
+                    input,
+                    bundleMessage,
+                    cssMessage,
+                } = ctx.pick(
+                    'input',
+                    'nameTable',
+                    'subsetResult',
+                    'bundleMessage',
+                    'cssMessage',
+                );
                 if (!(input.testHTML === false && input.reporter === false)) {
+                    /** @ts-ignore */
+                    delete cssMessage.css;
                     const reporter = await createReporter(
                         subsetResult,
                         nameTable,
                         input,
                         exec.records,
                         bundleMessage as BundleReporter,
+                        cssMessage,
                     );
                     await outputFile(
                         path.join(input.destFold, 'reporter.json'),
                         JSON.stringify(reporter),
                     );
+                    ctx.set('reporter', reporter);
                 }
             },
             async function Clear(ctx) {
@@ -326,4 +337,6 @@ export const fontSplit = async (opt: InputTemplate) => {
         createContext(opt),
     );
     const ctx = await exec.run();
+    const { reporter } = ctx.pick('reporter');
+    return reporter;
 };

@@ -1,8 +1,9 @@
 import { HB } from '../hb';
 import { Context } from '../pipeline/index';
 import { InputTemplate, SubsetResult, Subsets } from '../interface';
-import { type BundleReporter } from '../templates/reporter';
+import { createReporter, type BundleReporter } from '../templates/reporter';
 import { type FontBaseTool } from '../subsetService/getFeatureQueryFromBuffer';
+import { createCSS } from 'src/templates/css';
 
 /** 全局 Context 的类型，用于在分步函数中定义类型 */
 export type IContext = ReturnType<typeof createContext>;
@@ -23,6 +24,8 @@ export const createContext = (opt: InputTemplate) =>
         nameTable: Record<string, string>;
         fontTool: FontBaseTool;
         bundleMessage: Partial<BundleReporter>;
+        cssMessage: ReturnType<typeof createCSS>;
+        reporter: Awaited<ReturnType<typeof createReporter>>;
     }>(
         { input: opt },
         {
@@ -38,5 +41,5 @@ export const createContext = (opt: InputTemplate) =>
                     ...(opt?.logger?.settings ?? {}),
                 },
             },
-        }
+        },
     );

@@ -37,7 +37,7 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
         url: string | URL,
         _?: boolean,
         username?: string,
-        password?: string
+        password?: string,
     ) {
         if (typeof url === 'string' && url.startsWith('file:///')) {
             const originURL = url;
