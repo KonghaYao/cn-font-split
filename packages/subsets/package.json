@@ -12,6 +12,7 @@
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
     },
+    "homepage": "https://chinese-font.netlify.app/",
     "scripts": {
         "build": "rollup -c ",
         "dev": "rollup -c -w",
@@ -35,7 +36,8 @@
         "otf",
         "opentype-fonts",
         "font-subsetter",
-        "font-subset"
+        "font-subset",
+        "cjk"
     ],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
