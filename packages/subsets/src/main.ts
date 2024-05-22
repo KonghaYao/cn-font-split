@@ -327,6 +327,9 @@ export const fontSplit = async (opt: InputTemplate) => {
                         JSON.stringify(reporter),
                     );
                     ctx.set('reporter', reporter);
+                }else{
+                    /** @ts-ignore */
+                    ctx.set('reporter', undefined); // 防止识别失败报错
                 }
             },
             async function Clear(ctx) {
