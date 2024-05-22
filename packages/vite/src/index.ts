@@ -17,7 +17,7 @@ export default function split(
     let viteConfig;
     let cacheDir = config.cacheDir;
     return <Plugin>{
-        name: 'vite-plugin-cn-font-split',
+        name: 'vite-plugin-font',
         enforce: 'pre',
         configResolved(c) {
             viteConfig = c;

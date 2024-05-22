@@ -1,53 +1,50 @@
 {
-  "version": "0.1.0",
-  "name": "vite-plugin-cn-font-split",
-  "description": "Vite plugin for bundle otf,ttf... font to webfonts",
-  "main": "./dist/index.js",
-  "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KonghaYao/cn-font-split.git"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "author": "KonghaYao<dongzhongzhidong@qq.com>",
-  "license": "Apache-2.0",
-  "scripts": {
-    "build": "tsc -p tsconfig.node.json",
-    "dev": "vite",
-    "prepublish": "pnpm build"
-  },
-  "keywords": [
-    "vite",
-    "vite-plugin",
-    "web-font",
-    "webfont",
-    "vue",
-    "react",
-    "converter",
-    "performance",
-    "wasm",
-    "woff2",
-    "ttf",
-    "otf",
-    "opentype-fonts",
-    "font-subsetter",
-    "font-subset",
-    "cjk"
-  ],
-  "peerDependencies": {
-    "vite": "^2 || ^3 || ^4 || ^5"
-  },
-  "devDependencies": {
-    "vite": "^5"
-  },
-  "dependencies": {
-    "@konghayao/cn-font-split": "workspace:^"
-  },
-  "bugs": {
-    "url": "https://github.com/KonghaYao/cn-font-split/issues"
-  },
-  "homepage": "https://chinese-font.netlify.app"
+	"version": "0.2.0",
+	"name": "vite-plugin-font",
+	"description": "Vite plugin for bundle otf,ttf... font to webfonts",
+	"main": "./dist/index.js",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/KonghaYao/cn-font-split.git"
+	},
+	"files": ["dist", "src"],
+	"author": "KonghaYao<dongzhongzhidong@qq.com>",
+	"license": "Apache-2.0",
+	"scripts": {
+		"build": "tsc -p tsconfig.node.json",
+		"dev": "vite",
+		"prepublish": "pnpm build"
+	},
+	"keywords": [
+		"vite",
+		"vite-plugin",
+		"web-font",
+		"webfont",
+		"vue",
+		"react",
+		"converter",
+		"performance",
+		"wasm",
+		"woff2",
+		"ttf",
+		"otf",
+		"opentype-fonts",
+		"font-subsetter",
+		"font-subset",
+		"cjk"
+	],
+	"peerDependencies": {
+		"vite": "^2 || ^3 || ^4 || ^5"
+	},
+	"devDependencies": {
+		"vite": "^5"
+	},
+	"dependencies": {
+		"@konghayao/cn-font-split": "workspace:^"
+	},
+	"bugs": {
+		"url": "https://github.com/KonghaYao/cn-font-split/issues"
+	},
+	"homepage": "https://chinese-font.netlify.app"
 }
