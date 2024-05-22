@@ -39,11 +39,11 @@ export const App = () => {
 
 The source code includes the `src/font.d.ts` file, which you can add to your `tsconfig.json`.
 
-```ts
+```json
 {
-      \"compilerOptions\": {
-        \"types\": [\"vite-plugin-font/src/font.d\"]
-  }
+    "compilerOptions": {
+        "types": ["vite-plugin-font/src/font.d"]
+    }
 }
 ```
 
