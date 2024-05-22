@@ -82,7 +82,7 @@ import { fontSplit } from '@konghayao/cn-font-split';
 // import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.8.3/dist/browser/index.js";
 
 fontSplit({
-    FontPath: './fonts/SourceHanSerifCN-Bold.ttf', // 部分 otf 文件会报错，最好使用 ttf 版本的字体
+    FontPath: './fonts/SourceHanSerifCN-Bold.ttf', // 推荐使用 otf、ttf 字体
     destFold: './build',
     chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
     testHTML: true, // 输出一份 html 报告文件
