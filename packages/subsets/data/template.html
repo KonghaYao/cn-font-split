@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -13,9 +13,18 @@
             font-size: 18px;
         }
         h3 {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont,
-                'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-                'Helvetica Neue', sans-serif;
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                'Segoe UI',
+                Roboto,
+                Oxygen,
+                Ubuntu,
+                Cantarell,
+                'Open Sans',
+                'Helvetica Neue',
+                sans-serif;
             font-weight: normal;
         }
     </style>
@@ -35,7 +44,7 @@
             Object.fromEntries(
                 Object.entries(nameTable).map(([key, val]) => {
                     return [key, typeof val === 'string' ? val : val.en];
-                })
+                }),
             );
         function _formatBytes(bytes, decimals = 2) {
             if (bytes === 0) return '0 Bytes';
@@ -89,7 +98,7 @@
                     return (
                         col +
                         String.fromCharCode(
-                            ...UnicodeRange.parse(cur.chars.split(','))
+                            ...UnicodeRange.parse(cur.chars.split(',')),
                         )
                     );
                 }
@@ -140,7 +149,7 @@
             record.pop(); // 最后一个记录是没有用的
             const total = record.reduce(
                 (col, cur) => col + cur.end - cur.start,
-                0
+                0,
             );
             let chartDom;
             // console.log(record, total);
@@ -230,7 +239,7 @@
                             subtext: `总共 ${
                                 data.length
                             } 分包; 总大小 ${_formatBytes(
-                                total
+                                total,
                             )} 点击跳转查看；`,
                             left: 'center',
                         },
@@ -298,7 +307,7 @@
             return data.map((i) => {
                 const chars = i.chars.startsWith('U+')
                     ? String.fromCharCode(
-                          ...UnicodeRange.parse(i.chars.split(','))
+                          ...UnicodeRange.parse(i.chars.split(',')),
                       )
                     : i.chars;
                 return html`<div>
@@ -331,7 +340,7 @@
                         res.message =
                             res.message.windows || res.message.macintosh;
                         return res;
-                    })
+                    }),
             );
             createEffect(() => {
                 if (data()) {
@@ -342,7 +351,7 @@
                     }"`;
 
                     document.querySelector('title').textContent = getFontData(
-                        data().message
+                        data().message,
                     ).fontFamily;
                     const link = document.createElement('link');
                     link.rel = 'stylesheet';
@@ -355,12 +364,12 @@
                 html` <div>
                         ${RangeAnalyze(
                             data().data,
-                            getFontData(data().message)
+                            getFontData(data().message),
                         )}
                         ${DataAnalyze(data().data, getFontData(data().message))}
                         ${TimeAnalyze(
                             data().record,
-                            getFontData(data().message)
+                            getFontData(data().message),
                         )}
                         ${BaseMessage(getFontData(data().message))}
                     </div>

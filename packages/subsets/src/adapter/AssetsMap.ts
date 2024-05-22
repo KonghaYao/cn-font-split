@@ -7,7 +7,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
         super(
             input instanceof Array
                 ? input
-                : (Object.entries(input) as [K, string][])
+                : (Object.entries(input) as [K, string][]),
         );
     }
     ensureGet(token: K | string) {
@@ -48,7 +48,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     }
 
     async loadFileStream(
-        token: K | string
+        token: K | string,
     ): Promise<ReadableStream | ReadStream> {
         const { createReadStream } = await import('fs-extra');
         return createReadStream(this.ensureGet(token));
@@ -57,7 +57,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
     async loadFileResponse(token: K | string): Promise<Response> {
         if (!globalThis.fetch) {
             throw new Error(
-                'fetch 函数不存在，请适配 fetch 或者升级更高级的 Nodejs '
+                'fetch 函数不存在，请适配 fetch 或者升级更高级的 Nodejs ',
             );
         }
 
@@ -74,7 +74,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
             input.map(([k, v]) => this.set(k, v));
         } else {
             Object.entries(input).map(([k, v]) =>
-                this.set(k as K, v as string)
+                this.set(k as K, v as string),
             );
         }
     }
@@ -89,7 +89,7 @@ export class AssetsMap<K extends string> extends Map<K, string> {
             return outputFile(file, data);
         }
         throw new Error(
-            '你的环境好像不支持内部的 outputFile，请你适配 outputFile 参数'
+            '你的环境好像不支持内部的 outputFile，请你适配 outputFile 参数',
         );
     };
 }

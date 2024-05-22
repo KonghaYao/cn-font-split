@@ -12,5 +12,5 @@ const input = {
     },
 };
 export const Assets = new AssetsMap(
-    isDeno || isBrowser || isInWorker ? input.browser : input.node
+    isDeno || isBrowser || isInWorker ? input.browser : input.node,
 );
