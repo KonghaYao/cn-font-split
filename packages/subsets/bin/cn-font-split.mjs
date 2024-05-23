@@ -2,43 +2,37 @@
 import { fontSplit, VERSION_CN_FONT_SPLIT } from '../dist/index.js';
 import fs from 'fs';
 import mri from 'mri';
-import path from 'path';
 const temp = mri(process.argv.slice(2), {
     alias: {
-        i: "FontPath",
-        input: "FontPath",
-        output: "destFold",
-        o: "destFold",
-        d: "destFold",
-        h: "help"
-    }
+        i: 'FontPath',
+        input: 'FontPath',
+        output: 'destFold',
+        o: 'destFold',
+        d: 'destFold',
+        h: 'help',
+    },
 });
 
 const input = {};
-const ensurePath = (pathArr, obj) => {
-
-}
-
 Object.entries(temp).map(([k, v]) => {
     if (k.includes('.')) {
-        const paths = k.split('.')
-        let tempInput = input
+        const paths = k.split('.');
+        let tempInput = input;
         paths.forEach((i, index) => {
             if (!tempInput[i]) {
-                tempInput[i] = {}
+                tempInput[i] = {};
             }
             if (index === paths.length - 1) {
-                tempInput[i] = stringToValue(v)
+                tempInput[i] = stringToValue(v);
             } else {
-                tempInput = tempInput[i]
+                tempInput = tempInput[i];
             }
-        })
+        });
     } else {
-        input[k] = stringToValue(v)
+        input[k] = stringToValue(v);
     }
-})
+});
 
-console.log(input)
 if (input.help) {
     console.log(
         `//========== cn-font-split help ${VERSION_CN_FONT_SPLIT} ===========`,
@@ -60,7 +54,7 @@ if (input.help) {
 } else {
     console.log(VERSION_CN_FONT_SPLIT);
     if (input.FontPath && input.destFold) {
-        fontSplit(input).catch(e => console.log('error !!!!!: ', e.message))
+        fontSplit(input).catch((e) => console.log('error !!!!!: ', e.message));
     } else {
         console.log('Error: -i or -o must be filled!');
     }
