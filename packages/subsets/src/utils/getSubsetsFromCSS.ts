@@ -5,7 +5,7 @@ export const getSubsetsFromCSS = (css: string): Subsets => {
     const list = css.match(/@font-face[\s\S]+?\}/g);
     if (!list) return [];
     return list.map((face) => {
-        const unicodeList = face.match(/unicode-range:(.*(?:[,;]))+/);
+        const unicodeList = face.match(/unicode-range:([\s\S]*(?:[,;]))+/);
         if (!unicodeList) return [];
         const range = unicodeList[1];
         return range
