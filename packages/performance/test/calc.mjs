@@ -54,19 +54,49 @@ const resultGrid = texts.slice(0, textSize).map((i) => {
     const base = performanceTest(i, baseMap);
     const noto = performanceTest(i, notoMap);
     return {
+        base,
+        noto,
         setLength: base.setLength,
-        baseSize: base.totalSizeName,
+        baseSize: base.totalSize,
+        baseSizeName: base.totalSizeName,
         baseCount: base.totalCount,
         diffSize: base.totalSize - noto.totalSize,
         diffCount: base.totalCount - noto.totalCount,
-        notoSize: noto.totalSizeName,
+        notoSize: noto.totalSize,
+        notoSizeName: noto.totalSizeName,
         notoCount: noto.totalCount,
     };
 });
-console.table(resultGrid);
+console.table(
+    resultGrid.map((i) => {
+        const newObj = { ...i };
+        delete newObj.base;
+        delete newObj.noto;
+        delete newObj.diffCount;
+        delete newObj.diffSize;
+        return newObj;
+    }),
+);
+console.log('\t base \t noto');
 console.log(
-    '平均差距',
-    size(resultGrid.reduce((a, b) => a + b.diffSize, 0) / textSize).toString(),
-    // resultGrid.reduce((a, b) => a + b.diffCount, 0) / textSize,
+    '平均请求大小 ',
+    size(resultGrid.reduce((a, b) => a + b.baseSize, 0) / textSize).toString(),
+    size(resultGrid.reduce((a, b) => a + b.notoSize, 0) / textSize).toString(),
+);
+console.log(
+    '并发数目 ',
+    resultGrid.reduce((a, b) => a + b.baseCount, 0) / textSize,
+    resultGrid.reduce((a, b) => a + b.notoCount, 0) / textSize,
+);
+console.log(
+    '单包大小 ',
+    size(
+        resultGrid.reduce((a, b) => a + b.baseSize, 0) /
+            resultGrid.reduce((a, b) => a + b.baseCount, 0),
+    ).toString(),
+    size(
+        resultGrid.reduce((a, b) => a + b.notoSize, 0) /
+            resultGrid.reduce((a, b) => a + b.notoCount, 0),
+    ).toString(),
 );
 // console.log(texts[0]);
