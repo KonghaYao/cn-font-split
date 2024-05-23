@@ -9,6 +9,7 @@
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/font-sharp"
     },
     "scripts": {
+        "build": "tsc",
         "prepublish": "rm -r dist && tsc"
     },
     "keywords": [
