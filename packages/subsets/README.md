@@ -68,7 +68,7 @@ npm install @konghayao/cn-font-split -g # 如果使用命令行，推荐全局�
 cn-font-split -i=../demo/public/SmileySans-Oblique.ttf -o=./temp
 
 # 参数与正常 js 操作是一样的，深层json则需要使用 . 来赋值
-cn-font-split -i=../demo/public/SmileySans-Oblique.ttf -o=./temp --renameOutputFont=[hash:10][ext] --css.fontWeight=700
+cn-font-split -i=../demo/public/SmileySans-Oblique.ttf -o=./temp --renameOutputFont='[hash:10][ext]' --css.fontWeight=700
 
 # 显示输入参数说明，虽然会显示 typescript 类型。。。
 cn-font-split -h
