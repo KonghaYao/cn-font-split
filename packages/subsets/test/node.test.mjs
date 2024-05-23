@@ -7,12 +7,11 @@ fontSplit({
     destFold: './temp/node',
     FontPath: '../demo/public/SmileySans-Oblique.ttf',
     // FontPath: './test/temp/NotoColorEmoji.ttf',
-    // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
+    FontPath: './test/temp/AlibabaPuHuiTi-3-85-Bold.otf',
     // FontPath: './test/temp/字魂扁桃体.ttf',
     // FontPath: './test/temp/京華老宋体v1.007.ttf',
     // FontPath: './test/temp/SourceHanSerifSC.ttf',
     // FontPath: './test/temp/AlibabaPuHuiTi-3-65-Medium.woff2',
-
     targetType: 'woff2',
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},
