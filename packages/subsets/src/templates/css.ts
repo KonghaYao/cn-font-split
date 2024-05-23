@@ -33,7 +33,7 @@ export const createCSS = (
         css.fontFamily || fontData.fontFamily;
 
     const preferredSubFamily =
-        fontData.preferredSubFamily || fontData.fontSubFamily || '';
+        fontData.preferredSubFamily || fontData.fontSubFamily || fontData.fontSubfamily || '';
 
     const style =
         css.fontStyle || (isItalic(preferredSubFamily) ? 'italic' : 'normal');
