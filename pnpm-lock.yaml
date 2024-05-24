@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -120,8 +116,8 @@ importers:
         specifier: 8.3.1
         version: 8.3.1
       '@konghayao/opentype.js':
-        specifier: 2024.3.19
-        version: 2024.3.19
+        specifier: 2024.5.23
+        version: 2024.5.23
       '@napi-rs/woff-build':
         specifier: ^0.2.0
         version: 0.2.0
@@ -1109,11 +1105,9 @@ packages:
       eslint-plugin-local-rules: 2.0.0
     dev: false
 
-  /@konghayao/opentype.js@2024.3.19:
-    resolution: {integrity: sha512-BL8ymzIcpRkMZdM5/KjKuQcQi4/7ygodnd6cu8m3aipCaFWNzp2hGJG/aNLsTxUX4tfWu6kk51pKmcP1a0IpHA==}
+  /@konghayao/opentype.js@2024.5.23:
+    resolution: {integrity: sha512-HYXnxHjFQ9T/LAvvIpmFlyvRJUKyD9iNBGtsrWIFCSm9AhCX6WWWtN22Q4eL8cTnXQSc5sQQPqUpVApKoXgmgw==}
     hasBin: true
-    dependencies:
-      eslint-plugin-local-rules: 2.0.0
     dev: false
 
   /@napi-rs/wasm-runtime@0.1.2:
@@ -6364,3 +6358,7 @@ packages:
       compress-commons: 5.0.1
       readable-stream: 3.6.2
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
