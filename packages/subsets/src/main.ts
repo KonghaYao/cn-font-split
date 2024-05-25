@@ -10,7 +10,20 @@ import { BundleReporter, createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
 import { useSubset, getAutoSubset } from './useSubset/index';
-import { Latin, getCN_SC_Rank } from './data/Ranks';
+import {
+    Arabic,
+    Bengali,
+    Cyrillic,
+    CyrillicExt,
+    Devanagari,
+    Greek,
+    GreekExt,
+    Latin,
+    LatinExt,
+    Thai,
+    Vietnamese,
+    getCN_SC_Rank,
+} from './data/Ranks';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
@@ -146,7 +159,20 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ); //3
                 /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const autoForceBundle: number[][] = (
-                    opt.unicodeRank ?? [Latin, await getCN_SC_Rank()]
+                    opt.unicodeRank ?? [
+                        Latin,
+                        LatinExt,
+                        Vietnamese,
+                        Greek,
+                        GreekExt,
+                        Cyrillic,
+                        CyrillicExt,
+                        await getCN_SC_Rank(),
+                        Bengali,
+                        Devanagari,
+                        Arabic,
+                        Thai
+                    ]
                 ).map((rank) =>
                     rank.filter((char) => {
                         const isIn = AllUnicodeSet.has(char);
@@ -327,7 +353,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         JSON.stringify(reporter),
                     );
                     ctx.set('reporter', reporter);
-                }else{
+                } else {
                     /** @ts-ignore */
                     ctx.set('reporter', undefined); // 防止识别失败报错
                 }

@@ -16,8 +16,8 @@ export const resolveNodeModule = async (path: string) => {
             );
             return absolutePath;
         default:
-            const { default: module } = await import('node:module');
-            const require = module.createRequire(import.meta.url);
+            const { Module } = await import('node:module');
+            const require = Module.createRequire(import.meta.url);
             return require.resolve(path);
     }
 };
