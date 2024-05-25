@@ -40,7 +40,7 @@ const performanceTest = (text, charMap, usedPart = new Set()) => {
     };
 };
 
-const texts = JSON.parse(fs.readFileSync('./temp/merged.json', 'utf-8'));
+const texts = JSON.parse(fs.readFileSync('./data/merged.json', 'utf-8'));
 
 const baseMap = getCharMap(
     JSON.parse(fs.readFileSync('./temp/base/reporter.json', 'utf-8')),
