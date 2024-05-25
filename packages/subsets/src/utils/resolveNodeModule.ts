@@ -17,7 +17,8 @@ export const resolveNodeModule = async (path: string) => {
             return absolutePath;
         default:
             const { Module } = await import('node:module');
-            const require = Module.createRequire(import.meta.url);
-            return require.resolve(path);
+            // 使用 require 可能导致编译器判断错误
+            const r = Module.createRequire(import.meta.url);
+            return r.resolve(path);
     }
 };
