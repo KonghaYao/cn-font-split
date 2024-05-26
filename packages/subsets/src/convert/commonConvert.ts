@@ -16,4 +16,5 @@ import '../adapter/browser/URL.shim'; // 为了防止全局状态中 base 出现
 import { FontType } from '../utils/detectFormat';
 await DenoAdapter();
 //endif
+
 export { convert };
