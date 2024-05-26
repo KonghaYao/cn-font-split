@@ -1,4 +1,4 @@
-import { convert } from './convert/font-converter';
+import { convert } from './convert/commonConvert';
 import { hbjs } from './hb';
 import { Executor } from './pipeline/index';
 import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
@@ -171,7 +171,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         Bengali,
                         Devanagari,
                         Arabic,
-                        Thai
+                        Thai,
                     ]
                 ).map((rank) =>
                     rank.filter((char) => {
