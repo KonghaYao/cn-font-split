@@ -12,9 +12,9 @@
 4. 📤 Font information export, supporting tree shaking optimization
 5. 🎨 Pure CSS, no runtime data, multi-platform adaptation
 
-| Vite | Nuxt |
-| ---- | ---- |
-| ✅   | ✅   |
+| [Vite](#vite) | [Nuxt](#nuxt) | [Next](#nest-and-webpack) | [Webpack](#nest-and-webpack) |
+| ------------- | ------------- | ------------------------- | ---------------------------- |
+| ✅            | ✅            | ✅                        | ✅                           |
 
 ## 📦 Install
 
@@ -42,6 +42,50 @@ export default defineConfig({
 export default defineNuxtConfig({
     modules: ['node_modules/vite-plugin-font/src/nuxt'],
 });
+```
+
+### Nest And Webpack
+
+```js
+// next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    webpack: (config, options) => {
+        config.module.rules.push({
+            test: /\.(otf|ttf)/,
+            use: [
+                {
+                    loader: './node_modules/vite-plugin-font/dist/webpack.mjs',
+                    options: {},
+                },
+            ],
+        });
+        return config;
+    },
+};
+
+export default nextConfig;
+```
+
+```js
+// webpack.config.js
+const path = require('path');
+
+module.exports = {
+    module: {
+        rules: [
+            {
+                test: /\.(otf|ttf)/i,
+                use: [
+                    {
+                        loader: './node_modules/vite-plugin-font/dist/webpack.mjs',
+                        options: {},
+                    },
+                ],
+            },
+        ],
+    },
+};
 ```
 
 ## 🚀 Usage
