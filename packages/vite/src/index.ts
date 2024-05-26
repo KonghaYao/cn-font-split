@@ -11,6 +11,7 @@ export default function split(
     config: Partial<
         InputTemplate & {
             cacheDir?: string;
+            server?: boolean;
         }
     > = {},
 ): Plugin {
@@ -29,9 +30,9 @@ export default function split(
                 const resolvedPath = path.resolve(cacheDir!, getFileName(id));
                 let stat;
                 try {
-                    stat = fs.statSync(resolvedPath);
+                    stat = await fs.promises.stat(resolvedPath);
                 } catch (e) {}
-                if (!stat) {
+                if (!stat && config.server !== false) {
                     console.log('cn-font-split | 字体预构建中');
                     await fontSplit({
                         ...config,
@@ -39,11 +40,13 @@ export default function split(
                         destFold: resolvedPath,
                         reporter: true,
                         log(...args) {},
+                    }).catch((e) => {
+                        console.error(e);
                     });
                 } else {
                     console.log('cn-font-split | 采用缓存 | ' + resolvedPath);
                 }
-                const json = fs.readFileSync(
+                const json = await fs.promises.readFile(
                     resolvedPath + '/reporter.json',
                     'utf-8',
                 );
