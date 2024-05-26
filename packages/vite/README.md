@@ -12,9 +12,9 @@
 4. 📤 Font information export, supporting tree shaking optimization
 5. 🎨 Pure CSS, no runtime data, multi-platform adaptation
 
-| [Vite](#vite) | [Nuxt](#nuxt) | [Next](#nest-and-webpack) | [Webpack](#nest-and-webpack) |
-| ------------- | ------------- | ------------------------- | ---------------------------- |
-| ✅            | ✅            | ✅                        | ✅                           |
+| [Vite](#vite) | [Nuxt](#nuxt) | [Next](#nest-rspack-and-webpack) | [Webpack](#nest-rspack-and-webpack) | [Rspack](#nest-rspack-and-webpack) |
+| ------------- | ------------- | -------------------------------- | ----------------------------------- | ---------------------------------- |
+| ✅            | ✅            | ✅                               | ✅                                  | ✅                                 |
 
 ## 📦 Install
 
@@ -44,7 +44,7 @@ export default defineNuxtConfig({
 });
 ```
 
-### Nest And Webpack
+### Nest, Rspack And Webpack
 
 ```js
 // next.config.mjs
