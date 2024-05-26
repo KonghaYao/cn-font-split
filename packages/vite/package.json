@@ -1,14 +1,17 @@
 {
-	"version": "0.3.0",
+	"version": "0.5.0",
 	"name": "vite-plugin-font",
-	"description": "Vite plugin for bundle otf,ttf... font to webfonts",
+	"description": "auto CJK font subset for Vite and Nuxt",
 	"main": "./dist/index.js",
 	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/vite"
 	},
-	"files": ["dist", "src"],
+	"files": [
+		"dist",
+		"src"
+	],
 	"author": "KonghaYao<dongzhongzhidong@qq.com>",
 	"license": "Apache-2.0",
 	"scripts": {
@@ -19,6 +22,8 @@
 	"keywords": [
 		"vite",
 		"vite-plugin",
+		"nuxt",
+		"nuxt-plugin",
 		"web-font",
 		"webfont",
 		"vue",
@@ -46,5 +51,8 @@
 	"bugs": {
 		"url": "https://github.com/KonghaYao/cn-font-split/issues"
 	},
-	"homepage": "https://chinese-font.netlify.app"
+	"homepage": "https://chinese-font.netlify.app",
+	"optionalDependencies": {
+		"@nuxt/kit": "^3.11.2"
+	}
 }
