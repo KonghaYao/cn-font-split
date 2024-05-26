@@ -1,5 +1,5 @@
 import { addVitePlugin, defineNuxtModule } from '@nuxt/kit';
-import font from './index';
+import font from './vite';
 
 export default defineNuxtModule({
     meta: {
@@ -11,8 +11,9 @@ export default defineNuxtModule({
         if (nuxt.options._prepare) return;
         addVitePlugin(
             font({
+                ...options,
                 cacheDir: 'node_modules/.vite/.font',
-            }),
+            }) as any,
             {
                 server: true,
                 client: false,
@@ -21,9 +22,10 @@ export default defineNuxtModule({
         );
         addVitePlugin(
             font({
+                ...options,
                 cacheDir: 'node_modules/.vite/.font',
                 server: false,
-            }),
+            }) as any,
             {
                 server: false,
                 client: true,
