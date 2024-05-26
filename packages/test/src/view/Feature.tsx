@@ -18,84 +18,79 @@ export const FeatureList = () => {
                     const wasm = route?.route().searchParams.get('wasm');
                     const hb = route?.route().searchParams.get('hb');
                     const isTest = route?.route().searchParams.get('test');
+                    const renderArea = [
+                        i.featureKey,
+                        hb && i.featureKey + '-hb',
+                        wasm && i.featureKey + '-hb-wasm',
+                        !hb && !wasm && i.featureKey + '-demo',
+                    ].filter(Boolean);
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
-                            {[
-                                i.featureKey,
-                                hb && i.featureKey + '-hb',
-                                wasm && i.featureKey + '-hb-wasm',
-                                !hb && !wasm && i.featureKey + '-demo',
-                            ]
-                                .filter(Boolean)
-                                .flatMap((fontFamily) => {
-                                    return <AbsoluteLayout render={() => (
-                                        i.featureValues ?? [
-                                            'off',
-                                            'on',
-                                        ]
-                                    ).map((val, index) => {
-                                        return (
-                                            <div
-                                                class={[
+                            {renderArea.map((fontFamily) => {
+                                return (
+                                    <AbsoluteLayout
+                                        render={() =>
+                                            (
+                                                i.featureValues ?? ['off', 'on']
+                                            ).map((val, index) => {
+                                                return (
+                                                    <div
+                                                        class={[
+                                                            'clear-font-style',
+                                                            fontFamily +
+                                                                '-' +
+                                                                val,
+                                                        ].join(' ')}
+                                                        style={{
+                                                            'font-family': `"${fontFamily}"`,
+                                                            padding: '10px',
+                                                            'font-size':
+                                                                (i.fontSize ??
+                                                                    48) + 'px',
+                                                            color:
+                                                                !isTest &&
+                                                                colorSet[index],
 
-                                                    'clear-font-style',
-                                                    fontFamily +
-                                                    '-' +
-                                                    val,
-                                                ].join(' ')}
-                                                style={{
-                                                    'font-family': `"${fontFamily}"`,
-                                                    padding: "10px",
-                                                    'font-size':
-                                                        (i.fontSize ??
-                                                            48) +
-                                                        'px',
-                                                    color:
-                                                        !isTest &&
-                                                        colorSet[
-                                                        index
-                                                        ],
-
-                                                    height: i.height,
-                                                    // width: '100%',
-                                                    direction:
-                                                        i.direction ??
-                                                        'initial',
-                                                    textOrientation:
-                                                        i[
-                                                        'text-orientation'
-                                                        ],
-                                                    'writing-mode':
-                                                        i[
-                                                        'writing-mode'
-                                                        ],
-                                                    'font-feature-settings':
-                                                        `"${i.featureKey}" ${val}` +
-                                                        ((i.withFeature &&
-                                                            ',' +
-                                                            i.withFeature
-                                                                .map(
-                                                                    (
-                                                                        f,
-                                                                    ) =>
-                                                                        `"${f}"`,
-                                                                )
-                                                                .join(
-                                                                    ',',
-                                                                )) ||
-                                                            ''),
-                                                }}
-                                                lang={i.lang}
-                                            >
-                                                {i.splitText}
-                                            </div>
-                                        );
-                                    })} ></AbsoluteLayout>
-
-                                })}
-
-
+                                                            height: i.height,
+                                                            // width: '100%',
+                                                            direction:
+                                                                i.direction ??
+                                                                'initial',
+                                                            textOrientation:
+                                                                i[
+                                                                    'text-orientation'
+                                                                ],
+                                                            'writing-mode':
+                                                                i[
+                                                                    'writing-mode'
+                                                                ],
+                                                            'font-feature-settings':
+                                                                `"${i.featureKey}" ${val}` +
+                                                                ((i.withFeature &&
+                                                                    ',' +
+                                                                        i.withFeature
+                                                                            .map(
+                                                                                (
+                                                                                    f,
+                                                                                ) =>
+                                                                                    `"${f}"`,
+                                                                            )
+                                                                            .join(
+                                                                                ',',
+                                                                            )) ||
+                                                                    ''),
+                                                        }}
+                                                        lang={i.lang}
+                                                    >
+                                                        {i.splitText}
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                    ></AbsoluteLayout>
+                                );
+                            })}
 
                             {/* 加载原始字体 */}
                             <StyleForFont
