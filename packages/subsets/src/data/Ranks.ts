@@ -79,7 +79,9 @@ export const Arabic = UnicodeRange.parse(
 );
 
 export const Thai = UnicodeRange.parse(
-    'U+0E01-0E5B,U+200C-200D,U+25CC'.split(
-        ',',
-    ),
+    'U+0E01-0E5B,U+200C-200D,U+25CC'.split(','),
+);
+
+export const Khmer = UnicodeRange.parse(
+    'U+1780-17FF,U+19E0-19FF,U+200C-200D,U+25CC'.split(','),
 );
