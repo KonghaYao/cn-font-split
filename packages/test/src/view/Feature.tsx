@@ -3,7 +3,10 @@ import Features from '../../FeatureConfig.json';
 import { StyleForFont } from '../components/createStyleForFont';
 import { RouteContext } from '../simpleRoute';
 import { AbsoluteLayout } from '../components/AbsoluteLayout';
-const colorSet = ['#000000', '#00af6c'];
+const colorSet = [
+    ['#00af6c', '#00af6c'],
+    ['#2f06c2', '#2f01d2'],
+];
 export const FeatureList = () => {
     const route = useContext(RouteContext);
     return (
@@ -27,7 +30,7 @@ export const FeatureList = () => {
                     return (
                         <details open class={i.featureKey + '_total'}>
                             <summary>{i.featureKey}</summary>
-                            {renderArea.map((fontFamily) => {
+                            {renderArea.map((fontFamily, level) => {
                                 return (
                                     <AbsoluteLayout
                                         render={() =>
@@ -50,10 +53,14 @@ export const FeatureList = () => {
                                                                     48) + 'px',
                                                             color:
                                                                 !isTest &&
-                                                                colorSet[index],
+                                                                colorSet[level][
+                                                                    index
+                                                                ],
 
                                                             height: i.height,
-                                                            // width: '100%',
+                                                            'line-height':
+                                                                level === 1 &&
+                                                                i.lineHeight,
                                                             direction:
                                                                 i.direction ??
                                                                 'initial',

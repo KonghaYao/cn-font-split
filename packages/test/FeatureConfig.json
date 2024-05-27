@@ -32,6 +32,7 @@
     {
         "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/Subset/SourceHanSerifKR-VF.otf",
         "featureKey": "ljmo",
+        "lineHeight": "1.439",
         "splitText": "ᄀ\\nᄁ\\nᄂ\\nᄓ\\nᄔ\\nᄕ\\nᄖ\\nᄂᄉᄉ\\nᄂᄌᄌ\\nᄂᄒᄒ\\nᄃ\\nᄗ\\nᄄ\\nᄃᄅᄅ\\nᄃᄆᄆ\\nᄃᄇᄇ\\nᄃᄉᄉ\\nᄃᄌᄌ\\nᄅ\\nᄅᄀᄀ\\nᄅᄀᄀ\\nᄘ\\nᄅᄃᄃ\\nᄅᄃᄃ\\nᄙ\\nᄅᄆᄆ\\nᄅᄇᄇ\\nᄅᄇᄇ\\nᄅᄫᄫ\\nᄅᄉᄉ\\nᄅᄌᄌ\\nᄅᄏᄏ\\nᄚ\\nᄛ\\nᄆ\\nᄆᄀᄀ\\n"
     },
     {
@@ -544,6 +545,7 @@
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
         "featureKey": "cv03",
+        
         "splitText": "4"
     },
     {
