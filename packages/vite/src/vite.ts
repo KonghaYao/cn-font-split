@@ -2,7 +2,7 @@ import { InputTemplate } from '@konghayao/cn-font-split';
 import type { Plugin } from 'vite';
 import path from 'path';
 
-import { BundlePlugin } from '.';
+import { BundlePlugin } from './index.js';
 export default function split(
     config: Partial<
         InputTemplate & {
