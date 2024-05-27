@@ -18,6 +18,7 @@ import {
     Devanagari,
     Greek,
     GreekExt,
+    Khmer,
     Latin,
     LatinExt,
     Thai,
@@ -172,6 +173,7 @@ export const fontSplit = async (opt: InputTemplate) => {
                         Devanagari,
                         Arabic,
                         Thai,
+                        Khmer,
                     ]
                 ).map((rank) =>
                     rank.filter((char) => {
