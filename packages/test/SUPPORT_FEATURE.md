@@ -23,7 +23,7 @@
 | ✅     | abvs        | Above-base Substitutions                            |                                                               |
 | ✅     | afrc        | Alternative Fractions                               |                                                               |
 | ✅     | akhn        | Akhand                                              |                                                               |
-| ⏺️     | blwf        | Below-base Forms                                    |                                                               |
+| ⏺️     | blwf        | Below-base Forms                                    | harfbuzz 部分解析失效，部分成功                               |
 | ✅     | blwm        | Below-base Mark Positioning                         |                                                               |
 | ✅     | blws        | Below-base Substitutions                            |                                                               |
 | ✅     | calt        | Contextual Alternates                               |                                                               |
@@ -32,7 +32,7 @@
 | ❌     | cfar        | Conjunct Form After Ro                              |                                                               |
 | ❌     | chws        | Contextual Half-width Spacing                       |                                                               |
 | ✅     | cjct        | Conjunct Forms                                      |                                                               |
-| ❌     | clig        | Contextual Ligatures                                |                                                               |
+| ✅     | clig        | Contextual Ligatures                                |                                                               |
 | ⏺️     | cpct        | Centered CJK Punctuation                            | 浏览器 unicode-range 部分形态位移                             |
 | ✅     | cpsp        | Capital Spacing                                     |                                                               |
 | ✅     | cswh        | Contextual Swash                                    |                                                               |
@@ -95,7 +95,7 @@
 | ✅     | pcap        | Petite Capitals                                     |                                                               |
 | ✅     | pkna        | Proportional Kana                                   |                                                               |
 | ✅     | pnum        | Proportional Figures                                |                                                               |
-| ❌     | pref        | Pre-Base Forms                                      |                                                               |
+| ✅     | pref        | Pre-Base Forms                                      |                                                               |
 | ✅     | pres        | Pre-base Substitutions                              |                                                               |
 | ✅     | pstf        | Post-base Forms                                     |                                                               |
 | ✅     | psts        | Post-base Substitutions                             |                                                               |
