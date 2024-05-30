@@ -1,4 +1,3 @@
-import { type ReadStream } from 'fs-extra';
 import { resolveNodeModule } from '../utils/resolveNodeModule';
 import { isBrowser, isDeno, isInWorker, isNode } from '../utils/env';
 import type { IOutputFile } from '../interface';
@@ -47,12 +46,6 @@ export class AssetsMap<K extends string> extends Map<K, string> {
         throw new Error('loadFileAsync 适配环境失败');
     }
 
-    async loadFileStream(
-        token: K | string,
-    ): Promise<ReadableStream | ReadStream> {
-        const { createReadStream } = await import('fs-extra');
-        return createReadStream(this.ensureGet(token));
-    }
     /** 以 fetch 的方式进行数据传递 */
     async loadFileResponse(token: K | string): Promise<Response> {
         if (!globalThis.fetch) {
