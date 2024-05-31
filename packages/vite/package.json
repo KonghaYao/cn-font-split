@@ -1,5 +1,5 @@
 {
-	"version": "0.7.1",
+	"version": "0.7.2",
 	"name": "vite-plugin-font",
 	"description": "auto CJK font subset for Vite and Nuxt",
 	"main": "./dist/vite.js",
@@ -54,7 +54,6 @@
 	},
 	"homepage": "https://chinese-font.netlify.app",
 	"optionalDependencies": {
-		"@nuxt/kit": "^3.11.2",
-		"@nuxt/schema": "^3.11.2"
+		"@nuxt/kit": "^3.11.2"
 	}
 }
