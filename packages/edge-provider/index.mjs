@@ -11,19 +11,22 @@ Assets.pathTransform = (innerPath) =>
         './',
         'https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split/dist/browser/',
     );
+
+
 const UA =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 const kv = await Deno.openKv();
 const app = new Application();
 const router = new Router();
+
 // 上传文件并存储
 router.post('/upload', async (ctx) => {
     const buffer = await ctx.request.body.arrayBuffer();
     const name = ctx.request.headers.get('filename');
     const hash = new Md5('md5').update(buffer).toString();
-    console.log(hash);
-    const cacheURL = await kv.get([hash]);
-    console.log(cacheURL);
+    // console.log(hash);
+    const cacheURL = await kv.get(["files", hash]);
+    // console.log(cacheURL);
     if (cacheURL.value) {
         ctx.response.body = JSON.stringify({
             code: 50,
@@ -32,7 +35,7 @@ router.post('/upload', async (ctx) => {
         });
     } else {
         const url = await upload(new Blob([buffer]), name, hash);
-        await kv.set([hash], url);
+        await kv.set(["files", hash], url);
         ctx.response.body = JSON.stringify({
             code: 0,
             data: { name, hash, url },
@@ -41,7 +44,7 @@ router.post('/upload', async (ctx) => {
 });
 // kv.set(["f7ee05dd168d7623046d621c8193c336" ], "https://we.tl/t-eCzYb8ZH3m")
 const downloadFromKV = async (hash) => {
-    const url = (await kv.get([hash])).value;
+    const url = (await kv.get(['files', hash])).value;
     if (url) {
         return download(url);
     } else {
@@ -83,6 +86,9 @@ router.get('/split', async (ctx) => {
 app.use(router.routes());
 console.log('Server listening on http://localhost:8000');
 await app.listen({ port: 8000 });
+
+
+
 /**
  * download file from shortend_url
  * @param {*} shortened_url
@@ -104,7 +110,7 @@ async function download(shortened_url) {
             },
         ).then((res) => res.json());
     });
-    console.log(res.direct_link);
+    // console.log(res.direct_link);
     return fetch(res.direct_link);
 }
 /**
@@ -156,9 +162,9 @@ async function upload(file, filename, hash) {
         },
     ).then((res) => res.json());
     let authorization = transfer.storm_upload_token;
-    console.log('transfer', transfer);
+    // console.log('transfer', transfer);
     const urls = JSON.parse(atob(authorization.split('.')[1]));
-    console.log('checked', urls);
+    // console.log('checked', urls);
     authorization = 'Bearer ' + authorization;
     await fetch(urls['storm.preflight_batch_url'], {
         headers: {
@@ -194,12 +200,12 @@ async function upload(file, filename, hash) {
         credentials: 'include',
     }).then(async (res) => {
         if (res.status !== 200) {
-            console.log(await res.text());
+            // console.log(await res.text());
             throw new Error('preflict');
         }
         return res.blob();
     });
-    console.log('preflict');
+    // console.log('preflict');
     const blocks = await fetch(urls['storm.announce_blocks_url'], {
         headers: {
             accept: 'application/json',
@@ -226,7 +232,7 @@ async function upload(file, filename, hash) {
         credentials: 'include',
     }).then((res) => res.json());
     const url = blocks.data.blocks[0].presigned_put_url;
-    console.log('got upload server url');
+    // console.log('got upload server url');
     await fetch(url, {
         headers: {
             accept: '*/*',
@@ -255,7 +261,7 @@ async function upload(file, filename, hash) {
         mode: 'cors',
         credentials: 'omit',
     }).then((res) => {
-        console.log(res.status);
+        // console.log(res.status);
         if (res.status >= 300) {
             throw Error('upload failed');
         }
@@ -264,7 +270,7 @@ async function upload(file, filename, hash) {
     await new Promise((resolve) => {
         setTimeout(resolve, 3000);
     });
-    console.log('get Callback URL');
+    // console.log('get Callback URL');
     const result = await fetch(urls['storm.create_batch_url'], {
         headers: {
             accept: 'application/json',
@@ -298,7 +304,7 @@ async function upload(file, filename, hash) {
         mode: 'cors',
         credentials: 'include',
     }).then((res) => res.json());
-    console.log(result);
+    // console.log(result);
     const finalize = await fetch(
         'https://wetransfer.com/api/v4/transfers/' + transfer.id + '/finalize',
         {
@@ -331,7 +337,7 @@ async function upload(file, filename, hash) {
             method: 'PUT',
         },
     ).then((res) => res.json());
-    console.log(transfer.id);
-    console.log(finalize);
+    // console.log(transfer.id);
+    // console.log(finalize);
     return finalize.shortened_url;
 }

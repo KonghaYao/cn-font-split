@@ -1,4 +1,4 @@
-# 中文 Web Font 切割工具
+# 中文 Web Font 切割工具 cn-font-split
 
 ![updateTime](https://img.shields.io/badge/更新时间-2024/03/23-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
@@ -7,7 +7,7 @@
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
-| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/online-split/)|
+| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用 Online](https://chinese-font.netlify.app/online-split/)|
 | ------------------------------------------------- | ---------------------------------------------------- |---------------------------------------------------- |
 
 ## 简介

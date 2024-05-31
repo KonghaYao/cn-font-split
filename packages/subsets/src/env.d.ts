@@ -17,25 +17,7 @@ declare module 'omt:*' {
 declare module 'https://deno.land/std@0.170.0/node/url.ts' {
     export * from 'node:url';
 }
-declare module 'comlink/dist/esm/node-adapter.mjs' {
-    import { Endpoint } from 'comlink/dist/esm/protocol';
-    import { tinf_uncompress as inflate } from '@konghayao/opentype.js/src/tiny-inflate@1.0.3.esm.js';
-    export interface NodeEndpoint {
-        postMessage(message: any, transfer?: any[]): void;
-        on(
-            type: string,
-            listener: EventListenerOrEventListenerObject,
-            options?: {},
-        ): void;
-        off(
-            type: string,
-            listener: EventListenerOrEventListenerObject,
-            options?: {},
-        ): void;
-        start?: () => void;
-    }
-    export default function nodeEndpoint(nep: NodeEndpoint): Endpoint;
-}
+
 declare module '@konghayao/opentype.js' {
     export * from '@types/opentype.js';
 }
