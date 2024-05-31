@@ -24,7 +24,8 @@ export default defineNuxtModule({
             font({
                 ...options,
                 cacheDir: 'node_modules/.vite/.font',
-                server: false,
+                // build 状态时，会先进行 client 的 build 导致打包失败
+                server: process.env.NODE_ENV === 'production',
             }),
             {
                 server: false,
