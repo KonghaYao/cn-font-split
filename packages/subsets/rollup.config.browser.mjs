@@ -1,4 +1,3 @@
-import analyze from 'rollup-plugin-analyzer';
 import common from '@rollup/plugin-commonjs';
 import fse from 'fs-extra';
 import resolve from '@rollup/plugin-node-resolve';
@@ -72,10 +71,5 @@ export default {
             preferBuiltins: true,
         }),
 
-        analyze({
-            summaryOnly: true,
-            writeTo: (str) =>
-                fse.outputFileSync('dist/browser/index.analyze.txt', str),
-        }),
     ],
 };
