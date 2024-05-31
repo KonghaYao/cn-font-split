@@ -14,7 +14,7 @@ export class BundlePlugin {
                 server?: boolean;
             }
         > = {},
-    ) {}
+    ) { }
     getResolvedPath(p: string) {
         return path.resolve(this.config.cacheDir!, getFileName(p));
     }
@@ -36,23 +36,26 @@ export class BundlePlugin {
     }
     async createBundle(p: string) {
         const resolvedPath = this.getResolvedPath(p);
-        let stat;
+        let stat: boolean;
         try {
-            stat = await fs.promises.stat(resolvedPath);
-        } catch (e) {}
+            await fs.promises.access(resolvedPath);
+            stat = true
+        } catch (e) {
+            stat = false
+        }
         if (!stat && this.config.server !== false) {
-            console.log('cn-font-split | 字体预构建中');
+            console.log('vite-plugin-font | font pre-building');
             await fontSplit({
                 ...this.config,
                 FontPath: p,
                 destFold: resolvedPath,
                 reporter: true,
-                log() {},
+                log() { },
             }).catch((e) => {
                 console.error(e);
             });
         } else {
-            console.log('cn-font-split | 采用缓存 | ' + resolvedPath);
+            console.log('vite-plugin-font | using cache | ' + resolvedPath);
         }
     }
 }
