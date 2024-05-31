@@ -13,7 +13,7 @@ export default defineNuxtModule({
             font({
                 ...options,
                 cacheDir: 'node_modules/.vite/.font',
-            }) as any,
+            }),
             {
                 server: true,
                 client: false,
@@ -25,7 +25,7 @@ export default defineNuxtModule({
                 ...options,
                 cacheDir: 'node_modules/.vite/.font',
                 server: false,
-            }) as any,
+            }),
             {
                 server: false,
                 client: true,
