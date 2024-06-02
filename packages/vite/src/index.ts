@@ -1,20 +1,36 @@
-import { InputTemplate, fontSplit } from '@konghayao/cn-font-split';
+import { InputTemplate, Subsets, fontSplit } from '@konghayao/cn-font-split';
 import path from 'path';
 import fs from 'fs';
 
 function getFileName(id: string) {
     return path.basename(id).replace(/\./g, '_');
 }
+function chunk(arr?: number[], size = 500) {
+    if (arr) {
+        let result = [];
+        for (let i = 0; i < arr.length; i += size) {
+            result.push(arr.slice(i, i + size));
+        }
+
+        return result;
+    } else {
+        return;
+    }
+}
+
+export type BundlePluginConfig = Partial<
+    InputTemplate & {
+        cacheDir?: string;
+        server?: boolean;
+    }
+>;
 
 export class BundlePlugin {
     constructor(
-        public config: Partial<
-            InputTemplate & {
-                cacheDir?: string;
-                server?: boolean;
-            }
-        > = {},
-    ) { }
+        public config: BundlePluginConfig = {},
+        public subsets: number[][] | undefined = undefined,
+    ) {}
+
     getResolvedPath(p: string) {
         return path.resolve(this.config.cacheDir!, getFileName(p));
     }
@@ -39,9 +55,9 @@ export class BundlePlugin {
         let stat: boolean;
         try {
             await fs.promises.access(resolvedPath);
-            stat = true
+            stat = true;
         } catch (e) {
-            stat = false
+            stat = false;
         }
         if (!stat && this.config.server !== false) {
             console.log('vite-plugin-font | font pre-building');
@@ -50,7 +66,9 @@ export class BundlePlugin {
                 FontPath: p,
                 destFold: resolvedPath,
                 reporter: true,
-                log() { },
+                autoChunk: !this.subsets,
+                subsets: chunk(this.subsets?.flat()),
+                log() {},
             }).catch((e) => {
                 console.error(e);
             });

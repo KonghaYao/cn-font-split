@@ -19,7 +19,7 @@ export default function split(
             plugin.config.cacheDir =
                 config.cacheDir ?? path.resolve(c.cacheDir, './.font/');
             console.log(
-                'cn-font-split | 字体构建缓存地址 | ' + plugin.config.cacheDir,
+                'vite-plugin-font | cache dir | ' + plugin.config.cacheDir,
             );
         },
         async load(id, options) {
