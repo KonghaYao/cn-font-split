@@ -13,12 +13,12 @@ export type Step<CTX> = (ctx: CTX) => void | Promise<void>;
 
 export class Executor<
     T extends Step<CTX> | Parallel<CTX>,
-    CTX extends Context<unknown>
+    CTX extends Context<unknown>,
 > {
     constructor(
         /** 定义每一个运行步骤的函数 */
         private steps: T[],
-        public context: CTX
+        public context: CTX,
     ) {}
 
     /**
@@ -43,7 +43,7 @@ export class Executor<
         return {
             start,
             p: (async () => task(this.context))().then(() =>
-                this.endTask({ start, task })
+                this.endTask({ start, task }),
             ),
             task,
         };
@@ -51,7 +51,11 @@ export class Executor<
     endTask({ start, task }: { start: number; task: Step<CTX> }) {
         const end = performance.now();
         this.context.info(
-            '<--\t' + (end - start).toFixed(0) + 'ms\t' + task.name + '\tDone\t'
+            '<--\t' +
+                (end - start).toFixed(0) +
+                'ms\t' +
+                task.name +
+                '\tDone\t',
         );
 
         const record: PerformanceRecord = { name: task.name, start, end };
@@ -72,7 +76,7 @@ export class Executor<
         } else if (task instanceof Parallel) {
             const pending = this.concurrentMap.get(task.to) ?? [];
             pending.push(
-                this.startTask(task.task) as ReturnType<this['startTask']>
+                this.startTask(task.task) as ReturnType<this['startTask']>,
             );
             this.concurrentMap.set(task.to, pending);
             return true;
@@ -84,7 +88,7 @@ export class Executor<
     async run(
         /**
          * 当任务执行次数超过这个倍数时将会跳出循环并且报错 */
-        maxStepsOver = 1.5
+        maxStepsOver = 1.5,
     ) {
         if (!this.steps)
             throw new Error('run: Please defineOrder for the tasks');

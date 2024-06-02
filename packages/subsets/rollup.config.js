@@ -1,4 +1,3 @@
-import analyze from 'rollup-plugin-analyzer';
 import fse from 'fs-extra';
 import resolve from '@rollup/plugin-node-resolve';
 import condition from '@forsee/rollup-plugin-conditional';
@@ -22,10 +21,6 @@ export default {
         resolve({
             extensions: ['.ts', '.html'],
             moduleDirectories: [],
-        }),
-        analyze({
-            summaryOnly: true,
-            writeTo: (str) => fse.outputFileSync('dist/index.analyze.txt', str),
         }),
     ],
 };

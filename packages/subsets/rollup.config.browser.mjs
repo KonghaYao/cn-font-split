@@ -1,4 +1,3 @@
-import analyze from 'rollup-plugin-analyzer';
 import common from '@rollup/plugin-commonjs';
 import fse from 'fs-extra';
 import resolve from '@rollup/plugin-node-resolve';
@@ -37,7 +36,7 @@ await Promise.all(
         ].map((i) => require.resolve(i)),
     ].map((i) => {
         return fse.copy(i, './dist/browser/' + path.basename(i));
-    })
+    }),
 );
 import { createTypeForBrowser } from './scripts/createTypeForBrowser.mjs';
 
@@ -72,10 +71,5 @@ export default {
             preferBuiltins: true,
         }),
 
-        analyze({
-            summaryOnly: true,
-            writeTo: (str) =>
-                fse.outputFileSync('dist/browser/index.analyze.txt', str),
-        }),
     ],
 };

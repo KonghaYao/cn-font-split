@@ -12,7 +12,7 @@ import {
 export const convert = async function (
     buffer: Uint8Array,
     toFormat: FontType,
-    fromFormat?: FontType
+    fromFormat?: FontType,
 ) {
     const snft = ['truetype', 'ttf', 'otf'];
     if (snft.includes(toFormat)) {

@@ -23,7 +23,7 @@ try {
             if (url.host === 'a')
                 return (async () => {
                     const path = fileURLToPath(
-                        decodeURIComponent(url.hash.slice(1))
+                        decodeURIComponent(url.hash.slice(1)),
                     );
 
                     const item = cache.has(path)

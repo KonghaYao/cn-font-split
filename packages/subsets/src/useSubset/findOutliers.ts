@@ -1,12 +1,12 @@
 export function findOutliers(
     origin_data: number[][],
     data: number[],
-    threshold = 3
+    threshold = 3,
 ) {
     const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
     const std = Math.sqrt(
         data.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) /
-            (data.length - 1)
+            (data.length - 1),
     );
     const outliers: number[][] = [];
     const bigger: number[][] = [];

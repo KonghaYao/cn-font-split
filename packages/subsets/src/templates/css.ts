@@ -33,7 +33,7 @@ export const createCSS = (
         css.fontFamily || fontData.fontFamily;
 
     const preferredSubFamily =
-        fontData.preferredSubFamily || fontData.fontSubFamily || '';
+        fontData.preferredSubFamily || fontData.fontSubFamily || fontData.fontSubfamily || '';
 
     const style =
         css.fontStyle || (isItalic(preferredSubFamily) ? 'italic' : 'normal');
@@ -58,6 +58,7 @@ export const createCSS = (
               ) ?? [];
 
     const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
+    const display = css.fontDisplay || 'swap';
     const cssStyleSheet = subsetResult
         //  反转数组，使得 feature 在后面覆盖前面的 feature
         .reverse()
@@ -76,7 +77,7 @@ src:${[
             ].join(',')};
 font-style: ${style};
 ${css.fontWeight !== false ? `font-weight: ${weight};` : ''}
-font-display: ${css.fontDisplay || 'swap'};
+font-display: ${display};
 unicode-range:${unicodeRange};
 }`; // css 这个句尾不需要分号😭
             const comment =
@@ -90,7 +91,7 @@ unicode-range:${unicodeRange};
         })
         .join('\n');
     const header = createHeaderComment(fontData, opts);
-    return header + cssStyleSheet;
+    return { css: header + cssStyleSheet, family, style, weight, display };
 };
 function createLocalsString(
     css: NonNullable<InputTemplate['css']>,

@@ -13,7 +13,7 @@ interface Deno {
     writeFile(
         path: string | URL,
         data: Uint8Array | ReadableStream<Uint8Array>,
-        options?: WriteFileOptions
+        options?: WriteFileOptions,
     ): Promise<void>;
 }
 declare global {

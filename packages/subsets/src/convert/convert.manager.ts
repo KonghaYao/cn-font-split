@@ -1,8 +1,8 @@
 import WORKER_URL from 'omt:./convert.worker';
-import { WorkerPool, WorkerPoolOptions, pool } from 'workerpool';
+import { Pool, WorkerPoolOptions, pool } from 'workerpool';
 import { WorkerURLWrapper } from '../utils/WorkerURLWrapper';
 export class ConvertManager {
-    pool: WorkerPool;
+    pool: Pool;
     constructor(options?: WorkerPoolOptions) {
         this.pool = pool(WorkerURLWrapper('./' + WORKER_URL), {
             ...options,

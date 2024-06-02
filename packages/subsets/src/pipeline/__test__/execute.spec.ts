@@ -18,7 +18,7 @@ test('Executor ', async () => {
                 expect(nickname).toBe('konghayao');
             },
         ],
-        new Context<{ tag: number; nickname: string }>({ tag: 2019 })
+        new Context<{ tag: number; nickname: string }>({ tag: 2019 }),
     );
     await exec.run();
 });

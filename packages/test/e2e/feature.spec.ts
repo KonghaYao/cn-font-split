@@ -15,15 +15,23 @@ for (const iterator of features) {
         // 测试 harfbuzz wasm 版本只需要将 -demo 替换为 -hb-wasm 即可
         await compareElAndSave(
             page,
-            '.' + iterator.featureKey + '-demo',
-            // '.' + iterator.featureKey + '-hb',
-            // '.' + iterator.featureKey + '-hb-wasm',
-            '.' + iterator.featureKey,
+            '.' + iterator.featureKey + '-demo-on',
+            '.' + iterator.featureKey + "-on",
             './temp/' +
-                iterator.featureKey +
-                '/' +
-                iterator.featureKey +
-                '-diff.png',
+            iterator.featureKey +
+            '/' +
+            iterator.featureKey +
+            '-on-diff.png',
+        );
+        await compareElAndSave(
+            page,
+            '.' + iterator.featureKey + '-demo-off',
+            '.' + iterator.featureKey + "-off",
+            './temp/' +
+            iterator.featureKey +
+            '/' +
+            iterator.featureKey +
+            '-off-diff.png',
         );
     });
 }

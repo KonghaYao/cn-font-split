@@ -17,10 +17,11 @@ const singleFontWeightName = new Map([
 ]);
 
 export const subFamilyToWeight = (str: string) => {
+    str = str.toLowerCase();
     const name = [...doubleFontWeightName.keys()].find((i) => str.includes(i));
     if (name) return doubleFontWeightName.get(name);
     const singleName = [...singleFontWeightName.keys()].find((i) =>
-        str.includes(i)
+        str.includes(i),
     );
     if (singleName) return singleFontWeightName.get(singleName);
     return 400;

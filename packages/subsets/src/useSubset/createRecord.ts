@@ -8,7 +8,7 @@ export async function createRecord(
     chunk: number[],
     subset: number[],
     input: InputTemplate,
-    index: number
+    index: number,
 ): Promise<SubsetResult[0]> {
     const renameOutputFont = input.renameOutputFont || '[hash][ext]';
     const replaceProps: ReplaceProps = {

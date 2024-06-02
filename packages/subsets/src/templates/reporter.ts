@@ -1,6 +1,7 @@
 import { InputTemplate, SubsetResult } from '../interface';
 import { PerformanceRecord } from '../pipeline/executor';
 import { env } from '../utils/env';
+import { createCSS } from './css';
 import { getDeviceMessage } from './device';
 export type ReporterFile = ReturnType<typeof createReporter>;
 export type NameTable = Record<string, string | { en: string }>;
@@ -23,7 +24,8 @@ export const createReporter = async (
     nameTable: NameTable,
     input: InputTemplate,
     record: PerformanceRecord[],
-    bundleMessage: BundleReporter
+    bundleMessage: BundleReporter,
+    css: Omit<ReturnType<typeof createCSS>, 'css'>,
 ) => {
     const data = subsetResult.map((i) => {
         return {
@@ -55,5 +57,6 @@ export const createReporter = async (
             ...(await getDeviceMessage(env)),
         },
         bundleMessage,
+        css,
     };
 };

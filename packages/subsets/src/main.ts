@@ -1,4 +1,4 @@
-import { convert } from './convert/font-converter';
+import { convert } from './convert/commonConvert';
 import { hbjs } from './hb';
 import { Executor } from './pipeline/index';
 import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
@@ -10,11 +10,25 @@ import { BundleReporter, createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
 import { useSubset, getAutoSubset } from './useSubset/index';
-import { Latin, getCN_SC_Rank } from './data/Ranks';
+import {
+    Arabic,
+    Bengali,
+    Cyrillic,
+    CyrillicExt,
+    Devanagari,
+    Greek,
+    GreekExt,
+    Khmer,
+    Latin,
+    LatinExt,
+    Thai,
+    Vietnamese,
+    getCN_SC_Rank,
+} from './data/Ranks';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
-import { makeImage } from './makeImage/index';
+import { makeImage } from 'font-sharp/dist/font-sharp/src/makeImage.js';
 import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
 import { forceSubset } from './subsetService/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
@@ -146,7 +160,21 @@ export const fontSplit = async (opt: InputTemplate) => {
                 ); //3
                 /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
                 const autoForceBundle: number[][] = (
-                    opt.unicodeRank ?? [Latin, await getCN_SC_Rank()]
+                    opt.unicodeRank ?? [
+                        Latin,
+                        LatinExt,
+                        Vietnamese,
+                        Greek,
+                        GreekExt,
+                        Cyrillic,
+                        CyrillicExt,
+                        await getCN_SC_Rank(),
+                        Bengali,
+                        Devanagari,
+                        Arabic,
+                        Thai,
+                        Khmer,
+                    ]
                 ).map((rank) =>
                     rank.filter((char) => {
                         const isIn = AllUnicodeSet.has(char);
@@ -280,8 +308,9 @@ export const fontSplit = async (opt: InputTemplate) => {
                         input.destFold,
                         input.cssFileName ?? 'result.css',
                     ),
-                    css,
+                    css.css,
                 );
+                ctx.set('cssMessage', css);
             },
             async function outputHTML(ctx) {
                 const { input } = ctx.pick('input');
@@ -297,25 +326,38 @@ export const fontSplit = async (opt: InputTemplate) => {
                 }
             },
             async function outputReporter(ctx) {
-                const { nameTable, subsetResult, input, bundleMessage } =
-                    ctx.pick(
-                        'input',
-                        'nameTable',
-                        'subsetResult',
-                        'bundleMessage',
-                    );
+                const {
+                    nameTable,
+                    subsetResult,
+                    input,
+                    bundleMessage,
+                    cssMessage,
+                } = ctx.pick(
+                    'input',
+                    'nameTable',
+                    'subsetResult',
+                    'bundleMessage',
+                    'cssMessage',
+                );
                 if (!(input.testHTML === false && input.reporter === false)) {
+                    /** @ts-ignore */
+                    delete cssMessage.css;
                     const reporter = await createReporter(
                         subsetResult,
                         nameTable,
                         input,
                         exec.records,
                         bundleMessage as BundleReporter,
+                        cssMessage,
                     );
                     await outputFile(
                         path.join(input.destFold, 'reporter.json'),
                         JSON.stringify(reporter),
                     );
+                    ctx.set('reporter', reporter);
+                } else {
+                    /** @ts-ignore */
+                    ctx.set('reporter', undefined); // 防止识别失败报错
                 }
             },
             async function Clear(ctx) {
@@ -326,4 +368,6 @@ export const fontSplit = async (opt: InputTemplate) => {
         createContext(opt),
     );
     const ctx = await exec.run();
+    const { reporter } = ctx.pick('reporter');
+    return reporter;
 };

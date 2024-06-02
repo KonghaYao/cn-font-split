@@ -12,12 +12,13 @@ export const resolveNodeModule = async (path: string) => {
             const { fileURLToPath } = await import('node:url');
             const absolutePath = resolve(
                 dirname(fileURLToPath(import.meta.url)),
-                path.slice(1)
+                path.slice(1),
             );
             return absolutePath;
         default:
-            const { default: module } = await import('node:module');
-            const require = module.createRequire(import.meta.url);
-            return require.resolve(path);
+            const { Module } = await import('node:module');
+            // 使用 require 可能导致编译器判断错误
+            const r = Module.createRequire(import.meta.url);
+            return r.resolve(path);
     }
 };

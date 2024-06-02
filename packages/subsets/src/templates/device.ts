@@ -23,10 +23,9 @@ export interface DeviceMessage {
 }
 
 export const getDeviceMessage = async (
-    env: typeof ENV
+    env: typeof ENV,
 ): Promise<DeviceMessage | undefined> => {
     if (env === 'browser') return getBrowserDeviceMessage();
     if (env === 'node') return getNodeDeviceMessage();
     if (env === 'deno') return getDenoDeviceMessage();
-
 };
