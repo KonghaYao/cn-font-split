@@ -1,5 +1,5 @@
 {
-	"version": "0.7.2",
+	"version": "0.8.0",
 	"name": "vite-plugin-font",
 	"description": "auto CJK font subset for Vite and Nuxt",
 	"main": "./dist/vite.js",
@@ -47,7 +47,8 @@
 		"vite": "^5"
 	},
 	"dependencies": {
-		"@konghayao/cn-font-split": "workspace:^"
+		"@konghayao/cn-font-split": "workspace:^",
+		"glob": "^10.4.1"
 	},
 	"bugs": {
 		"url": "https://github.com/KonghaYao/cn-font-split/issues"
