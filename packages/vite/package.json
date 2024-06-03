@@ -1,7 +1,7 @@
 {
 	"version": "0.9.0",
 	"name": "vite-plugin-font",
-	"description": "auto CJK font subset for Vite and Nuxt",
+	"description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
 	"main": "./dist/vite.js",
 	"type": "module",
 	"repository": {
@@ -16,8 +16,9 @@
 	"license": "Apache-2.0",
 	"scripts": {
 		"build": "tsc -p tsconfig.node.json || echo 2",
+		"test": "node test/build.test.mjs",
 		"dev": "vite",
-		"prepublish": "pnpm build"
+		"prepublish": "pnpm test && pnpm build"
 	},
 	"keywords": [
 		"vite",
