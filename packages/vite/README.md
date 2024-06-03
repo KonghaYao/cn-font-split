@@ -1,20 +1,27 @@
-# 🔠 vite-plugin-font ⚡
+# 🔠  vite-plugin-font ⚡
 
 [中文](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README.md)
 
-[vite-plugin-font](https://www.npmjs.com/package/vite-plugin-font) is a font building tool for [Chinese web fonts project(中文网字计划)](https://chinese-font.netlify.app) supported by Vite. It can split large fonts into Webfonts, with powerful performance and simplicity. vite-plugin-font is supported by [cn-font-split](https://www.npmjs.com/package/cn-font-split).
+[vite-plugin-font](https://www.npmjs.com/package/vite-plugin-font) is a font building tool for Webfonts that supports the [Chinese Font Splitting Project](https://chinese-font.netlify.app) and is optimized for performance and simplicity. It can split large fonts into Webfonts. 
+
+We provide both a [minimal optimization](#minimal-optimization) plan for first-screen optimization and a full optimization plan for large text sites, achieving the ultimate optimization of Chinese fonts in the front-end toolchain.
 
 ## ⚡ Feature
 
-1. ⚙️ Automatic CJK font segmentation, extremely fast loading on demand
-2. 🔄 Automatic font conversion to woff2, no need to worry about size
-3. 🌐 Automatic addition of local adaptation, reducing CLS
-4. 📤 Font information export, supporting tree shaking optimization
-5. 🎨 Pure CSS, no runtime data, multi-platform adaptation
+1. ⚙️ Automatic CJK (Chinese, Japanese, and Korean) font splitting, with extremely fast on-demand loading speed
+2. 🚀 Automatically optimize the first screen based on the characters used in the project
+3. 🔄 Automatically convert fonts to the woff2 format, so you don't have to worry about size issues
+4. 🌐 Automatically add local adaptation to reduce content displacement accumulation, with SSR support
+5. 📤 Export font information to support tree shaking optimization
+6. 🎨 Pure CSS, no runtime data, multi-platform adaptation
 
-| [Vite](#vite) | [Nuxt](#nuxt) | [Next](#nest-rspack-and-webpack) | [Webpack](#nest-rspack-and-webpack) | [Rspack](#nest-rspack-and-webpack) |
-| ------------- | ------------- | -------------------------------- | ----------------------------------- | ---------------------------------- |
-| ✅            | ✅            | ✅                               | ✅                                  | ✅                                 |
+| Type                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack](#webpack) |
+| ----------------------------- | -------------------------- | ------------- | ------------- | ------------------- |
+| Full optimization                    | ✅                         | ✅            | ✅            | ✅                  |
+| [Minimal optimization](#minimal-optimization) | ✅                         | ⭕            | ⭕            | ⭕                  |
+
+> 1. Full optimization is suitable for blogs and documentation websites that require a large amount of uncertain text. It can achieve full font rendering and has excellent caching performance when used with CDNs.
+> 2. [Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
 
 ## 📦 Install
 
@@ -25,6 +32,8 @@ npm i -D vite-plugin-font
 ## ✨ Config
 
 ### Vite
+
+> Almost all frameworks that use Vite as the underlying compilation framework can use `vite-plugin-font` by defining `plugins`.
 
 ```js
 // vite.config.js
@@ -44,7 +53,7 @@ export default defineNuxtConfig({
 });
 ```
 
-### Nest, Rspack And Webpack
+### Next
 
 ```js
 // next.config.mjs
@@ -66,6 +75,8 @@ const nextConfig = {
 
 export default nextConfig;
 ```
+
+### Webpack
 
 ```js
 // webpack.config.js
@@ -91,7 +102,7 @@ module.exports = {
 ## 🚀 Usage
 
 ```jsx
-// Automatically inject CSS to import fonts, and support tree shaking optimization of font information!
+// Automatically inject CSS to import fonts and support tree shaking optimization of font information!
 import { css } from '../../demo/public/SmileySans-Oblique.ttf'; // Directly import font files
 console.log(css.family, css.weight); // You can get CSS-related data from here
 
@@ -99,14 +110,53 @@ export const App = () => {
     return (
         <div
             style={{
-                fontFamily: `"${css.family}"`,
+                fontFamily: css.family,
             }}
         ></div>
     );
 };
 ```
 
-## Typescript Support
+## Minimal Optimization
+
+[Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
+
+> Add the `fontSubsets` minimal optimization plugin.
+
+```js
+// vite.config.js
+import { defineConfig } from 'vite';
+import viteFont, { fontSubsets } from 'vite-plugin-font';
+export default defineConfig({
+    plugins: [
+        viteFont(), // This plugin achieves full optimization.
+        fontSubsets({
+            scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'],
+        }), // This plugin achieves minimal optimization.
+    ],
+});
+```
+
+> Add `?subsets` to your links.
+
+```diff
+// Automatically inject CSS to import fonts and support tree shaking optimization of font information!
+- import { css } from '../../demo/public/SmileySans-Oblique.ttf';
++ import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets';
+console.log(css.family, css.weight); // You can get CSS-related data from here
+
+export const App = () => {
+    return (
+        <div
+            style={{
+                fontFamily: css.family,
+            }}
+        ></div>
+    );
+};
+```
+
+## Typescript support
 
 The source code includes the `src/font.d.ts` file, which you can add to your `tsconfig.json`.
 
@@ -118,6 +168,6 @@ The source code includes the `src/font.d.ts` file, which you can add to your `ts
 }
 ```
 
-## Input Parameters
+## Input parameters
 
-Please refer to the usage instructions of [cn-font-split](https://www.npmjs.com/package/cn-font-split) for input parameters, most of which are common.
+See the [Chinese Font Splitting Project](https://www.npmjs.com/package/cn-font-split) documentation for input parameters. Most parameters are universal.
