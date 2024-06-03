@@ -15,7 +15,7 @@ We provide both a [minimal optimization](#minimal-optimization) plan for first-s
 5. 📤 Export font information to support tree shaking optimization
 6. 🎨 Pure CSS, no runtime data, multi-platform adaptation
 
-| Type                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack](#webpack) |
+| Type                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack, Rspack](#webpack) |
 | ----------------------------- | -------------------------- | ------------- | ------------- | ------------------- |
 | Full optimization                    | ✅                         | ✅            | ✅            | ✅                  |
 | [Minimal optimization](#minimal-optimization) | ✅                         | ⭕            | ⭕            | ⭕                  |
@@ -50,6 +50,9 @@ export default defineConfig({
 // nuxt.config.ts
 export default defineNuxtConfig({
     modules: ['node_modules/vite-plugin-font/src/nuxt'],
+    fontSplit: {
+        scanFiles: ["pages/**/*.{vue,ts,tsx,js,jsx}"]
+    }
 });
 ```
 
@@ -79,7 +82,7 @@ export default nextConfig;
 ### Webpack
 
 ```js
-// webpack.config.js
+// webpack.config.js or rspack.config.js
 const path = require('path');
 
 module.exports = {
@@ -121,7 +124,7 @@ export const App = () => {
 
 [Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
 
-> Add the `fontSubsets` minimal optimization plugin.
+> Add `scanFiles`
 
 ```js
 // vite.config.js
