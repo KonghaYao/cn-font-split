@@ -129,10 +129,9 @@ import { defineConfig } from 'vite';
 import viteFont, { fontSubsets } from 'vite-plugin-font';
 export default defineConfig({
     plugins: [
-        viteFont(), // 这个插件实现全量级优化
-        fontSubsets({
+        viteFont({
             scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'],
-        }), // 这个插件实现极小量级优化
+        }), 
     ],
 });
 ```

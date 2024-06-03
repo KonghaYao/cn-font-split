@@ -2,7 +2,7 @@ import { InputTemplate, Subsets, fontSplit } from '@konghayao/cn-font-split';
 import path from 'path';
 import fs from 'fs';
 
-function getFileName(id: string) {
+export function getFileName(id: string) {
     return path.basename(id).replace(/\./g, '_');
 }
 function chunk(arr?: number[], size = 500) {
@@ -19,20 +19,20 @@ function chunk(arr?: number[], size = 500) {
 }
 
 export type BundlePluginConfig = Partial<
-    InputTemplate & {
-        cacheDir?: string;
-        server?: boolean;
-    }
->;
+    InputTemplate
+> & {
+    cacheDir: string;
+    server?: boolean;
+};
 
 export class BundlePlugin {
+    public subsets: number[][] | undefined = undefined
     constructor(
-        public config: BundlePluginConfig = {},
-        public subsets: number[][] | undefined = undefined,
-    ) {}
+        public config: BundlePluginConfig,
+    ) { }
 
     getResolvedPath(p: string) {
-        return path.resolve(this.config.cacheDir!, getFileName(p));
+        return path.resolve(this.config.cacheDir, getFileName(p));
     }
     async createSourceCode(p: string) {
         const resolvedPath = this.getResolvedPath(p);
@@ -50,7 +50,7 @@ export class BundlePlugin {
             .join('\n');
         return `import '${resolvedPath}/result.css';` + code;
     }
-    async createBundle(p: string) {
+    async createBundle(p: string,  mode: "full" | "subsets" = 'full') {
         const resolvedPath = this.getResolvedPath(p);
         let stat: boolean;
         try {
@@ -63,12 +63,12 @@ export class BundlePlugin {
             console.log('vite-plugin-font | font pre-building');
             await fontSplit({
                 ...this.config,
-                FontPath: p,
+                FontPath: p.split("?")[0],
                 destFold: resolvedPath,
                 reporter: true,
                 autoChunk: !this.subsets,
-                subsets: chunk(this.subsets?.flat()),
-                log() {},
+                subsets: mode !== 'full' ? chunk(this.subsets?.flat()) : undefined,
+                log() { },
             }).catch((e) => {
                 console.error(e);
             });

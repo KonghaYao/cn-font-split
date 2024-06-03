@@ -126,13 +126,12 @@ export const App = () => {
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import viteFont, { fontSubsets } from 'vite-plugin-font';
+import viteFont from 'vite-plugin-font';
 export default defineConfig({
     plugins: [
-        viteFont(), // This plugin achieves full optimization.
-        fontSubsets({
-            scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'],
-        }), // This plugin achieves minimal optimization.
+        viteFont({
+            scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'], // add this
+        }), 
     ],
 });
 ```
