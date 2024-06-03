@@ -3,7 +3,7 @@ import Plugin from './src/vite';
 export default defineConfig({
     plugins: [
         Plugin({
-            scanFiles: ['test/**/*.{json,js,jsx,ts,tsx,vue}']
+            scanFiles: ['src/**/*.{json,js,jsx,ts,tsx,vue}']
         })
     ],
     build: {
