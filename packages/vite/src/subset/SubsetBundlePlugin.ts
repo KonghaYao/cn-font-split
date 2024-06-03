@@ -1,32 +1,58 @@
-import { BundlePlugin, BundlePluginConfig } from '../index.js';
+import { BundlePlugin, BundlePluginConfig, getFileName } from '../index.js';
 import { glob } from 'glob';
 import fs from 'fs';
 import crypto from 'node:crypto';
+import path from 'path'
+
 export interface SubsetBundlePluginConfig extends BundlePluginConfig {
-    scanFiles: string | string[];
+    scanFiles?: string | string[];
     ignore?: string | string[];
     whiteList?: string | string[];
 }
+
+
+
 export class SubsetBundlePlugin extends BundlePlugin {
     subsetConfig: SubsetBundlePluginConfig;
     constructor(config: SubsetBundlePluginConfig) {
         super(config);
         this.subsetConfig = config;
+        this.subsetCacheDir = config.cacheDir
     }
 
     usedSubsets = new Set<number>();
-    async createSubsets() {
+    subsetCacheDir: string
+    getResolvedPath(p: string) {
+        const { isSubset, idString } = this.isSubsetLink(p)
+        return path.resolve(isSubset ? this.subsetCacheDir : this.config.cacheDir, getFileName(idString));
+    }
+    isSubsetLink(p: string) {
+        const [idString, params] = p.split('?');
+        const searchParams = new URLSearchParams(params)
+        const isSubset = searchParams.has('subsets')
+        return { idString, isSubset, searchParams }
+    }
+    async createSubsets(p: string) {
+        const { isSubset } = this.isSubsetLink(p)
+        if (!isSubset) return;
+        console.log("vite-plugin-font | Minimal Mode")
         this.getWhiteListSubsets();
         await this.getScanFiles();
         const subsetsArr = [...this.usedSubsets].sort((a, b) => a - b);
         this.subsets = [subsetsArr];
-        return crypto
+        const hash = crypto
             .createHash('md5')
             .update(String.fromCharCode(...subsetsArr))
             .digest('hex');
+        // 修改缓存地址，达到缓存
+        this.subsetCacheDir = path.resolve(
+            this.config.cacheDir,
+            hash,
+        );
+        return hash
     }
-    async getScanFiles() {
-        const files = await glob(this.subsetConfig.scanFiles, {
+    private async getScanFiles() {
+        const files = await glob(this.subsetConfig.scanFiles!, {
             absolute: true,
             nodir: true,
             ignore: this.subsetConfig.ignore ?? ['node_modules/**'],
@@ -52,7 +78,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
             }),
         );
     }
-    getWhiteListSubsets() {
+    private getWhiteListSubsets() {
         let whiteList = this.subsetConfig.whiteList ?? [];
         if (!(whiteList instanceof Array)) {
             whiteList = [whiteList];

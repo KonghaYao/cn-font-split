@@ -14,6 +14,8 @@
 
 `cn-font-split` 是 **[中文网字计划](https://chinese-font.netlify.app/)** 所使用的字体分包工具，通过高性能的各种技术将庞大的字体包拆分为适合网络分发的版本。经过四个版本的字体研究与代码迭代，这项技术在我们的网站中得到了充分的应用，实现了中文字体在 Web 领域的加载速度与效率的双飞跃。
 
+[vite-font-split | 一款支持Vite、Next、Nuxt 的前端字体插件](https://www.npmjs.com/package/vite-plugin-font)
+
 比快更快，比强更强。
 
 -   🚀 `自研多线程`+ (`WebAssembly`｜`Native`) 分包速度极快；

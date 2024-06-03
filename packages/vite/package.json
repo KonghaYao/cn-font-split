@@ -1,5 +1,5 @@
 {
-	"version": "0.8.2",
+	"version": "0.9.0",
 	"name": "vite-plugin-font",
 	"description": "auto CJK font subset for Vite and Nuxt",
 	"main": "./dist/vite.js",

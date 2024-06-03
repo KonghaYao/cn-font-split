@@ -67,7 +67,7 @@
     "include": [
         "src/index.ts",
         "src/font.d.ts",
-        "test/index.ts"
+        "example/*.ts"
     ],
     "exclude": [
         "*.spec.ts"
