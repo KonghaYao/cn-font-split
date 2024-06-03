@@ -3,6 +3,7 @@ import type { Plugin } from 'vite';
 import path from 'path';
 
 import { BundlePlugin } from './index.js';
+export { default as fontSubsets } from './subset/vite.js'
 export default function split(
     config: Partial<
         InputTemplate & {
