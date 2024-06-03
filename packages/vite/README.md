@@ -15,10 +15,10 @@ We provide both a [minimal optimization](#minimal-optimization) plan for first-s
 5. 📤 Export font information to support tree shaking optimization
 6. 🎨 Pure CSS, no runtime data, multi-platform adaptation
 
-| Type                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack, Rspack](#webpack) |
-| ----------------------------- | -------------------------- | ------------- | ------------- | ------------------- |
-| Full optimization                    | ✅                         | ✅            | ✅            | ✅                  |
-| [Minimal optimization](#minimal-optimization) | ✅                         | ⭕            | ⭕            | ⭕                  |
+| Type                                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack, Rspack](#webpack) |
+|-----------------------------------------------|----------------------------|---------------|---------------|-----------------------------|
+| Full optimization                             | ✅                          | ✅             | ✅             | ✅                           |
+| [Minimal optimization](#minimal-optimization) | ✅                          | ✅             | ✅             | ✅                           |
 
 > 1. Full optimization is suitable for blogs and documentation websites that require a large amount of uncertain text. It can achieve full font rendering and has excellent caching performance when used with CDNs.
 > 2. [Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
@@ -124,7 +124,7 @@ export const App = () => {
 
 [Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
 
-> Add `scanFiles`
+> Add `scanFiles` . The approach of [Nuxt](#nuxt) and Webpack is slightly different, but both involve adding scan files to the options.
 
 ```js
 // vite.config.js
