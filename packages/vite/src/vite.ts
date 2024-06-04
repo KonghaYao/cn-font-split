@@ -11,6 +11,7 @@ export default function split(config: Partial<SubsetBundlePluginConfig>): Plugin
 
         async configResolved(c) {
             plugin = new SubsetBundlePlugin({ cacheDir: c.cacheDir, ...config })
+            await plugin.emptySubsetsDir()
             console.log(
                 'vite-plugin-font | cache dir | ' + plugin.config.cacheDir,
             );

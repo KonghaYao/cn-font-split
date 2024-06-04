@@ -1,6 +1,6 @@
 import { BundlePlugin, BundlePluginConfig, getFileName } from '../index.js';
 import { glob } from 'glob';
-import fs from 'fs';
+import fs from 'fs-extra';
 import crypto from 'node:crypto';
 import path from 'path'
 
@@ -32,6 +32,13 @@ export class SubsetBundlePlugin extends BundlePlugin {
         const isSubset = searchParams.has('subsets')
         return { idString, isSubset, searchParams }
     }
+    emptySubsetsDir() {
+        const dir = path.resolve(
+            this.config.cacheDir,
+            '.subsets',
+        )
+        return fs.emptyDir(dir)
+    }
     async createSubsets(p: string) {
         const { isSubset } = this.isSubsetLink(p)
         if (!isSubset) return;
@@ -47,6 +54,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
         // 修改缓存地址，达到缓存
         this.subsetCacheDir = path.resolve(
             this.config.cacheDir,
+            '.subsets',
             hash,
         );
         return hash
