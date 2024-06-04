@@ -5,7 +5,7 @@ export default async function () {
     config.cacheDir = config.cacheDir || cacheDir;
     const id = this.resourcePath + this.resourceQuery;
     const plugin = new SubsetBundlePlugin(config);
-    const isSubset = plugin.isSubsetLink(id);
+    const { isSubset } = plugin.isSubsetLink(id);
     await plugin.createSubsets(id);
     await plugin.createBundle(id, isSubset ? "subsets" : "full");
     return plugin.createSourceCode(id);

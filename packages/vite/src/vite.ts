@@ -17,7 +17,7 @@ export default function split(config: Partial<SubsetBundlePluginConfig>): Plugin
         },
         async load(id, options) {
             if ([/\.otf/, /\.ttf/].some((i) => i.test(id))) {
-                const isSubset = plugin.isSubsetLink(id)
+                const { isSubset } = plugin.isSubsetLink(id)
                 await plugin.createSubsets(id);
                 await plugin.createBundle(id, isSubset ? "subsets" : "full");
                 return plugin.createSourceCode(id);
