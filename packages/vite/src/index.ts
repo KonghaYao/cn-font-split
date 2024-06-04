@@ -43,14 +43,14 @@ export class BundlePlugin {
         const obj = JSON.parse(json);
         const code = Object.entries(obj)
             .map(([k, v]) => {
-                return `export const ${k} = /*@__PURE__*/ JSON.parse('${JSON.stringify(
-                    v,
-                )}');`;
+                return `export const ${k} = /*@__PURE__*/ ${JSON.stringify(
+                    v
+                )};`;
             })
             .join('\n');
-        return `import '${resolvedPath}/result.css';` + code;
+        return `import '${resolvedPath}/result.css?t=${(Math.random() * 100000).toFixed(0)}';\n` + code;
     }
-    async createBundle(p: string,  mode: "full" | "subsets" = 'full') {
+    async createBundle(p: string, mode: "full" | "subsets" = 'full') {
         const resolvedPath = this.getResolvedPath(p);
         let stat: boolean;
         try {
