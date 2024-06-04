@@ -1,5 +1,5 @@
 import { addVitePlugin, defineNuxtModule } from '@nuxt/kit';
-import font from './vite';
+import font from './vite.js';
 
 export default defineNuxtModule({
     meta: {
