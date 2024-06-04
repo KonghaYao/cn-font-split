@@ -2,7 +2,7 @@ import type { Plugin } from 'vite';
 import {
     SubsetBundlePlugin,
     SubsetBundlePluginConfig,
-} from './subset/SubsetBundlePlugin';
+} from './subset/SubsetBundlePlugin.js';
 export default function split(config: Partial<SubsetBundlePluginConfig>): Plugin {
     let plugin: SubsetBundlePlugin
     return <Plugin>{
