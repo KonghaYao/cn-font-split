@@ -158,6 +158,31 @@ export const App = () => {
 };
 ```
 
+#### Optimization for individual partitions
+
+Sometimes, we need to package fonts based on different page dimensions, so we can use keys to identify the scope of using scanFiles.
+
+```js
+// This will match subset-1
+import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets&key=subset-1';
+```
+
+```js
+import { defineConfig } from 'vite';
+import viteFont from 'vite-plugin-font';
+export default defineConfig({
+    plugins: [
+        viteFont({
+            scanFiles: {
+                // ?subsets will match default
+                'default': ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
+                'subset-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}']
+            },
+        }), 
+    ],
+});
+```
+
 ## Typescript support
 
 The source code includes the `src/font.d.ts` file, which you can add to your `tsconfig.json`.

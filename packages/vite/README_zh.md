@@ -160,6 +160,8 @@ export const App = () => {
 
 #### 单独分区优化
 
+有些时候，我们需要根据不同的页面维度来进行字体分包，所以可以使用 key 来标识使用 scanFiles 的范围。
+
 ```js
 // 这个将会匹配到 subset-1 
 import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets&key=subset-1';
