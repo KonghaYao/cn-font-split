@@ -5,16 +5,30 @@ import crypto from 'node:crypto';
 import path from 'path'
 
 export interface SubsetBundlePluginConfig extends BundlePluginConfig {
-    scanFiles?: string | string[];
+    scanFiles?: string | string[] | Record<string, string | string[]>;
     ignore?: string | string[];
     whiteList?: string | string[];
 }
 
-
+export class SubsetUtils {
+    static isSubsetLink(p: string) {
+        const [idString, params] = p.split('?');
+        const searchParams = new URLSearchParams(params)
+        const isSubset = searchParams.has('subsets')
+        return { idString, isSubset, searchParams }
+    }
+    static emptySubsetsDir(config: BundlePluginConfig) {
+        const dir = path.resolve(
+            config.cacheDir,
+            '.subsets',
+        )
+        return fs.emptyDir(dir)
+    }
+}
 
 export class SubsetBundlePlugin extends BundlePlugin {
     subsetConfig: SubsetBundlePluginConfig;
-    constructor(config: SubsetBundlePluginConfig) {
+    constructor(config: SubsetBundlePluginConfig, public key = 'default') {
         super(config);
         this.subsetConfig = config;
         this.subsetCacheDir = config.cacheDir
@@ -26,22 +40,9 @@ export class SubsetBundlePlugin extends BundlePlugin {
         const { isSubset, idString } = this.isSubsetLink(p)
         return path.resolve(isSubset ? this.subsetCacheDir : this.config.cacheDir, getFileName(idString));
     }
-    isSubsetLink(p: string) {
-        const [idString, params] = p.split('?');
-        const searchParams = new URLSearchParams(params)
-        const isSubset = searchParams.has('subsets')
-        return { idString, isSubset, searchParams }
-    }
-    emptySubsetsDir() {
-        const dir = path.resolve(
-            this.config.cacheDir,
-            '.subsets',
-        )
-        return fs.emptyDir(dir)
-    }
-    async createSubsets(p: string) {
-        const { isSubset } = this.isSubsetLink(p)
-        if (!isSubset) return;
+    isSubsetLink = SubsetUtils.isSubsetLink
+    async createSubsets() {
+        if (!this.subsetConfig.scanFiles) return
         console.log("vite-plugin-font | Minimal Mode")
         this.getWhiteListSubsets();
         await this.getScanFiles();
@@ -59,8 +60,16 @@ export class SubsetBundlePlugin extends BundlePlugin {
         );
         return hash
     }
+
     private async getScanFiles() {
-        const files = await glob(this.subsetConfig.scanFiles!, {
+        let globStr: string | string[];
+        if (typeof this.subsetConfig.scanFiles === 'object' && !(this.subsetConfig.scanFiles instanceof Array)) {
+            globStr = this.subsetConfig.scanFiles[this.key]
+        } else {
+            globStr = this.subsetConfig.scanFiles!
+        }
+        if (!globStr) return
+        const files = await glob(globStr!, {
             absolute: true,
             nodir: true,
             ignore: this.subsetConfig.ignore ?? ['node_modules/**'],

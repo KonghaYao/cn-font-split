@@ -15,6 +15,6 @@ declare module '*.ttf?subsets' {
     export * from '@konghayao/_font_';
 }
 
-declare module '*.otf?subsets' {
+declare module '*.otf*?subsets' {
     export * from '@konghayao/_font_';
 }
