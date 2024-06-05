@@ -43,7 +43,7 @@ export class BundlePlugin {
         const obj = JSON.parse(json);
         const code = Object.entries(obj)
             .map(([k, v]) => {
-                return `export const ${k} = /*@__PURE__*/ ${JSON.stringify(
+                return `export const ${k} = ${JSON.stringify(
                     v
                 )};`;
             })
@@ -60,15 +60,20 @@ export class BundlePlugin {
             stat = false;
         }
         if (!stat && this.config.server !== false) {
-            console.log('vite-plugin-font | font pre-building');
+            console.log('vite-plugin-font | font pre-building |' + resolvedPath);
             await fontSplit({
                 ...this.config,
                 FontPath: p.split("?")[0],
                 destFold: resolvedPath,
                 reporter: true,
-                autoChunk: !this.subsets,
+                autoChunk: mode === 'full',
                 subsets: mode !== 'full' ? chunk(this.subsets?.flat()) : undefined,
                 log() { },
+                logger: {
+                    settings: {
+                        minLevel: 5
+                    }
+                }
             }).catch((e) => {
                 console.error(e);
             });

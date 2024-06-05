@@ -1,14 +1,10 @@
 import fs from 'fs-extra';
 import { exec } from 'child_process';
-import path from 'path'
+import assert from 'assert';
 // 执行 pnpm vite build 并检查
-
-
 fs.emptyDirSync('./node_modules/.vite')
 
 
-
-// 在当前目录下的scripts文件夹里执行hexo g命令
 await new Promise((res, rej) => {
   exec('pnpm vite build', { cwd: process.cwd() }, (err, stdout, stderr) => {
         if (err) {
@@ -19,5 +15,6 @@ await new Promise((res, rej) => {
     });
 })
 
-fs.existsSync('./node_modules/.vite/SmileySans-Oblique_ttf/reporter.json')
-fs.existsSync('./node_modules/.vite/550f6d0bdaac0c337c8be0d99865edcb/reporter.json')
+assert.ok(fs.existsSync('./node_modules/.vite/.subsets/2f32afea01e31e457a7be1dabf93e228/SmileySans-Oblique_ttf/reporter.json'))
+assert.ok(fs.existsSync('./node_modules/.vite/.subsets/1851a5900af7816b43bd1b9aefd9da9f/SmileySans-Oblique_ttf/reporter.json'))
+assert.ok(fs.existsSync('./node_modules/.vite/SmileySans-Oblique_ttf/reporter.json'))

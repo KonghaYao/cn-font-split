@@ -158,6 +158,29 @@ export const App = () => {
 };
 ```
 
+#### 单独分区优化
+
+```js
+// 这个将会匹配到 subset-1 
+import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets&key=subset-1';
+```
+
+```js
+import { defineConfig } from 'vite';
+import viteFont from 'vite-plugin-font';
+export default defineConfig({
+    plugins: [
+        viteFont({
+            scanFiles: {
+                // ?subsets 将会匹配 default
+                'default': ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
+                'subset-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}']
+            },
+        }), 
+    ],
+});
+```
+
 ## Typescript 支持
 
 源码中包含 `src/font.d.ts` 文件，你可以将其加入 tsconfig.json 中。
