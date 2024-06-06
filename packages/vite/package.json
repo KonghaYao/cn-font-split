@@ -1,5 +1,5 @@
 {
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"name": "vite-plugin-font",
 	"description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
 	"main": "./dist/vite.js",
@@ -18,7 +18,7 @@
 		"build": "tsc -p tsconfig.node.json || echo 2",
 		"test": "node test/build.test.mjs",
 		"dev": "vite",
-		"prepublish": "pnpm test && pnpm build"
+		"prepublish": "pnpm build && pnpm test "
 	},
 	"keywords": [
 		"vite",
