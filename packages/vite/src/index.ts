@@ -43,7 +43,6 @@ export class BundlePlugin {
             })
             .join('\n');
         const resultCSS = url.pathToFileURL(resolvedPath).pathname;
-        console.log(resultCSS);
         return (
             `import '${resultCSS}/result.css?t=${(
                 Math.random() * 100000
