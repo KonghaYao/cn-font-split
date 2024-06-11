@@ -32,12 +32,12 @@ Object.entries(temp).map(([k, v]) => {
         input[k] = stringToValue(v);
     }
 });
+console.log(input);
 
 if (input.help) {
     console.log(
         `//========== cn-font-split help ${VERSION_CN_FONT_SPLIT} ===========`,
     );
-    console.log('    use . to set the input value.');
     console.log('    cn-font-split -i=./a.ttf -o=./dist');
     console.log('//==== more params ');
     console.log(
@@ -61,7 +61,7 @@ if (input.help) {
 }
 
 function stringToValue(val) {
-    if (typeof va === 'string') {
+    if (typeof val === 'string') {
         if (val.toLowerCase() === 'true') {
             return true;
         } else if (val.toLowerCase() === 'false') {
