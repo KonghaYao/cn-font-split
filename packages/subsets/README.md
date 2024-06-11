@@ -21,7 +21,7 @@
 -   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形！
 -   ⛰️ 自研 Harfbuzz 文本 SVG 引擎，独立渲染文本。
 
-我们有编译器插件啦 —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。
+**我们有编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
 > [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
 
