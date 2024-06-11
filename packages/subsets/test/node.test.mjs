@@ -16,6 +16,8 @@ fontSplit({
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},
     chunkSize: 70 * 1024,
+    testHTML: false,
+    reporter: false,
     css: {
         // fontWeight: false
         // localFamily: false,
