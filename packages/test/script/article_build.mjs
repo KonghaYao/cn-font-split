@@ -1,4 +1,4 @@
-import { fontSplit } from "@konghayao/cn-font-split";
+import { fontSplit } from "cn-font-split";
 
 await fontSplit({
     destFold: './temp/SourceHanSerifSC-VF/',

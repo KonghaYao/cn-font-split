@@ -1,5 +1,5 @@
 declare module '@konghayao/_font_' {
-    import { fontSplit } from '@konghayao/cn-font-split';
+    import { fontSplit } from 'cn-font-split';
     type Reporter = Awaited<ReturnType<typeof fontSplit>>;
     export const css: Reporter['css'];
 }

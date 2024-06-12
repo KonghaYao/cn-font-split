@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import _ from 'lodash-es';
-import { fontSplit, convert } from '@konghayao/cn-font-split';
+import { fontSplit, convert } from 'cn-font-split';
 const features = fs.readJSONSync('./FeatureConfig.json');
 const allKey = new Set();
 

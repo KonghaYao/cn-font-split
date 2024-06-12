@@ -28,6 +28,11 @@ fontSplit({
         //     unicodes: true
         // }
     },
+    logger: {
+        settings: {
+            minLevel: 4
+        }
+    }
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},
