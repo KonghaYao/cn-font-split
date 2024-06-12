@@ -1,9 +1,9 @@
 import fs from 'fs-extra';
 import _ from 'lodash-es'
-import { convert } from '@konghayao/cn-font-split';
+import { convert } from 'cn-font-split';
 const features = fs.readJSONSync('./FeatureConfig.json');
 
-const wasmBlob = await fs.readFile('./node_modules/@konghayao/cn-font-split/dist/browser/hb-subset.wasm')
+const wasmBlob = await fs.readFile('./node_modules/cn-font-split/dist/browser/hb-subset.wasm')
 const { instance: { exports } } = await WebAssembly.instantiate(wasmBlob);
 
 

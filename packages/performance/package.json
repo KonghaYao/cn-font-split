@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@japont/unicode-range": "^1.0.0",
-    "@konghayao/cn-font-split": "workspace:^",
+    "cn-font-split": "workspace:^",
     "byte-size": "^8.1.1",
     "solid-js": "^1.7.8"
   }

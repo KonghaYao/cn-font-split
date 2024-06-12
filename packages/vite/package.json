@@ -48,7 +48,7 @@
 		"vite": "^5"
 	},
 	"dependencies": {
-		"@konghayao/cn-font-split": "workspace:^",
+		"cn-font-split": "workspace:^",
 		"fs-extra": "^11.2.0",
 		"glob": "^10.4.1"
 	},

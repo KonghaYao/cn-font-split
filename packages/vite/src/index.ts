@@ -1,4 +1,4 @@
-import { InputTemplate, fontSplit } from '@konghayao/cn-font-split';
+import { InputTemplate, fontSplit } from 'cn-font-split';
 import path from 'path';
 import fs from 'fs';
 import url from 'url';

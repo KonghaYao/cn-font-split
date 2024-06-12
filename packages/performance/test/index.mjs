@@ -1,4 +1,4 @@
-import { fontSplit, getSubsetsFromCSS } from '@konghayao/cn-font-split';
+import { fontSplit, getSubsetsFromCSS } from 'cn-font-split';
 import fs from 'node:fs';
 const noto = fs.readFileSync('./css/noto.css', 'utf-8');
 await fontSplit({

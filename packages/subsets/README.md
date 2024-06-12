@@ -3,7 +3,7 @@
 ![updateTime](https://img.shields.io/badge/更新时间-2024/03/23-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
 ![npmVersion](https://img.shields.io/badge/LTS_version-4.12.0-green)
-[![](https://data.jsdelivr.com/v1/package/npm/@konghayao/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/@konghayao/cn-font-split)
+[![](https://data.jsdelivr.com/v1/package/npm/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/cn-font-split)
 
 ![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
@@ -59,8 +59,8 @@ Nodejs 版本推荐使用 **大于 18 的版本**。如低级版本或者其他�
 ❗ 注意您安装的版本不是 beta 版本。如果是 beta 版本可能会引起一些问题。
 
 ```bash
-npm install @konghayao/cn-font-split
-npm install @konghayao/cn-font-split -g # 如果使用命令行，推荐全局安装
+npm install cn-font-split
+npm install cn-font-split -g # 如果使用命令行，推荐全局安装
 ```
 
 ### 命令行使用
@@ -79,9 +79,9 @@ cn-font-split -h
 ### 写打包代码
 
 ```js
-import { fontSplit } from '@konghayao/cn-font-split';
-// import { fontSplit } from "@konghayao/cn-font-split/dist/browser/index.js";
-// import { fontSplit } from "https://cdn.jsdelivr.net/npm/@konghayao/cn-font-split@4.8.3/dist/browser/index.js";
+import { fontSplit } from 'cn-font-split';
+// import { fontSplit } from "cn-font-split/dist/browser/index.js";
+// import { fontSplit } from "https://cdn.jsdelivr.net/npm/cn-font-split@4.8.3/dist/browser/index.js";
 
 fontSplit({
     FontPath: './fonts/SourceHanSerifCN-Bold.ttf', // 推荐使用 otf、ttf 字体
