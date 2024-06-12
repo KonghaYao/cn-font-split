@@ -18,11 +18,7 @@ jobs:
             - run: npm install pnpm -g
             - run: pnpm install --no-frozen-lockfile
             - run: pnpm -C ./packages/font-sharp build
-            - run: npm pkg set name=cn-font-split
-              working-directory: packages/subsets
-            - run: npm run prepublish
-              working-directory: packages/subsets
-            - run: npm publish --access public
+            - run: pnpm publish --access public
               working-directory: packages/subsets
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
