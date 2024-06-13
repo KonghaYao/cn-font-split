@@ -2,7 +2,6 @@
     "name": "root",
     "private": true,
     "version": "3.4.2",
-    "description": "中文 web font 切割工具",
     "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
