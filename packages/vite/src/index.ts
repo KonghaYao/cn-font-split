@@ -2,8 +2,8 @@ import { InputTemplate, fontSplit } from 'cn-font-split';
 import path from 'path';
 import fs from 'fs';
 import url from 'url';
-import crypto from 'crypto'
-import { createChineseCrossPlatformFallbackCss } from './createChineseCrossPlatformFallbackCss'
+import crypto from 'crypto';
+import { createChineseCrossPlatformFallbackCss } from 'cn-font-metrics';
 export function getFileName(id: string) {
     return path.basename(id).replace(/\./g, '_');
 }
@@ -27,7 +27,10 @@ export type BundlePluginConfig = Partial<InputTemplate> & {
 
 export class BundlePlugin {
     public subsets: number[][] | undefined = undefined;
-    constructor(public config: BundlePluginConfig, public key = 'default') { }
+    constructor(
+        public config: BundlePluginConfig,
+        public key = 'default',
+    ) {}
 
     getResolvedPath(p: string) {
         return path.resolve(this.config.cacheDir, getFileName(p));
@@ -49,12 +52,11 @@ export class BundlePlugin {
             })
             .join('\n');
         const resultCSS = url.pathToFileURL(resolvedPath).pathname;
-        const key = (
-            Math.random() * 100000
-        ).toFixed(0)
+        const key = (Math.random() * 100000).toFixed(0);
         return (
             `import '${resultCSS}/metrics.css?t=${key}';\n` +
-            `import '${resultCSS}/result.css?t=${key}';\n` + code
+            `import '${resultCSS}/result.css?t=${key}';\n` +
+            code
         );
     }
     async checkCache(resolvedPath: string) {
@@ -63,22 +65,26 @@ export class BundlePlugin {
             await fs.promises.access(resolvedPath);
             await fs.promises.access(path.resolve(resolvedPath, 'result.css'));
             await fs.promises.access(path.resolve(resolvedPath, 'metrics.css'));
-            await fs.promises.access(path.resolve(resolvedPath, 'metrics.json'));
-            await fs.promises.access(path.resolve(resolvedPath, 'reporter.json'));
+            await fs.promises.access(
+                path.resolve(resolvedPath, 'metrics.json'),
+            );
+            await fs.promises.access(
+                path.resolve(resolvedPath, 'reporter.json'),
+            );
             stat = true;
         } catch (e) {
             stat = false;
         }
-        return stat
+        return stat;
     }
     async createBundle(p: string, mode: 'full' | 'subsets' = 'full') {
         const resolvedPath = this.getResolvedPath(p);
-        const stat = await this.checkCache(p)
+        const stat = await this.checkCache(p);
         if (!stat && this.config.server !== false) {
             console.log(
                 'vite-plugin-font | font pre-building |' + resolvedPath,
             );
-            const FontPath = p.split('?')[0]
+            const FontPath = p.split('?')[0];
             await fontSplit({
                 ...this.config,
                 FontPath,
@@ -87,7 +93,7 @@ export class BundlePlugin {
                 autoChunk: mode === 'full',
                 subsets:
                     mode !== 'full' ? chunk(this.subsets?.flat()) : undefined,
-                log() { },
+                log() {},
                 logger: {
                     settings: {
                         minLevel: 5,
@@ -96,18 +102,25 @@ export class BundlePlugin {
             }).catch((e) => {
                 console.error(e);
             });
-            await this.createFallback(FontPath, resolvedPath)
+            await this.createFallback(FontPath, resolvedPath);
         } else {
             console.log('vite-plugin-font | using cache | ' + resolvedPath);
         }
     }
     async createFallback(FontPath: string, resolvedPath: string) {
-        const hash = crypto
-            .createHash('md5')
-            .update(FontPath)
-            .digest('hex');
-        const { fontFamilyString, css } = await createChineseCrossPlatformFallbackCss(FontPath, ` ${this.key} ${hash.slice(0,6)}`)
-        await fs.promises.writeFile(path.resolve(resolvedPath, 'metrics.css'), css)
-        await fs.promises.writeFile(path.resolve(resolvedPath, 'metrics.json'), JSON.stringify({ fontFamilyFallback: fontFamilyString }))
+        const hash = crypto.createHash('md5').update(FontPath).digest('hex');
+        const { fontFamilyString, css } =
+            await createChineseCrossPlatformFallbackCss(
+                FontPath,
+                ` ${this.key} ${hash.slice(0, 6)}`,
+            );
+        await fs.promises.writeFile(
+            path.resolve(resolvedPath, 'metrics.css'),
+            css,
+        );
+        await fs.promises.writeFile(
+            path.resolve(resolvedPath, 'metrics.json'),
+            JSON.stringify({ fontFamilyFallback: fontFamilyString }),
+        );
     }
 }

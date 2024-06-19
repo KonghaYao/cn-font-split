@@ -14,11 +14,12 @@
 4. 🌐 自动添加本地适配，减少内容位移累积，SSR 支持
 5. 📤 字体信息导出，支持树摇优化
 6. 🎨 纯 CSS，无运行时数据，多平台适配
+7. 📦 自动减少中文 CLS 偏移
 
 | Type                          | [Vite、Astro、Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack、Rspack](#webpack) |
-|-------------------------------|--------------------------|---------------|---------------|----------------------------|
-| 全量级优化                    | ✅                        | ✅             | ✅             | ✅                          |
-| [极小量级优化](#极小量级优化) | ✅                        | ✅             | ✅             | ✅                          |
+| ----------------------------- | -------------------------- | ------------- | ------------- | --------------------------- |
+| 全量级优化                    | ✅                         | ✅            | ✅            | ✅                          |
+| [极小量级优化](#极小量级优化) | ✅                         | ✅            | ✅            | ✅                          |
 
 > 1. 全量级优化适合于博客、文档网站，需要大量不确定文本，可以实现全量级的字体渲染，并且配合 CDN 可以有非常好的缓存性能。
 > 2. [极小量级优化](#极小量级优化)适合于官网、大促网页等快速渲染需求大的场景，它收集你的代码中使用的字符，并只加载这些字符，拥有非常好的渲染性能。
@@ -27,6 +28,11 @@
 
 ```sh
 npm i -D vite-plugin-font
+```
+
+```js
+import { css, fontFamilyFallback } from '../demo/public/SmileySans-Oblique.ttf';
+document.body.style.fontFamily = `"${css.family}", ` + fontFamilyFallback;
 ```
 
 ## ✨ Config
@@ -51,8 +57,8 @@ export default defineConfig({
 export default defineNuxtConfig({
     modules: ['node_modules/vite-plugin-font/src/nuxt'],
     fontSplit: {
-        scanFiles: ["pages/**/*.{vue,ts,tsx,js,jsx}"]
-    }
+        scanFiles: ['pages/**/*.{vue,ts,tsx,js,jsx}'],
+    },
 });
 ```
 
@@ -134,7 +140,7 @@ export default defineConfig({
     plugins: [
         viteFont({
             scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'],
-        }), 
+        }),
     ],
 });
 ```
@@ -163,7 +169,7 @@ export const App = () => {
 有些时候，我们需要根据不同的页面维度来进行字体分包，所以可以使用 key 来标识使用 scanFiles 的范围。
 
 ```js
-// 这个将会匹配到 subset-1 
+// 这个将会匹配到 subset-1
 import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets&key=subset-1';
 ```
 
@@ -175,10 +181,10 @@ export default defineConfig({
         viteFont({
             scanFiles: {
                 // ?subsets 将会匹配 default
-                'default': ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
-                'subset-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}']
+                default: ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
+                'subset-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}'],
             },
-        }), 
+        }),
     ],
 });
 ```
