@@ -28,8 +28,8 @@ export class SubsetUtils {
 
 export class SubsetBundlePlugin extends BundlePlugin {
     subsetConfig: SubsetBundlePluginConfig;
-    constructor(config: SubsetBundlePluginConfig, public key = 'default') {
-        super(config);
+    constructor(config: SubsetBundlePluginConfig, key?: string) {
+        super(config, key);
         this.subsetConfig = config;
         this.subsetCacheDir = config.cacheDir
     }

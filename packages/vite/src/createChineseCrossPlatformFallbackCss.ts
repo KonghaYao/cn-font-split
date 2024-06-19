@@ -1,5 +1,6 @@
 import {
     MicrosoftYaHei,
+    MicrosoftYaHeiUI,
     NotoSansCJKscRegular,
     PingFangSCRegular,
     PingFangSCSemibold,
@@ -37,10 +38,10 @@ export const createChineseCrossPlatformFallbackCss = async (
         },
         {
             name: 'Microsoft YaHei',
-            metrics: MicrosoftYaHei,
+            metrics: MicrosoftYaHeiUI,
         },
         {
-            name: 'Noto Sans',
+            name: 'Source Han Sans',
             metrics: NotoSansCJKscRegular,
         },
     ];
