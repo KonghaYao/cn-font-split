@@ -9,8 +9,7 @@
 
 <body></body>
 <script type="module">
-    // import '../src/font.d'
-    import { css } from '../demo/public/SmileySans-Oblique.ttf';
+    import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets';
     document.body.innerHTML = JSON.stringify(css, null, 4);
     document.body.style.fontFamily = `"${css.family}"`
 </script>
