@@ -1,64 +1,64 @@
 {
-	"version": "1.1.2",
-	"name": "vite-plugin-font",
-	"description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
-	"main": "./dist/vite.js",
-	"type": "module",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/vite"
-	},
-	"files": [
-		"dist",
-		"src"
-	],
-	"author": "KonghaYao<dongzhongzhidong@qq.com>",
-	"license": "Apache-2.0",
-	"scripts": {
-		"build": "tsc -p tsconfig.node.json || echo 2",
-		"test": "node test/build.test.mjs",
-		"dev": "vite",
-		"prepublish": "pnpm build && pnpm test "
-	},
-	"keywords": [
-		"vite",
-		"vite-plugin",
-		"nuxt",
-		"nuxt-plugin",
-		"next",
-		"next-plugin",
-		"webpack",
-		"webpack-plugin",
-		"web-font",
-		"webfont",
-		"vue",
-		"react",
-		"converter",
-		"performance",
-		"wasm",
-		"woff2",
-		"ttf",
-		"otf",
-		"opentype-fonts",
-		"font-subsetter",
-		"font-subset",
-		"cjk"
-	],
-	"devDependencies": {
-		"vite": "^5"
-	},
-	"dependencies": {
-		"cn-font-metrics": "^1.1.1",
-		"cn-font-split": "workspace:^",
-		"fontaine": "^0.5.0",
-		"fs-extra": "^11.2.0",
-		"glob": "^10.4.1"
-	},
-	"bugs": {
-		"url": "https://github.com/KonghaYao/cn-font-split/issues"
-	},
-	"homepage": "https://chinese-font.netlify.app",
-	"optionalDependencies": {
-		"@nuxt/kit": "^3.11.2"
-	}
+    "version": "1.3.0",
+    "name": "vite-plugin-font",
+    "description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
+    "main": "./dist/vite.js",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/vite"
+    },
+    "files": [
+        "dist",
+        "src"
+    ],
+    "author": "KonghaYao<dongzhongzhidong@qq.com>",
+    "license": "Apache-2.0",
+    "scripts": {
+        "build": "tsc -p tsconfig.node.json || echo 2",
+        "test": "node test/build.test.mjs",
+        "dev": "vite",
+        "prepublish": "pnpm build && pnpm test "
+    },
+    "keywords": [
+        "vite",
+        "vite-plugin",
+        "nuxt",
+        "nuxt-plugin",
+        "next",
+        "next-plugin",
+        "webpack",
+        "webpack-plugin",
+        "web-font",
+        "webfont",
+        "vue",
+        "react",
+        "converter",
+        "performance",
+        "wasm",
+        "woff2",
+        "ttf",
+        "otf",
+        "opentype-fonts",
+        "font-subsetter",
+        "font-subset",
+        "cjk"
+    ],
+    "devDependencies": {
+        "vite": "^5"
+    },
+    "dependencies": {
+        "cn-font-metrics": "^1.1.3",
+        "cn-font-split": "workspace:^",
+        "fontaine": "^0.5.0",
+        "fs-extra": "^11.2.0",
+        "glob": "^10.4.1"
+    },
+    "bugs": {
+        "url": "https://github.com/KonghaYao/cn-font-split/issues"
+    },
+    "homepage": "https://chinese-font.netlify.app",
+    "optionalDependencies": {
+        "@nuxt/kit": "^3.11.2"
+    }
 }

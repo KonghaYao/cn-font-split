@@ -1,8 +1,10 @@
 # 🔠  vite-plugin-font ⚡
 
+![中文网字计划](https://cdn.jsdelivr.net/gh/KonghaYao/cn-font-split/assets/chinese-fonts.png)
+
 [中文](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README.md)
 
-[vite-plugin-font](https://www.npmjs.com/package/vite-plugin-font) is a font building tool for Webfonts that supports the [Chinese Font Splitting Project](https://chinese-font.netlify.app) and is optimized for performance and simplicity. It can split large fonts into Webfonts. 
+[vite-plugin-font](https://www.npmjs.com/package/vite-plugin-font) is a font building tool for Webfonts that supports the [中文网字计划](https://chinese-font.netlify.app) and is optimized for performance and simplicity. It can split large fonts into Webfonts.
 
 We provide both a [minimal optimization](#minimal-optimization) plan for first-screen optimization and a full optimization plan for large text sites, achieving the ultimate optimization of Chinese fonts in the front-end toolchain.
 
@@ -14,11 +16,12 @@ We provide both a [minimal optimization](#minimal-optimization) plan for first-s
 4. 🌐 Automatically add local adaptation to reduce content displacement accumulation, with SSR support
 5. 📤 Export font information to support tree shaking optimization
 6. 🎨 Pure CSS, no runtime data, multi-platform adaptation
+7. 📦 Automatically reduce the layout offset of Chinese CLS
 
 | Type                                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack, Rspack](#webpack) |
-|-----------------------------------------------|----------------------------|---------------|---------------|-----------------------------|
-| Full optimization                             | ✅                          | ✅             | ✅             | ✅                           |
-| [Minimal optimization](#minimal-optimization) | ✅                          | ✅             | ✅             | ✅                           |
+| --------------------------------------------- | -------------------------- | ------------- | ------------- | --------------------------- |
+| Full optimization                             | ✅                         | ✅            | ✅            | ✅                          |
+| [Minimal optimization](#minimal-optimization) | ✅                         | ✅            | ✅            | ✅                          |
 
 > 1. Full optimization is suitable for blogs and documentation websites that require a large amount of uncertain text. It can achieve full font rendering and has excellent caching performance when used with CDNs.
 > 2. [Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
@@ -27,6 +30,11 @@ We provide both a [minimal optimization](#minimal-optimization) plan for first-s
 
 ```sh
 npm i -D vite-plugin-font
+```
+
+```js
+import { css, fontFamilyFallback } from '../demo/public/SmileySans-Oblique.ttf';
+document.body.style.fontFamily = `"${css.family}", ` + fontFamilyFallback;
 ```
 
 ## ✨ Config
@@ -51,8 +59,8 @@ export default defineConfig({
 export default defineNuxtConfig({
     modules: ['node_modules/vite-plugin-font/src/nuxt'],
     fontSplit: {
-        scanFiles: ["pages/**/*.{vue,ts,tsx,js,jsx}"]
-    }
+        scanFiles: ['pages/**/*.{vue,ts,tsx,js,jsx}'],
+    },
 });
 ```
 
@@ -134,7 +142,7 @@ export default defineConfig({
     plugins: [
         viteFont({
             scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'], // add this
-        }), 
+        }),
     ],
 });
 ```
@@ -175,10 +183,10 @@ export default defineConfig({
         viteFont({
             scanFiles: {
                 // ?subsets will match default
-                'default': ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
-                'subset-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}']
+                default: ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
+                'subset-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}'],
             },
-        }), 
+        }),
     ],
 });
 ```
@@ -197,4 +205,4 @@ The source code includes the `src/font.d.ts` file, which you can add to your `ts
 
 ## Input parameters
 
-See the [Chinese Font Splitting Project](https://www.npmjs.com/package/cn-font-split) documentation for input parameters. Most parameters are universal.
+See the [中文网字计划](https://www.npmjs.com/package/cn-font-split) documentation for input parameters. Most parameters are universal.

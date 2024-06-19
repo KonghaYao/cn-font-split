@@ -4,12 +4,20 @@ export default defineConfig({
     plugins: [
         Plugin({
             scanFiles: {
-                'default': ['src/**/*.{json,js,jsx,ts,tsx,vue}'],
-                'page-1': ['example/**/*.{json,js,jsx,ts,tsx,vue}']
+                default: ['test/test.txt'],
+                'page-1': ['test/test2.txt'],
             },
-        })
+        }),
     ],
     build: {
+        rollupOptions: {
+            input: {
+                index: 'index.html',
+                fallback: 'fallback.html',
+                subsets: 'subsets.html',
+                subsets1: 'subsets-1.html',
+            },
+        },
         outDir: 'build',
     },
 });
