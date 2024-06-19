@@ -3,7 +3,7 @@ import {
     NotoSansCJKscRegular,
     PingFangSCRegular,
     PingFangSCSemibold,
-} from './metrics';
+} from './metrics.js';
 import { readMetrics, generateFontFace } from 'fontaine';
 import { pathToFileURL } from 'url';
 
