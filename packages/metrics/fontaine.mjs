@@ -25,5 +25,4 @@ for (const font of fonts) {
 // });
 
 import fs from 'fs';
-fs.writeFileSync('./metrics.mjs', code);
-fs.writeFileSync('./metrics.ts', code);
+fs.writeFileSync('./src/metrics.ts', code);
