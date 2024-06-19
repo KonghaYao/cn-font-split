@@ -1,15 +1,14 @@
 {
   "name": "cn-font-metrics",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "",
-  "main": "metrics.mjs",
-  "types": "metrics.ts",
-  "files": ["metrics.mjs","metrics.ts"],
+  "main": "dist/index.js",
+  "files": ["dist"],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "node ./fontaine.mjs"
+    "build": "node ./fontaine.mjs && tsc "
   },
   "keywords": [],
   "author": "",
