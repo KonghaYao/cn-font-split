@@ -1,2 +1,2 @@
-export * from '../src/metrics';
-export * from '../src/createChineseCrossPlatformFallbackCss';
+export * from './metrics.js';
+export * from './createChineseCrossPlatformFallbackCss.js';
