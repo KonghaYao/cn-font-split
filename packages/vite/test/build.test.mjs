@@ -17,12 +17,12 @@ await new Promise((res, rej) => {
 
 assert.ok(
     fs.existsSync(
-        './node_modules/.vite/.subsets/b8339086f76032aa031710e5e3e519db/SmileySans-Oblique_ttf/reporter.json',
+        './node_modules/.vite/.subsets/9e0df19620e2ecada33853c8cb7caf1c/SmileySans-Oblique_ttf/reporter.json',
     ),
 );
 assert.ok(
     fs.existsSync(
-        './node_modules/.vite/.subsets/e107e07a3be215fe5eed7305d4a95ddc/SmileySans-Oblique_ttf/reporter.json',
+        './node_modules/.vite/.subsets/235d6d3f17828669b8f0141c549d49db/SmileySans-Oblique_ttf/reporter.json',
     ),
 );
 assert.ok(
