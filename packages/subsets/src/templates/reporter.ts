@@ -41,7 +41,7 @@ export const createReporter = async (
         // 修复 FontPath 输入二进制数据后导致的膨胀
         config: {
             ...input,
-            fontPath:
+            FontPath:
                 typeof input.FontPath !== 'string'
                     ? 'it is a binary input'
                     : input.FontPath,

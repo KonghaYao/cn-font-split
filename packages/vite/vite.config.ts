@@ -4,8 +4,8 @@ export default defineConfig({
     plugins: [
         Plugin({
             scanFiles: {
-                default: ['test/test.txt'],
-                'page-1': ['test/test2.txt'],
+                default: ['subsets.html'],
+                'page-1': ['subsets-1.html'],
             },
         }),
     ],
