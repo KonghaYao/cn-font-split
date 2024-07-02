@@ -1,18 +1,16 @@
 # 中文 Web Font 切割工具
 
-
 ![中文网字计划](/assets/chinese-fonts.png)
 
-![updateTime](https://img.shields.io/badge/更新时间-2024/06/13-green)
+![updateTime](https://img.shields.io/badge/更新时间-2024/07/02-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.15.1-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-4.6.0-green)
 [![](https://data.jsdelivr.com/v1/package/npm/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/cn-font-split)
 
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
-![CodeFactor](https://www.codefactor.io/repository/github/konghayao/cn-font-split/badge)
 
-| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/online-split/)|
-| ------------------------------------------------- | ---------------------------------------------------- |---------------------------------------------------- |
+| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/online-split/) |
+| ------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------- |
 
 ## 简介
 
@@ -30,9 +28,9 @@
 
 [详见兼容性章节](#兼容性提醒)。
 
-| [Nodejs](#nodejs) | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |
-| -------------------- | ------------- | ------------------ | ------------------- | ------------------ | -------- |
-| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0 | ✅^102 | ✅^114 | ✅^15 | ⏺️ ^1.0.4 |
+| [Nodejs](#nodejs)    | [Deno](#deno) | [Chrome](#browser) | [FireFox](#browser) | [Safari](#browser) | [Bun](#bun) |
+| -------------------- | ------------- | ------------------ | ------------------- | ------------------ | ----------- |
+| ✅^18.0.0 ⏺️ ^14.0.0 | ✅^1.30.0     | ✅^102             | ✅^114              | ✅^15              | ⏺️ ^1.0.4   |
 
 ### 新版本功能
 
@@ -45,6 +43,7 @@
 7. ✅ 🏞️ 字体预览图生成
 8. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，随处可使用！
 9. ✅ 🥳 不止中文，只要是包内的字符，统统分包
+10. ✅ 🏞️ 支持自动识别可变字体字重
 
 ## 快速使用
 
@@ -92,7 +91,7 @@ fontSplit({
     // 或者也可以像这样传入一个函数返回自定义的文件名
     // renameOutputFont: ({ transferred, ext, index }) => {
     //   return index.toString(36) + ext
-    // } 
+    // }
 });
 ```
 
