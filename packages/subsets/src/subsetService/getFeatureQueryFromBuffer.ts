@@ -151,7 +151,13 @@ export const getFeatureQueryFromBuffer = (
     tool.font.tables.gsub = tool.getTable(gsub, 'GSUB');
     return new Substitution(tool.font);
 };
+
+export const getFVarTable = (tool: FontBaseTool) => {
+    return tool.getTable(fvar, 'fvar');
+};
+
 import name from '@konghayao/opentype.js/src/tables/name.js';
+import fvar from '@konghayao/opentype.js/src/tables/fvar.js';
 import ltag from '@konghayao/opentype.js/src/tables/ltag.js';
 
 /** 从字体中读取 name table */

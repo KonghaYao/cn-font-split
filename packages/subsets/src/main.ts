@@ -36,6 +36,7 @@ import { createContoursMap } from './useSubset/createContoursMap';
 import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
 import {
     createFontBaseTool,
+    getFVarTable,
     getNameTableFromTool,
 } from './subsetService/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
@@ -108,6 +109,16 @@ export const fontSplit = async (opt: InputTemplate) => {
                 const fontTool = createFontBaseTool(ttfFile.buffer);
                 ctx.set('fontTool', fontTool);
                 ctx.free('ttfFile');
+            },
+            // 专门处理 VF 字体相关的信息抽取的
+            async function getVFMessage(ctx) {
+                const { fontTool } = ctx.pick('fontTool');
+                const fvar = getFVarTable(fontTool);
+                if (fvar) {
+                    ctx.set('VF', fvar);
+                } else {
+                    ctx.set('VF', null);
+                }
             },
             async function createImage(ctx) {
                 const { input, hb, face } = ctx.pick('input', 'hb', 'face');
@@ -297,12 +308,13 @@ export const fontSplit = async (opt: InputTemplate) => {
             },
             /** 输出 css 文件 */
             async function outputCSS(ctx) {
-                const { nameTable, subsetResult, input } = ctx.pick(
+                const { nameTable, subsetResult, input, VF } = ctx.pick(
                     'input',
                     'nameTable',
                     'subsetResult',
+                    'VF',
                 );
-                const css = createCSS(subsetResult, nameTable, input.css);
+                const css = createCSS(subsetResult, nameTable, input.css, VF);
                 await outputFile(
                     path.join(
                         input.destFold,

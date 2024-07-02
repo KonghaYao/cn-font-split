@@ -3,8 +3,18 @@ import { Context } from '../pipeline/index';
 import { InputTemplate, SubsetResult, Subsets } from '../interface';
 import { createReporter, type BundleReporter } from '../templates/reporter';
 import { type FontBaseTool } from '../subsetService/getFeatureQueryFromBuffer';
-import { createCSS } from 'src/templates/css';
-
+import { createCSS } from '../templates/css';
+export interface FontAxis {
+    tag: string;
+    minValue: number;
+    defaultValue: number;
+    maxValue: number;
+    axisNameID: number;
+    name?: string; // The '?' indicates that this property is optional
+}
+export interface VFMessage {
+    axes: FontAxis[];
+}
 /** 全局 Context 的类型，用于在分步函数中定义类型 */
 export type IContext = ReturnType<typeof createContext>;
 
@@ -23,6 +33,7 @@ export const createContext = (opt: InputTemplate) =>
         subsets: Subsets;
         nameTable: Record<string, string>;
         fontTool: FontBaseTool;
+        VF: VFMessage | null;
         bundleMessage: Partial<BundleReporter>;
         cssMessage: ReturnType<typeof createCSS>;
         reporter: Awaited<ReturnType<typeof createReporter>>;
