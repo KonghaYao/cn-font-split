@@ -1,3 +1,4 @@
+import { VFMessage } from '../fontSplit/context';
 import { InputTemplate, SubsetResult } from '../interface';
 import { createHeaderComment } from './css/createHeaderComment';
 import { getFormatFromFontPath } from './css/getFormatFromFontPath';
@@ -18,6 +19,7 @@ export const createCSS = (
     subsetResult: SubsetResult,
     nameTable: { windows?: NameTable; macintosh?: NameTable },
     opts: InputTemplate['css'],
+    VFOpts: VFMessage | null,
 ) => {
     const fontData = Object.fromEntries(
         Object.entries(nameTable?.windows ?? nameTable?.macintosh ?? {}).map(
@@ -33,7 +35,10 @@ export const createCSS = (
         css.fontFamily || fontData.fontFamily;
 
     const preferredSubFamily =
-        fontData.preferredSubFamily || fontData.fontSubFamily || fontData.fontSubfamily || '';
+        fontData.preferredSubFamily ||
+        fontData.fontSubFamily ||
+        fontData.fontSubfamily ||
+        '';
 
     const style =
         css.fontStyle || (isItalic(preferredSubFamily) ? 'italic' : 'normal');
@@ -57,7 +62,10 @@ export const createCSS = (
                       : i,
               ) ?? [];
 
-    const weight = css.fontWeight || subFamilyToWeight(preferredSubFamily);
+    const weight =
+        css.fontWeight ||
+        getFontWeightForVF(VFOpts) ||
+        subFamilyToWeight(preferredSubFamily);
     const display = css.fontDisplay || 'swap';
     const cssStyleSheet = subsetResult
         //  反转数组，使得 feature 在后面覆盖前面的 feature
@@ -93,6 +101,20 @@ unicode-range:${unicodeRange};
     const header = createHeaderComment(fontData, opts);
     return { css: header + cssStyleSheet, family, style, weight, display };
 };
+
+function getFontWeightForVF(VF: VFMessage | null) {
+    if (!VF) return;
+    if (VF.axes.length === 0) return;
+    const weight = VF.axes.find((i) => i.tag === 'wght');
+    if (!weight) return;
+    if (
+        typeof weight.minValue === 'number' &&
+        typeof weight.maxValue === 'number'
+    ) {
+        return `${weight.minValue} ${weight.maxValue}`;
+    }
+    return;
+}
 function createLocalsString(
     css: NonNullable<InputTemplate['css']>,
     fontData: Record<string, string>,
