@@ -77,7 +77,7 @@ async function transferFontType(ctx: Context) {
 async function loadHarbuzz(ctx: Context) {
     const { ttfFile, input: opt } = ctx.pick('input', 'ttfFile');
 
-    const wasm = await loadHarbuzzAdapter();
+    const wasm = await Assets.loadHarbuzz();
     if (!wasm) throw new Error('启动 harfbuzz 失败');
     const hb = hbjs(wasm.instance);
     const blob = hb.createBlob(ttfFile);
