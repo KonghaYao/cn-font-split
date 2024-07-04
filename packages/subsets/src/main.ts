@@ -1,4 +1,4 @@
-import { convert } from './convert/commonConvert';
+import { convert } from './convert/font-convert';
 import { hbjs } from './hb';
 import { Executor, PerformanceRecord } from './pipeline/index';
 import { createContext } from './ createContext';
