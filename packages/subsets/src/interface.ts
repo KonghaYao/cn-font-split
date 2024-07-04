@@ -1,4 +1,4 @@
-import { FontType } from './utils/detectFormat';
+import { FontType } from './convert/detectFormat';
 import { WriteFileOptions } from 'fs-extra';
 import type { Buffer } from 'buffer';
 import type { ReplaceProps } from './useSubset/templateReplacer';

@@ -1,9 +1,9 @@
 import { HB } from '../hb';
 import { IOutputFile, InputTemplate, SubsetResult } from '../interface';
-import { convert } from '../convert/commonConvert';
-import type { FontType } from '../utils/detectFormat';
+import { convert } from '../convert/font-convert';
+import type { FontType } from '../convert/detectFormat';
 import { IContext } from '../ createContext';
-import { getExtensionsByFontType } from '../utils/getExtensionsByFontType';
+import { getExtensionsByFontType } from '../convert/detectFormat';
 import { subsetFont } from './subsetFont';
 import { createRecord } from './createRecord';
 import { recordToLog } from './recordToLog';
