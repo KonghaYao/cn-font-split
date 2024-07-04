@@ -48,7 +48,7 @@ export declare namespace HB {
 }
 
 /**
- * harfbuzz 的函数
+ * 封装 harfbuzz wasm 的函数
  * @message copied from https://github.com/harfbuzz/harfbuzzjs/blob/main/hbjs.js
  * @author refactor and modify by konghayao
  */

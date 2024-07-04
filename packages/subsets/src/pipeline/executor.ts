@@ -19,6 +19,7 @@ export class Executor<
         /** 定义每一个运行步骤的函数 */
         private steps: T[],
         public context: CTX,
+        public records: PerformanceRecord[] = [],
     ) {}
 
     /**
@@ -36,7 +37,7 @@ export class Executor<
             throw new Error('setPtr: Array boundary number error: ' + newPtr);
         }
     }
-    public records: PerformanceRecord[] = [];
+
     startTask(task: Step<CTX>) {
         this.context.info('-->\t\t' + task.name + '\tStart');
         const start = performance.now();
