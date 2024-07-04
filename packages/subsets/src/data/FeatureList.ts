@@ -1,3 +1,4 @@
+/** opentype feature 的文本标签 */
 export const FeatureList = [
     'aalt',
     'abvf',

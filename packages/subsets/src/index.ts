@@ -3,7 +3,7 @@ export * from './interface';
 export * from './hb';
 export * from './main';
 export * from './utils/getSubsetsFromCSS';
-export * from './data/Ranks';
+export * from './data/LanguageRange';
 export * from './adapter/assets';
 export * from './utils/cacheResult';
 export * from './utils/env';

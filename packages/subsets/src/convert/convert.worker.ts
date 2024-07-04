@@ -1,6 +1,8 @@
+// 在 web worker 中的脚本
 import type { FontType } from '../utils/detectFormat';
 import { worker, Transfer } from 'workerpool';
 import { convert } from './commonConvert';
+
 // 欺骗 环境，认为是 classic worker
 !globalThis.importScripts &&
     (globalThis.importScripts = (...args: string[]) => {

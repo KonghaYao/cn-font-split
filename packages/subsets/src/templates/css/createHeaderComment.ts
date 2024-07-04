@@ -1,6 +1,6 @@
 import { InputTemplate } from '../../interface';
 
-/** 创建头部的注释字符串 */
+/** 创建头部的注释字符串, 包含版本信息和字体的头部信息 */
 export const createHeaderComment = (
     fontData: Record<string, string>,
     opts: InputTemplate['css'],

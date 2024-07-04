@@ -1,4 +1,4 @@
-import { VFMessage } from '../fontSplit/context';
+import { VFMessage } from '../ createContext';
 import { InputTemplate, SubsetResult } from '../interface';
 import { createHeaderComment } from './css/createHeaderComment';
 import { getFormatFromFontPath } from './css/getFormatFromFontPath';
