@@ -1,8 +1,7 @@
 import { convert } from './convert/commonConvert';
 import { hbjs } from './hb';
 import { Executor, PerformanceRecord } from './pipeline/index';
-import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
-import { createContext } from './fontSplit/context';
+import { createContext } from './ createContext';
 import path from 'path';
 import byteSize from 'byte-size';
 import { IOutputFile, InputTemplate } from './interface';
@@ -24,7 +23,7 @@ import {
     Thai,
     Vietnamese,
     getCN_SC_Rank,
-} from './data/Ranks';
+} from './data/LanguageRange';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';

@@ -1,6 +1,6 @@
 import { timeRecordFormat } from '../utils/timeCount';
 import byteSize from 'byte-size';
-import { IContext } from '../fontSplit/context';
+import { IContext } from '../ createContext';
 
 export async function recordToLog(
     ctx: IContext,
