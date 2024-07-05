@@ -39,7 +39,7 @@ import {
     getNameTableFromTool,
 } from './subsetService/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
-import { CharsetTool } from './utils/CharSetTool';
+import { differenceSet } from './utils/CharSetTool';
 
 type Context = ReturnType<typeof createContext>;
 /** 从路径或者二进制数据获取原始字体文件 */
@@ -140,7 +140,7 @@ async function PreSubset(ctx: Context) {
     ctx.trace('总字符数', totalChars.length);
     bundleMessage.originSize = totalChars.length;
     const AllUnicodeSet = new Set([...totalChars]); // 2
-    CharsetTool.difference(AllUnicodeSet, subsetsToSet(UserSubsets)); //3
+    differenceSet(AllUnicodeSet, subsetsToSet(UserSubsets)); //3
     /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
     const autoForceBundle: number[][] = (
         input.unicodeRank ?? [
@@ -168,7 +168,7 @@ async function PreSubset(ctx: Context) {
     const featureData = getFeatureData(fontTool);
     const featureMap = getFeatureMap(featureData);
     const ForcePartSubsets = forceSubset(UserSubsets, featureMap); // 5
-    CharsetTool.difference(AllUnicodeSet, ForcePartSubsets.flat()); // 6
+    differenceSet(AllUnicodeSet, ForcePartSubsets.flat()); // 6
 
     autoForceBundle.push([...AllUnicodeSet]);
     const contoursMap = await createContoursMap();
