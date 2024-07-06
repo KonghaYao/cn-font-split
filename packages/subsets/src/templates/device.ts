@@ -22,6 +22,7 @@ export interface DeviceMessage {
     createdTime: string;
 }
 
+/** 获取设备信息 */
 export const getDeviceMessage = async (
     env: typeof ENV,
 ): Promise<DeviceMessage | undefined> => {

@@ -2,7 +2,7 @@ import { HB } from './hb';
 import { Context } from './pipeline/index';
 import { InputTemplate, SubsetResult, Subsets } from './interface';
 import { createReporter, type BundleReporter } from './templates/reporter';
-import { type FontBaseTool } from './subsetService/getFeatureQueryFromBuffer';
+import { type FontBaseTool } from './feature/getFeatureQueryFromBuffer';
 import { createCSS } from './templates/css';
 export interface FontAxis {
     tag: string;

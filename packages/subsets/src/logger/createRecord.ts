@@ -1,6 +1,8 @@
 import { UnicodeRange } from '@japont/unicode-range';
 import { IOutputFile, InputTemplate, SubsetResult } from '../interface';
 import { templateReplace, type ReplaceProps } from './templateReplacer';
+
+/** 从构建完成的分包信息中创建分包记录 */
 export async function createRecord(
     outputFile: IOutputFile,
     ext: string,
