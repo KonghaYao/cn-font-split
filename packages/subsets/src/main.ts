@@ -8,7 +8,8 @@ import { IOutputFile, InputTemplate } from './interface';
 import { BundleReporter, createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
-import { useSubset, getAutoSubset } from './useSubset/index';
+import { useSubset } from './useSubset/index';
+import { getAutoSubset } from './useSubset/getAutoSubset';
 import {
     Arabic,
     Bengali,
@@ -46,14 +47,18 @@ type Context = ReturnType<typeof createContext>;
 async function LoadFile(ctx: Context) {
     ctx.info(`cn-font-split@${__cn_font_split_version__} 环境检测\t`, env);
     const { input } = ctx.pick('input');
-    typeof input.log === 'function' && ctx.recordLog(input.log);
+
+    // 注册日志函数
+    typeof input.log === 'function' && ctx.registerLog(input.log);
+
+    // 获取二进制文件
     let res!: Uint8Array;
     if (typeof input.FontPath === 'string') {
         res = await Assets.loadFileAsync(input.FontPath);
     } else if (input.FontPath instanceof Uint8Array) {
-        // 视为二进制数据
         res = new Uint8Array(input.FontPath);
     }
+
     ctx.trace('输入文件大小：' + byteSize(res.byteLength));
     ctx.set('bundleMessage', { originLength: res.byteLength });
     ctx.set('originFile', res);

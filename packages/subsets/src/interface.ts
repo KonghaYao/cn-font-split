@@ -2,6 +2,10 @@ import { FontType } from './convert/detectFormat';
 import { WriteFileOptions } from 'fs-extra';
 import type { Buffer } from 'buffer';
 import type { ReplaceProps } from './logger/templateReplacer';
+import { ConvertManager } from './convert/convert.manager';
+import { ISettingsParam } from 'tslog';
+import { WorkerPoolOptions } from 'workerpool';
+
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     unicodeRange: string;
@@ -11,6 +15,7 @@ export type SubsetResult = {
     diff: number;
     charLength: number;
 }[];
+
 /** unicode-range的数据表示格式 */
 export type Subset = (number | [number, number])[];
 
@@ -23,9 +28,7 @@ export type IOutputFile = (
     data: Uint8Array | string,
     options?: WriteFileOptions | undefined,
 ) => Promise<void>;
-import { ConvertManager } from './convert/convert.manager';
-import { ISettingsParam } from 'tslog';
-import { WorkerPoolOptions } from 'workerpool';
+
 export type InputTemplate = {
     /** 字体文件的相对地址，或者直接输入 buffer */
     FontPath: string | Buffer | Uint8Array;

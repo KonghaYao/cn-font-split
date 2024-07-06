@@ -28,7 +28,7 @@ export class Context<T, LogObj = unknown> extends Logger<LogObj> {
         super(opts?.log?.settings, opts?.log?.logObj);
     }
 
-    recordLog(log: (...args: any[]) => void) {
+    registerLog(log: (...args: any[]) => void) {
         this.attachTransport((obj) => {
             const params = Object.keys(obj)
                 .filter((i) => !isNaN(parseInt(i)))
