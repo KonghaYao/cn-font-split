@@ -1,7 +1,7 @@
 import { FontType } from './convert/detectFormat';
 import { WriteFileOptions } from 'fs-extra';
 import type { Buffer } from 'buffer';
-import type { ReplaceProps } from './useSubset/templateReplacer';
+import type { ReplaceProps } from './logger/templateReplacer';
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
     unicodeRange: string;

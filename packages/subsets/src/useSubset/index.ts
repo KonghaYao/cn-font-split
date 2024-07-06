@@ -5,12 +5,12 @@ import type { FontType } from '../convert/detectFormat';
 import { IContext } from '../ createContext';
 import { getExtensionsByFontType } from '../convert/detectFormat';
 import { subsetFont } from './subsetFont';
-import { createRecord } from './createRecord';
-import { recordToLog } from './recordToLog';
+import { createRecord } from '../logger/createRecord';
+import { recordToLog } from '../logger/recordToLog';
 import {
     FeatureMap,
     processSingleUnicodeWithFeature,
-} from '../subsetService/featureMap';
+} from '../feature/featureMap';
 
 /** 直接根据chunk 批量分包字体 */
 export const useSubset = async (
@@ -40,14 +40,12 @@ export const useSubset = async (
             subsetMessage,
             ctx,
             index,
-        }
-    }
+        };
+    };
     if (input.threads) {
         await Promise.all(
             totalChunk.map(async (chunk, index) =>
-                runSubSet(
-                    createContext(chunk, index)
-                ).catch((e: Error) => {
+                runSubSet(createContext(chunk, index)).catch((e: Error) => {
                     ctx.warn('分包失败 ' + index + ' ' + e.message);
                 }),
             ),
@@ -55,9 +53,7 @@ export const useSubset = async (
     } else {
         let index = 0;
         for (const chunk of totalChunk) {
-            await runSubSet(
-                createContext(chunk, index)
-            );
+            await runSubSet(createContext(chunk, index));
             index++;
         }
     }
@@ -65,20 +61,29 @@ export const useSubset = async (
     return subsetMessage;
 };
 /**  使用 harfbuzz 开始进行分包 */
-async function runSubSet(
-    { face, chunk, hb, input, targetType, outputFile, ext, subsetMessage, ctx, index }: {
-        face: HB.Face,
-        chunk: number[],
-        hb: HB.Handle,
-        input: InputTemplate,
-        targetType: FontType,
-        outputFile: IOutputFile,
-        ext: string,
-        subsetMessage: SubsetResult,
-        ctx: IContext,
-        index: number,
-    }
-) {
+async function runSubSet({
+    face,
+    chunk,
+    hb,
+    input,
+    targetType,
+    outputFile,
+    ext,
+    subsetMessage,
+    ctx,
+    index,
+}: {
+    face: HB.Face;
+    chunk: number[];
+    hb: HB.Handle;
+    input: InputTemplate;
+    targetType: FontType;
+    outputFile: IOutputFile;
+    ext: string;
+    subsetMessage: SubsetResult;
+    ctx: IContext;
+    index: number;
+}) {
     const hbStart = performance.now();
     if (chunk.length === 0) {
         ctx.warn('发现空分包' + chunk);
@@ -96,8 +101,8 @@ async function runSubSet(
     const service = input.threads && input.threads?.service;
     const transferred = service
         ? await service.pool.exec('convert', [buffer, targetType], {
-            transfer: [buffer.buffer],
-        })
+              transfer: [buffer.buffer],
+          })
         : await convert(buffer, targetType);
     const woff2Time = [woff2Start, performance.now()] as const;
 

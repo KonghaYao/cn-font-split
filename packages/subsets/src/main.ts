@@ -28,8 +28,8 @@ import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
 import { makeImage } from 'font-sharp/dist/font-sharp/src/makeImage.js';
-import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
-import { forceSubset } from './subsetService/forceSubset';
+import { getFeatureData, getFeatureMap } from './feature/featureMap';
+import { forceSubset } from './feature/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
 import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
@@ -37,7 +37,7 @@ import {
     createFontBaseTool,
     getFVarTable,
     getNameTableFromTool,
-} from './subsetService/getFeatureQueryFromBuffer';
+} from './feature/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
 import { differenceSet } from './utils/CharSetTool';
 

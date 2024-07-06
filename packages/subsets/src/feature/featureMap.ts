@@ -1,4 +1,4 @@
-import { FeatureList } from '../data/FeatureList';
+import { FeatureList } from './FeatureList';
 import { Subset } from '../interface';
 import {
     FontBaseTool,
