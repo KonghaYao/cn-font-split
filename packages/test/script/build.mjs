@@ -24,7 +24,7 @@ for (const i of features) {
     const charset = i.splitText
         .split('')
         .filter(Boolean)
-        .map((i) => i.charCodeAt(0));
+        .map((i) => i.codePointAt(0));
     await fontSplit({
         destFold: './temp/' + i.featureKey,
         FontPath: Buffer.from(b),

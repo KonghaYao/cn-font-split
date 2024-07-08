@@ -1,22 +1,22 @@
 function hb_tag(s: string) {
     return (
-        ((s.charCodeAt(0) & 0xff) << 24) |
-        ((s.charCodeAt(1) & 0xff) << 16) |
-        ((s.charCodeAt(2) & 0xff) << 8) |
-        ((s.charCodeAt(3) & 0xff) << 0)
+        ((s.codePointAt(0)! & 0xff) << 24) |
+        ((s.codePointAt(1)! & 0xff) << 16) |
+        ((s.codePointAt(2)! & 0xff) << 8) |
+        ((s.codePointAt(3)! & 0xff) << 0)
     );
 }
 function HB_TAG(str: string) {
     return str.split('').reduce(function (a, ch) {
-        return (a << 8) + ch.charCodeAt(0);
+        return (a << 8) + ch.codePointAt(0)!;
     }, 0);
 }
 function _hb_untag(tag: number) {
     return [
-        String.fromCharCode((tag >> 24) & 0xff),
-        String.fromCharCode((tag >> 16) & 0xff),
-        String.fromCharCode((tag >> 8) & 0xff),
-        String.fromCharCode((tag >> 0) & 0xff),
+        String.fromCodePoint((tag >> 24) & 0xff),
+        String.fromCodePoint((tag >> 16) & 0xff),
+        String.fromCodePoint((tag >> 8) & 0xff),
+        String.fromCodePoint((tag >> 0) & 0xff),
     ].join('');
 }
 export type BufferFlag =
@@ -346,7 +346,7 @@ export function hbjs(instance: WebAssembly.Instance) {
         if (!text) return { ptr: 0, length: 0, free() {} };
         const ptr = exports.malloc(text.length + 1);
         for (let i = 0; i < text.length; ++i) {
-            const char = text.charCodeAt(i);
+            const char = text.codePointAt(i)!;
             if (char > 127) throw new Error('Expected ASCII text');
             heapu8[ptr + i] = char;
         }
@@ -363,7 +363,7 @@ export function hbjs(instance: WebAssembly.Instance) {
     function createJsString(text: string) {
         const ptr = exports.malloc(text.length * 2);
         const words = new Uint16Array(exports.memory.buffer, ptr, text.length);
-        for (let i = 0; i < words.length; ++i) words[i] = text.charCodeAt(i);
+        for (let i = 0; i < words.length; ++i) words[i] = text.codePointAt(i)!;
         return {
             ptr: ptr,
             length: words.length,
