@@ -151,7 +151,7 @@ export function isItalic(str: string) {
 
 /** 创建 unicode 注释文本，方便调试 */
 function createUnicodeCommentForPackage(range: string) {
-    return `/* ${String.fromCharCode(
+    return `/* ${String.fromCodePoint(
         ...UnicodeRange.parse(range.split(',')),
     )} */`;
 }

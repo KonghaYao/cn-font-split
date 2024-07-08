@@ -89,7 +89,7 @@ export const createFontBaseTool = (buffer: ArrayBuffer) => {
         | ReturnType<typeof parseWOFFTableEntries>;
     const signature = parse.getTag(data, 0);
     if (
-        signature === String.fromCharCode(0, 1, 0, 0) ||
+        signature === String.fromCodePoint(0, 1, 0, 0) ||
         signature === 'true' ||
         signature === 'typ1'
     ) {
@@ -102,7 +102,7 @@ export const createFontBaseTool = (buffer: ArrayBuffer) => {
         tableEntries = parseOpenTypeTableEntries(data, numTables);
     } else if (signature === 'wOFF') {
         const flavor = parse.getTag(data, 4);
-        if (flavor === String.fromCharCode(0, 1, 0, 0)) {
+        if (flavor === String.fromCodePoint(0, 1, 0, 0)) {
             font.outlinesFormat = 'truetype';
         } else if (flavor === 'OTTO') {
             font.outlinesFormat = 'cff';

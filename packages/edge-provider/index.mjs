@@ -12,7 +12,6 @@ Assets.pathTransform = (innerPath) =>
         'https://cdn.jsdelivr.net/npm/cn-font-split/dist/browser/',
     );
 
-
 const UA =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
 const kv = await Deno.openKv();
@@ -25,7 +24,7 @@ router.post('/upload', async (ctx) => {
     const name = ctx.request.headers.get('filename');
     const hash = new Md5('md5').update(buffer).toString();
     // console.log(hash);
-    const cacheURL = await kv.get(["files", hash]);
+    const cacheURL = await kv.get(['files', hash]);
     // console.log(cacheURL);
     if (cacheURL.value) {
         ctx.response.body = JSON.stringify({
@@ -35,7 +34,7 @@ router.post('/upload', async (ctx) => {
         });
     } else {
         const url = await upload(new Blob([buffer]), name, hash);
-        await kv.set(["files", hash], url);
+        await kv.set(['files', hash], url);
         ctx.response.body = JSON.stringify({
             code: 0,
             data: { name, hash, url },
@@ -59,7 +58,7 @@ router.get('/split', async (ctx) => {
         .get('splitText')
         .split('')
         .filter(Boolean)
-        .map((i) => i.charCodeAt(0));
+        .map((i) => i.codePointAt(0));
     const blob = await downloadFromKV(hash).then((res) => res.arrayBuffer());
     console.log(blob.byteLength);
     const pack = await new Promise((res) => {
@@ -86,8 +85,6 @@ router.get('/split', async (ctx) => {
 app.use(router.routes());
 console.log('Server listening on http://localhost:8000');
 await app.listen({ port: 8000 });
-
-
 
 /**
  * download file from shortend_url
