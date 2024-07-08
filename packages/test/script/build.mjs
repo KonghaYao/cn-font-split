@@ -21,8 +21,7 @@ for (const i of features) {
             i.fontLink.replace(/.*\.(.*?)/g, '.$1'),
     );
     const b = await convert(new Uint8Array(buffer), 'ttf');
-    const charset = i.splitText
-        .split('')
+    const charset = [...i.splitText]
         .filter(Boolean)
         .map((i) => i.codePointAt(0));
     await fontSplit({
