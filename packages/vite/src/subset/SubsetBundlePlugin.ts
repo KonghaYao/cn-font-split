@@ -84,7 +84,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
                         encoding: 'utf8',
                     });
                     stream.on('data', (i: string) => {
-                        i.split('').forEach((char) =>
+                        [...i].forEach((char) =>
                             this.usedSubsets.add(char.codePointAt(0)!),
                         );
                     });
@@ -105,7 +105,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
         }
         const set = this.usedSubsets;
         whiteList.forEach((str) =>
-            str.split('').forEach((char) => set.add(char.codePointAt(0)!)),
+            [...str].forEach((char) => set.add(char.codePointAt(0)!)),
         );
     }
 }

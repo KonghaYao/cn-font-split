@@ -54,9 +54,7 @@ const downloadFromKV = async (hash) => {
 router.get('/split', async (ctx) => {
     const hash = await ctx.request.url.searchParams.get('hash');
     console.log(hash);
-    const charset = ctx.request.url.searchParams
-        .get('splitText')
-        .split('')
+    const charset = [...ctx.request.url.searchParams.get('splitText')]
         .filter(Boolean)
         .map((i) => i.codePointAt(0));
     const blob = await downloadFromKV(hash).then((res) => res.arrayBuffer());
