@@ -41,6 +41,7 @@ import {
 } from './feature/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
 import { differenceSet } from './utils/CharSetTool';
+import wrapper from '@konghayao/harfbuzzjs/hb-subset.js';
 
 type Context = ReturnType<typeof createContext>;
 /** 从路径或者二进制数据获取原始字体文件 */
@@ -81,9 +82,7 @@ async function transferFontType(ctx: Context) {
 async function loadHarbuzz(ctx: Context) {
     const { ttfFile, input: opt } = ctx.pick('input', 'ttfFile');
 
-    const wasm = await Assets.loadHarbuzz();
-    if (!wasm) throw new Error('启动 harfbuzz 失败');
-    const hb = hbjs(wasm.instance);
+    const hb = hbjs(await wrapper());
     const blob = hb.createBlob(ttfFile);
     const face = hb.createFace(blob, 0);
     blob.destroy();
