@@ -6,7 +6,7 @@ import path from 'node:path';
 import alias from '@rollup/plugin-alias';
 import condition from '@forsee/rollup-plugin-conditional';
 import commonPlugin from './scripts/common.config.mjs';
-const nodeAssets = await fse.readJson('./src/adapter/nodeAssets.json');
+const nodeAssets = await fse.readJson('./src/adapter/node/nodeAssets.json');
 const require = createRequire(import.meta.url);
 
 // 防止打包时删除 ts 的类型注解
@@ -70,6 +70,5 @@ export default {
             },
             preferBuiltins: true,
         }),
-
     ],
 };
