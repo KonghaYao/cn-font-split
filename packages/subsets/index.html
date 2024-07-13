@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    cn-font-split 浏览器构建测试
+</body>
+<script type="module">
+    import { fontSplit, Assets } from './dist/browser/index.js';
+    Assets.pathTransform = (innerPath) =>
+        innerPath.replace('./', 'http://127.0.0.1:5500/dist/browser/');
+
+    console.log(Assets);
+    const files = [];
+    await fontSplit({
+        destFold: '',
+        FontPath:
+            'https://cdn.jsdelivr.net/gh/KonghaYao/chinese-free-web-font-storage/packages/dyh/fonts/SmileySans-Oblique.ttf',
+        // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
+        // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
+        previewImage: {},
+        outputFile(name, data) {
+            files.push([name, data]);
+        },
+    });
+    console.log(files);
+
+
+</script>
+
+</html>

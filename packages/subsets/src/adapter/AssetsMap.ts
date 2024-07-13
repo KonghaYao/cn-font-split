@@ -44,7 +44,8 @@ class AssetsMap<K extends string> extends Map<K, string> {
             const {
                 promises: { readFile },
             } = await import('fs');
-            return readFile(await resolveNodeModule(targetPath)).then((res) => {
+            const realFilePath = await resolveNodeModule(targetPath);
+            return readFile(realFilePath).then((res) => {
                 return new Uint8Array(res.buffer);
             });
         } else if (
@@ -106,7 +107,8 @@ class AssetsMap<K extends string> extends Map<K, string> {
 export class SystemAssetsMap<K extends string> extends AssetsMap<K> {
     async loadHarbuzz(input = 'hb-subset.wasm') {
         if (isNode || isDeno) {
-            return WebAssembly.instantiate(await this.loadFileAsync(input));
+            const blob = await this.loadFileAsync(input);
+            return WebAssembly.instantiate(blob);
         }
         return WebAssembly.instantiateStreaming(this.loadFileResponse(input));
     }

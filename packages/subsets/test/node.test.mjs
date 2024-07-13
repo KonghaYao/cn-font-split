@@ -16,8 +16,8 @@ fontSplit({
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},
     chunkSize: 70 * 1024,
-    testHTML: false,
-    reporter: false,
+    testHTML: true,
+    reporter: true,
     css: {
         // fontWeight: false
         // localFamily: false,
@@ -30,9 +30,9 @@ fontSplit({
     },
     logger: {
         settings: {
-            minLevel: 4
-        }
-    }
+            minLevel: 4,
+        },
+    },
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},
