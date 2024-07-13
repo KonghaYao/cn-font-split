@@ -1,6 +1,6 @@
 {
     "name": "font-sharp",
-    "version": "4.11.3",
+    "version": "5.0.1",
     "description": "font to SVG Render.",
     "main": "dist/font-sharp/src/index.js",
     "type": "module",
@@ -27,7 +27,7 @@
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "peerDependencies": {
-        "@konghayao/harfbuzzjs": "^8"
+        "@konghayao/harfbuzzjs": "9.0.5"
     },
     "devDependencies": {
         "@rollup/plugin-terser": "^0.4.4"
