@@ -1,0 +1,27 @@
+
+export const PingFangSCUltralight = {"ascent":1060,"descent":-340,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":452};
+export const PingFangSCThin = {"ascent":1060,"descent":-340,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":457};
+export const PingFangSCSemibold = {"ascent":1060,"descent":-340,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":485};
+export const PingFangSCRegular = {"ascent":1060,"descent":-340,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":472};
+export const PingFangSCMedium = {"ascent":1060,"descent":-340,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":482};
+export const PingFangSCLight = {"ascent":1060,"descent":-340,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":465};
+export const NotoSerifCJKscSemiBold = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":505};
+export const NotoSerifCJKscRegular = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":492};
+export const NotoSerifCJKscMedium = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":499};
+export const NotoSerifCJKscLight = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":488};
+export const NotoSerifCJKscExtraLight = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":484};
+export const NotoSerifCJKscBold = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":514};
+export const NotoSerifCJKscBlack = {"ascent":1151,"descent":-286,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":525};
+export const NotoSansCJKscThin = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":439};
+export const NotoSansCJKscRegular = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":467};
+export const NotoSansCJKscMedium = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":479};
+export const NotoSansCJKscLight = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":450};
+export const NotoSansCJKscDemiLight = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":462};
+export const NotoSansCJKscBold = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":495};
+export const NotoSansCJKscBlack = {"ascent":1160,"descent":-288,"lineGap":0,"unitsPerEm":1000,"xWidthAvg":511};
+export const MicrosoftYaHeiUILight = {"ascent":2080,"descent":-521,"lineGap":0,"unitsPerEm":2048,"xWidthAvg":928};
+export const MicrosoftYaHeiUI = {"ascent":2080,"descent":-521,"lineGap":0,"unitsPerEm":2048,"xWidthAvg":989};
+export const MicrosoftYaHeiUIBold = {"ascent":2080,"descent":-521,"lineGap":0,"unitsPerEm":2048,"xWidthAvg":1044};
+export const MicrosoftYaHeiLight = {"ascent":2210,"descent":-514,"lineGap":0,"unitsPerEm":2048,"xWidthAvg":928};
+export const MicrosoftYaHei = {"ascent":2167,"descent":-536,"lineGap":0,"unitsPerEm":2048,"xWidthAvg":989};
+export const MicrosoftYaHeiBold = {"ascent":2167,"descent":-536,"lineGap":0,"unitsPerEm":2048,"xWidthAvg":1044};

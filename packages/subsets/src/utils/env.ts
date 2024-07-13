@@ -1,3 +1,5 @@
+// 判断 js 运行时
+
 export const isJsDom =
     typeof navigator === 'object' &&
     navigator.userAgent &&

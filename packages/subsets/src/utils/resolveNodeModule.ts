@@ -1,4 +1,4 @@
-/** 解析模块中文件的地址，并非解析__dirname 和 __filename 的函数 */
+/** 解析模块中文件的地址，并非解析__dirname 和 __filename 的函数，只在 node 环境中使用 */
 export const resolveNodeModule = async (path: string) => {
     const head = path[0];
     switch (head) {

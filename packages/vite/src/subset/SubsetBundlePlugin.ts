@@ -2,7 +2,7 @@ import { BundlePlugin, BundlePluginConfig, getFileName } from '../index.js';
 import { glob } from 'glob';
 import fs from 'fs-extra';
 import crypto from 'node:crypto';
-import path from 'path'
+import path from 'path';
 
 export interface SubsetBundlePluginConfig extends BundlePluginConfig {
     scanFiles?: string | string[] | Record<string, string | string[]>;
@@ -13,16 +13,13 @@ export interface SubsetBundlePluginConfig extends BundlePluginConfig {
 export class SubsetUtils {
     static isSubsetLink(p: string) {
         const [idString, params] = p.split('?');
-        const searchParams = new URLSearchParams(params)
-        const isSubset = searchParams.has('subsets')
-        return { idString, isSubset, searchParams }
+        const searchParams = new URLSearchParams(params);
+        const isSubset = searchParams.has('subsets');
+        return { idString, isSubset, searchParams };
     }
     static emptySubsetsDir(config: BundlePluginConfig) {
-        const dir = path.resolve(
-            config.cacheDir,
-            '.subsets',
-        )
-        return fs.emptyDir(dir)
+        const dir = path.resolve(config.cacheDir, '.subsets');
+        return fs.emptyDir(dir);
     }
 }
 
@@ -31,26 +28,29 @@ export class SubsetBundlePlugin extends BundlePlugin {
     constructor(config: SubsetBundlePluginConfig, key?: string) {
         super(config, key);
         this.subsetConfig = config;
-        this.subsetCacheDir = config.cacheDir
+        this.subsetCacheDir = config.cacheDir;
     }
 
     usedSubsets = new Set<number>();
-    subsetCacheDir: string
+    subsetCacheDir: string;
     getResolvedPath(p: string) {
-        const { isSubset, idString } = this.isSubsetLink(p)
-        return path.resolve(isSubset ? this.subsetCacheDir : this.config.cacheDir, getFileName(idString));
+        const { isSubset, idString } = this.isSubsetLink(p);
+        return path.resolve(
+            isSubset ? this.subsetCacheDir : this.config.cacheDir,
+            getFileName(idString),
+        );
     }
-    isSubsetLink = SubsetUtils.isSubsetLink
+    isSubsetLink = SubsetUtils.isSubsetLink;
     async createSubsets() {
-        if (!this.subsetConfig.scanFiles) return
-        console.log("vite-plugin-font | Minimal Mode")
+        if (!this.subsetConfig.scanFiles) return;
+        console.log('vite-plugin-font | Minimal Mode');
         this.getWhiteListSubsets();
         await this.getScanFiles();
         const subsetsArr = [...this.usedSubsets].sort((a, b) => a - b);
         this.subsets = [subsetsArr];
         const hash = crypto
             .createHash('md5')
-            .update(String.fromCharCode(...subsetsArr))
+            .update(String.fromCodePoint(...subsetsArr))
             .digest('hex');
         // 修改缓存地址，达到缓存
         this.subsetCacheDir = path.resolve(
@@ -58,17 +58,20 @@ export class SubsetBundlePlugin extends BundlePlugin {
             '.subsets',
             hash,
         );
-        return hash
+        return hash;
     }
 
     private async getScanFiles() {
         let globStr: string | string[];
-        if (typeof this.subsetConfig.scanFiles === 'object' && !(this.subsetConfig.scanFiles instanceof Array)) {
-            globStr = this.subsetConfig.scanFiles[this.key]
+        if (
+            typeof this.subsetConfig.scanFiles === 'object' &&
+            !(this.subsetConfig.scanFiles instanceof Array)
+        ) {
+            globStr = this.subsetConfig.scanFiles[this.key];
         } else {
-            globStr = this.subsetConfig.scanFiles!
+            globStr = this.subsetConfig.scanFiles!;
         }
-        if (!globStr) return
+        if (!globStr) return;
         const files = await glob(globStr!, {
             absolute: true,
             nodir: true,
@@ -81,8 +84,8 @@ export class SubsetBundlePlugin extends BundlePlugin {
                         encoding: 'utf8',
                     });
                     stream.on('data', (i: string) => {
-                        i.split('').forEach((char) =>
-                            this.usedSubsets.add(char.charCodeAt(0)),
+                        [...i].forEach((char) =>
+                            this.usedSubsets.add(char.codePointAt(0)!),
                         );
                     });
                     stream.on('end', () => {
@@ -102,7 +105,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
         }
         const set = this.usedSubsets;
         whiteList.forEach((str) =>
-            str.split('').forEach((char) => set.add(char.charCodeAt(0))),
+            [...str].forEach((char) => set.add(char.codePointAt(0)!)),
         );
     }
 }

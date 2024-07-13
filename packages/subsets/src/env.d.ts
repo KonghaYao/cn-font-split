@@ -42,3 +42,8 @@ declare module '@chinese-fonts/wawoff2' {
 declare type ANY = any;
 // 这个是全局的静态文件声明，不要进行模块化
 // export { }
+
+declare module '@konghayao/harfbuzzjs/hb-subset.js' {
+    const a: any;
+    export default a;
+}

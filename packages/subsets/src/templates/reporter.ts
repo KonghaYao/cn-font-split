@@ -19,6 +19,8 @@ export interface BundleReporter {
     bundledSize: number;
 }
 export type FontReporter = Awaited<ReturnType<typeof createReporter>>;
+
+/** 创建 reporter.json 文件的文本 */
 export const createReporter = async (
     subsetResult: SubsetResult,
     nameTable: NameTable,
@@ -38,9 +40,9 @@ export const createReporter = async (
     });
 
     return {
-        // 修复 FontPath 输入二进制数据后导致的膨胀
         config: {
             ...input,
+            // 修复 FontPath 输入二进制数据后导致的膨胀
             FontPath:
                 typeof input.FontPath !== 'string'
                     ? 'it is a binary input'
@@ -57,6 +59,7 @@ export const createReporter = async (
             ...(await getDeviceMessage(env)),
         },
         bundleMessage,
+        /** 字体的 css 相关的属性，便于使用 */
         css,
     };
 };

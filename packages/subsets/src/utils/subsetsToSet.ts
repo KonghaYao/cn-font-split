@@ -1,8 +1,7 @@
 import { Subsets } from '../interface';
 
-/** 提取 subsets 中的文本 */
-export const subsetsToSet = (subsets: Subsets) => {
-    const set = new Set<number>();
+/** 提取 subsets 中的 unicode 数字到 Set 中*/
+export const subsetsToSet = (subsets: Subsets, set = new Set<number>()) => {
     subsets.forEach((arr) => {
         arr.forEach((range) => {
             if (typeof range === 'number') {
