@@ -15,12 +15,12 @@ const folder = (arr) => {
                 }
                 return col;
             },
-            [[]]
+            [[]],
         );
 };
 import fs from 'fs-extra';
 let count = 0;
 const i = fs.readFileSync('./gb12345-han.txt', 'utf-8');
-const a = folder(i.split('\n').map((i) => i.charCodeAt(0)));
+const a = folder(i.split('\n').map((i) => i.codePointAt(0)));
 
 fs.outputJSONSync('./gb12345.json', a);

@@ -1,5 +1,4 @@
-import { subsetsToSet } from '../utils/subsetsToSet';
-import { FeatureList } from '../data/FeatureList';
+import { FeatureList } from './FeatureList';
 import { Subset } from '../interface';
 import {
     FontBaseTool,
@@ -7,6 +6,7 @@ import {
     getFeatureQueryFromBuffer,
     getGlyphIDToUnicodeMap,
 } from './getFeatureQueryFromBuffer';
+
 /** 从字体中获取 Feature 的数据数组 */
 export const getFeatureData = (fontTool: FontBaseTool) => {
     const featureQuery = getFeatureQueryFromBuffer(fontTool);
@@ -27,6 +27,7 @@ export const getFeatureData = (fontTool: FontBaseTool) => {
         );
     }).filter((i) => i.length > 1);
 };
+
 /** 将多个关系行，合并为元素的合集映射 */
 export const getFeatureMap = (featureData: number[][]) => {
     const featureMap = new Map<number, Set<number>>();

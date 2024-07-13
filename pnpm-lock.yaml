@@ -83,8 +83,8 @@ importers:
   packages/font-sharp:
     dependencies:
       '@konghayao/harfbuzzjs':
-        specifier: ^8
-        version: 8.3.1
+        specifier: 9.0.5
+        version: 9.0.5
     devDependencies:
       '@rollup/plugin-terser':
         specifier: ^0.4.4
@@ -127,8 +127,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@konghayao/harfbuzzjs':
-        specifier: 8.3.1
-        version: 8.3.1
+        specifier: 9.0.5
+        version: 9.0.5
       '@konghayao/opentype.js':
         specifier: 2024.5.25
         version: 2024.5.25
@@ -922,8 +922,8 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@konghayao/harfbuzzjs@8.3.1:
-    resolution: {integrity: sha512-w0MZaFTF7O4YtXvUH/brV9VqvY5OfYxlZ9xDtqM3vrAIyq/KAckvJHyqWeMdmMQ9aCqWRfgZOLfhX3HQivWdOg==}
+  /@konghayao/harfbuzzjs@9.0.5:
+    resolution: {integrity: sha512-IgdSA309ntzUDkitSlkvYANlFVv9YNpUXeopC9EHHlXrzTFRVUUYKLM4C56od02FXcdFJIbLYHeA29VvXaomNQ==}
     dev: false
 
   /@konghayao/opentype.js@2023.11.20:

@@ -8,7 +8,7 @@ import fs from 'node:fs';
  * @returns {number[]} - 一个包含文本中所有字符Unicode编码的数组
  */
 const getAllUnicodeFromText = (text) => {
-    return new Set(text.split('').map((char) => char.charCodeAt(0)));
+    return new Set([...text].map((char) => char.codePointAt(0)));
 };
 const getCharMap = (reporter) => {
     const charMap = new Map();

@@ -1,11 +1,10 @@
+import { FontType, supportedFormats, detectFormat } from '../detectFormat';
 import {
-    FontType,
-    supportedFormats,
-    detectFormat,
-} from '../utils/detectFormat';
-import { compress, decompress } from '@chinese-fonts/wawoff2';
+    convertTTFToWOFF2Async,
+    convertWOFF2ToTTFAsync,
+} from '@napi-rs/woff-build';
 
-/** 字体格式转化 */
+/** 字体格式转化, node 特供版本，速度非常快 */
 export const convert = async function (
     buffer: Uint8Array,
     toFormat: FontType,
@@ -35,10 +34,12 @@ export const convert = async function (
         // buffer = woffTool.toSfnt(buffer);
         throw new Error('Unsupported source format: woff');
     } else if (fromFormat === 'woff2') {
-        buffer = await decompress(buffer);
+        buffer = await convertWOFF2ToTTFAsync(buffer as Buffer);
     }
     if (toFormat === 'woff2') {
-        buffer = await compress(buffer);
+        buffer = await convertTTFToWOFF2Async(buffer as Buffer);
     }
+
+    buffer = new Uint8Array(buffer);
     return buffer;
 };

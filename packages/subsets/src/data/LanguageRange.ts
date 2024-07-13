@@ -1,4 +1,4 @@
-import { subsetsToSet } from '../utils/subsetsToSet';
+// 关于各语言在 Unicode 中的区域的定义文件
 import { Assets } from '../adapter/assets';
 import { UnicodeRange } from '@japont/unicode-range';
 //https://unicode.org/charts/nameslist/

@@ -97,7 +97,7 @@
                 if (cur.chars.startsWith('U+')) {
                     return (
                         col +
-                        String.fromCharCode(
+                        String.fromCodePoint(
                             ...UnicodeRange.parse(cur.chars.split(',')),
                         )
                     );
@@ -108,7 +108,7 @@
                 let exist = '';
                 let voids = '';
                 for (let i = min; i <= max; i++) {
-                    const char = String.fromCharCode(i);
+                    const char = String.fromCodePoint(i);
                     const isExist = total.includes(char);
                     if (isExist) {
                         exist += char;
@@ -306,7 +306,7 @@
         const CharList = (data) => {
             return data.map((i) => {
                 const chars = i.chars.startsWith('U+')
-                    ? String.fromCharCode(
+                    ? String.fromCodePoint(
                           ...UnicodeRange.parse(i.chars.split(',')),
                       )
                     : i.chars;

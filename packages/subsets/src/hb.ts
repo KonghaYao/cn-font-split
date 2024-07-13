@@ -1,22 +1,22 @@
 function hb_tag(s: string) {
     return (
-        ((s.charCodeAt(0) & 0xff) << 24) |
-        ((s.charCodeAt(1) & 0xff) << 16) |
-        ((s.charCodeAt(2) & 0xff) << 8) |
-        ((s.charCodeAt(3) & 0xff) << 0)
+        ((s.codePointAt(0)! & 0xff) << 24) |
+        ((s.codePointAt(1)! & 0xff) << 16) |
+        ((s.codePointAt(2)! & 0xff) << 8) |
+        ((s.codePointAt(3)! & 0xff) << 0)
     );
 }
 function HB_TAG(str: string) {
     return str.split('').reduce(function (a, ch) {
-        return (a << 8) + ch.charCodeAt(0);
+        return (a << 8) + ch.codePointAt(0)!;
     }, 0);
 }
 function _hb_untag(tag: number) {
     return [
-        String.fromCharCode((tag >> 24) & 0xff),
-        String.fromCharCode((tag >> 16) & 0xff),
-        String.fromCharCode((tag >> 8) & 0xff),
-        String.fromCharCode((tag >> 0) & 0xff),
+        String.fromCodePoint((tag >> 24) & 0xff),
+        String.fromCodePoint((tag >> 16) & 0xff),
+        String.fromCodePoint((tag >> 8) & 0xff),
+        String.fromCodePoint((tag >> 0) & 0xff),
     ].join('');
 }
 export type BufferFlag =
@@ -52,19 +52,29 @@ export declare namespace HB {
  * @message copied from https://github.com/harfbuzz/harfbuzzjs/blob/main/hbjs.js
  * @author refactor and modify by konghayao
  */
-export function hbjs(instance: WebAssembly.Instance) {
+export function hbjs(Module: any) {
     'use strict';
 
-    const exports = instance.exports as any;
-    const heapu8 = new Uint8Array(exports.memory.buffer);
-    const heapu32 = new Uint32Array(exports.memory.buffer);
-    const heapi32 = new Int32Array(exports.memory.buffer);
-    const heapf32 = new Float32Array(exports.memory.buffer);
+    const exports = Module.wasmExports;
+    const heapu8 = Module.HEAPU8;
+    const heapu32 = Module.HEAPU32;
+    const heapi32 = Module.HEAP32;
+    const heapf32 = Module.HEAPF32;
     const utf8Decoder = new TextDecoder('utf8');
+    const addFunction = Module.addFunction;
+
+    const freeFuncPtr = addFunction(function (ptr: any) {
+        exports.free(ptr);
+    }, 'vi');
 
     const HB_MEMORY_MODE_WRITABLE = 2;
     const HB_SET_VALUE_INVALID = -1;
-
+    const HB_BUFFER_CONTENT_TYPE_GLYPHS = 2;
+    const DONT_STOP = 0;
+    const GSUB_PHASE = 1;
+    const GPOS_PHASE = 2;
+    const HB_BUFFER_SERIALIZE_FORMAT_JSON = hb_tag('JSON');
+    const HB_BUFFER_SERIALIZE_FLAG_NO_GLYPH_NAMES = 4;
     /**
      * Create an object representing a Harfbuzz blob.
      * @param blob A blob of binary data (usually the contents of a font file).
@@ -80,7 +90,7 @@ export function hbjs(instance: WebAssembly.Instance) {
             blob.byteLength,
             HB_MEMORY_MODE_WRITABLE,
             blobPtr,
-            exports.free_ptr(),
+            freeFuncPtr,
         );
         return {
             ptr: ptr,
@@ -230,7 +240,7 @@ export function hbjs(instance: WebAssembly.Instance) {
      * Create an object representing a Harfbuzz font.
      * @param  face An object returned from `createFace`.
      **/
-    function createFont(face: ReturnType<typeof createFace>) {
+    function createFont(face: HB.Face) {
         const ptr = exports.hb_font_create(face.ptr);
         const pathBufferSize = 65536; // should be enough for most glyphs
         const pathBuffer = exports.malloc(pathBufferSize); // permanently allocated
@@ -346,7 +356,7 @@ export function hbjs(instance: WebAssembly.Instance) {
         if (!text) return { ptr: 0, length: 0, free() {} };
         const ptr = exports.malloc(text.length + 1);
         for (let i = 0; i < text.length; ++i) {
-            const char = text.charCodeAt(i);
+            const char = text.codePointAt(i)!;
             if (char > 127) throw new Error('Expected ASCII text');
             heapu8[ptr + i] = char;
         }
@@ -362,8 +372,12 @@ export function hbjs(instance: WebAssembly.Instance) {
 
     function createJsString(text: string) {
         const ptr = exports.malloc(text.length * 2);
-        const words = new Uint16Array(exports.memory.buffer, ptr, text.length);
-        for (let i = 0; i < words.length; ++i) words[i] = text.charCodeAt(i);
+        const words = new Uint16Array(
+            Module.wasmMemory.buffer,
+            ptr,
+            text.length,
+        );
+        for (let i = 0; i < words.length; ++i) words[i] = text.codePointAt(i)!;
         return {
             ptr: ptr,
             length: words.length,
@@ -541,17 +555,30 @@ export function hbjs(instance: WebAssembly.Instance) {
      * @param {object} font: A font returned from `createFont`
      * @param {object} buffer: A buffer returned from `createBuffer` and suitably
      *   prepared.
-     * @param {object} features: (Currently unused).
+     * @param {object} features: A string of comma-separated OpenType features to apply.
      */
     function shape(font: HB.Font, buffer: HB.Buffer, features?: string) {
-        const featurestr = createAsciiString(features);
-        exports.hb_shape(
-            font.ptr,
-            buffer.ptr,
-            featurestr.ptr,
-            featurestr.length,
-        );
-        featurestr.free();
+        let featuresPtr = 0;
+        let featuresLen = 0;
+        if (features) {
+            const featuresList = features.split(',');
+            featuresPtr = exports.malloc(16 * featuresList.length);
+            featuresList.forEach(function (feature, i) {
+                let str = createAsciiString(feature);
+                if (
+                    exports.hb_feature_from_string(
+                        str.ptr,
+                        -1,
+                        featuresPtr + featuresLen * 16,
+                    )
+                )
+                    featuresLen++;
+                str.free();
+            });
+        }
+
+        exports.hb_shape(font.ptr, buffer.ptr, featuresPtr, featuresLen);
+        if (featuresPtr) exports.free(featuresPtr);
     }
 
     /**
@@ -565,7 +592,7 @@ export function hbjs(instance: WebAssembly.Instance) {
     * @param {object} font: A font returned from `createFont`
     * @param {object} buffer: A buffer returned from `createBuffer` and suitably
     *   prepared.
-    * @param {string} features: A dictionary of OpenType features to apply.
+    * @param {string} features: features: A string of comma-separated OpenType features to apply.
     * @param {number} stop_at: A lookup ID at which to terminate shaping.
     * @param {number} stop_phase: Either 0 (don't terminate shaping), 1 (`stop_at`
         refers to a lookup ID in the GSUB table), 2 (`stop_at` refers to a lookup
@@ -573,30 +600,83 @@ export function hbjs(instance: WebAssembly.Instance) {
     */
 
     function shapeWithTrace(
-        font: ReturnType<typeof createFont>,
-        buffer: ReturnType<typeof createFont>,
+        font: HB.Font,
+        buffer: HB.Buffer,
         features: string,
         stop_at: number,
         stop_phase: number,
     ) {
-        const bufLen = 1024 * 1024;
-        const traceBuffer = exports.malloc(bufLen);
-        const featurestr = createAsciiString(features);
-        const traceLen = exports.hbjs_shape_with_trace(
-            font.ptr,
-            buffer.ptr,
-            featurestr.ptr,
-            stop_at,
-            stop_phase,
-            traceBuffer,
-            bufLen,
-        );
-        featurestr.free();
-        const trace = utf8Decoder.decode(
-            heapu8.subarray(traceBuffer, traceBuffer + traceLen - 1),
-        );
-        exports.free(traceBuffer);
-        return JSON.parse(trace);
+        let trace: { m: string; t: any; glyphs: boolean }[] = [];
+        let currentPhase = DONT_STOP;
+        let stopping = false;
+        let failure = false;
+
+        let traceBufLen = 1024 * 1024;
+        let traceBufPtr = exports.malloc(traceBufLen);
+
+        let traceFunc = function (
+            bufferPtr: number,
+            fontPtr: number,
+            messagePtr: number,
+            user_data: any,
+        ) {
+            let message = utf8Decoder.decode(
+                heapu8.subarray(messagePtr, heapu8.indexOf(0, messagePtr)),
+            );
+            if (message.startsWith('start table GSUB'))
+                currentPhase = GSUB_PHASE;
+            else if (message.startsWith('start table GPOS'))
+                currentPhase = GPOS_PHASE;
+
+            if (currentPhase != stop_phase) stopping = false;
+
+            if (failure) return 1;
+
+            if (
+                stop_phase != DONT_STOP &&
+                currentPhase == stop_phase &&
+                message.startsWith('end lookup ' + stop_at)
+            )
+                stopping = true;
+
+            if (stopping) return 0;
+
+            exports.hb_buffer_serialize_glyphs(
+                bufferPtr,
+                0,
+                exports.hb_buffer_get_length(bufferPtr),
+                traceBufPtr,
+                traceBufLen,
+                0,
+                fontPtr,
+                HB_BUFFER_SERIALIZE_FORMAT_JSON,
+                HB_BUFFER_SERIALIZE_FLAG_NO_GLYPH_NAMES,
+            );
+
+            trace.push({
+                m: message,
+                t: JSON.parse(
+                    utf8Decoder.decode(
+                        heapu8.subarray(
+                            traceBufPtr,
+                            heapu8.indexOf(0, traceBufPtr),
+                        ),
+                    ),
+                ),
+                glyphs:
+                    exports.hb_buffer_get_content_type(bufferPtr) ==
+                    HB_BUFFER_CONTENT_TYPE_GLYPHS,
+            });
+
+            return 1;
+        };
+
+        let traceFuncPtr = addFunction(traceFunc, 'iiiii');
+        exports.hb_buffer_set_message_func(buffer.ptr, traceFuncPtr, 0, 0);
+        shape(font, buffer, features);
+        exports.free(traceBufPtr);
+
+        return trace;
     }
 
     /** 附加 API */

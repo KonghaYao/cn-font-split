@@ -1,15 +1,15 @@
-import { convert } from './convert/commonConvert';
+import { convert } from './convert/font-convert';
 import { hbjs } from './hb';
 import { Executor, PerformanceRecord } from './pipeline/index';
-import { loadHarbuzzAdapter } from './adapter/loadHarfbuzz';
-import { createContext } from './fontSplit/context';
+import { createContext } from './ createContext';
 import path from 'path';
 import byteSize from 'byte-size';
 import { IOutputFile, InputTemplate } from './interface';
 import { BundleReporter, createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
 import { subsetsToSet } from './utils/subsetsToSet';
-import { useSubset, getAutoSubset } from './useSubset/index';
+import { useSubset } from './useSubset/index';
+import { getAutoSubset } from './useSubset/getAutoSubset';
 import {
     Arabic,
     Bengali,
@@ -24,13 +24,13 @@ import {
     Thai,
     Vietnamese,
     getCN_SC_Rank,
-} from './data/Ranks';
+} from './data/LanguageRange';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
 import { makeImage } from 'font-sharp/dist/font-sharp/src/makeImage.js';
-import { getFeatureData, getFeatureMap } from './subsetService/featureMap';
-import { forceSubset } from './subsetService/forceSubset';
+import { getFeatureData, getFeatureMap } from './feature/featureMap';
+import { forceSubset } from './feature/forceSubset';
 import { calcContoursBorder } from './useSubset/calcContoursBorder';
 import { createContoursMap } from './useSubset/createContoursMap';
 import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
@@ -38,23 +38,28 @@ import {
     createFontBaseTool,
     getFVarTable,
     getNameTableFromTool,
-} from './subsetService/getFeatureQueryFromBuffer';
+} from './feature/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
-import { CharsetTool } from './utils/CharSetTool';
+import { differenceSet } from './utils/CharSetTool';
+import wrapper from '@konghayao/harfbuzzjs/hb-subset.js';
 
 type Context = ReturnType<typeof createContext>;
 /** 从路径或者二进制数据获取原始字体文件 */
 async function LoadFile(ctx: Context) {
     ctx.info(`cn-font-split@${__cn_font_split_version__} 环境检测\t`, env);
     const { input } = ctx.pick('input');
-    typeof input.log === 'function' && ctx.recordLog(input.log);
+
+    // 注册日志函数
+    typeof input.log === 'function' && ctx.registerLog(input.log);
+
+    // 获取二进制文件
     let res!: Uint8Array;
     if (typeof input.FontPath === 'string') {
         res = await Assets.loadFileAsync(input.FontPath);
     } else if (input.FontPath instanceof Uint8Array) {
-        // 视为二进制数据
         res = new Uint8Array(input.FontPath);
     }
+
     ctx.trace('输入文件大小：' + byteSize(res.byteLength));
     ctx.set('bundleMessage', { originLength: res.byteLength });
     ctx.set('originFile', res);
@@ -77,9 +82,7 @@ async function transferFontType(ctx: Context) {
 async function loadHarbuzz(ctx: Context) {
     const { ttfFile, input: opt } = ctx.pick('input', 'ttfFile');
 
-    const wasm = await loadHarbuzzAdapter();
-    if (!wasm) throw new Error('启动 harfbuzz 失败');
-    const hb = hbjs(wasm.instance);
+    const hb = hbjs(await wrapper());
     const blob = hb.createBlob(ttfFile);
     const face = hb.createFace(blob, 0);
     blob.destroy();
@@ -141,7 +144,7 @@ async function PreSubset(ctx: Context) {
     ctx.trace('总字符数', totalChars.length);
     bundleMessage.originSize = totalChars.length;
     const AllUnicodeSet = new Set([...totalChars]); // 2
-    CharsetTool.difference(AllUnicodeSet, subsetsToSet(UserSubsets)); //3
+    differenceSet(AllUnicodeSet, subsetsToSet(UserSubsets)); //3
     /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
     const autoForceBundle: number[][] = (
         input.unicodeRank ?? [
@@ -169,7 +172,7 @@ async function PreSubset(ctx: Context) {
     const featureData = getFeatureData(fontTool);
     const featureMap = getFeatureMap(featureData);
     const ForcePartSubsets = forceSubset(UserSubsets, featureMap); // 5
-    CharsetTool.difference(AllUnicodeSet, ForcePartSubsets.flat()); // 6
+    differenceSet(AllUnicodeSet, ForcePartSubsets.flat()); // 6
 
     autoForceBundle.push([...AllUnicodeSet]);
     const contoursMap = await createContoursMap();
