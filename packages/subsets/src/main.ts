@@ -146,7 +146,7 @@ async function PreSubset(ctx: Context) {
     const totalChars = face.collectUnicodes();
     ctx.trace('总字符数', totalChars.length);
     bundleMessage.originSize = totalChars.length;
-    const AllUnicodeSet = new Set([...totalChars]); // 2
+    const AllUnicodeSet = new Set([...totalChars].sort()); // 2
     differenceSet(AllUnicodeSet, subsetsToSet(UserSubsets)); //3
     /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
     const autoForceBundle: number[][] = (

@@ -47,3 +47,6 @@ declare module '@konghayao/harfbuzzjs/hb-subset.js' {
     const a: any;
     export default a;
 }
+declare module '@napi-rs/woff-build-wasm32-wasi/woff-build.wasi-browser' {
+    export * from '@napi-rs/woff-build';
+}

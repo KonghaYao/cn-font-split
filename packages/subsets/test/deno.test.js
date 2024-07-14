@@ -8,7 +8,7 @@ console.log(Assets);
 fontSplit({
     destFold: './temp/deno',
     FontPath: '../demo/public/SmileySans-Oblique.ttf',
-    // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
+    FontPath: './test/temp/也字工厂小石头.ttf',
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     // previewImage: {},
 });
