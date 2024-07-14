@@ -6,7 +6,7 @@ fs.emptyDirSync('./temp/node');
 fontSplit({
     destFold: './temp/node',
     FontPath: '../demo/public/SmileySans-Oblique.ttf',
-    // FontPath: './test/temp/NotoColorEmoji.ttf',
+    FontPath: './test/temp/也字工厂小石头.ttf',
     // FontPath: './test/temp/AlibabaPuHuiTi-3-85-Bold.otf',
     // FontPath: './test/temp/字魂扁桃体.ttf',
     // FontPath: './test/temp/京華老宋体v1.007.ttf',
@@ -29,11 +29,11 @@ fontSplit({
         // }
     },
     // buildMode: "stable",
-    logger: {
-        settings: {
-            minLevel: 1,
-        },
-    },
+    // logger: {
+    //     settings: {
+    //         minLevel: 1,
+    //     },
+    // },
     // autoChunk: false,
     // subsets: [[31105, 8413]],
     // threads: {},
