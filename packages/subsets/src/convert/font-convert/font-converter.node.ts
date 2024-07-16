@@ -4,7 +4,7 @@ import {
     convertWOFF2ToTTFAsync,
 } from '@napi-rs/woff-build';
 
-/** 字体格式转化, node 特供版本，速度非常快 */
+/** 字体格式转化, node 特供版本，速度非常快，但是在跨平台构建方面会有产物不一致问题 */
 export const convert = async function (
     buffer: Uint8Array,
     toFormat: FontType,

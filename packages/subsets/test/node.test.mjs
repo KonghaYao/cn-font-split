@@ -28,9 +28,10 @@ fontSplit({
         //     unicodes: true
         // }
     },
+    // buildMode: "speed",
     logger: {
         settings: {
-            minLevel: 4,
+            minLevel: 1,
         },
     },
     // autoChunk: false,

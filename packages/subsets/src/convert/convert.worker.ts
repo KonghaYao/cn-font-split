@@ -10,8 +10,18 @@ import { convert } from './font-convert/index';
     });
 
 worker({
-    async convert(buffer: Uint8Array, targetType: FontType) {
-        const res = await convert(buffer, targetType).catch((error) => {
+    async convert(
+        buffer: Uint8Array,
+        toFormat: FontType,
+        fromFormat?: FontType,
+        buildMode?: 'stable' | 'speed',
+    ) {
+        const res = await convert(
+            buffer,
+            toFormat,
+            fromFormat,
+            buildMode,
+        ).catch((error) => {
             console.error(error);
             return new Uint8Array([]);
         });

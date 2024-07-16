@@ -96,10 +96,14 @@ async function runSubSet({
     const woff2Start = performance.now();
     const service = input.threads && input.threads?.service;
     const transferred = service
-        ? await service.pool.exec('convert', [buffer, targetType], {
-              transfer: [buffer.buffer],
-          })
-        : await convert(buffer, targetType);
+        ? await service.pool.exec(
+              'convert',
+              [buffer, targetType, undefined, input.buildMode],
+              {
+                  transfer: [buffer.buffer],
+              },
+          )
+        : await convert(buffer, targetType, undefined, input.buildMode);
     const woff2Time = [woff2Start, performance.now()] as const;
 
     const outputMessage = await createRecord(

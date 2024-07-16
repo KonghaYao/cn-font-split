@@ -67,11 +67,19 @@ async function LoadFile(ctx: Context) {
 
 /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
 async function transferFontType(ctx: Context) {
-    const { originFile, bundleMessage } = ctx.pick(
+    const { originFile, bundleMessage, input } = ctx.pick(
         'originFile',
         'bundleMessage',
+        'input',
     );
-    const ttfFile = (await convert(originFile, 'truetype')).slice(0);
+    const ttfFile = (
+        await convert(
+            originFile,
+            'truetype',
+            undefined,
+            input.buildMode !== 'speed',
+        )
+    ).slice(0);
 
     bundleMessage.ttfLength = ttfFile.byteLength;
     ctx.set('ttfBufferSize', ttfFile.byteLength);
@@ -184,6 +192,7 @@ async function PreSubset(ctx: Context) {
         contoursMap,
         input.chunkSize ?? 70 * 1024,
         new Set([...totalChars]),
+        input.buildMode
     );
 
     const AutoPartSubsets: number[][] = [];
@@ -221,7 +230,7 @@ async function PreSubset(ctx: Context) {
         return col;
     }, 0);
     if (input.autoChunk !== false && subsetCharsNumber < totalChars.length) {
-        console.log('字符缺漏', subsetCharsNumber, totalChars.length);
+        ctx.trace('字符缺漏', subsetCharsNumber, totalChars.length);
     } // 11
 
     if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600))
