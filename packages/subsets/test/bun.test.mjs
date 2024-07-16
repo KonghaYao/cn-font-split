@@ -5,7 +5,7 @@ fs.emptyDirSync('./temp/bun');
 fontSplit({
     destFold: './temp/bun',
     FontPath: '../demo/public/SmileySans-Oblique.ttf',
-    FontPath: './test/temp/也字工厂小石头.ttf',
+    // FontPath: './test/temp/也字工厂小石头.ttf',
     // FontPath: './test/temp/江西拙楷.ttf',
     // FontPath: './test/temp/MaokenAssortedSans1.30.ttf',
     // FontPath: './test/temp/字魂扁桃体.ttf',
