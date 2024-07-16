@@ -18,7 +18,7 @@ jobs:
             - run: npm install pnpm -g
             - run: pnpm install --no-frozen-lockfile
             - run: pnpm -C ./packages/font-sharp build
-            - run: pnpm publish --access public
+            - run: pnpm publish --access public --no-git-checks
               working-directory: packages/subsets
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
