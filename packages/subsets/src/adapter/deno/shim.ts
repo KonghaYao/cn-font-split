@@ -19,13 +19,11 @@ try {
     mockXHR({
         // 所有的 fetch 函数都会发送到这里
         proxy({ headers, body, method, url }) {
-            // console.log(url);
-            if (url.host === 'a')
+            if(url.startsWith('file://')) {
+                const path = fileURLToPath(
+                    url
+                );
                 return (async () => {
-                    const path = fileURLToPath(
-                        decodeURIComponent(url.hash.slice(1)),
-                    );
-
                     const item = cache.has(path)
                         ? cache.get(path)
                         : await Deno.readFile(path);
@@ -38,6 +36,7 @@ try {
                         headers: { 'content-type': 'application/wasm' },
                     });
                 })();
+            }
         },
         silent: true,
     });

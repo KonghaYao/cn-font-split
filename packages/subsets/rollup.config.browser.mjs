@@ -54,6 +54,14 @@ export default {
 
     plugins: [
         condition({ env: 'browser' }),
+        {
+            transform(code, id) {
+                // 修复 emscripten 导致脚本中的 promise 参数反转问题
+                if (id.includes('@konghayao/harfbuzz')) {
+                    return code.replace('reject,resolve', 'resolve,reject');
+                }
+            },
+        },
         ...commonPlugin,
         alias({
             entries: [{ find: 'path', replacement: 'path-browserify' }],
