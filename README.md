@@ -1,10 +1,10 @@
-# 中文 Web Font 切割工具
+# 中文 Web Font 切割工具 5.0
 
 ![中文网字计划](/assets/chinese-fonts.png)
 
-![updateTime](https://img.shields.io/badge/更新时间-2024/06/13-green)
+![updateTime](https://img.shields.io/badge/更新时间-2024/07/16-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-4.15.1-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-5.1.0-green)
 [![](https://data.jsdelivr.com/v1/package/npm/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/cn-font-split)
 
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
@@ -41,7 +41,7 @@
 5. ✅ 📦 更加可控的分包方式，支持细颗粒度的字符拆分。
 6. ✅ 🔔 支持 OTF 格式字体打包，支持复杂字形渲染。
 7. ✅ 🏞️ 字体预览图生成
-8. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，随处可使用！
+8. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，跨平台随处可使用、构建产物一致！
 9. ✅ 🥳 不止中文，只要是包内的字符，统统分包
 10. ✅ 🏞️ 支持自动识别可变字体字重
 

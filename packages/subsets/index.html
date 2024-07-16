@@ -13,7 +13,7 @@
 <script type="module">
     import { fontSplit, Assets } from './dist/browser/index.js';
     Assets.pathTransform = (innerPath) =>
-        innerPath.replace('./', 'http://127.0.0.1:5500/dist/browser/');
+        innerPath.replace('./', 'http://127.0.0.1:5500/packages/subsets/dist/browser/');
 
     console.log(Assets);
     const files = [];
@@ -21,7 +21,7 @@
         destFold: '',
         FontPath:
             'https://cdn.jsdelivr.net/gh/KonghaYao/chinese-free-web-font-storage/packages/dyh/fonts/SmileySans-Oblique.ttf',
-        // FontPath: '../../test/temp/也字工厂小石头.ttf',
+        FontPath: '../../test/temp/也字工厂小石头.ttf',
         // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
         previewImage: {},
         outputFile(name, data) {
