@@ -17,7 +17,7 @@ const toHeaders = (obj: Record<string, string>) => {
 };
 
 type ProxyFunc = (input: {
-    url: URL;
+    url: string;
     headers: Headers;
     method: RequestInit['method'];
     body: RequestInit['body'];
@@ -39,15 +39,15 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
         username?: string,
         password?: string,
     ) {
+        const originURL = url;
         if (typeof url === 'string' && url.startsWith('file:///')) {
-            const originURL = url;
             url = new URL('https://a');
-            url.hash = encodeURIComponent(originURL);
+            url.hash = encodeURIComponent(originURL.toString());
         }
 
         // 不进行同步操作
         super.open.call(this, method, url, true, username, password);
-        this.$data.url = url;
+        this.$data.url = originURL.toString();
         this.$data.method = method.toLowerCase();
     }
     //! 注意 send 必须是同步函数，这里不能够使用 async
@@ -59,10 +59,7 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
             const result =
                 config.proxy &&
                 config.proxy({
-                    url:
-                        url instanceof URL
-                            ? url
-                            : new URL(url, globalThis.location?.origin),
+                    url,
                     headers: toHeaders(headers),
                     method,
                     body,
@@ -84,7 +81,9 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
                 }, 0);
                 return;
             }
+            
             // 这里穿透下去
+            this.$data.url = new URL(url, globalThis.location?.origin).toString()
         }
         super.send.call(this, body);
     }
@@ -100,7 +99,7 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
         responseText: '',
         statusText: '',
         headers: {} as Record<string, string>,
-        url: '' as string | URL,
+        url: '' as string ,
         method: 'get' as Method,
     };
     _responseHeaders = new Headers();
@@ -123,7 +122,7 @@ export class MockXMLHttpRequest extends XMLHttpRequest {
 
         this._responseHeaders = res.headers;
         this.$data.status = res.status;
-        this.$data.statusText = '';
+        this.$data.statusText = res.statusText;
         // Statuses(res.status);
 
         this.$data.responseText = this.response;
