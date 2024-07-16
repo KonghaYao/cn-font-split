@@ -17,7 +17,7 @@ const convert = (
     buffer: Uint8Array,
     toFormat: FontType,
     fromFormat?: FontType,
-    buildMode: 'stable' | 'speed' = 'stable',
+    buildMode: 'stable' | 'speed' = 'speed',
 ): Promise<Uint8Array> => {
     const convertFunc =
         buildMode === 'stable'

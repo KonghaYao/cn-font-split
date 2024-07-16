@@ -177,8 +177,8 @@ export type InputTemplate = {
     outputFile?: IOutputFile;
     /**
      * 构建模式
-     * @default 'stable'
-     * @description 5.1.0 将构建模式默认为 stable，虽然速度比较慢，但是跨平台构建产物一致。speed 则速度极快，但是产物不一致
+     * @default 'speed'
+     * @description 构建模式默认为 speed
      */
     buildMode?: 'stable' | 'speed';
     threads?:

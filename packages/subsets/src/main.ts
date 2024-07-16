@@ -73,12 +73,7 @@ async function transferFontType(ctx: Context) {
         'input',
     );
     const ttfFile = (
-        await convert(
-            originFile,
-            'truetype',
-            undefined,
-            input.buildMode !== 'speed',
-        )
+        await convert(originFile, 'truetype', undefined, input.buildMode)
     ).slice(0);
 
     bundleMessage.ttfLength = ttfFile.byteLength;
@@ -192,7 +187,7 @@ async function PreSubset(ctx: Context) {
         contoursMap,
         input.chunkSize ?? 70 * 1024,
         new Set([...totalChars]),
-        input.buildMode
+        input.buildMode,
     );
 
     const AutoPartSubsets: number[][] = [];
