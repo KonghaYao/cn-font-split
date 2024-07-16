@@ -197,7 +197,7 @@ export function getGlyphIDToUnicodeMap(tool: FontBaseTool) {
 import { tinf_uncompress as inflate } from '@konghayao/opentype.js/src/tiny-inflate@1.0.3.esm.js'; // from code4fukui/tiny-inflate-es
 function uncompressTable(data: DataView, tableEntry: any) {
     if (tableEntry.compression === 'WOFF') {
-        console.log(tableEntry);
+        // console.log(tableEntry);
         const inBuffer = new Uint8Array(
             data.buffer,
             tableEntry.offset + 2,

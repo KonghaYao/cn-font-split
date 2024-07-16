@@ -175,6 +175,12 @@ export type InputTemplate = {
      * @description 如果你需要在特定的平台使用，那么需要适配这个函数
      */
     outputFile?: IOutputFile;
+    /**
+     * 构建模式
+     * @default 'stable'
+     * @description 5.1.0 将构建模式默认为 stable，虽然速度比较慢，但是跨平台构建产物一致。speed 则速度极快，但是产物不一致
+     */
+    buildMode?: 'stable' | 'speed';
     threads?:
         | {
               /**

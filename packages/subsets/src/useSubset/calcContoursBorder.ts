@@ -11,6 +11,7 @@ export async function calcContoursBorder(
     contoursMap: Map<number, number>,
     maxSize: number,
     totalChars: Set<number>,
+    buildMode?: 'stable' | 'speed',
 ) {
     let space = Math.floor(totalChars.size / 100);
     space = Math.max(space, 1);
@@ -29,6 +30,8 @@ export async function calcContoursBorder(
     const transferred = await convert(
         new Uint8Array(buffer.buffer),
         targetType,
+        undefined,
+        buildMode,
     );
 
     const totalContours: number = arr.reduce((col, cur) => {
