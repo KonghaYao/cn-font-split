@@ -5,7 +5,7 @@ import type { FontType } from '../convert/detectFormat';
 import { IContext } from '../ createContext';
 import { getExtensionsByFontType } from '../convert/detectFormat';
 import { subsetFont } from './subsetFont';
-import { createRecord } from '../logger/createRecord';
+import { createRecord, getFileHashName } from '../logger/createRecord';
 import { recordToLog } from '../logger/recordToLog';
 
 /** 直接根据chunk 批量分包字体 */
@@ -91,6 +91,8 @@ async function runSubSet({
         ctx.warn('发现空分包' + chunk);
         return;
     }
+    // 先计算filename，避免 buffer 数据后面清空
+    const filename = getFileHashName(input, buffer, ext, index);
 
     // 执行 ttf 文件转 woff2
     const woff2Start = performance.now();
@@ -105,15 +107,13 @@ async function runSubSet({
           )
         : await convert(buffer, targetType, undefined, input.buildMode);
     const woff2Time = [woff2Start, performance.now()] as const;
-
     const outputMessage = await createRecord(
         outputFile,
-        ext,
         transferred,
         chunk, // 理论分包
         Array.from(arr), // 实际分包
-        input,
-        index,
+        // 采用 ttf 文件的二进制进行操作，保证 hash 统一
+        filename,
     );
     // console.log(chunk.length - arr.length) // 记录理论分包和实际分包的数目差距
     subsetMessage.push(outputMessage);

@@ -28,7 +28,7 @@ fontSplit({
         //     unicodes: true
         // }
     },
-    // buildMode: "speed",
+    // buildMode: "stable",
     logger: {
         settings: {
             minLevel: 1,
