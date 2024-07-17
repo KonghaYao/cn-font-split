@@ -82,7 +82,7 @@ export const createCSS = (
         .reverse()
         .map(({ path, unicodeRange }) => {
             const str = `@font-face {
-font-family: "${family}";
+font-family:"${family}";
 src:${[
                 ...locals,
                 `url("./${path}") format("woff2")`,
