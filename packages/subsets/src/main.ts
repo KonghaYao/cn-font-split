@@ -103,8 +103,8 @@ async function initOpentype(ctx: Context) {
     ctx.set('fontTool', fontTool);
     ctx.free('ttfFile');
 }
-function createImage(outputFile: IOutputFile) {
-    return async function (ctx: Context) {
+function createImageProcess(outputFile: IOutputFile) {
+    return async function createImage(ctx: Context) {
         const { input, hb, face } = ctx.pick('input', 'hb', 'face');
         if (input.previewImage) {
             const font = hb.createFont(face);
@@ -238,8 +238,8 @@ async function PreSubset(ctx: Context) {
     ctx.free('ttfFile');
 }
 /** 执行所有包的分包动作 */
-function subsetFont(outputFile: IOutputFile) {
-    return async function (ctx: Context) {
+function createSubsetFontProcess(outputFile: IOutputFile) {
+    return async function subsetFont(ctx: Context) {
         const { input, face, blob, subsetsToRun, hb, bundleMessage } = ctx.pick(
             'input',
             'face',
@@ -274,9 +274,9 @@ function subsetFont(outputFile: IOutputFile) {
         ctx.free('blob', 'face', 'hb');
     };
 }
-function outputCSS(outputFile: IOutputFile) {
+function createOutputCSSProcess(outputFile: IOutputFile) {
     /** 输出 css 文件 */
-    return async function (ctx: Context) {
+    return async function outputCSS(ctx: Context) {
         const { nameTable, subsetResult, input, VF } = ctx.pick(
             'input',
             'nameTable',
@@ -291,8 +291,8 @@ function outputCSS(outputFile: IOutputFile) {
         ctx.set('cssMessage', css);
     };
 }
-function outputHTML(outputFile: IOutputFile) {
-    return async function (ctx: Context) {
+function createOutputHTMLProcess(outputFile: IOutputFile) {
+    return async function outputHTML(ctx: Context) {
         const { input } = ctx.pick('input');
         if (input.testHTML !== false) {
             const { createTestHTML } = await import('./templates/html/index');
@@ -354,12 +354,12 @@ export const fontSplit = async (opt: InputTemplate) => {
             transferFontType,
             loadHarbuzz,
             initOpentype,
-            createImage(outputFile),
+            createImageProcess(outputFile),
             getBasicMessage,
             PreSubset,
-            subsetFont(outputFile),
-            outputCSS(outputFile),
-            outputHTML(outputFile),
+            createSubsetFontProcess(outputFile),
+            createOutputCSSProcess(outputFile),
+            createOutputHTMLProcess(outputFile),
             outputReporter(outputFile, () => records),
             Clear,
         ],
