@@ -37,37 +37,18 @@
             onMount,
             createEffect,
         } from 'https://esm.sh/solid-js';
-
         import html from 'https://esm.sh/solid-js/html';
-        import * as echarts from 'https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.esm.min.js';
+        import prettyBytes from 'https://esm.sh/pretty-bytes';
+        import { UnicodeRange } from 'https://esm.sh/@japont/unicode-range@1.0.0';
+        /** 延迟获取 Echarts*/
+        const getECharts = () =>
+            import('https://esm.sh/echarts@5.3.3/dist/echarts.esm.min.js');
         const getFontData = (nameTable) =>
             Object.fromEntries(
                 Object.entries(nameTable).map(([key, val]) => {
                     return [key, typeof val === 'string' ? val : val.en];
                 }),
             );
-        function _formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = [
-                'Bytes',
-                'KB',
-                'MB',
-                'GB',
-                'TB',
-                'PB',
-                'EB',
-                'ZB',
-                'YB',
-            ];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return (
-                parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) +
-                ' ' +
-                sizes[i]
-            );
-        }
         const range = [
             ['基本汉字', 0x4e00, 0x9fa5],
             ['基本汉字补充', 0x9fa6, 0x9fff],
@@ -91,7 +72,7 @@
             ['注音扩展', 0x31a0, 0x31ba],
             ['〇', 0x3007, 0x3007],
         ];
-        import { UnicodeRange } from 'https://esm.sh/@japont/unicode-range@1.0.0';
+
         const RangeAnalyze = (data) => {
             const total = data.reduce((col, cur) => {
                 if (cur.chars.startsWith('U+')) {
@@ -156,7 +137,8 @@
 
             onMount(() => {
                 // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
-                setTimeout(() => {
+                setTimeout(async () => {
+                    const echarts = await getECharts();
                     let myChart = echarts.init(chartDom);
                     let option = {
                         tooltip: {
@@ -219,7 +201,8 @@
             let chartDom;
             onMount(() => {
                 // 问就是渲染代价太大，等 1000ms 让浏览器冷静一下
-                setTimeout(() => {
+                setTimeout(async () => {
+                    const echarts = await getECharts();
                     let myChart = echarts.init(chartDom);
                     let option = {
                         tooltip: {
@@ -229,7 +212,7 @@
                                     `第 ${data.dataIndex + 1} 分包\n` +
                                     data.data.name +
                                     '\n' +
-                                    _formatBytes(data.data.value)
+                                    prettyBytes(data.data.value)
                                 );
                             },
                         },
@@ -238,7 +221,7 @@
                             text: message.fontFamily,
                             subtext: `总共 ${
                                 data.length
-                            } 分包; 总大小 ${_formatBytes(
+                            } 分包; 总大小 ${prettyBytes(
                                 total,
                             )} 点击跳转查看；`,
                             left: 'center',
@@ -312,7 +295,7 @@
                     : i.chars;
                 return html`<div>
                     <h3 id="${i.name}">
-                        分片名称 ${i.name} | 分片大小 ${_formatBytes(i.size)}
+                        分片名称 ${i.name} | 分片大小 ${prettyBytes(i.size)}
                     </h3>
                     <p>${chars}</p>
                 </div>`;
