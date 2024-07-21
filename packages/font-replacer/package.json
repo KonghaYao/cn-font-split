@@ -1,0 +1,15 @@
+{
+    "name": "cn-font-replacer",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/index.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "prepublish": "pnpm build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT"
+}
