@@ -1,4 +1,4 @@
-name: release
+name: release-font-replacer
 
 on:
     workflow_dispatch: # 添加 workflow_dispatch 触发器
