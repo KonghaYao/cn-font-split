@@ -1,7 +1,7 @@
 import { Font } from '@konghayao/opentype.js';
 import { Charset, FontSetMatch } from './FontSetMatch.js';
 import { UnicodeCharset, UnicodeMatch } from './UnicodeMatch.js';
-import { CharsetLoader } from './defaultCharsetLoader.js';
+import { CharsetLoader } from './CharsetLoader.js';
 
 /** 获取 unicode 字符集检测报告 */
 export async function getCharsetReport(
