@@ -9,7 +9,7 @@ ${paths
     .map((i) => {
         return `
 if(path==='${i}'){
-    D = await import('../data/${i}')
+    D = await import('../../data/${i}')
 }
 `;
     })
