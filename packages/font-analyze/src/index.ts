@@ -2,8 +2,8 @@ import { RenderOptions, parse } from '@konghayao/opentype.js';
 import { getCharsetReport } from './Charset/getCharsetReport.js';
 import {
     defaultCharsetLoader,
-    CharsetLoader,
 } from './Charset/defaultCharsetLoader.js';
+import { CharsetLoader } from './Charset/CharsetLoader.js';
 import { getFeatureReport } from './Feature/index.js';
 
 export * from './Charset/defaultCharsetLoader.js';
