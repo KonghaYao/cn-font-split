@@ -33,19 +33,13 @@ export class BundlePlugin {
     ) {}
 
     getResolvedPath(p: string) {
-        return path.resolve(this.config.cacheDir, getFileName(p));
+        return path.resolve(this.config.cacheDir!, getFileName(p));
     }
     async createSourceCode(p: string) {
         const resolvedPath = this.getResolvedPath(p);
-        const json = await fs.promises.readFile(
-            resolvedPath + '/reporter.json',
-            'utf-8',
-        );
-        const json1 = await fs.promises.readFile(
-            resolvedPath + '/metrics.json',
-            'utf-8',
-        );
-        const obj = { ...JSON.parse(json), ...JSON.parse(json1) };
+        const json = await fs.readJSON(resolvedPath + '/reporter.json');
+        const json1 = await fs.readJSON(resolvedPath + '/metrics.json');
+        const obj = { ...json, ...json1 };
         const code = Object.entries(obj)
             .map(([k, v]) => {
                 return `export const ${k} = ${JSON.stringify(v)};`;
@@ -60,22 +54,14 @@ export class BundlePlugin {
         );
     }
     async checkCache(resolvedPath: string) {
-        let stat: boolean;
-        try {
-            await fs.promises.access(resolvedPath);
-            await fs.promises.access(path.resolve(resolvedPath, 'result.css'));
-            await fs.promises.access(path.resolve(resolvedPath, 'metrics.css'));
-            await fs.promises.access(
-                path.resolve(resolvedPath, 'metrics.json'),
-            );
-            await fs.promises.access(
-                path.resolve(resolvedPath, 'reporter.json'),
-            );
-            stat = true;
-        } catch (e) {
-            stat = false;
-        }
-        return stat;
+        const isFullCached = await Promise.all([
+            fs.exists(resolvedPath),
+            fs.exists(path.resolve(resolvedPath, 'result.css')),
+            fs.exists(path.resolve(resolvedPath, 'metrics.css')),
+            fs.exists(path.resolve(resolvedPath, 'metrics.json')),
+            fs.exists(path.resolve(resolvedPath, 'reporter.json')),
+        ]);
+        return isFullCached.every((i) => i);
     }
     async createBundle(p: string, mode: 'full' | 'subsets' = 'full') {
         const resolvedPath = this.getResolvedPath(p);
@@ -93,7 +79,6 @@ export class BundlePlugin {
                 autoChunk: mode === 'full',
                 subsets:
                     mode !== 'full' ? chunk(this.subsets?.flat()) : undefined,
-                log() {},
                 logger: {
                     settings: {
                         minLevel: 5,

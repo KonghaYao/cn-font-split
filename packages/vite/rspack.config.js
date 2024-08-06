@@ -34,6 +34,11 @@ export default {
             template: './example/subsets-1.html',
             chunks: ['subsets-1'],
         }),
-        unplugin.webpack(),
+        unplugin.rspack({
+            scanFiles: {
+                default: ['./example/subsets.html'],
+                'page-1': ['./example/subsets-1.html'],
+            },
+        }),
     ],
 };

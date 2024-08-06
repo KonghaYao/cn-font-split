@@ -1,4 +1,4 @@
-# 🔠  vite-plugin-font ⚡
+# 🔠  vite-plugin-font 2.0 ⚡
 
 ![中文网字计划](https://cdn.jsdelivr.net/gh/KonghaYao/cn-font-split/assets/chinese-fonts.png)
 
@@ -46,9 +46,9 @@ document.body.style.fontFamily = `"${css.family}", ` + fontFamilyFallback;
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import viteFont from 'vite-plugin-font';
+import Font from 'vite-plugin-font';
 export default defineConfig({
-    plugins: [viteFont()],
+    plugins: [Font.vite()],
 });
 ```
 
@@ -71,15 +71,7 @@ export default defineNuxtConfig({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     webpack: (config, options) => {
-        config.module.rules.push({
-            test: /\.(otf|ttf)/,
-            use: [
-                {
-                    loader: './node_modules/vite-plugin-font/dist/webpack.mjs',
-                    options: {},
-                },
-            ],
-        });
+        config.plugins.push(viteFont.webpack());
         return config;
     },
 };
@@ -94,19 +86,7 @@ export default nextConfig;
 const path = require('path');
 
 module.exports = {
-    module: {
-        rules: [
-            {
-                test: /\.(otf|ttf)/i,
-                use: [
-                    {
-                        loader: './node_modules/vite-plugin-font/dist/webpack.mjs',
-                        options: {},
-                    },
-                ],
-            },
-        ],
-    },
+    plugins: [viteFont.webpack()],
 };
 ```
 
@@ -137,10 +117,10 @@ export const App = () => {
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import viteFont from 'vite-plugin-font';
+import Font from 'vite-plugin-font';
 export default defineConfig({
     plugins: [
-        viteFont({
+        Font.vite({
             scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'], // add this
         }),
     ],
@@ -177,10 +157,10 @@ import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets&key=subset
 
 ```js
 import { defineConfig } from 'vite';
-import viteFont from 'vite-plugin-font';
+import Font from 'vite-plugin-font';
 export default defineConfig({
     plugins: [
-        viteFont({
+        Font.vite({
             scanFiles: {
                 // ?subsets will match default
                 default: ['src/**/*.{json,js,jsx,ts,tsx,vue}'],

@@ -13,24 +13,23 @@ export interface Options extends Partial<SubsetBundlePluginConfig> {
 class UnionFontPlugin {
     config: SubsetBundlePluginConfig = {};
     pluginStore = new Map<string, SubsetBundlePlugin>();
-    prepared = false;
+    prepared?: Promise<null>;
     async start() {
-        if (this.prepared) return this.prepared
+        if (this.prepared) return this.prepared;
         if (!this.config.cacheDir)
             this.config.cacheDir = 'node_modules/.cache/.font';
-        let resolve
-        this.prepared = new Promise<void>((res)=>{
-            resolve = res
-        })
+        let resolve: (value: null) => void;
+        this.prepared = new Promise<null>((res) => {
+            resolve = res;
+        });
         await SubsetUtils.emptyCacheDir(this.config);
         console.log(
             'vite-plugin-font | empty cache dir | ' + this.config.cacheDir,
         );
-        const plugin = new SubsetBundlePlugin(this.config);
-        await plugin.createSubsets();
-        this.pluginStore.set('default', plugin);
+        // 初始化 default
+        await this.getUsingPlugin('default');
         console.log('vite-plugin-font | cache dir | ' + this.config.cacheDir);
-        resolve()
+        resolve!(null);
     }
     createConfig(config: Options) {
         const scanFiles =

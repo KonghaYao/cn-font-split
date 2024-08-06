@@ -18,7 +18,8 @@ export class SubsetUtils {
         return { idString, isSubset, searchParams };
     }
     static emptyCacheDir(config: BundlePluginConfig) {
-        if(!config.cacheDir) throw new Error("vite-plugin-font | cacheDir missed")
+        if (!config.cacheDir)
+            throw new Error('vite-plugin-font | cacheDir missed');
         const dir = path.resolve(config.cacheDir, '.subsets');
         return fs.emptyDir(dir);
     }
@@ -44,7 +45,6 @@ export class SubsetBundlePlugin extends BundlePlugin {
     isSubsetLink = SubsetUtils.isSubsetLink;
     async createSubsets() {
         if (!this.subsetConfig.scanFiles) return;
-        console.log('vite-plugin-font | Minimal Mode');
         this.getWhiteListSubsets();
         await this.getScanFiles();
         const subsetsArr = [...this.usedSubsets].sort((a, b) => a - b);
