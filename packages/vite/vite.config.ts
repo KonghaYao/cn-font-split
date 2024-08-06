@@ -1,21 +1,21 @@
 import { defineConfig } from 'vite';
-import Plugin from './src/vite';
+import Plugin from './src/unplugin';
 export default defineConfig({
     plugins: [
-        Plugin({
+        Plugin.vite({
             scanFiles: {
-                default: ['subsets.html'],
-                'page-1': ['subsets-1.html'],
+                default: ['./example/subsets.html'],
+                'page-1': ['./example/subsets-1.html'],
             },
         }),
     ],
     build: {
         rollupOptions: {
             input: {
-                index: 'index.html',
-                fallback: 'fallback.html',
-                subsets: 'subsets.html',
-                subsets1: 'subsets-1.html',
+                index: './example/index.html',
+                fallback: './example/fallback.html',
+                subsets: './example/subsets.html',
+                subsets1: './example/subsets-1.html',
             },
         },
         outDir: 'build',

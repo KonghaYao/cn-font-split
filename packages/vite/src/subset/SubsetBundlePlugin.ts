@@ -17,7 +17,8 @@ export class SubsetUtils {
         const isSubset = searchParams.has('subsets');
         return { idString, isSubset, searchParams };
     }
-    static emptySubsetsDir(config: BundlePluginConfig) {
+    static emptyCacheDir(config: BundlePluginConfig) {
+        if(!config.cacheDir) throw new Error("vite-plugin-font | cacheDir missed")
         const dir = path.resolve(config.cacheDir, '.subsets');
         return fs.emptyDir(dir);
     }
@@ -28,7 +29,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
     constructor(config: SubsetBundlePluginConfig, key?: string) {
         super(config, key);
         this.subsetConfig = config;
-        this.subsetCacheDir = config.cacheDir;
+        this.subsetCacheDir = config.cacheDir!;
     }
 
     usedSubsets = new Set<number>();
@@ -36,7 +37,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
     getResolvedPath(p: string) {
         const { isSubset, idString } = this.isSubsetLink(p);
         return path.resolve(
-            isSubset ? this.subsetCacheDir : this.config.cacheDir,
+            isSubset ? this.subsetCacheDir : this.config.cacheDir!,
             getFileName(idString),
         );
     }
@@ -54,7 +55,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
             .digest('hex');
         // 修改缓存地址，达到缓存
         this.subsetCacheDir = path.resolve(
-            this.config.cacheDir,
+            this.config.cacheDir!,
             '.subsets',
             hash,
         );

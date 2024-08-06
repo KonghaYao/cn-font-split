@@ -1,6 +1,6 @@
 import { InputTemplate, fontSplit } from 'cn-font-split';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import url from 'url';
 import crypto from 'crypto';
 import { createChineseCrossPlatformFallbackCss } from 'cn-font-metrics';
@@ -21,7 +21,7 @@ function chunk(arr?: number[], size = 500) {
 }
 
 export type BundlePluginConfig = Partial<InputTemplate> & {
-    cacheDir: string;
+    cacheDir?: string;
     server?: boolean;
 };
 
