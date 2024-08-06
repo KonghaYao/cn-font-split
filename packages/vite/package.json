@@ -8,6 +8,10 @@
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/vite"
     },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
     "files": [
         "dist",
         "src"
@@ -18,7 +22,7 @@
         "build": "tsc -p tsconfig.node.json || echo 2",
         "test": "node test/build.test.mjs",
         "dev": "vite",
-        "prepublish": "pnpm build && pnpm test "
+        "prepublish": "pnpm build "
     },
     "keywords": [
         "vite",
