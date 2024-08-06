@@ -1,5 +1,5 @@
 import { addVitePlugin, defineNuxtModule } from '@nuxt/kit';
-import font from './vite.js';
+import font from './unplugin.js';
 
 export default defineNuxtModule({
     meta: {
@@ -10,7 +10,7 @@ export default defineNuxtModule({
         // Skip when preparing
         if (nuxt.options._prepare) return;
         addVitePlugin(
-            font({
+            font.vite({
                 ...options,
                 cacheDir: 'node_modules/.vite/.font',
             }),
@@ -21,7 +21,7 @@ export default defineNuxtModule({
             },
         );
         addVitePlugin(
-            font({
+            font.vite({
                 ...options,
                 cacheDir: 'node_modules/.vite/.font',
                 // build 状态时，会先进行 client 的 build 导致打包失败
