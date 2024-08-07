@@ -1,8 +1,8 @@
 {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "name": "vite-plugin-font",
     "description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
-    "main": "./dist/vite.js",
+    "main": "./dist/unplugin.js",
     "type": "module",
     "repository": {
         "type": "git",
