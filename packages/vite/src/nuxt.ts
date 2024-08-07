@@ -1,4 +1,7 @@
 import { addVitePlugin, defineNuxtModule } from '@nuxt/kit';
+
+import type {} from '@nuxt/schema';
+
 import font from './unplugin.js';
 
 export default defineNuxtModule({
