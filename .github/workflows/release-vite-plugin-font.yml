@@ -15,7 +15,7 @@ jobs:
             - run: npm install pnpm -g
             - run: pnpm install --no-frozen-lockfile
             - run: pnpm -C ./packages/font-sharp build
-            - run: pnpm -C ./packages/subsets build
+            - run: pnpm -C ./packages/subsets prepublish
             - run: pnpm publish --access public --no-git-checks
               working-directory: packages/vite
               env:
