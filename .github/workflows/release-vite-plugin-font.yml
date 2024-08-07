@@ -14,6 +14,8 @@ jobs:
                   registry-url: 'https://registry.npmjs.org'
             - run: npm install pnpm -g
             - run: pnpm install --no-frozen-lockfile
+            - run: pnpm -C ./packages/font-sharp build
+            - run: pnpm -C ./packages/subsets build
             - run: pnpm publish --access public --no-git-checks
               working-directory: packages/vite
               env:
