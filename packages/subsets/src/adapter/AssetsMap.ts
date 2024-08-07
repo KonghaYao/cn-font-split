@@ -93,10 +93,12 @@ class AssetsMap<K extends string> extends Map<K, string> {
             const outputFile = (await import('fs-extra')).outputFile;
             return outputFile(file, data, options);
         }
+        //ifdef browser
         if (isDeno) {
             const { outputFile } = await import('./deno/fs-extra');
             return outputFile(file, data);
         }
+        //endif
         throw new Error(
             '你的环境好像不支持内部的 outputFile，请你适配 outputFile 参数',
         );

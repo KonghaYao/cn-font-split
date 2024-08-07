@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { fontSplit } from '../dist/index.js';
+import { fontSplit } from '../dist/cn-font-split.cjs';
 import crypto from 'node:crypto';
 
 fs.emptyDirSync('./temp/node');
