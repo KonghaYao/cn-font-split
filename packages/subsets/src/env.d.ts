@@ -10,7 +10,7 @@ declare module 'https://*' {
     export const Md5: any;
     export default a;
 }
-declare module 'omt:*' {
+declare module '*?worker&url' {
     const a: string;
     export default a;
 }

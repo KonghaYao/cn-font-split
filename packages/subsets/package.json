@@ -2,7 +2,8 @@
     "name": "cn-font-split",
     "version": "5.1.1",
     "description": "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size.",
-    "main": "dist/index.js",
+    "main": "dist/cn-font-split.cjs",
+    "module": "dist/cn-font-split.js",
     "browser": "dist/browser/index.js",
     "type": "module",
     "bin": {
@@ -14,15 +15,12 @@
     },
     "homepage": "https://chinese-font.netlify.app/",
     "scripts": {
-        "build": "rollup -c ",
-        "dev": "rollup -c -w",
-        "build:browser": "rollup -c rollup.config.browser.mjs ",
-        "dev:browser": "rollup -c rollup.config.browser.mjs -w",
-        "test": "vitest",
+        "build": "pnpm vite build",
+        "build:browser": "pnpm vite build --mode browser ",
         "test:node": "node ./test/node.test.mjs",
         "test:deno": "deno run -A --no-npm ./test/deno.test.js",
         "test:bun": "bun run ./test/bun.test.mjs",
-        "prepublish": "tsc && pnpm build && pnpm build:browser && tsc"
+        "prepublish": "pnpm build && pnpm build:browser --emptyOutDir=false && tsc"
     },
     "keywords": [
         "font",
@@ -56,7 +54,6 @@
         "workerpool": "^9.1.1"
     },
     "devDependencies": {
-        "@rollup/plugin-terser": "^0.4.4",
         "@types/byte-size": "^8.1.1",
         "@types/md5": "^2.3.4",
         "@types/opentype.js": "^1.3.7",

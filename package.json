@@ -6,7 +6,8 @@
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "scripts": {
-        "preinstall": "npx only-allow pnpm"
+        "fix_dep": "node ./script/fix_vite_lib_assets.mjs ",
+        "preinstall": "pnpm fix_dep && npx only-allow pnpm"
     },
     "dependencies": {
         "fs-extra": "^11.1.1"
@@ -28,6 +29,7 @@
         "rollup-plugin-analyzer": "^4.0.0",
         "typescript": "^5.2.2",
         "vite": "^5.0.13",
-        "vite-plugin-solid": "^2.10.2"
+        "vite-plugin-solid": "^2.10.2",
+        "vite-plugin-static-copy": "^1.0.6"
     }
 }

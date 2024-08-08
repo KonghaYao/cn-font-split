@@ -9,7 +9,7 @@ export class ConvertManager {
 
     constructor(options?: WorkerPoolOptions) {
         // 初始化工作池，指定工作线程的URL和配置选项。
-        this.pool = pool(WorkerURLWrapper('.' + workerURL.toString()), {
+        this.pool = pool(WorkerURLWrapper(workerURL.toString()), {
             ...options,
             workerOpts: { type: 'module' },
         });
