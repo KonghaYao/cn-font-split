@@ -1,6 +1,5 @@
 import fs from 'fs-extra';
 import { fontSplit } from '../dist/cn-font-split.js';
-import crypto from 'node:crypto';
 
 fs.emptyDirSync('./temp/node');
 fontSplit({
@@ -15,7 +14,6 @@ fontSplit({
     targetType: 'woff2',
     // subsets: JSON.parse(await fs.readFile("./subsets/misans.json", "utf-8")),
     previewImage: {},
-    chunkSize: 70 * 1024,
     testHTML: true,
     reporter: true,
     css: {

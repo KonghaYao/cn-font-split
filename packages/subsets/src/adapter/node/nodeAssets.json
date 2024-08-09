@@ -1,6 +1,5 @@
 {
-    "hb-subset.wasm": "@konghayao/harfbuzzjs/hb-subset.wasm",
-    "cn_char_rank.dat": "&../data/cn_char_rank.dat",
-    "template.html": "&../data/template.html",
-    "unicodes_contours.dat": "@chinese-fonts/font-contours/data/unicodes_contours.dat"
+    "cn_char_rank.dat": "&./cn_char_rank.dat",
+    "template.html": "&./template.html",
+    "unicodes_contours.dat": "&./unicodes_contours.dat"
 }

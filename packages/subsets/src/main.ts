@@ -219,7 +219,6 @@ async function PreSubset(ctx: Context) {
             : ForcePartSubsets;
 
     const totalSubsets = reduceMinsPackage(FullSubsets, ctx); // 10
-
     const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
         col += cur.length;
         return col;

@@ -107,11 +107,4 @@ class AssetsMap<K extends string> extends Map<K, string> {
 
 /** 管理系统资源加载的类 */
 export class SystemAssetsMap<K extends string> extends AssetsMap<K> {
-    async loadHarbuzz(input = 'hb-subset.wasm') {
-        if (isNode || isDeno) {
-            const blob = await this.loadFileAsync(input);
-            return WebAssembly.instantiate(blob);
-        }
-        return WebAssembly.instantiateStreaming(this.loadFileResponse(input));
-    }
 }
