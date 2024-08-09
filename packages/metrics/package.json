@@ -1,9 +1,9 @@
 {
   "name": "cn-font-metrics",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "",
-  "main": "dist/cn-font-metrics.cjs",
-  "module": "dist/cn-font-metrics.js",
+  "main": "dist/cn-font-metrics.js",
+  "module": "dist/cn-font-metrics.mjs",
   "types": "./dist/index.d.ts",
   "files": ["dist"],
   "publishConfig": {
