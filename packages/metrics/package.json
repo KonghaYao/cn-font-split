@@ -1,15 +1,19 @@
 {
   "name": "cn-font-metrics",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "",
   "main": "dist/cn-font-metrics.cjs",
   "module": "dist/cn-font-metrics.js",
+  "types": "./dist/index.d.ts",
   "files": ["dist"],
   "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "scripts": {
-    "build": "node ./fontaine.mjs && tsc "
+    "build:font": "node ./fontaine.mjs ",
+    "build":" vite build&&tsc",
+    "prepublish": "pnpm build"
   },
   "keywords": [],
   "author": "",
