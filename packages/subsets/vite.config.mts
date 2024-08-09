@@ -3,24 +3,12 @@ import condition from '@forsee/rollup-plugin-conditional';
 import p from './package.json';
 import nodeExternals from 'rollup-plugin-node-externals';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-const isNodeModule = (key) => key.startsWith('node:');
+import { NodeNativePolyfill } from './scripts/NodeNativePolyfill.mts';
 const nodeReplacer = {
     path: 'path-browserify',
 };
-const loadNodeModule = (key) => {
-    key = key.replace('node:', '');
-    if (key in nodeReplacer) {
-        return `
-import A from "${nodeReplacer[key]}";
-export default A;
-export * from "${nodeReplacer[key]}"`;
-    }
-    return `export default '';
-export const promisify = '';`;
-};
 export default defineConfig(({ mode }) => {
     const isBrowser = mode === 'browser';
-    const isCJS = mode === 'cjs';
     const conditionPlugin = {
         enforce: 'pre',
         ...condition({ env: isBrowser ? 'browser' : 'node' }),
@@ -62,13 +50,7 @@ export default defineConfig(({ mode }) => {
                     }
                 },
             },
-            {
-                load(id) {
-                    if (isNodeModule(id)) {
-                        return loadNodeModule(id);
-                    }
-                },
-            },
+            NodeNativePolyfill(nodeReplacer),
         ],
         build: {
             target: 'esnext',
@@ -79,7 +61,13 @@ export default defineConfig(({ mode }) => {
                 fileName: isBrowser && 'cn-font-split.browser',
             },
             minify: false, // 禁用代码混淆
+            assetsDir: '',
             assetsInlineLimit: 0,
+            rollupOptions: {
+                output: {
+                    assetFileNames: `[name]-[hash].[ext]`,
+                },
+            },
         },
 
         worker: {
@@ -89,13 +77,7 @@ export default defineConfig(({ mode }) => {
                     builtins: !isBrowser,
                     deps: !isBrowser,
                 }),
-                {
-                    load(id) {
-                        if (isNodeModule(id)) {
-                            return loadNodeModule(id);
-                        }
-                    },
-                },
+                NodeNativePolyfill(nodeReplacer),
                 conditionPlugin,
             ],
         },
