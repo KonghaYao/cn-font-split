@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { fontSplit } from '../dist/index.js';
+import { fontSplit } from '..';
 
 fs.emptyDirSync('./temp/bun');
 fontSplit({
