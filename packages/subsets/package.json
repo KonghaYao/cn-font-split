@@ -10,6 +10,10 @@
     "bin": {
         "cn-font-split": "bin/cn-font-split.mjs"
     },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
