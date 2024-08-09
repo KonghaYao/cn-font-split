@@ -93,10 +93,12 @@ class AssetsMap<K extends string> extends Map<K, string> {
             const outputFile = (await import('fs-extra')).outputFile;
             return outputFile(file, data, options);
         }
+        //ifdef browser
         if (isDeno) {
             const { outputFile } = await import('./deno/fs-extra');
             return outputFile(file, data);
         }
+        //endif
         throw new Error(
             '你的环境好像不支持内部的 outputFile，请你适配 outputFile 参数',
         );
@@ -105,11 +107,4 @@ class AssetsMap<K extends string> extends Map<K, string> {
 
 /** 管理系统资源加载的类 */
 export class SystemAssetsMap<K extends string> extends AssetsMap<K> {
-    async loadHarbuzz(input = 'hb-subset.wasm') {
-        if (isNode || isDeno) {
-            const blob = await this.loadFileAsync(input);
-            return WebAssembly.instantiate(blob);
-        }
-        return WebAssembly.instantiateStreaming(this.loadFileResponse(input));
-    }
 }

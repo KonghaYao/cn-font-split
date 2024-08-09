@@ -1,6 +1,6 @@
-import unplugin from './dist/unplugin.js';
-import rspack from '@rspack/core';
-export default {
+const { fontPlugin } = require('.');
+const rspack = require('@rspack/core');
+module.exports = {
     entry: {
         index: './example/index.mjs',
         fallback: './example/fallback.mjs',
@@ -34,7 +34,7 @@ export default {
             template: './example/subsets-1.html',
             chunks: ['subsets-1'],
         }),
-        unplugin.rspack({
+        fontPlugin.rspack({
             scanFiles: {
                 default: ['./example/subsets.html'],
                 'page-1': ['./example/subsets-1.html'],

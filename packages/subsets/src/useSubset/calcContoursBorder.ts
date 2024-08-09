@@ -33,10 +33,10 @@ export async function calcContoursBorder(
         undefined,
         buildMode,
     );
-
+    const transferredLength = parseInt((transferred.byteLength / 20) as unknown as string) * 20
     const totalContours: number = arr.reduce((col, cur) => {
         return col + (contoursMap.get(cur) ?? (contoursMap.get(0) as number));
     }, 0);
-    const ContoursPerByte = totalContours / transferred.byteLength;
+    const ContoursPerByte = totalContours / transferredLength;
     return maxSize * ContoursPerByte;
 }
