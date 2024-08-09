@@ -6,7 +6,7 @@ fs.emptyDirSync('./node_modules/.vite');
 fs.emptyDirSync('./node_modules/.cache');
 
 await new Promise((res, rej) => {
-    exec('pnpm vite build', { cwd: process.cwd() }, (err, stdout, stderr) => {
+    exec('pnpm vite build -c vite.config.test.mts', { cwd: process.cwd() }, (err, stdout, stderr) => {
         if (err) {
             rej(err);
             return;
