@@ -64,6 +64,6 @@
         "skipLibCheck": true /* Skip type checking of declaration files. */,
         "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
     },
-    "include": ["src/index.ts", "src/font.d.ts", "example/*.ts"],
+    "include": ["src/unplugin.ts", "src/font.d.ts", "example/*.ts"],
     "exclude": ["*.spec.ts", "@nuxt/kit"]
 }

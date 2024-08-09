@@ -1,4 +1,4 @@
-const { fontPlugin } = require('.');
+const fontPlugin = require('.');
 const rspack = require('@rspack/core');
 module.exports = {
     entry: {
