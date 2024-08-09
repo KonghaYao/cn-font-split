@@ -22,7 +22,7 @@ class UnionFontPlugin {
         this.prepared = new Promise<null>((res) => {
             resolve = res;
         });
-        await SubsetUtils.emptyCacheDir(this.config);
+        if (this.config.emptyCacheDir) await SubsetUtils.emptyCacheDir(this.config);
         console.log(
             'vite-plugin-font | empty cache dir | ' + this.config.cacheDir,
         );
@@ -34,11 +34,11 @@ class UnionFontPlugin {
     createConfig(config: Options) {
         const scanFiles =
             typeof config.scanFiles === 'object' &&
-            !(config.scanFiles instanceof Array)
+                !(config.scanFiles instanceof Array)
                 ? config.scanFiles
                 : {
-                      default: config.scanFiles!,
-                  };
+                    default: config.scanFiles!,
+                };
         this.config = { ...config, scanFiles };
     }
     getCacheDir() {

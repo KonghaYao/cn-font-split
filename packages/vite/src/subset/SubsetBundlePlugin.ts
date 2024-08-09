@@ -8,6 +8,7 @@ export interface SubsetBundlePluginConfig extends BundlePluginConfig {
     scanFiles?: string | string[] | Record<string, string | string[]>;
     ignore?: string | string[];
     whiteList?: string | string[];
+    emptyCacheDir?: boolean
 }
 
 export class SubsetUtils {
