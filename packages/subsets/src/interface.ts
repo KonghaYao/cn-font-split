@@ -5,6 +5,7 @@ import type { ReplaceProps } from './logger/templateReplacer';
 import { ConvertManager } from './convert/convert.manager';
 import { ISettingsParam } from 'tslog';
 import { WorkerPoolOptions } from 'workerpool';
+import { IContext } from './main';
 
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
@@ -72,24 +73,24 @@ export type InputTemplate = {
          * 控制 css 字体相关的注释内容，用于调试和优化。
          */
         comment:
-            | {
-                  /**
-                   * 基本的构建信息
-                   * @default true
-                   */
-                  base?: false;
-                  /**
-                   * 字体文件中的 name table，有字体证书相关的说明
-                   * @default true
-                   */
-                  nameTable?: false;
-                  /**
-                   * 显示每个字体包含有的 unicode range 的字符, debug 用
-                   * @default false
-                   */
-                  unicodes?: true;
-              }
-            | false;
+        | {
+            /**
+             * 基本的构建信息
+             * @default true
+             */
+            base?: false;
+            /**
+             * 字体文件中的 name table，有字体证书相关的说明
+             * @default true
+             */
+            nameTable?: false;
+            /**
+             * 显示每个字体包含有的 unicode range 的字符, debug 用
+             * @default false
+             */
+            unicodes?: true;
+        }
+        | false;
         /**
          * 控制是否对 CSS 文件进行压缩，以减小文件大小。
          * @default true
@@ -182,24 +183,30 @@ export type InputTemplate = {
      */
     buildMode?: 'stable' | 'speed';
     threads?:
-        | {
-              /**
-               * 服务对象，用于多线程处理
-               * @protected
-               */
-              service?: ConvertManager;
-              /*
-               * 是否进行多线程切割
-               * @default true
-               */
-              split?: boolean;
-              /* workerpool 允许的配置项 */
-              options?: WorkerPoolOptions;
-          }
-        | false;
+    | {
+        /**
+         * 服务对象，用于多线程处理
+         * @protected
+         */
+        service?: ConvertManager;
+        /*
+         * 是否进行多线程切割
+         * @default true
+         */
+        split?: boolean;
+        /* workerpool 允许的配置项 */
+        options?: WorkerPoolOptions;
+    }
+    | false;
     /**
      * 字体复杂字形等特性的支持
      * @dev
      */
     fontFeature?: boolean;
+
+    /** 自定义插件 */
+    plugins?: {
+        /** 自定义预分包策略 */
+        PreSubset?: (ctx:IContext) => Promise<void>
+    }
 };

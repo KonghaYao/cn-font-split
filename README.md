@@ -105,12 +105,20 @@ fontSplit({
     - result.css // css 入口，引入这个 css 文件即可使用字体包
 ```
 
+
+### 自定义插件
+
+cn-font-split 在 v6 版本进行了插件化重构，提供了一些高度自定义的方法, 你可以在下面的代码中获取灵感。
+
+1. [自定义分包策略](/packages/subsets/test/overwrite.test.mjs)
+
 ### 更多 demo
 
 1. [Nodejs 使用](/packages/subsets/test/node.test.mjs)
 2. [Deno 使用](/packages/subsets/test/deno.test.js)
 3. [Bun 使用](/packages/subsets/test/bun.test.js)
 4. [浏览器使用](https://github.com/KonghaYao/chinese-free-web-font-storage/blob/feature/docs/src/components/online-split/index.tsx)
+
 
 ## 提高网站的字体加载速度
 
@@ -119,6 +127,8 @@ fontSplit({
 3. **一定要配置 HTTP 缓存条件**：在有缓存时，用户打开你的网站是可以达到 50ms 内瞬间加载完所有字体包的。由于字体文件配置一次就基本上不会进行改动，所以可以持久缓存。
 4. **文档站点的预加载**：如果网站有条件，可以在首页或者是所有页面，在浏览器空闲的时候，使用 js 的 fetch （force-cache） 请求所有的字体包。这样浏览器会把字体都加入进缓存中，从而保证其它页面的文字也能迅速加载。至于分包的具体名称，可以使用 reporter.json 文件查看。
 5. **首屏优化**：推荐使用 [vite-plugin-font](https://npmjs.com/package/vite-plugin-font)。它可以扫描代码中使用的字符，并与你的前端工具链进行结合，实现最小化字体切割。
+
+
 
 ## 开发相关
 
@@ -169,7 +179,7 @@ fontSplit({
 2. Bun 在我的 Mac 上运行良好，但是到某些 Linux 平台上，就会出问题。
 3. Bun 运行速度比 Nodejs 要快 30% 左右（保守估计）。
 
-### 感谢
+## 感谢
 
 1. 项目核心插件为 Harfbuzz 项目，源项目使用 C 与 C++ 构建了一个字体布局工具，然后提供了 WASM 的打包方法。项目重新构建并提供了 Typescript 版本的 API 封装，使得代码可以更好地融入生态中。
 2. opentype.js 这个项目为第二解析引擎，主要处理 feature 关系判断和文本转化为 SVG 的任务，在渲染方面给我们的支持很多。
