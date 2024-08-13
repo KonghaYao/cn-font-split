@@ -1,5 +1,5 @@
 import byteSize from 'byte-size';
-import { IContext } from '../ createContext';
+import { IContext } from '../createContext';
 
 const timeRecordFormat = (start: number, end: number) => {
     return (end - start).toFixed(0) + 'ms';
