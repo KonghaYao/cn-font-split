@@ -1,7 +1,7 @@
 import { convert } from './convert/font-convert';
 import { hbjs } from './hb';
 import { Executor, PerformanceRecord } from './pipeline/index';
-import { createContext } from './ createContext';
+import { IContext, createContext } from './createContext';
 import path from 'path';
 import byteSize from 'byte-size';
 import { IOutputFile, InputTemplate } from './interface';
@@ -43,9 +43,10 @@ export { type FontReporter } from './templates/reporter';
 import { differenceSet } from './utils/CharSetTool';
 import wrapper from '@konghayao/harfbuzzjs/hb-subset.js';
 
-type Context = ReturnType<typeof createContext>;
+export { type IContext } from './createContext'
+
 /** 从路径或者二进制数据获取原始字体文件 */
-async function LoadFile(ctx: Context) {
+async function LoadFile(ctx: IContext) {
     ctx.info(`cn-font-split@${__cn_font_split_version__} 环境检测\t`, env);
     const { input } = ctx.pick('input');
 
@@ -66,7 +67,7 @@ async function LoadFile(ctx: Context) {
 }
 
 /** 转换为 TTF 格式，这样可以被 HarfBuzz 操作 */
-async function transferFontType(ctx: Context) {
+async function transferFontType(ctx: IContext) {
     const { originFile, bundleMessage, input } = ctx.pick(
         'originFile',
         'bundleMessage',
@@ -82,7 +83,7 @@ async function transferFontType(ctx: Context) {
     ctx.free('originFile');
 }
 /** 加载 Harfbuzz 字体操作库 */
-async function loadHarbuzz(ctx: Context) {
+async function loadHarbuzz(ctx: IContext) {
     const { ttfFile, input: opt } = ctx.pick('input', 'ttfFile');
 
     const hb = hbjs(await wrapper());
@@ -97,14 +98,14 @@ async function loadHarbuzz(ctx: Context) {
         opt.threads.service = new ConvertManager(opt.threads.options);
     }
 }
-async function initOpentype(ctx: Context) {
+async function initOpentype(ctx: IContext) {
     const { ttfFile } = ctx.pick('input', 'ttfFile');
     const fontTool = createFontBaseTool(ttfFile.buffer);
     ctx.set('fontTool', fontTool);
     ctx.free('ttfFile');
 }
 function createImageProcess(outputFile: IOutputFile) {
-    return async function createImage(ctx: Context) {
+    return async function createImage(ctx: IContext) {
         const { input, hb, face } = ctx.pick('input', 'hb', 'face');
         if (input.previewImage) {
             const font = hb.createFont(face);
@@ -118,7 +119,7 @@ function createImageProcess(outputFile: IOutputFile) {
     };
 }
 /** 获取字体的基础信息，如字体族类，license等 */
-async function getBasicMessage(ctx: Context) {
+async function getBasicMessage(ctx: IContext) {
     const { fontTool } = ctx.pick('fontTool', 'face');
     const nameTable = getNameTableFromTool(fontTool);
     ctx.set('nameTable', nameTable);
@@ -132,7 +133,7 @@ async function getBasicMessage(ctx: Context) {
 }
 
 /** 通过数据计算得出分包的数据结构 */
-async function PreSubset(ctx: Context) {
+async function PreSubset(ctx: IContext) {
     const { input, hb, face, ttfBufferSize, bundleMessage, fontTool } =
         ctx.pick(
             'input',
@@ -230,15 +231,15 @@ async function PreSubset(ctx: Context) {
     if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600))
         throw new Error(
             '分包数为' +
-                totalSubsets.length +
-                '，超过了期望最大分包数，将会导致您的机器过久运行',
+            totalSubsets.length +
+            '，超过了期望最大分包数，将会导致您的机器过久运行',
         );
     ctx.set('subsetsToRun', totalSubsets);
     ctx.free('ttfFile');
 }
 /** 执行所有包的分包动作 */
 function createSubsetFontProcess(outputFile: IOutputFile) {
-    return async function subsetFont(ctx: Context) {
+    return async function subsetFont(ctx: IContext) {
         const { input, face, blob, subsetsToRun, hb, bundleMessage } = ctx.pick(
             'input',
             'face',
@@ -275,7 +276,7 @@ function createSubsetFontProcess(outputFile: IOutputFile) {
 }
 function createOutputCSSProcess(outputFile: IOutputFile) {
     /** 输出 css 文件 */
-    return async function outputCSS(ctx: Context) {
+    return async function outputCSS(ctx: IContext) {
         const { nameTable, subsetResult, input, VF } = ctx.pick(
             'input',
             'nameTable',
@@ -291,7 +292,7 @@ function createOutputCSSProcess(outputFile: IOutputFile) {
     };
 }
 function createOutputHTMLProcess(outputFile: IOutputFile) {
-    return async function outputHTML(ctx: Context) {
+    return async function outputHTML(ctx: IContext) {
         const { input } = ctx.pick('input');
         if (input.testHTML !== false) {
             const { createTestHTML } = await import('./templates/html/index');
@@ -307,7 +308,7 @@ function outputReporter(
     outputFile: IOutputFile,
     getRecords: () => PerformanceRecord[],
 ) {
-    return async function (ctx: Context) {
+    return async function (ctx: IContext) {
         const { nameTable, subsetResult, input, bundleMessage, cssMessage } =
             ctx.pick(
                 'input',
@@ -339,7 +340,7 @@ function outputReporter(
     };
 }
 
-async function Clear(ctx: Context) {
+async function Clear(ctx: IContext) {
     const { input } = ctx.pick('input');
     input.threads && input.threads?.service?.destroy();
 }
@@ -355,7 +356,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             initOpentype,
             createImageProcess(outputFile),
             getBasicMessage,
-            PreSubset,
+            opt.plugins?.PreSubset ?? PreSubset,
             createSubsetFontProcess(outputFile),
             createOutputCSSProcess(outputFile),
             createOutputHTMLProcess(outputFile),
