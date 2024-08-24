@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-import { fontSplit, VERSION_CN_FONT_SPLIT } from '../dist/index.js';
+import { fontSplit, VERSION_CN_FONT_SPLIT } from '../dist/cn-font-split.js';
 import fs from 'fs';
 import mri from 'mri';
 const temp = mri(process.argv.slice(2), {
