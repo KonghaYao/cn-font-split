@@ -7,7 +7,14 @@ import {
 } from './subset/SubsetBundlePlugin.js';
 
 export interface Options extends Partial<SubsetBundlePluginConfig> {
-    // define your plugin options here
+    /**
+     * 默认为 [/\.otf/, /\.ttf/]
+     */
+    include?: RegExp[];
+    /**
+     * 默认为 [/\\\/node_modules\\//]
+     */
+    exclude?: RegExp[];
 }
 
 class UnionFontPlugin {
@@ -22,7 +29,8 @@ class UnionFontPlugin {
         this.prepared = new Promise<null>((res) => {
             resolve = res;
         });
-        if (this.config.emptyCacheDir) await SubsetUtils.emptyCacheDir(this.config);
+        if (this.config.emptyCacheDir)
+            await SubsetUtils.emptyCacheDir(this.config);
         console.log(
             'vite-plugin-font | empty cache dir | ' + this.config.cacheDir,
         );
@@ -34,11 +42,11 @@ class UnionFontPlugin {
     createConfig(config: Options) {
         const scanFiles =
             typeof config.scanFiles === 'object' &&
-                !(config.scanFiles instanceof Array)
+            !(config.scanFiles instanceof Array)
                 ? config.scanFiles
                 : {
-                    default: config.scanFiles!,
-                };
+                      default: config.scanFiles!,
+                  };
         this.config = { ...config, scanFiles };
     }
     getCacheDir() {
@@ -62,12 +70,15 @@ class UnionFontPlugin {
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (
     config = {},
 ) => {
+    const include = config.include ?? [/\.otf/, /\.ttf/];
+    const exclude = config.exclude ?? [/\/node_modules\//];
     const plugin = new UnionFontPlugin();
     plugin.createConfig(config);
     return {
         name: 'vite-plugin-font',
         loadInclude(id) {
-            return [/\.otf/, /\.ttf/].some((i) => i.test(id));
+            if (exclude.some((i) => i.test(id))) return false;
+            return include.some((i) => i.test(id));
         },
         enforce: 'pre',
         vite: {
