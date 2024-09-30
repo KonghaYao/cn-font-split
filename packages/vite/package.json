@@ -1,10 +1,10 @@
 {
-    "version": "2.1.5",
+    "version": "2.1.6",
     "name": "vite-plugin-font",
     "description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
     "main": "./dist/unplugin.js",
     "module": "./dist/unplugin.mjs",
-    "types":"./dist/unplugin.d.ts",
+    "types": "./dist/unplugin.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/vite"
