@@ -5,6 +5,7 @@ import {
     SubsetBundlePluginConfig,
     SubsetUtils,
 } from './subset/SubsetBundlePlugin.js';
+import { normalizePath } from './utils/normalizePath.js';
 
 export interface Options extends Partial<SubsetBundlePluginConfig> {
     /**
@@ -77,6 +78,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
     return {
         name: 'vite-plugin-font',
         loadInclude(id) {
+            id = normalizePath(id)
             if (exclude.some((i) => i.test(id))) return false;
             return include.some((i) => i.test(id));
         },
