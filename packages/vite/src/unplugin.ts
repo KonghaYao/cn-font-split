@@ -61,10 +61,20 @@ class UnionFontPlugin {
         if (!usingPlugin) {
             usingPlugin = new SubsetBundlePlugin(this.config);
             usingPlugin.key = key;
-            await usingPlugin.createSubsets();
             this.pluginStore.set(key, usingPlugin);
         }
+        await usingPlugin.createSubsets();
         return usingPlugin;
+    }
+    /** 通过改动文件的 path 获取需要变更的 plugin */
+    getWatchingPlugin(path: string) {
+        let matchedPlugins:SubsetBundlePlugin[] = []
+        this.pluginStore.forEach((plugin, key) => {
+            if(plugin.isMatchScanArea(path)){
+                matchedPlugins.push(plugin)
+            }
+        });
+        return matchedPlugins
     }
 }
 
@@ -75,10 +85,11 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
     const exclude = config.exclude ?? [/\/node_modules\//];
     const plugin = new UnionFontPlugin();
     plugin.createConfig(config);
+
     return {
         name: 'vite-plugin-font',
         loadInclude(id) {
-            id = normalizePath(id)
+            id = normalizePath(id);
             if (exclude.some((i) => i.test(id))) return false;
             return include.some((i) => i.test(id));
         },
@@ -88,6 +99,14 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
                 plugin.setCacheDir(c.cacheDir);
                 await plugin.start();
             },
+            /** 先对 vite 进行热更新支持 */
+            handleHotUpdate(ctx) {
+                const plugins = plugin.getWatchingPlugin(ctx.file)
+                console.log(plugins.length)
+                return ctx.modules.concat(plugins.map(i=>{
+                    return ctx.server.moduleGraph.getModuleById(i.buildId!)!
+                }))
+            },
         },
         async load(id) {
             await plugin.start();
@@ -95,6 +114,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
             const key = searchParams.get('key') ?? 'default';
             const usingPlugin = await plugin.getUsingPlugin(key);
             await usingPlugin.createBundle(id, isSubset ? 'subsets' : 'full');
+            usingPlugin.buildId = id
             return usingPlugin.createSourceCode(id);
         },
     };

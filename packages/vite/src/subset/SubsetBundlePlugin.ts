@@ -1,14 +1,14 @@
-import { BundlePlugin, BundlePluginConfig, getFileName } from '../index.js';
+import { BundlePlugin, BundlePluginConfig, getFileName } from './index.js';
 import { glob } from 'glob';
 import fs from 'fs-extra';
 import crypto from 'node:crypto';
 import path from 'path';
-
+import { minimatch } from 'minimatch';
 export interface SubsetBundlePluginConfig extends BundlePluginConfig {
     scanFiles?: string | string[] | Record<string, string | string[]>;
     ignore?: string | string[];
     whiteList?: string | string[];
-    emptyCacheDir?: boolean
+    emptyCacheDir?: boolean;
 }
 
 export class SubsetUtils {
@@ -27,6 +27,8 @@ export class SubsetUtils {
 }
 
 export class SubsetBundlePlugin extends BundlePlugin {
+    /** 构建引擎的文件 ID，提供给构建引擎判断 */
+    public buildId?: string;
     subsetConfig: SubsetBundlePluginConfig;
     constructor(config: SubsetBundlePluginConfig, key?: string) {
         super(config, key);
@@ -47,7 +49,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
     async createSubsets() {
         if (!this.subsetConfig.scanFiles) return;
         this.getWhiteListSubsets();
-        await this.getScanFiles();
+        await this.updateScanFiles();
         const subsetsArr = [...this.usedSubsets].sort((a, b) => a - b);
         this.subsets = [subsetsArr];
         const hash = crypto
@@ -62,8 +64,17 @@ export class SubsetBundlePlugin extends BundlePlugin {
         );
         return hash;
     }
-
-    private async getScanFiles() {
+    /** 匹配绝对路径是否被获取到 */
+    isMatchScanArea(p: string) {
+        const globStr = this.getGlobArea();
+        const resolvePath = (p: string) => path.resolve(process.cwd(), p);
+        if (globStr instanceof Array) {
+            return globStr.some((i) => minimatch(p, resolvePath(i)));
+        }
+        return minimatch(p, resolvePath(globStr));
+    }
+    /** 获取配置中的 */
+    private getGlobArea() {
         let globStr: string | string[];
         if (
             typeof this.subsetConfig.scanFiles === 'object' &&
@@ -73,6 +84,10 @@ export class SubsetBundlePlugin extends BundlePlugin {
         } else {
             globStr = this.subsetConfig.scanFiles!;
         }
+        return globStr;
+    }
+    private async updateScanFiles() {
+        const globStr = this.getGlobArea();
         if (!globStr) return;
         const files = await glob(globStr!, {
             absolute: true,
