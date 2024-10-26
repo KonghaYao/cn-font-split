@@ -1,5 +1,5 @@
 {
-    "version": "2.1.7",
+    "version": "3.0.0",
     "name": "vite-plugin-font",
     "description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
     "main": "./dist/unplugin.js",
@@ -20,10 +20,10 @@
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && node ./scripts/fix_cjs.mjs && tsc",
         "test": "node test/build.test.mjs",
         "dev": "vite -c vite.config.test.mts",
-        "prepublish": "pnpm build && node ./scripts/fix_cjs.mjs && tsc"
+        "prepublish": "pnpm build"
     },
     "keywords": [
         "vite",
@@ -50,8 +50,6 @@
         "cjk"
     ],
     "devDependencies": {
-        "@nuxt/kit": "^3",
-        "@nuxt/schema": "^3",
         "@rspack/core": "1.0.0-alpha.1",
         "vite": "^5"
     },
@@ -67,8 +65,5 @@
     "bugs": {
         "url": "https://github.com/KonghaYao/cn-font-split/issues"
     },
-    "homepage": "https://chinese-font.netlify.app",
-    "optionalDependencies": {
-        "@nuxt/kit": "^3"
-    }
+    "homepage": "https://chinese-font.netlify.app"
 }

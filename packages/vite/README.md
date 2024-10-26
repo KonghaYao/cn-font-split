@@ -55,12 +55,15 @@ export default defineConfig({
 ### Nuxt
 
 ```js
-// nuxt.config.ts
+// https://nuxt.com/docs/api/configuration/nuxt-config
+import font from 'vite-plugin-font';
 export default defineNuxtConfig({
-    modules: ['node_modules/vite-plugin-font/src/nuxt'],
-    fontSplit: {
-        scanFiles: ['pages/**/*.{vue,ts,tsx,js,jsx}'],
+    devtools: { enabled: false },
+    // modules: ["module/nuxt"],
+    vite: {
+        plugins: [font.vite({})],
     },
+    compatibilityDate: '2024-10-26',
 });
 ```
 
