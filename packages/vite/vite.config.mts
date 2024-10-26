@@ -13,9 +13,8 @@ export default defineConfig(({ mode }) => {
         build: {
             target: 'esnext',
             lib: {
-                entry: ['./src/unplugin.ts', './src/nuxt'],
+                entry: ['./src/unplugin.ts'],
                 formats: ['es', 'cjs'],
-                name: 'cn-font-metric',
             },
             minify: false, // 禁用代码混淆
             assetsDir: '',
