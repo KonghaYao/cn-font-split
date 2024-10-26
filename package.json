@@ -20,7 +20,7 @@
         "prettier": "3.0.3",
         "rollup": "^4.18.0",
         "typescript": "^5.2.2",
-        "vite": "^5.0.13",
+        "vite": "^5.2.14",
         "vite-plugin-solid": "^2.10.2",
         "rollup-plugin-node-externals": "^7.1.2",
         "vite-plugin-static-copy": "^1.0.6"
