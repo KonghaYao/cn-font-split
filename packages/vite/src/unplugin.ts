@@ -68,13 +68,13 @@ class UnionFontPlugin {
     }
     /** 通过改动文件的 path 获取需要变更的 plugin */
     getWatchingPlugin(path: string) {
-        let matchedPlugins:SubsetBundlePlugin[] = []
+        let matchedPlugins: SubsetBundlePlugin[] = [];
         this.pluginStore.forEach((plugin, key) => {
-            if(plugin.isMatchScanArea(path)){
-                matchedPlugins.push(plugin)
+            if (plugin.isMatchScanArea(path)) {
+                matchedPlugins.push(plugin);
             }
         });
-        return matchedPlugins
+        return matchedPlugins;
     }
 }
 
@@ -101,11 +101,14 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
             },
             /** 先对 vite 进行热更新支持 */
             handleHotUpdate(ctx) {
-                const plugins = plugin.getWatchingPlugin(ctx.file)
-                console.log(plugins.length)
-                return ctx.modules.concat(plugins.map(i=>{
-                    return ctx.server.moduleGraph.getModuleById(i.buildId!)!
-                }))
+                const plugins = plugin.getWatchingPlugin(ctx.file);
+                return ctx.modules.concat(
+                    plugins.map((i) => {
+                        return ctx.server.moduleGraph.getModuleById(
+                            i.buildId!,
+                        )!;
+                    }),
+                );
             },
         },
         async load(id) {
@@ -114,7 +117,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
             const key = searchParams.get('key') ?? 'default';
             const usingPlugin = await plugin.getUsingPlugin(key);
             await usingPlugin.createBundle(id, isSubset ? 'subsets' : 'full');
-            usingPlugin.buildId = id
+            usingPlugin.buildId = id;
             return usingPlugin.createSourceCode(id);
         },
     };

@@ -67,6 +67,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
     /** 匹配绝对路径是否被获取到 */
     isMatchScanArea(p: string) {
         const globStr = this.getGlobArea();
+        if (!globStr) return false;
         const resolvePath = (p: string) => path.resolve(process.cwd(), p);
         if (globStr instanceof Array) {
             return globStr.some((i) => minimatch(p, resolvePath(i)));
@@ -75,16 +76,14 @@ export class SubsetBundlePlugin extends BundlePlugin {
     }
     /** 获取配置中的 */
     private getGlobArea() {
-        let globStr: string | string[];
         if (
             typeof this.subsetConfig.scanFiles === 'object' &&
             !(this.subsetConfig.scanFiles instanceof Array)
         ) {
-            globStr = this.subsetConfig.scanFiles[this.key];
+            return this.subsetConfig.scanFiles[this.key];
         } else {
-            globStr = this.subsetConfig.scanFiles!;
+            return this.subsetConfig.scanFiles;
         }
-        return globStr;
     }
     private async updateScanFiles() {
         const globStr = this.getGlobArea();
