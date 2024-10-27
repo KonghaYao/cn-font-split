@@ -45,7 +45,7 @@ export class BundlePlugin {
                 return `export const ${k} = ${JSON.stringify(v)};`;
             })
             .join('\n');
-        const resultCSS = url.pathToFileURL(resolvedPath).pathname;
+        const resultCSS = decodeURI(url.pathToFileURL(resolvedPath).pathname);
         const key = (Math.random() * 100000).toFixed(0);
         return (
             `import '${resultCSS}/metrics.css?t=${key}';\n` +
