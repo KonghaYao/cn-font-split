@@ -51,7 +51,7 @@
     ],
     "devDependencies": {
         "@rspack/core": "1.0.0-alpha.1",
-        "vite": "^5"
+        "vite": "^5.4.10"
     },
     "dependencies": {
         "cn-font-metrics": "^2.1.6",
