@@ -7,7 +7,7 @@ const items = fs
 for (const file of items) {
     let code = fs.readFileSync(file, 'utf-8');
     const isNeedChange = /shouldInline/.test(code);
-    code = code.replace(/(\(config.build.lib\)\n\s+return )true/, '$1false');
+    code = code.replace(/(\(config.build.lib\)[\n\s]+return )true/, '$1false');
     // console.log(isNeedChange);
     fs.outputFileSync(file, code);
 }

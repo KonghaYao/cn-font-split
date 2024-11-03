@@ -55,13 +55,14 @@
         "workerpool": "^9.1.1"
     },
     "devDependencies": {
-        "font-sharp": "workspace:^",
+        "@chinese-fonts/wawoff2": "2.0.6",
         "@konghayao/harfbuzzjs": "9.0.5",
         "@konghayao/opentype.js": "2024.5.25",
-        "@chinese-fonts/wawoff2": "2.0.6",
         "@types/byte-size": "^8.1.1",
         "@types/md5": "^2.3.4",
         "@types/opentype.js": "^1.3.7",
+        "chinese-simple2traditional": "^2.2.2",
+        "font-sharp": "workspace:^",
         "path-browserify": "^1.0.1"
     }
 }

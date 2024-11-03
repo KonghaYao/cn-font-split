@@ -4,6 +4,7 @@ import p from './package.json';
 import nodeExternals from 'rollup-plugin-node-externals';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { NodeNativePolyfill } from './scripts/NodeNativePolyfill.mts';
+
 const nodeReplacer = {
     path: 'path-browserify',
 };
@@ -72,7 +73,7 @@ export default defineConfig(({ mode }) => {
 
         worker: {
             format: 'es',
-            plugins: [
+            plugins: () => [
                 nodeExternals({
                     builtins: !isBrowser,
                     deps: !isBrowser,

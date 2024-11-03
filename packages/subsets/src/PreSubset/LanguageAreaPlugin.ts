@@ -12,9 +12,9 @@ import {
     LatinExt,
     Thai,
     Vietnamese,
-    getCN_SC_Rank,
 } from '../data/LanguageRange';
 import { PreSubsetPlugin, SubsetSetCollection } from '../PreSubset';
+import { ZhCommon, ZhSC, ZhTC } from '../data/CJKRange';
 
 export class LanguageAreaPlugin implements PreSubsetPlugin {
     name = 'LanguageArea';
@@ -33,7 +33,10 @@ export class LanguageAreaPlugin implements PreSubsetPlugin {
             GreekExt,
             Cyrillic,
             CyrillicExt,
-            await getCN_SC_Rank(),
+            // await getCN_SC_Rank(),
+            ZhCommon,
+            ZhSC,
+            ZhTC,
             Bengali,
             Devanagari,
             Arabic,
@@ -42,11 +45,12 @@ export class LanguageAreaPlugin implements PreSubsetPlugin {
         ];
         // 根据输入模板使用指定的语言区域或Unicode字符排名，如果没有指定，则使用默认语言区域
         // 对每个区域内的字符进行过滤，确保它们存在于AllUnicodeSet中，并从集合中移除已使用的字符
-        const areaSubsets: SubsetSetCollection = (
-            input.languageAreas ??
-            input.unicodeRank ??
-            defaultArea
-        )
+        const languageSets = await Promise.all(
+            defaultArea.map((i) => {
+                return i.loader();
+            }),
+        );
+        const areaSubsets: SubsetSetCollection = languageSets
             .map((rank) =>
                 rank.filter((char) => {
                     const isIn = remainingCharsSet.has(char);
