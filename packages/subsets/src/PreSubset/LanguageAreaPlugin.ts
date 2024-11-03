@@ -14,7 +14,14 @@ import {
     Vietnamese,
 } from '../data/LanguageRange';
 import { PreSubsetPlugin, SubsetSetCollection } from '../PreSubset';
-import { ZhCommon, ZhSC, ZhTC } from '../data/CJKRange';
+import {
+    HangulJamo,
+    HangulSyl,
+    HiraganaAndKatakana,
+    ZhCommon,
+    ZhSC,
+    ZhTC,
+} from '../data/CJKRange';
 
 export class LanguageAreaPlugin implements PreSubsetPlugin {
     name = 'LanguageArea';
@@ -34,9 +41,16 @@ export class LanguageAreaPlugin implements PreSubsetPlugin {
             Cyrillic,
             CyrillicExt,
             // await getCN_SC_Rank(),
+            // 中文处理
             ZhCommon,
             ZhSC,
             ZhTC,
+            // 日文处理
+            HiraganaAndKatakana,
+
+            // 韩文处理
+            HangulJamo,
+            HangulSyl,
             Bengali,
             Devanagari,
             Arabic,

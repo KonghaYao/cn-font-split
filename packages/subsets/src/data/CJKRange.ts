@@ -1,3 +1,4 @@
+import { UnicodeRange } from '@japont/unicode-range';
 import { Assets } from '../adapter/assets';
 import { LanguageArea } from './LanguageRange';
 async function getPartFromCNPkg(partNo: number) {
@@ -29,4 +30,24 @@ export const ZhSC: LanguageArea = {
 export const ZhTC: LanguageArea = {
     name: 'ZhTC',
     loader: async () => getPartFromCNPkg(2),
+};
+
+/** 平假名、片假名*/
+export const HiraganaAndKatakana: LanguageArea = {
+    name: 'HiraganaAndKatakana',
+    loader: async () => UnicodeRange.parse(['U+3040-309F', 'U+30A0-30FF']),
+};
+
+export const HangulJamo: LanguageArea = {
+    name: 'HangulJamo',
+    loader: async () => UnicodeRange.parse(['U+1100-11FF']),
+};
+
+export const HangulSyl: LanguageArea = {
+    name: 'HangulSyl',
+    loader: async () => [
+        ...new Uint16Array(
+            (await Assets.loadFileAsync('hangul-syl.dat')).buffer,
+        ),
+    ],
 };
