@@ -7,43 +7,21 @@ import byteSize from 'byte-size';
 import { IOutputFile, InputTemplate } from './interface';
 import { BundleReporter, createReporter } from './templates/reporter';
 import { createCSS } from './templates/css';
-import { subsetsToSet } from './utils/subsetsToSet';
-import { useSubset } from './useSubset/index';
-import { getAutoSubset } from './useSubset/getAutoSubset';
-import {
-    Arabic,
-    Bengali,
-    Cyrillic,
-    CyrillicExt,
-    Devanagari,
-    Greek,
-    GreekExt,
-    Khmer,
-    Latin,
-    LatinExt,
-    Thai,
-    Vietnamese,
-    getCN_SC_Rank,
-} from './data/LanguageRange';
+import { useSubset } from './RunSubset/index';
 import { Assets } from './adapter/assets';
 import { env } from './utils/env';
 import { ConvertManager } from './convert/convert.manager';
 import { makeImage } from 'font-sharp/dist/font-sharp/src/makeImage.js';
-import { getFeatureData, getFeatureMap } from './feature/featureMap';
-import { forceSubset } from './feature/forceSubset';
-import { calcContoursBorder } from './useSubset/calcContoursBorder';
-import { createContoursMap } from './useSubset/createContoursMap';
-import { reduceMinsPackage } from './useSubset/reduceMinsPackage';
 import {
     createFontBaseTool,
     getFVarTable,
     getNameTableFromTool,
 } from './feature/getFeatureQueryFromBuffer';
 export { type FontReporter } from './templates/reporter';
-import { differenceSet } from './utils/CharSetTool';
 import wrapper from '@konghayao/harfbuzzjs/hb-subset.js';
+import { PreSubset } from './PreSubset.js';
 
-export { type IContext } from './createContext'
+export { type IContext } from './createContext';
 
 /** 从路径或者二进制数据获取原始字体文件 */
 async function LoadFile(ctx: IContext) {
@@ -132,111 +110,6 @@ async function getBasicMessage(ctx: IContext) {
     }
 }
 
-/** 通过数据计算得出分包的数据结构 */
-async function PreSubset(ctx: IContext) {
-    const { input, hb, face, ttfBufferSize, bundleMessage, fontTool } =
-        ctx.pick(
-            'input',
-            'face',
-            'hb',
-            'ttfBufferSize',
-            'bundleMessage',
-            'fontTool',
-        );
-    const UserSubsets = input.subsets ?? []; // 1
-    const totalChars = face.collectUnicodes();
-    ctx.trace('总字符数', totalChars.length);
-    bundleMessage.originSize = totalChars.length;
-    const AllUnicodeSet = new Set([...totalChars].sort()); // 2
-    differenceSet(AllUnicodeSet, subsetsToSet(UserSubsets)); //3
-    /**  默认语言强制分包，保证 Latin1 这种数据集中在一个包，这样只有英文，无中文区域 */
-    const autoForceBundle: number[][] = (
-        input.unicodeRank ?? [
-            Latin,
-            LatinExt,
-            Vietnamese,
-            Greek,
-            GreekExt,
-            Cyrillic,
-            CyrillicExt,
-            await getCN_SC_Rank(),
-            Bengali,
-            Devanagari,
-            Arabic,
-            Thai,
-            Khmer,
-        ]
-    ).map((rank) =>
-        rank.filter((char) => {
-            const isIn = AllUnicodeSet.has(char);
-            AllUnicodeSet.delete(char);
-            return isIn;
-        }),
-    ); // 4
-    const featureData = getFeatureData(fontTool);
-    const featureMap = getFeatureMap(featureData);
-    const ForcePartSubsets = forceSubset(UserSubsets, featureMap); // 5
-    differenceSet(AllUnicodeSet, ForcePartSubsets.flat()); // 6
-
-    autoForceBundle.push([...AllUnicodeSet]);
-    const contoursMap = await createContoursMap();
-    /** 单包最大轮廓数值 */
-    const contoursBorder = await calcContoursBorder(
-        hb,
-        face,
-        input.targetType ?? 'woff2',
-        contoursMap,
-        input.chunkSize ?? 70 * 1024,
-        new Set([...totalChars]),
-        input.buildMode,
-    );
-
-    const AutoPartSubsets: number[][] = [];
-    /** 计算合理的单个分包的理论字符上限，尽量保证不会出现超大分包 */
-    const maxCharSize =
-        ((input.chunkSizeTolerance ?? 1.7) *
-            totalChars.length *
-            (input.chunkSize ?? 70 * 1024)) /
-        ttfBufferSize; // 8
-
-    for (const bundle of autoForceBundle) {
-        const subset = getAutoSubset(
-            bundle,
-            contoursBorder,
-            contoursMap,
-            featureMap,
-            maxCharSize,
-        );
-        AutoPartSubsets.push(...subset);
-    } // 9
-    // 检查 featureMap 中未使用的数据
-    for (const [key, iterator] of featureMap.entries()) {
-        if (iterator) ctx.warn('featureMap ' + key + ' 未使用' + iterator.size);
-    }
-
-    const FullSubsets =
-        input.autoChunk !== false
-            ? [...ForcePartSubsets, ...AutoPartSubsets]
-            : ForcePartSubsets;
-
-    const totalSubsets = reduceMinsPackage(FullSubsets, ctx); // 10
-    const subsetCharsNumber = totalSubsets.reduce((col, cur) => {
-        col += cur.length;
-        return col;
-    }, 0);
-    if (input.autoChunk !== false && subsetCharsNumber < totalChars.length) {
-        ctx.trace('字符缺漏', subsetCharsNumber, totalChars.length);
-    } // 11
-
-    if (totalSubsets.length >= (input.maxAllowSubsetsCount ?? 600))
-        throw new Error(
-            '分包数为' +
-            totalSubsets.length +
-            '，超过了期望最大分包数，将会导致您的机器过久运行',
-        );
-    ctx.set('subsetsToRun', totalSubsets);
-    ctx.free('ttfFile');
-}
 /** 执行所有包的分包动作 */
 function createSubsetFontProcess(outputFile: IOutputFile) {
     return async function subsetFont(ctx: IContext) {
@@ -356,7 +229,7 @@ export const fontSplit = async (opt: InputTemplate) => {
             initOpentype,
             createImageProcess(outputFile),
             getBasicMessage,
-            opt.plugins?.PreSubset ?? PreSubset,
+            PreSubset,
             createSubsetFontProcess(outputFile),
             createOutputCSSProcess(outputFile),
             createOutputHTMLProcess(outputFile),

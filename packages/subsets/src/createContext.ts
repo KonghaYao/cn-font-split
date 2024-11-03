@@ -35,7 +35,8 @@ export type PureRuntimeContext = {
     bundleMessage: Partial<BundleReporter>;
     cssMessage: ReturnType<typeof createCSS>;
     reporter: Awaited<ReturnType<typeof createReporter>>;
-}
+    totalChars: Uint32Array;
+};
 
 /** 创建全局 Context，任何一处都可以调用 */
 export const createContext = (opt: InputTemplate) =>

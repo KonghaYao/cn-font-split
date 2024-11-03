@@ -5,7 +5,7 @@ import type { ReplaceProps } from './logger/templateReplacer';
 import { ConvertManager } from './convert/convert.manager';
 import { ISettingsParam } from 'tslog';
 import { WorkerPoolOptions } from 'workerpool';
-import { IContext } from './main';
+import { PreSubsetPlugin } from './PreSubset.js';
 
 /** subset 切割完毕后的数据格式 */
 export type SubsetResult = {
@@ -73,24 +73,24 @@ export type InputTemplate = {
          * 控制 css 字体相关的注释内容，用于调试和优化。
          */
         comment:
-        | {
-            /**
-             * 基本的构建信息
-             * @default true
-             */
-            base?: false;
-            /**
-             * 字体文件中的 name table，有字体证书相关的说明
-             * @default true
-             */
-            nameTable?: false;
-            /**
-             * 显示每个字体包含有的 unicode range 的字符, debug 用
-             * @default false
-             */
-            unicodes?: true;
-        }
-        | false;
+            | {
+                  /**
+                   * 基本的构建信息
+                   * @default true
+                   */
+                  base?: false;
+                  /**
+                   * 字体文件中的 name table，有字体证书相关的说明
+                   * @default true
+                   */
+                  nameTable?: false;
+                  /**
+                   * 显示每个字体包含有的 unicode range 的字符, debug 用
+                   * @default false
+                   */
+                  unicodes?: true;
+              }
+            | false;
         /**
          * 控制是否对 CSS 文件进行压缩，以减小文件大小。
          * @default true
@@ -107,24 +107,32 @@ export type InputTemplate = {
      */
     subsets?: Subsets;
 
-    /** 自动分包，如果使用了 subsets 参数，那么将会自动分包剩下的 Unicode 字符 */
-    autoChunk?: boolean;
-    /*  自动分包时使用，优先分包这些字符 */
+    /**
+     * 自动分包时使用，优先分包这些字符
+     * @deprecated 请改用 languageAreas
+     */
     unicodeRank?: number[][];
-    /** 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小
+    /*  自动分包时, 根据语言地区优化分包效果 */
+    languageAreas?: number[][];
+
+    /**
+     * 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小
      * @default 71680 (70 * 1024)
      */
     chunkSize?: number;
+
     /**
      * 分包字符的容忍度，这个数值是基础值的倍数
      * @default  1.7
      */
     chunkSizeTolerance?: number;
+
     /**
      * 最大允许的分包输出字体文件数目，超过这个数目，程序报错退出
      * @default 600
      */
     maxAllowSubsetsCount?: number;
+
     /**
      * 输出的 css 文件的名称
      * @default result.css
@@ -135,10 +143,12 @@ export type InputTemplate = {
      * @default: true
      */
     testHTML?: boolean;
+
     /** 是否输出报告文件
      * @default true
      */
     reporter?: boolean;
+
     /**
      * 是否输出预览图
      */
@@ -171,42 +181,57 @@ export type InputTemplate = {
      * @default [hash][ext]
      */
     renameOutputFont?: string | ((replaceProps: ReplaceProps) => string);
+
     /**
      * 输出文件的函数，
      * @description 如果你需要在特定的平台使用，那么需要适配这个函数
      */
     outputFile?: IOutputFile;
+
     /**
      * 构建模式
      * @default 'speed'
      * @description 构建模式默认为 speed
      */
     buildMode?: 'stable' | 'speed';
+
     threads?:
-    | {
-        /**
-         * 服务对象，用于多线程处理
-         * @protected
-         */
-        service?: ConvertManager;
-        /*
-         * 是否进行多线程切割
-         * @default true
-         */
-        split?: boolean;
-        /* workerpool 允许的配置项 */
-        options?: WorkerPoolOptions;
-    }
-    | false;
+        | {
+              /**
+               * 服务对象，用于多线程处理
+               * @protected
+               */
+              service?: ConvertManager;
+              /*
+               * 是否进行多线程切割
+               * @default true
+               */
+              split?: boolean;
+              /* workerpool 允许的配置项 */
+              options?: WorkerPoolOptions;
+          }
+        | false;
     /**
      * 字体复杂字形等特性的支持
-     * @dev
+     * @default true
      */
     fontFeature?: boolean;
+    /**
+     * 将零散的字符集合并到字体中
+     * @default false
+     */
+    reduceMins?: boolean;
+    /**
+     * 自动分割每个大包为小包
+     * @default true
+     */
+    autoSubset?: boolean;
+    /**
+     * 是否将剩余的字符集添加到结果中
+     * @default true
+     */
+    subsetRemainChars?: boolean;
 
-    /** 自定义插件 */
-    plugins?: {
-        /** 自定义预分包策略 */
-        PreSubset?: (ctx:IContext) => Promise<void>
-    }
+    /** 自定义插件  */
+    plugins?: PreSubsetPlugin[];
 };

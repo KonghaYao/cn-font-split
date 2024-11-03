@@ -1,5 +1,5 @@
-import { Assets } from '../adapter/assets';
-import { cacheResult } from '../utils/cacheResult';
+import { Assets } from '../../adapter/assets';
+import { cacheResult } from '../../utils/cacheResult';
 
 /** 构建轮廓数据库，存储方式为桶存储 */
 export const createContoursMap = cacheResult(async () => {

@@ -70,21 +70,13 @@ export const processSingleUnicodeWithFeature = (
 
 /**
  * 装饰普通的 Subset 使其能够使用 opentype feature
- * @important 注意，是 subset 而不是 subsets
  */
-export const decorateSubset = (subset: Subset, featureMap: FeatureMap) => {
-    return subset.flatMap((i) => {
-        if (typeof i === 'number') {
-            return processSingleUnicodeWithFeature(i, featureMap);
-        } else {
-            const [start, end] = i;
-            const res = new Set<number>();
-            for (let index = start; index <= end; index++) {
-                processSingleUnicodeWithFeature(index, featureMap).forEach(
-                    (codepoint) => res.add(codepoint),
-                );
-            }
-            return [...res.values()];
-        }
+export const decorateSubset = (subset: Set<number>, featureMap: FeatureMap) => {
+    const result = new Set<number>();
+    subset.forEach((i) => {
+        return processSingleUnicodeWithFeature(i, featureMap).forEach((i) =>
+            result.add(i),
+        );
     });
+    return result;
 };

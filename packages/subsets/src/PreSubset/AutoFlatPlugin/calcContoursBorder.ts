@@ -1,7 +1,7 @@
-import { HB } from '../hb';
-import { convert } from '../convert/font-convert';
-import { FontType } from '../convert/detectFormat';
-import { subsetFont } from './subsetFont';
+import { HB } from '../../hb';
+import { convert } from '../../convert/font-convert';
+import { FontType } from '../../convert/detectFormat';
+import { subsetFont } from '../../RunSubset/subsetFont';
 
 /** 计算分包时，单个包内可以容纳的最大轮廓 */
 export async function calcContoursBorder(
@@ -33,7 +33,8 @@ export async function calcContoursBorder(
         undefined,
         buildMode,
     );
-    const transferredLength = parseInt((transferred.byteLength / 20) as unknown as string) * 20
+    const transferredLength =
+        parseInt((transferred.byteLength / 20) as unknown as string) * 20;
     const totalContours: number = arr.reduce((col, cur) => {
         return col + (contoursMap.get(cur) ?? (contoursMap.get(0) as number));
     }, 0);
