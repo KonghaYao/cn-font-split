@@ -1,26 +1,57 @@
-import { Client } from 'minio';
-import { KV } from './KV/index';
+import { fontSplit } from 'cn-font-split';
+import {
+    GetObjectCommand,
+    PutObjectCommand,
+    S3Client,
+} from '@aws-sdk/client-s3';
 class FontCSSAPI {
-    OSS: Client;
+    OSS: S3Client;
+    buckets = {
+        originFont: 'origin-font',
+        resultFont: 'result-font',
+    };
     KV = useStorage();
-    constructor() {
-        this.OSS = new Client({
-            endPoint: 'play.min.io',
-            port: 9000,
-            useSSL: true,
-            accessKey: 'Q3AM3UQ867SPQQA43P2F',
-            secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG',
+    constructor(public baseURL: string) {
+        this.OSS = new S3Client({
+            region: '',
+            endpoint: 'https://play.min.io:9000',
+            credentials: {
+                accessKeyId: 'Q3AM3UQ867SPQQA43P2F',
+                secretAccessKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG',
+            },
         });
     }
     decodeURL(req: Request) {
-        return {};
+        const url = new URL(req.url);
+        const qs = url.searchParams;
+        const str = qs.get('family');
+        if (!str) throw new Error('no family');
+        // TODO 解析更多 google 参数
+        const [family, other] = str.split(':');
+        return {
+            family,
+        };
     }
     async main(req: Request) {
         const query = this.decodeURL(req);
         // const hit = await this.isCached(query);
         // if (hit) return this.getCache();
-
-        
+        const data = await this.getOriginFont(query.family);
+        await this.subsetFont(data.binary, data.hash);
+        return this.baseURL + '/' + data.hash + '/result.css';
+    }
+    getOriginFont(name: string) {
+        return this.OSS.send(
+            new GetObjectCommand({
+                Bucket: this.buckets.originFont,
+                Key: name,
+            }),
+        ).then(async (res) => {
+            return {
+                hash: res.ChecksumCRC32C,
+                binary: await res.Body?.transformToByteArray(),
+            };
+        });
     }
     async subsetFont(blob: Uint8Array, baseFolder: string) {
         return fontSplit({
@@ -29,10 +60,15 @@ class FontCSSAPI {
             chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
             testHTML: false, // 输出一份 html 报告文件
             reporter: false, // 输出 json 格式报告
-            previewImage: false, // 只要填入 这个参数，就会进行图片预览文件生成，文件为 SVG 格式
             threads: {}, // 默认开启多线程，速度飞快
-            async outputFile(name, blob) {
-                this.OSS.saveFile(name, blob);
+            outputFile: async (name, blob) => {
+                this.OSS.send(
+                    new PutObjectCommand({
+                        Bucket: this.buckets.resultFont,
+                        Key: baseFolder + '/' + name,
+                        Body: blob,
+                    }),
+                );
             },
         });
     }
