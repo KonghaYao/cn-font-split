@@ -1,0 +1,19 @@
+{
+    "name": "edge-provider",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "scripts": {
+        "build": "nitro build",
+        "dev": "nitro dev",
+        "prepare": "nitro prepare",
+        "preview": "node .output/server/index.mjs"
+    },
+    "devDependencies": {
+        "nitropack": "latest",
+        "minio": "^8.0.2"
+    }
+}
