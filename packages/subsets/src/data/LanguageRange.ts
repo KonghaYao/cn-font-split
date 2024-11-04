@@ -13,119 +13,150 @@ export interface LanguageArea {
  * */
 export const Latin: LanguageArea = {
     name: 'Latin',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'.split(
-                ',',
-            ),
-        ),
-};
-/**
- * Latin-ext 范围替换
- * @link https://npmmirror.com/package/@fontsource/noto-sans/files/400.css?version=5.0.22#L61
- * */
-export const LatinExt: LanguageArea = {
-    name: 'LatinExt',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF'.split(
-                ',',
-            ),
-        ),
+    loader: () => UnicodeRange.parse('U+0000-024F'.split(',')),
 };
 
-export const Vietnamese: LanguageArea = {
-    name: 'Vietnamese',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB'.split(
-                ',',
-            ),
-        ),
-};
 export const Greek: LanguageArea = {
     name: 'Greek',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF'.split(
-                ',',
-            ),
-        ),
-};
-export const GreekExt: LanguageArea = {
-    name: 'GreekExt',
-    loader: () => UnicodeRange.parse(['U+1F00-1FFF']),
+    loader: () => UnicodeRange.parse('U+0370-03FF,U+1F00-1FFF'.split(',')),
 };
 
 export const Cyrillic: LanguageArea = {
     name: 'Cyrillic',
     loader: () =>
         UnicodeRange.parse(
-            'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116'.split(','),
-        ),
-};
-export const CyrillicExt = {
-    name: 'CyrillicExt',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F'.split(
-                ',',
-            ),
+            'U+0400-052f,U+1C80-1C8F,U+2DE0-2DFF,U+A640-A69F'.split(','),
         ),
 };
 
 /**
- * noto-sans-bengali
- * @link https://npmmirror.com/package/@fontsource/noto-sans-bengali/files/400.css?version=5.0.13#L1
- */
-export const Bengali: LanguageArea = {
-    name: 'Bengali',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0951-0952,U+0964-0965,U+0980-09FE,U+1CD0,U+1CD2,U+1CD5-1CD6,U+1CD8,U+1CE1,U+1CEA,U+1CED,U+1CF2,U+1CF5-1CF7,U+200C-200D,U+20B9,U+25CC,U+A8F1'.split(
-                ',',
-            ),
-        ),
-};
-
-/**
- * noto-sans-devanagari
- * @link https://npmmirror.com/package/@fontsource/noto-sans-devanagari/files/400.css?version=5.0.13#L1
- */
-export const Devanagari: LanguageArea = {
-    name: 'Devanagari',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF,U+11B00-11B09'.split(
-                ',',
-            ),
-        ),
-};
-
-/**
- * noto-sans-arabic
- * @link https://npmmirror.com/package/@fontsource/noto-sans-arabic/files/400.css?version=5.0.13#L8
+ * 阿拉伯文范围
  */
 export const Arabic: LanguageArea = {
     name: 'Arabic',
     loader: () =>
         UnicodeRange.parse(
-            'U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EFD-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1,U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'.split(
+            'U+0600-06FF,U+0750-077F,U+0870-08FF,U+FB50-FDFF,U+FE70-FEFF'.split(
                 ',',
             ),
         ),
 };
 
-export const Thai = {
-    name: 'Thai',
-    loader: () =>
-        UnicodeRange.parse('U+0E01-0E5B,U+200C-200D,U+25CC'.split(',')),
+/**
+ * 孟加拉语
+ */
+export const Bengali: LanguageArea = {
+    name: 'Bengali',
+    loader: () => UnicodeRange.parse('U+0980-09FF'.split(',')),
 };
 
+/**
+ * 天城文
+ */
+export const Devanagari: LanguageArea = {
+    name: 'Devanagari',
+    loader: () =>
+        UnicodeRange.parse('U+0900-097F,U+A8E0-A8FF,U+11B00-11B5F'.split(',')),
+};
+
+/** 泰文 */
+export const Thai = {
+    name: 'Thai',
+    loader: () => UnicodeRange.parse('U+0E00-0E7F'.split(',')),
+};
+
+/** 高棉 */
 export const Khmer = {
     name: 'Khmer',
-    loader: () =>
-        UnicodeRange.parse(
-            'U+1780-17FF,U+19E0-19FF,U+200C-200D,U+25CC'.split(','),
-        ),
+    loader: () => UnicodeRange.parse('U+1780-17FF,U+19E0-19FF'.split(',')),
+};
+
+// 少数民族的文字
+
+/** 藏文 */
+export const Tibetan = {
+    name: 'Tibetan',
+    loader: () => UnicodeRange.parse('U+0F00-0FFF'.split(',')),
+};
+/** 蒙古文 */
+export const Mongolian = {
+    name: 'Mongolian',
+    loader: () => UnicodeRange.parse('U+1800-18AF'.split(',')),
+};
+
+/** 傣文 */
+export const TaiLe = {
+    name: 'Tai Le',
+    loader: () => UnicodeRange.parse('U+1950-197F'.split(',')),
+};
+
+/** 西双版纳傣文 */
+export const TaiLue = {
+    name: 'Tai Lue',
+    loader: () => UnicodeRange.parse('U+1980-19DF'.split(',')),
+};
+
+/** 彝文 */
+export const Yi = {
+    name: 'Yi',
+    loader: () => UnicodeRange.parse('U+A000-A48F,U+A490-A4C6'.split(',')),
+};
+
+/** 八思巴文 */
+export const PhagsPa = {
+    name: 'Phags-pa',
+    loader: () => UnicodeRange.parse('U+A840-A87F'.split(',')),
+};
+
+/**
+ * 朝鲜文
+ * 采用韩文的解析方式
+ */
+
+/** 傈僳文 */
+export const Lisu = {
+    name: 'Lisu',
+    loader: () => UnicodeRange.parse('U+10C00-10C4F'.split(',')),
+};
+
+/** 布依文 */
+export const Buhid = {
+    name: 'Buhid',
+    loader: () => UnicodeRange.parse('U+1740-175F'.split(',')),
+};
+
+/** 苗文 */
+export const Miao = {
+    name: 'Miao',
+    loader: () => UnicodeRange.parse('U+16F00-16F9F'.split(',')),
+};
+
+/** 哈尼文 */
+export const Hani = {
+    name: 'Hani',
+    loader: () => UnicodeRange.parse('U+13A0-13F5'.split(',')),
+};
+
+/** 拉祜文 */
+export const Lahu = {
+    name: 'Lahu',
+    loader: () => UnicodeRange.parse('U+10900-1091F'.split(',')),
+};
+
+/** 佤文 */
+export const Va = {
+    name: 'Va',
+    loader: () => UnicodeRange.parse('U+10A00-10A5F'.split(',')),
+};
+
+/** 壮文 */
+export const Zhuang = {
+    name: 'Zhuang',
+    loader: () => UnicodeRange.parse('U+10D30-10D7F'.split(',')),
+};
+
+/** 纳西文 */
+export const NaxiDongba = {
+    name: 'Naxi Dongba',
+    loader: () => UnicodeRange.parse('U+10FB0-10FDF'.split(',')),
 };
