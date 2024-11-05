@@ -4,7 +4,7 @@ import {
     PutObjectCommand,
     S3Client,
 } from '@aws-sdk/client-s3';
-class FontCSSAPI {
+export class FontCSSAPI {
     OSS: S3Client;
     buckets = {
         originFont: 'origin-font',
@@ -13,7 +13,8 @@ class FontCSSAPI {
     KV = useStorage();
     constructor(public baseURL: string) {
         this.OSS = new S3Client({
-            region: '',
+            region: 'us-east-1',
+            forcePathStyle: true,
             endpoint: 'https://play.min.io:9000',
             credentials: {
                 accessKeyId: 'Q3AM3UQ867SPQQA43P2F',
@@ -21,8 +22,16 @@ class FontCSSAPI {
             },
         });
     }
-    decodeURL(req: Request) {
-        const url = new URL(req.url);
+    uploadFont(key, font) {
+        return this.OSS.send(
+            new PutObjectCommand({
+                Bucket: this.buckets.originFont,
+                Key: key,
+                Body: font,
+            }),
+        );
+    }
+    decodeURL(url: URL) {
         const qs = url.searchParams;
         const str = qs.get('family');
         if (!str) throw new Error('no family');
@@ -32,8 +41,8 @@ class FontCSSAPI {
             family,
         };
     }
-    async main(req: Request) {
-        const query = this.decodeURL(req);
+    async main(url: URL) {
+        const query = this.decodeURL(url);
         // const hit = await this.isCached(query);
         // if (hit) return this.getCache();
         const data = await this.getOriginFont(query.family);
@@ -47,6 +56,7 @@ class FontCSSAPI {
                 Key: name,
             }),
         ).then(async (res) => {
+            console.log(res)
             return {
                 hash: res.ChecksumCRC32C,
                 binary: await res.Body?.transformToByteArray(),
