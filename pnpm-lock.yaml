@@ -60,6 +60,9 @@ importers:
       cn-font-split:
         specifier: ^5.2.2
         version: 5.2.2
+      ohash:
+        specifier: ^1.1.4
+        version: 1.1.4
     devDependencies:
       nitropack:
         specifier: latest
