@@ -22,11 +22,12 @@ export const ZhCommon: LanguageArea = {
     name: 'CN_SC_Rank',
     loader: async () => getPartFromCNPkg(0),
 };
-
+/** 简体中文排序 */
 export const ZhSC: LanguageArea = {
     name: 'ZhSC',
     loader: async () => getPartFromCNPkg(1),
 };
+/** 繁体中文排序 */
 export const ZhTC: LanguageArea = {
     name: 'ZhTC',
     loader: async () => getPartFromCNPkg(2),
