@@ -8,6 +8,14 @@ try {
     };
 } catch (e) {}
 
+// @ts-ignore
+globalThis.process.versions.node = null;
+globalThis.window = globalThis.window || {
+    navigator: globalThis.navigator,
+};
+globalThis.document = globalThis.document || {
+    nodeType: 8,
+};
 try {
     const { mockXHR } = await import('./XHR/mockXHR');
 
@@ -19,10 +27,8 @@ try {
     mockXHR({
         // 所有的 fetch 函数都会发送到这里
         proxy({ headers, body, method, url }) {
-            if(url.startsWith('file://')) {
-                const path = fileURLToPath(
-                    url
-                );
+            if (url.startsWith('file://')) {
+                const path = fileURLToPath(url);
                 return (async () => {
                     const item = cache.has(path)
                         ? cache.get(path)

@@ -27,6 +27,8 @@ export const getDeviceMessage = async (
     env: typeof ENV,
 ): Promise<DeviceMessage | undefined> => {
     if (env === 'browser') return getBrowserDeviceMessage();
+    //ifdef node
     if (env === 'node') return getNodeDeviceMessage();
+    //endif
     if (env === 'deno') return getDenoDeviceMessage();
 };

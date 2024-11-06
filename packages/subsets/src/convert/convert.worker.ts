@@ -2,6 +2,7 @@
 import type { FontType } from './detectFormat';
 import { worker, Transfer } from 'workerpool';
 import { convert } from './font-convert/index';
+import { isDeno } from '../utils/env';
 
 // 欺骗 环境，认为是 classic worker
 !globalThis.importScripts &&
@@ -25,6 +26,6 @@ worker({
             console.error(error);
             return new Uint8Array([]);
         });
-        return new Transfer(res, [res.buffer]);
+        return isDeno ? res : new Transfer(res, [res.buffer]);
     },
 });
