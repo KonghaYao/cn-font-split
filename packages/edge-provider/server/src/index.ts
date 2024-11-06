@@ -1,18 +1,18 @@
-import { fontSplit } from 'cn-font-split';
 import {
     GetObjectCommand,
     PutObjectCommand,
     S3Client,
 } from '@aws-sdk/client-s3';
-import { sha256 } from './sha256';
-
+import { sha256 } from './sha256.js';
+import { KV } from './KV/index.js';
+import { fontSplit } from './cn-font-split/index.js';
 export class FontCSSAPI {
     OSS: S3Client;
     buckets = {
         originFont: 'origin-font',
         resultFont: 'result-font',
     };
-    KV = useStorage('db');
+    KV = KV();
     constructor(public baseURL: string) {
         this.OSS = new S3Client({
             region: 'us-east-1',
@@ -48,6 +48,7 @@ export class FontCSSAPI {
         const query = this.decodeURL(url);
         const runtimeKey = await sha256(JSON.stringify(query));
         const cached = await this.KV.getItem<string>(runtimeKey);
+        console.log(cached);
         if (usingCache && cached) return cached;
 
         const targetUrl = await this.splitFontTask(query);

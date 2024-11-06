@@ -7,17 +7,12 @@
     "author": "",
     "license": "ISC",
     "scripts": {
-        "build": "nitro build",
-        "dev": "nitro dev",
-        "prepare": "nitro prepare",
-        "preview": "node .output/server/index.mjs"
-    },
-    "devDependencies": {
-        "nitropack": "latest"
+        "start": "deno run -A --unstable-kv --unstable-sloppy-imports ./demo/deno.js"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.685.0",
-        "cn-font-split": "^5.2.2",
-        "ohash": "^1.1.4"
+        "cn-font-split": "workspace:*",
+        "hono": "^4.6.9",
+        "unstorage": "^1.13.1"
     }
 }
