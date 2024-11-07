@@ -1,4 +1,4 @@
-import 'https://deno.land/x/xhr@0.3.0/mod.ts';
+await import('https://deno.land/x/xhr@0.3.0/mod.ts');
 try {
     (globalThis as any).location = {
         origin: '/',
@@ -8,8 +8,9 @@ try {
     };
 } catch (e) {}
 
+globalThis.process?.versions?.node &&
 // @ts-ignore
-globalThis.process.versions.node = null;
+    (globalThis.process.versions.node = null);
 globalThis.window = globalThis.window || {
     navigator: globalThis.navigator,
 };
@@ -47,3 +48,5 @@ try {
         silent: true,
     });
 } catch (e) {}
+
+export {};
