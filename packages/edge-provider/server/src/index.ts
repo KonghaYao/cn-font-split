@@ -88,6 +88,9 @@ export class FontCSSAPI {
             };
         });
     }
+    // 挂载 woff2 服务，当有时，使用这个服务；无时，使用本地多线程
+    service = undefined;
+
     /** 分割字体 */
     async subsetFont(blob: Uint8Array, baseFolder: string) {
         return fontSplit({
@@ -96,7 +99,9 @@ export class FontCSSAPI {
             chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
             testHTML: false, // 输出一份 html 报告文件
             reporter: false, // 输出 json 格式报告
-            threads: {}, // 默认开启多线程，速度飞快
+            threads: {
+                service: this.service,
+            }, // 默认开启多线程，速度飞快
             outputFile: async (name, blob) => {
                 this.OSS.send(
                     new PutObjectCommand({

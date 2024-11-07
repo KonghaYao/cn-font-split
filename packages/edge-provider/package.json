@@ -7,9 +7,11 @@
     "author": "",
     "license": "ISC",
     "scripts": {
-        "start": "deno run -A --unstable-kv --unstable-sloppy-imports ./demo/deno.js"
+        "start": "deno serve -A --unstable-kv --unstable-sloppy-imports ./server/index.ts",
+        "start:woff2": "deno serve -A --port 8001 --unstable-sloppy-imports ./server/woff2.ts"
     },
     "dependencies": {
+        "@chinese-fonts/wawoff2": "2.0.6",
         "@aws-sdk/client-s3": "^3.685.0",
         "cn-font-split": "workspace:*",
         "hono": "^4.6.9",
