@@ -50,7 +50,6 @@ export class FontCSSAPI {
         const cached = await this.KV.getItem<string>(runtimeKey);
         console.log(cached);
         if (usingCache && cached) return cached;
-
         const targetUrl = await this.splitFontTask(query);
         await this.KV.setItem(runtimeKey, targetUrl);
         return targetUrl;
