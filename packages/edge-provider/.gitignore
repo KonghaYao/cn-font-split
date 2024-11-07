@@ -6,3 +6,4 @@ dist
 .output
 .env
 deno.lock
+.wrangler
