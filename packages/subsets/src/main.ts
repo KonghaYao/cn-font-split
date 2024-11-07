@@ -73,7 +73,8 @@ async function loadHarbuzz(ctx: IContext) {
     ctx.set('blob', blob);
     if (opt.threads !== false) {
         opt.threads = opt.threads || {};
-        opt.threads.service = new ConvertManager(opt.threads.options);
+        opt.threads.service =
+            opt.threads.service || new ConvertManager(opt.threads.options);
     }
 }
 async function initOpentype(ctx: IContext) {
