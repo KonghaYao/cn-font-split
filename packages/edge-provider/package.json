@@ -7,6 +7,8 @@
     "author": "",
     "license": "ISC",
     "scripts": {
+        "dev": "wrangler dev",
+        "deploy:cf": "wrangler deploy --minify",
         "start": "deno serve -A --unstable-kv --unstable-sloppy-imports ./server/index.ts",
         "start:woff2": "deno serve -A --port 8001 --unstable-sloppy-imports ./server/woff2.ts"
     },
@@ -16,5 +18,9 @@
         "cn-font-split": "workspace:*",
         "hono": "^4.6.9",
         "unstorage": "^1.13.1"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20241022.0",
+        "wrangler": "^3.83.0"
     }
 }
