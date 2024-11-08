@@ -7,3 +7,4 @@ dist
 .env
 deno.lock
 .wrangler
+target
