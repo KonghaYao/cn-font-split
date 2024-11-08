@@ -12,8 +12,8 @@ sequenceDiagram
     participant F as Font CSS API
     participant CDN as CDN 缓存服务
     participant OSS as 对象存储服务
-    participant Upload as 上传分包 API
-    participant W as Woff2 压缩集群
+    participant Upload as 字体构建服务
+    participant W as 字体压缩服务
 
     U -->> F: 访问 CSS 服务
     F -->> CDN: 重定向到CDN文件
@@ -30,3 +30,11 @@ sequenceDiagram
     W -->> Upload: 返回 CSS URL
     Upload -->> U: 返回 CSS URL
 ```
+
+1. Font CSS API 是整个系统的网关服务，对外提供 URL 重定向。
+    2. 服务部署为 JS 边缘函数
+    3. 边缘函数响应快，查询 KV 也快，直接一个生态返回重定向 URL
+2. 字体构建服务, 用于接收上传字体，和构建字体的 ttf 版本，性能消耗不大
+    1. 单独部署为 JS 边缘函数，独写分离
+    2. 构建字体时需要调用 harfbuzz 的库进行构建，时间略长
+3. 字体压缩服务，提供 Woff2 字体压缩服务，需要高性能高并发，且网络够快
