@@ -1,11 +1,9 @@
-import {
-    GetObjectCommand,
-    PutObjectCommand,
-    S3Client,
-} from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import { sha256 } from './sha256.js';
 import { KV } from './KV/index.js';
-import { fontSplit } from './cn-font-split/index.js';
+import { Context } from 'hono';
+import { env } from 'hono/adapter';
+
 export class FontCSSAPI {
     OSS: S3Client;
     buckets = {
@@ -13,27 +11,20 @@ export class FontCSSAPI {
         resultFont: 'result-font',
     };
     KV = KV();
-    constructor(public baseURL: string) {
+    public baseURL: string;
+    constructor(c: Context) {
+        this.baseURL = env(c).CDN_URL;
         this.OSS = new S3Client({
-            region: 'us-east-1',
+            region: env(c).S3_REGION,
             forcePathStyle: true,
-            endpoint: 'https://play.min.io:9000',
+            endpoint: env(c).S3_ENDPOINT,
             credentials: {
-                accessKeyId: 'Q3AM3UQ867SPQQA43P2F',
-                secretAccessKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG',
+                accessKeyId: env(c).S3_AK,
+                secretAccessKey: env(c).S3_SK,
             },
         });
     }
-    /** 上传原始字体到 OSS */
-    uploadFont(key: string, font: Uint8Array) {
-        return this.OSS.send(
-            new PutObjectCommand({
-                Bucket: this.buckets.originFont,
-                Key: key,
-                Body: font,
-            }),
-        );
-    }
+
     decodeURL(url: URL) {
         const qs = url.searchParams;
         const str = qs.get('family');
@@ -50,66 +41,6 @@ export class FontCSSAPI {
         const cached = await this.KV.getItem<string>(runtimeKey);
         console.log(cached);
         if (usingCache && cached) return cached;
-        const targetUrl = await this.splitFontTask(query);
-        await this.KV.setItem(runtimeKey, targetUrl);
-        return targetUrl;
-    }
-
-    /** 纯粹分割字体的任务：
-     * 1. 获取字体
-     * 2. 分割字体
-     * 3. 输出 result.css 地址
-     */
-    async splitFontTask(query: ReturnType<FontCSSAPI['decodeURL']>) {
-        const data = await this.getOriginFont(query.family);
-        await this.subsetFont(data.binary, data.hash);
-        return this.baseURL + '/' + data.hash + '/result.css';
-    }
-
-    /**
-     * 获取原始字体文件
-     *
-     * @param name 字体文件的名称，用于指定OSS中的具体对象键
-     * @returns 返回一个Promise对象，解析为一个包含哈希值和二进制数据的对象
-     */
-    getOriginFont(name: string) {
-        return this.OSS.send(
-            new GetObjectCommand({
-                Bucket: this.buckets.originFont,
-                Key: name,
-            }),
-        ).then(async (res) => {
-            const binary = await res.Body?.transformToByteArray();
-            const hash = await sha256(binary);
-            return {
-                hash,
-                binary,
-            };
-        });
-    }
-    // 挂载 woff2 服务，当有时，使用这个服务；无时，使用本地多线程
-    service = undefined;
-
-    /** 分割字体 */
-    async subsetFont(blob: Uint8Array, baseFolder: string) {
-        return fontSplit({
-            FontPath: blob,
-            destFold: '',
-            chunkSize: 70 * 1024, // 如果需要的话，自己定制吧
-            testHTML: false, // 输出一份 html 报告文件
-            reporter: false, // 输出 json 格式报告
-            threads: {
-                service: this.service,
-            }, // 默认开启多线程，速度飞快
-            outputFile: async (name, blob) => {
-                this.OSS.send(
-                    new PutObjectCommand({
-                        Bucket: this.buckets.resultFont,
-                        Key: baseFolder + '/' + name,
-                        Body: blob,
-                    }),
-                );
-            },
-        });
+        throw new Error('font not build');
     }
 }
