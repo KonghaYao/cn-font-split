@@ -1,0 +1,8 @@
+[package]
+name = "woff2"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket = "0.5.1"
+woff = { version = "0.3.3", features = ["binary"] }
