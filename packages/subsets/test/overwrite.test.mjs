@@ -8,6 +8,7 @@ fontSplit({
     testHTML: true,
     reporter: true,
     plugins: {
+        // 5.0.0 的插件模式，已经废弃
         async PreSubset(ctx) {
             // 所有需要的工具函数请 pick 出来
             const { input, hb, face, ttfBufferSize, bundleMessage, fontTool } =
