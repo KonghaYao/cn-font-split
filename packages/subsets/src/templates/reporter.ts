@@ -38,15 +38,17 @@ export const createReporter = async (
             charsSize: i.charLength,
         };
     });
+    const resource = input.FontPath || input.input;
 
     return {
         config: {
             ...input,
+            FontPath: undefined,
             // 修复 FontPath 输入二进制数据后导致的膨胀
-            FontPath:
-                typeof input.FontPath !== 'string'
+            input:
+                typeof resource !== 'string'
                     ? 'it is a binary input'
-                    : input.FontPath,
+                    : resource,
             threads: { ...input.threads, service: undefined },
         },
         message: nameTable,

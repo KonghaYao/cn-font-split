@@ -30,13 +30,13 @@ async function LoadFile(ctx: IContext) {
 
     // 注册日志函数
     typeof input.log === 'function' && ctx.registerLog(input.log);
-
+    const resource = input.input || input.FontPath;
     // 获取二进制文件
     let res!: Uint8Array;
-    if (typeof input.FontPath === 'string') {
-        res = await Assets.loadFileAsync(input.FontPath);
-    } else if (input.FontPath instanceof Uint8Array) {
-        res = new Uint8Array(input.FontPath);
+    if (typeof resource === 'string') {
+        res = await Assets.loadFileAsync(resource);
+    } else if (resource instanceof Uint8Array) {
+        res = new Uint8Array(resource);
     }
 
     ctx.trace('输入文件大小：' + byteSize(res.byteLength));
@@ -91,7 +91,7 @@ function createImageProcess(outputFile: IOutputFile) {
             const encoded = await makeImage(hb, font, input.previewImage?.text);
             font.destroy();
             await outputFile(
-                path.join(input.destFold, 'preview' + '.svg'),
+                path.join(input.destFold || input.outDir, 'preview' + '.svg'),
                 encoded,
             );
         }
@@ -128,7 +128,10 @@ function createSubsetFontProcess(outputFile: IOutputFile) {
             hb,
             subsetsToRun,
             async (filename, buffer) => {
-                return outputFile(path.join(input.destFold, filename), buffer);
+                return outputFile(
+                    path.join(input.destFold || input.outDir, filename),
+                    buffer,
+                );
             },
             input.targetType ?? 'woff2',
             ctx,
@@ -159,7 +162,10 @@ function createOutputCSSProcess(outputFile: IOutputFile) {
         );
         const css = createCSS(subsetResult, nameTable, input.css, VF);
         await outputFile(
-            path.join(input.destFold, input.cssFileName ?? 'result.css'),
+            path.join(
+                input.destFold || input.outDir,
+                input.cssFileName ?? 'result.css',
+            ),
             css.css,
         );
         ctx.set('cssMessage', css);
@@ -172,7 +178,7 @@ function createOutputHTMLProcess(outputFile: IOutputFile) {
             const { createTestHTML } = await import('./templates/html/index');
             const reporter = createTestHTML();
             await outputFile(
-                path.join(input.destFold, 'index.html'),
+                path.join(input.destFold || input.outDir, 'index.html'),
                 await reporter,
             );
         }
@@ -203,7 +209,7 @@ function outputReporter(
                 cssMessage,
             );
             await outputFile(
-                path.join(input.destFold, 'reporter.json'),
+                path.join(input.destFold || input.outDir, 'reporter.json'),
                 JSON.stringify(reporter),
             );
             ctx.set('reporter', reporter);
