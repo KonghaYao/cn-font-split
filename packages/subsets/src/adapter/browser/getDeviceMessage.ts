@@ -6,17 +6,15 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
     let OS_PLATFORM = '';
     let OS_PLATFORM_VERSION = '';
     let OS_ARCH = '';
-    let OS_BROWSER = (WINDOW.navigator && WINDOW.navigator.userAgent) || '';
+    let OS_BROWSER = WINDOW.navigator?.userAgent || '';
     let OS_MODEL = '';
     const OS_LOCALE =
-        (WINDOW.navigator && WINDOW.navigator.language) ||
-        (WINDOW.navigator &&
-            WINDOW.navigator.languages &&
-            WINDOW.navigator.languages[0]) ||
+        WINDOW.navigator?.language ||
+        (WINDOW.navigator?.languages && WINDOW.navigator.languages[0]) ||
         '';
 
     // @ts-expect-error userAgentData is not part of the navigator interface yet
-    const userAgentData = WINDOW.navigator.userAgentData;
+    const userAgentData = WINDOW.navigator?.userAgentData;
 
     if (isUserAgentData(userAgentData)) {
         userAgentData
@@ -44,7 +42,7 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
     return {
         runtime: {
             name: 'javascript',
-            version: navigator.userAgent,
+            version: WINDOW.navigator?.userAgent,
         },
         os: {
             name: OS_PLATFORM,
@@ -52,7 +50,7 @@ export const getBrowserDeviceMessage = (): DeviceMessage => {
             build_number: OS_BROWSER,
         },
         device: {
-            cpus: navigator.hardwareConcurrency,
+            cpus: WINDOW.navigator?.hardwareConcurrency,
             locale: OS_LOCALE,
             model: OS_MODEL,
             manufacturer: OS_BROWSER,

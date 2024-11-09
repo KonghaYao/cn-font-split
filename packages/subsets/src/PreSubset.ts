@@ -57,7 +57,7 @@ export async function PreSubset(ctx: IContext) {
             ...prePlugins,
             // 数据收集插件
             new UserSubsetsPlugin(),
-            new LanguageAreaPlugin(),
+            input.languageAreas !== false && new LanguageAreaPlugin(),
             input.subsetRemainChars !== false && new AddRemainCharsPlugin(),
             // 修饰插件，不会大幅增加字符
             input.autoSubset !== false && new AutoSubsetPlugin(),

@@ -41,9 +41,7 @@ export const useSubset = async (
     if (input.threads) {
         await Promise.all(
             totalChunk.map(async (chunk, index) =>
-                runSubSet(createContext(chunk, index)).catch((e: Error) => {
-                    ctx.warn('分包失败 ' + index + ' ' + e.message);
-                }),
+                runSubSet(createContext(chunk, index)).catch((e: Error) => {}),
             ),
         );
     } else {
@@ -100,7 +98,7 @@ async function runSubSet({
     const transferred = service
         ? await service.pool.exec(
               'convert',
-              [buffer, targetType, undefined, input.buildMode],
+              [buffer, targetType, 0, input.buildMode],
               {
                   transfer: [buffer.buffer],
               },

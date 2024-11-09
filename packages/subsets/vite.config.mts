@@ -8,6 +8,30 @@ import { NodeNativePolyfill } from './scripts/NodeNativePolyfill.mts';
 const nodeReplacer = {
     path: 'path-browserify',
 };
+
+const forceBrowser = () => {
+    return {
+        name: 'force-browser',
+        enforce: 'pre',
+        transform(code, id, options) {
+            if (code.includes('isNode')) {
+                console.log(id);
+                return code.replace(
+                    /(function\s+isNode\(.*?\) \{)/m,
+                    '$1\nreturn false;',
+                );
+            }
+            if (code.includes('ENVIRONMENT_IS_NODE')) {
+                console.log(id);
+                return code.replace(
+                    'typeof process=="object"&&typeof process.versions=="object"&&typeof process.versions.node=="string"',
+                    'false',
+                );
+            }
+        },
+    };
+};
+
 export default defineConfig(({ mode }) => {
     const isBrowser = mode === 'browser';
     const conditionPlugin = {
@@ -52,6 +76,7 @@ export default defineConfig(({ mode }) => {
                 },
             },
             NodeNativePolyfill(nodeReplacer),
+            isBrowser && forceBrowser(),
         ],
         build: {
             target: 'esnext',
@@ -80,6 +105,7 @@ export default defineConfig(({ mode }) => {
                 }),
                 NodeNativePolyfill(nodeReplacer),
                 conditionPlugin,
+                isBrowser && forceBrowser(),
             ],
         },
         resolve: {

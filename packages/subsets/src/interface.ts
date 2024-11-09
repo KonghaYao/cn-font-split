@@ -31,10 +31,24 @@ export type IOutputFile = (
 ) => Promise<void>;
 
 export type InputTemplate = {
-    /** 字体文件的相对地址，或者直接输入 buffer */
-    FontPath: string | Buffer | Uint8Array;
-    /** 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数 */
-    destFold: string;
+    /**
+     * 字体文件的相对地址，或者直接输入 buffer
+     * @deprecated 请使用 input, 7.0 将会移除
+     */
+    FontPath?: string | Buffer | Uint8Array;
+    /**
+     * 字体文件的相对地址，或者直接输入 buffer
+     */
+    input: string | Buffer | Uint8Array;
+    /**
+     * 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数
+     * @deprecated 请使用 outDir, 7.0 将会移除
+     */
+    destFold?: string;
+    /**
+     * 切割后放置文件的文件夹，如果没有文件系统，调用 outputFile 参数
+     */
+    outDir: string;
     /**
      * 可选的CSS属性配置，用于自定义字体的样式和行为。
      */
@@ -108,12 +122,9 @@ export type InputTemplate = {
     subsets?: Subsets;
 
     /**
-     * 自动分包时使用，优先分包这些字符
-     * @deprecated 请改用 languageAreas
+     *  自动分包时, 根据语言地区优化分包效果, 默认开启
      */
-    unicodeRank?: number[][];
-    /*  自动分包时, 根据语言地区优化分包效果 */
-    languageAreas?: number[][];
+    languageAreas?: false;
 
     /**
      * 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小

@@ -19,6 +19,6 @@ export class UserSubsetsPlugin implements PreSubsetPlugin {
         differenceSet(remainingCharsSet, userDefinedSet); //3
 
         // 创建一个包含用户定义子集的集合
-        return [...subsets, ...userDefinedSet] as SubsetSetCollection;
+        return [...subsets, userDefinedSet] as SubsetSetCollection;
     }
 }

@@ -15,18 +15,18 @@ for (const i of features) {
     // if (fs.existsSync('./temp/' + i.featureKey)) continue
     const buffer = fs.readFileSync(
         './temp/' +
-            i.featureKey +
-            '/' +
-            i.featureKey +
-            i.fontLink.replace(/.*\.(.*?)/g, '.$1'),
+        i.featureKey +
+        '/' +
+        i.featureKey +
+        i.fontLink.replace(/.*\.(.*?)/g, '.$1'),
     );
     const b = await convert(new Uint8Array(buffer), 'ttf');
     const charset = [...i.splitText]
         .filter(Boolean)
         .map((i) => i.codePointAt(0));
     await fontSplit({
-        destFold: './temp/' + i.featureKey,
-        FontPath: Buffer.from(b),
+        outDir: './temp/' + i.featureKey,
+        input: Buffer.from(b),
         reporter: false,
         testHTML: false,
         css: {
@@ -39,6 +39,9 @@ for (const i of features) {
             },
         },
         autoChunk: false,
+        subsetRemainChars: false,
+        reduceMins: false,
+        languageAreas: false,
         targetType: 'woff2',
         // subsets: chunk(
         //     charset,
