@@ -1,16 +1,20 @@
 import { Hono } from 'hono';
+import { logger } from 'hono/logger';
 import { env } from 'hono/adapter';
 import { FontCSSAPI } from './src/index.js'; // 假设这是你的 API 类的导入路径
 import { BuilderAPI } from './src/BuilderAPI.js';
 import { RemoteConvertManager } from './src/cn-font-split/RemoteConvertManager.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
-const app = new Hono();
+const app = new Hono().use('*', errorHandler).use(logger());
+
+// 字体分析接口
 app.get('/css2', async (c) => {
     const fontApi = new FontCSSAPI(c);
     const url = await fontApi.main(new URL(c.req.url)); // 使用 c.req.url 获取请求 URL
 
     // 设置缓存控制头，模拟原来的缓存策略
-    c.res.headers.set('Cache-Control', `public, max-age=${60 * 60}`);
+    c.res.headers.set('Cache-Control', `public, max-age=${60 * 60 * 24 * 3}`);
 
     // 重定向到生成的 URL
     return c.redirect(url, 302);
