@@ -1,9 +1,13 @@
-FROM docker.io/rust:1.82.0-bookworm AS build
-
-# ARG pkg=woff2
+FROM docker.io/rust:1.82.0-alpine3.19 AS build
+# 使用国内的 rsproxy.cn 的源，alpine需要设置 RUSTFLAGS 环境变量
+ENV  RUSTUP_DIST_SERVER="https://rsproxy.cn" \
+    RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup" \
+    RUSTFLAGS=-Ctarget-feature=-crt-static
+# 安装编译需要的一些依赖
+RUN sed -e 's/dl-cdn[.]alpinelinux.org/mirrors.aliyun.com/g' -i~ /etc/apk/repositories 
+RUN apk add --update --no-cache build-base
 
 WORKDIR /build
-
 COPY . .
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -16,9 +20,11 @@ RUN objcopy --compress-debug-sections target/release/woff2 ./main
 
 ################################################################################
 
-FROM docker.io/debian:bookworm-slim
+FROM docker.io/alpine:3.19
 
 WORKDIR /app
+RUN sed -e 's/dl-cdn[.]alpinelinux.org/mirrors.aliyun.com/g' -i~ /etc/apk/repositories 
+RUN apk add libstdc++ libgcc
 
 ## copy the main binary
 COPY --from=build /build/main ./
