@@ -25,8 +25,8 @@ for (const i of features) {
         .filter(Boolean)
         .map((i) => i.codePointAt(0));
     await fontSplit({
-        destFold: './temp/' + i.featureKey,
-        FontPath: Buffer.from(b),
+        outDir: './temp/' + i.featureKey,
+        input: Buffer.from(b),
         reporter: false,
         testHTML: false,
         css: {

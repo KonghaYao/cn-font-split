@@ -1,8 +1,8 @@
 import { fontSplit } from 'cn-font-split';
 
 await fontSplit({
-    destFold: './temp/SourceHanSerifSC-VF/',
-    FontPath: './temp/font/SourceHanSerifSC-VF.otf',
+    outDir: './temp/SourceHanSerifSC-VF/',
+    input: './temp/font/SourceHanSerifSC-VF.otf',
     reporter: false,
     testHTML: false,
     css: {
@@ -24,8 +24,8 @@ await fontSplit({
     ],
 });
 await fontSplit({
-    destFold: './temp/NotoColorEmoji/',
-    FontPath: './temp/font/NotoColorEmoji.ttf',
+    outDir: './temp/NotoColorEmoji/',
+    input: './temp/font/NotoColorEmoji.ttf',
     reporter: false,
     testHTML: false,
     css: {
