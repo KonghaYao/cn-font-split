@@ -108,12 +108,9 @@ export type InputTemplate = {
     subsets?: Subsets;
 
     /**
-     * 自动分包时使用，优先分包这些字符
-     * @deprecated 请改用 languageAreas
+     *  自动分包时, 根据语言地区优化分包效果, 默认开启
      */
-    unicodeRank?: number[][];
-    /*  自动分包时, 根据语言地区优化分包效果 */
-    languageAreas?: number[][];
+    languageAreas?: false;
 
     /**
      * 配合 autoChunk 使用，预计每个包的大小，插件会尽量打包到这个大小

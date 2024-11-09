@@ -39,7 +39,6 @@ export class AutoFlatPlugin implements PreSubsetPlugin {
                 totalChars.length *
                 (input.chunkSize ?? 70 * 1024)) /
             ttfBufferSize; // 8
-
         return getAutoSubset(subsets, contoursBorder, contoursMap, maxCharSize);
     }
 }
