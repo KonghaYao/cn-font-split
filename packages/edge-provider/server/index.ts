@@ -6,7 +6,6 @@ import { RemoteConvertManager } from './src/cn-font-split/RemoteConvertManager.j
 
 const app = new Hono();
 app.get('/css2', async (c) => {
-    console.log(env(c));
     const fontApi = new FontCSSAPI(c);
     const url = await fontApi.main(new URL(c.req.url)); // 使用 c.req.url 获取请求 URL
 

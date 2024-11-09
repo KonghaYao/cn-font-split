@@ -39,7 +39,6 @@ export class FontCSSAPI {
         const query = this.decodeURL(url);
         const runtimeKey = await sha256(JSON.stringify(query));
         const cached = await this.KV.getItem<string>(runtimeKey);
-        console.log(cached);
         if (usingCache && cached) return cached;
         throw new Error('font not build');
     }

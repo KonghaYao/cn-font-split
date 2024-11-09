@@ -8,7 +8,6 @@ app.post('/woff2', async (c) => {
     if (!buffer || !(buffer instanceof ArrayBuffer)) {
         return c.json({ error: 'Invalid buffer' }, 400);
     }
-    console.log('hit')
     const data = await compress(new Uint8Array(buffer));
     return c.body(data);
 });
