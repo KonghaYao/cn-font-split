@@ -71,14 +71,16 @@ export class BundlePlugin {
                 'vite-plugin-font | font pre-building |' + resolvedPath,
             );
             const FontPath = p.split('?')[0];
+            const onlySubset = mode !== 'full';
             await fontSplit({
                 ...this.config,
-                FontPath,
-                destFold: resolvedPath,
+                input: FontPath,
+                outDir: resolvedPath,
                 reporter: true,
-                autoChunk: mode === 'full',
-                subsets:
-                    mode !== 'full' ? chunk(this.subsets?.flat()) : undefined,
+                languageAreas: !onlySubset as false,
+                autoSubset: !onlySubset,
+                subsetRemainChars: !onlySubset,
+                subsets: onlySubset ? chunk(this.subsets?.flat()) : undefined,
                 logger: {
                     settings: {
                         minLevel: 5,
