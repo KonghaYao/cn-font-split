@@ -83,7 +83,7 @@ export async function PreSubset(ctx: IContext) {
     // 设置最终的子集列表到上下文中
     ctx.set(
         'subsetsToRun',
-        resultSubsets.map((i) => [...i]),
+        resultSubsets.filter((i) => i.size).map((i) => [...i]),
     );
     // 释放不再需要的 ttf 文件资源
     ctx.free('ttfFile', 'totalChars');
