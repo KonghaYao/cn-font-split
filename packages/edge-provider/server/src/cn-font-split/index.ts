@@ -13,12 +13,9 @@ import {
     fontSplit,
     Assets,
     DenoAdapter,
-} from 'https://unpkg.com/cn-font-split@6.0.0-1/dist/cn-font-split.browser.js';
+} from 'https://unpkg.com/cn-font-split@6.0.0/dist/cn-font-split.browser.js';
 
 Assets.pathTransform = (innerPath) =>
-    innerPath.replace(
-        './',
-        'https://unpkg.com/cn-font-split@6.0.0-1/dist/',
-    );
+    innerPath.replace('./', 'https://unpkg.com/cn-font-split@6.0.0/dist/');
 await DenoAdapter();
 export { fontSplit };

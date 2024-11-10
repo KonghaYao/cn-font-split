@@ -8,3 +8,4 @@ dist
 deno.lock
 .wrangler
 target
+.docker

@@ -7,8 +7,8 @@ services:
       - "8000:8000"
     environment:
       - WOFF2_SERVER=http://woff2:8080/woff2
-      - CDN_URL=https://play.min.io:9000/result-font
-      - S3_ENDPOINT=https://play.min.io:9000
+      - CDN_URL=http://0.0.0.0:9000/result-font
+      - S3_ENDPOINT=http://minio:9000
       - S3_AK=Q3AM3UQ867SPQQA43P2F
       - S3_SK=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
       - S3_REGION=us-east-1
@@ -16,3 +16,19 @@ services:
     build: ./server/woff2
     expose:
       - "8080"
+  minio:
+    image: minio/minio
+    hostname: "minio"
+    ports:
+      - 9000:9000 # api 端口
+      - 9001:9001 # 控制台端口
+    environment:
+      MINIO_ROOT_USER: Q3AM3UQ867SPQQA43P2F
+      MINIO_ROOT_PASSWORD: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+    volumes:
+      - ./.docker/minio/data:/data              
+      - ./.docker/minio/config:/root/.minio/   
+      - ./minio/init-minio.sh:/init-minio.sh
+    entrypoint: [ "sh", "-c", "chmod +x /init-minio.sh && /init-minio.sh  & minio server /data --console-address \":9001\""]
+    privileged: true
+    restart: always
