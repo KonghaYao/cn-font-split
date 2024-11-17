@@ -6,3 +6,5 @@ otf
 **/temp
 .rollup.cache
 .DS_Store
+target
+.idea

@@ -1,0 +1,9 @@
+[package]
+name = "subsets-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+harfbuzz_rs_now = "2.2.2"
+opentype = "0.38.0"
+woff = "0.3.3"
