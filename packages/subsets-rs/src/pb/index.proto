@@ -59,5 +59,8 @@ message InputTemplate {
     }
 }
  
-message Output {
+message EventMessage {
+    string event = 1;
+    optional bytes data = 2;
+    optional string message = 3;
 }

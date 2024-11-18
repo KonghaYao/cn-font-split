@@ -5,13 +5,25 @@ use opentype::layout::{ChainedContext, Coverage};
 use opentype::tables::glyph_substitution::Type;
 use opentype::tables::{GlyphPositioning, GlyphSubstitution};
 use opentype::truetype::tables::character_mapping::{
-    Encoding, Encoding0, Encoding12, Encoding14, Encoding4, Encoding6,
+    Encoding, Encoding0, Encoding12, Encoding4, Encoding6,
 };
 use opentype::truetype::tables::CharacterMapping;
 use opentype::Font;
 use std::collections::{HashMap, HashSet};
 
-pub fn analyze_gpos(font: &Font, font_file: &mut std::fs::File) {
+use std::io::Cursor;
+use crate::protos::EventMessage;
+use crate::runner::Context;
+
+pub fn pre_subset(ctx: &mut Context, callback: fn(event: EventMessage)) {
+    let file_binary = &ctx.input.input;
+    let mut font_file = Cursor::new(file_binary);
+    let font = opentype::Font::read(&mut font_file).expect("TODO: panic message");
+    let set = analyze_gsub(&font, &mut font_file);
+    ctx.pre_subset_result = Option::from(set);
+}
+
+pub fn analyze_gpos(font: &Font, font_file: &mut Cursor<&Vec<u8>>) {
     // GPOS table
     let data: GlyphPositioning = font.take(font_file).unwrap().unwrap();
     let headers: Vec<Header> = data.features.headers;
@@ -21,7 +33,7 @@ pub fn analyze_gpos(font: &Font, font_file: &mut std::fs::File) {
         .collect();
     println!("{:?}", data);
 }
-pub fn analyze_cmap(font: &Font, font_file: &mut std::fs::File) -> HashMap<u16, u32> {
+pub fn analyze_cmap(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> HashMap<u16, u32> {
     // GSUB
     let data: CharacterMapping = font.take(font_file).unwrap().unwrap();
     let mut cmap: HashMap<u16, u32> = HashMap::new();
@@ -58,7 +70,7 @@ pub fn analyze_cmap(font: &Font, font_file: &mut std::fs::File) -> HashMap<u16, 
     });
     cmap
 }
-pub fn analyze_gsub(font: &Font, font_file: &mut std::fs::File) -> Vec<Vec<u32>> {
+pub fn analyze_gsub(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> Vec<Vec<u32>> {
     let cmap = analyze_cmap(font, font_file);
     // GSUB
     let data: GlyphSubstitution = font.take(font_file).unwrap().unwrap();
@@ -278,7 +290,7 @@ fn collect_glyph_id_from_format_1_and_2(coverages: &Vec<Coverage>, result: &mut 
             result.push(center.clone());
         }),
         Coverage::Format2(cov) => cov.records.iter().for_each(|r| {
-            for x in (r.start_glyph_id..=r.end_glyph_id) {
+            for x in r.start_glyph_id..=r.end_glyph_id {
                 result.push(x.clone());
             }
         }),

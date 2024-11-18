@@ -1,12 +1,24 @@
-pub type SubsetRuntime = fn(ctx: &mut T);
-pub fn createRunner<T>(runtime: Vec<SubsetRuntime>, ctx: &mut T) {
-    runtime.iter().for_each(|r| r(ctx));
+use crate::protos::{EventMessage, InputTemplate};
+use crate::pre_subset::{pre_subset};
+use crate::run_subset::{run_subset};
+
+pub type SubsetRuntime<T> = fn(ctx: &mut T, callback: fn(event: EventMessage));
+
+pub struct Context {
+    pub input: InputTemplate,
+    pub pre_subset_result: Option<Vec<Vec<u32>>>,
 }
 
-pub struct Context {}
+pub fn font_split(config: InputTemplate, callback: fn(event: EventMessage)) {
+    let process: Vec<SubsetRuntime<Context>> = vec![
+        pre_subset,
+        run_subset,
+    ];
+    let mut ctx = Context {
+        input: config,
+        pre_subset_result: None,
+    };
 
-pub fn font_split() {
-    let process = vec![];
-    let ctx = Context {};
-    createRunner(process, ctx)
+    process.iter().for_each(|r| r(&mut ctx, callback));
 }
+

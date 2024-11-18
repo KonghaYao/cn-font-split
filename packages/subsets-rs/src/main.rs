@@ -1,22 +1,24 @@
-mod pre_subset;
 mod run_subset;
+mod runner;
+mod pre_subset;
 
 use std::io::Read;
-use crate::run_subset::run_subset;
-use opentype::File;
 use prost::Message;
+use crate::runner::font_split;
 
-mod protos {
+pub mod protos {
     include!("./pb/api_interface.rs");
 }
 
 fn main() {
     let path = "../demo/public/SmileySans-Oblique.ttf";
-    let mut font_file = std::fs::File::open(path).expect("Failed to open file");
-    let File { mut fonts } = File::read(&mut font_file).expect("Failed to read file");
-    // make_gpos(&fonts[0],&mut font_file);
-    let set = pre_subset::analyze_gsub(&fonts[0], &mut font_file);
-    run_subset(&path, &set)
+    let font_file = read_binary_file(&path).expect("Failed to read file");
+    let input = protos::InputTemplate { input: font_file, out_dir: None, css: None, target_type: None, subsets: None, language_areas: None, chunk_size: None, chunk_size_tolerance: None, max_allow_subsets_count: None, css_file_name: None, test_html: None, reporter: None, preview_image: None, rename_output_font: None, build_mode: None, multi_threads: None, font_feature: None, reduce_mins: None, auto_subset: None, subset_remain_chars: None };
+
+
+    font_split(input, |m| {
+        println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
+    })
 }
 
 #[test]
