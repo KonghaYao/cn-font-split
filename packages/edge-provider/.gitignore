@@ -1,0 +1,11 @@
+node_modules
+dist
+.data
+.nitro
+.cache
+.output
+.env
+deno.lock
+.wrangler
+target
+.docker

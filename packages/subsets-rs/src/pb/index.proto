@@ -1,0 +1,66 @@
+syntax = "proto3";
+ 
+package api_interface;
+
+message InputTemplate {
+    /**
+     * 对接此层，需要直接输入 buffer
+     */
+    bytes input = 1;
+    /**
+     * 切割后放置文件的文件夹
+     */
+    optional string out_dir = 2;
+    
+    message CssProperties {
+        optional string font_family = 1;
+        optional string font_weight = 2;
+        optional string font_style = 3;
+        optional string font_display = 4;
+        repeated string local_family = 5;
+        repeated PolyfillType polyfill = 6;
+        message CommentProperties {
+            optional bool base = 1;
+            optional bool name_table = 2;
+            optional bool unicodes = 3;
+        }
+        optional CommentProperties comment = 7;
+        optional bool compress = 8;
+    }
+    optional CssProperties css = 5;
+
+    optional string target_type = 6;
+    optional bytes subsets = 7;
+    optional bool language_areas = 8;
+    optional int32 chunk_size = 9;
+    optional float chunk_size_tolerance = 10;
+    optional int32 max_allow_subsets_count = 11;
+    optional string css_file_name = 12;
+    optional bool test_html = 13;
+    optional bool reporter = 14;
+    optional PreviewImage preview_image = 15;
+    
+    optional string rename_output_font = 18;
+    optional string build_mode = 20;
+    optional bool multi_threads = 21;
+    optional bool font_feature = 22;
+    optional bool reduce_mins = 23;
+    optional bool auto_subset = 24;
+    optional bool subset_remain_chars = 25;
+
+    message PolyfillType {
+        string name = 1;
+        string format = 2;
+    }
+
+    message PreviewImage {
+        string text = 1;
+        string name = 2;
+    }
+}
+ 
+message EventMessage {
+    string event = 1;
+    optional bytes data = 2;
+    optional string message = 3;
+}

@@ -1,0 +1,28 @@
+{
+    "name": "cn-font-replacer",
+    "version": "1.0.0",
+    "description": "font-replacer 是中文网字计划用于动态加载、动态更换字体所使用的库。你也可以自定义字体源来加载自己的字体，默认使用了字图 CDN的庞大字体库来源！",
+    "main": "./dist/index.js",
+    "type": "module",
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "build": "tsc",
+        "prepublish": "pnpm build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "font",
+        "cdn",
+        "cn-font",
+        "cjk-font"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
+    },
+    "homepage": "https://chinese-font.netlify.app/",
+    "author": "KonghaYao<3446798488@qq.com>",
+    "license": "MIT"
+}

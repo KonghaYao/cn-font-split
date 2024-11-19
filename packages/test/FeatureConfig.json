@@ -1,0 +1,682 @@
+[
+    {
+        "fontLink": "https://notofonts.github.io/khmer/fonts/NotoSansKhmer/full/otf/NotoSansKhmer-Regular.otf",
+        "featureKey": "blwf",
+        "splitText": "ង៉ិ  ង៉ី  ង៉ឹ  ង៉ឺ  ង៉ើ  ង៉័  ងិ  ងី  ងឹ  ងឺ  ងើ  ង័  ញ៉ិ  ញ៉ី  ញ៉ឹ  ញ៉ឺ  ញ៉ើ  ញ៉័  ញិ  ញី  ញឹ  ញឺ  ញើ  ញ័  ន៉ិ  ន៉ី  ន៉ឹ  ន៉ឺ  ន៉ើ  ន៉័  និ  នី  នឹ  នឺ  នើ  ន័  ប៉ិ  ប៉ី  ប៉ឹ  ប៉ឺ  ប៉ើ  ប៉័  បិ  បី  បឹ  បឺ  បើ  ប័  ម៉ិ  ម៉ី  ម៉ឹ  ម៉ឺ  ម៉ើ  ម៉័  មិ  មី  មឹ  មឺ  មើ  ម័  យ៉ិ  យ៉ី  យ៉ឹ  យ៉ឺ  យ៉ើ  យ៉័  យិ  យី  យឹ  យឺ  យើ  យ័  រ៉ិ  រ៉ី  រ៉ឹ  រ៉ឺ  រ៉ើ  រ៉័  រិ  រី  រឹ  រឺ  រើ  រ័  ល៉ិ  ល៉ី  ល៉ឹ  ល៉ឺ  ល៉ើ  ល៉័  លិ  លី  លឹ  លឺ  លើ  ល័  វ៉ិ  វ៉ី  វ៉ឹ "
+    },
+    {
+        "fontLink": "https://notofonts.github.io/khmer/fonts/NotoSansKhmer/full/otf/NotoSansKhmer-Regular.otf",
+        "featureKey": "pref",
+        "splitText": "្រ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "vatu",
+        "splitText": "क्र ङ्र ट्र"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "nukt",
+        "splitText": "क़ ङ़ ट़"
+    },
+    {
+        "fontLink": "https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansMath/full/otf/NotoSansMath-Regular.otf",
+        "featureKey": "ssty",
+        "splitText": "Α   B  Β  ≠  ℬ  C  ℭ   ℂ  Χ    ℎ  +  ⊕ "
+    },
+    {
+        "fontLink": "https://cdn.jsdelivr.net/gh/notofonts/notofonts.github.io/fonts/NotoSansMath/full/otf/NotoSansMath-Regular.otf",
+        "featureKey": "dtls",
+        "splitText": "i ⅈ j ⅉ"
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/Subset/SourceHanSerifKR-VF.otf",
+        "featureKey": "ljmo",
+        "lineHeight": "1.439",
+        "splitText": "ᄀ\\nᄁ\\nᄂ\\nᄓ\\nᄔ\\nᄕ\\nᄖ\\nᄂᄉᄉ\\nᄂᄌᄌ\\nᄂᄒᄒ\\nᄃ\\nᄗ\\nᄄ\\nᄃᄅᄅ\\nᄃᄆᄆ\\nᄃᄇᄇ\\nᄃᄉᄉ\\nᄃᄌᄌ\\nᄅ\\nᄅᄀᄀ\\nᄅᄀᄀ\\nᄘ\\nᄅᄃᄃ\\nᄅᄃᄃ\\nᄙ\\nᄅᄆᄆ\\nᄅᄇᄇ\\nᄅᄇᄇ\\nᄅᄫᄫ\\nᄅᄉᄉ\\nᄅᄌᄌ\\nᄅᄏᄏ\\nᄚ\\nᄛ\\nᄆ\\nᄆᄀᄀ\\n"
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/Subset/SourceHanSerifKR-VF.otf",
+        "featureKey": "tjmo",
+        "splitText": "ᄀ\\nᄁ\\nᄂ\\nᄓ\\nᄔ\\nᄕ\\nᄖ\\nᄂᄉᄉ\\nᄂᄌᄌ\\nᄂᄒᄒ\\nᄃ\\nᄗ\\nᄄ\\nᄃᄅᄅ\\nᄃᄆᄆ\\nᄃᄇᄇ\\nᄃᄉᄉ\\nᄃᄌᄌ\\nᄅ\\nᄅᄀᄀ\\nᄅᄀᄀ\\nᄘ\\nᄅᄃᄃ\\nᄅᄃᄃ\\nᄙ\\nᄅᄆᄆ\\nᄅᄇᄇ\\nᄅᄇᄇ\\nᄅᄫᄫ\\nᄅᄉᄉ\\nᄅᄌᄌ\\nᄅᄏᄏ\\nᄚ\\nᄛ\\nᄆ\\nᄆᄀᄀ\\n"
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/Subset/SourceHanSerifKR-VF.otf",
+        "featureKey": "vjmo",
+        "splitText": "ᄀ\\nᄁ\\nᄂ\\nᄓ\\nᄔ\\nᄕ\\nᄖ\\nᄂᄉᄉ\\nᄂᄌᄌ\\nᄂᄒᄒ\\nᄃ\\nᄗ\\nᄄ\\nᄃᄅᄅ\\nᄃᄆᄆ\\nᄃᄇᄇ\\nᄃᄉᄉ\\nᄃᄌᄌ\\nᄅ\\nᄅᄀᄀ\\nᄅᄀᄀ\\nᄘ\\nᄅᄃᄃ\\nᄅᄃᄃ\\nᄙ\\nᄅᄆᄆ\\nᄅᄇᄇ\\nᄅᄇᄇ\\nᄅᄫᄫ\\nᄅᄉᄉ\\nᄅᄌᄌ\\nᄅᄏᄏ\\nᄚ\\nᄛ\\nᄆ\\nᄆᄀᄀ\\n"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "vkrn",
+        "withFeature": ["vpal"],
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
+        "fontSize": 32,
+        "height": "360px",
+        "splitText": "スト ヘト スペース”"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "blws",
+        "splitText": "रू रु हू हु दृ शृ हृ"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "blwm",
+        "splitText": "छ्"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "ss18",
+        "splitText": "·  …"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "ss19",
+        "splitText": " ˇ  ˉ  ˊ  ˋ  ˙  、  。  ，  ‘  ’  “  ”  ！  ：  ；  ？"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "ss20",
+        "splitText": "ㄓㄨˋ ㄧㄣˉ"
+    },
+    {
+        "fontLink": "https://github.com/NightFurySL2001/WD-XL-font/releases/download/v2.001/WD-XLLubrifontTC-Regular.otf",
+        "featureKey": "smpl",
+        "splitText": "綵  著  藉  蘋  託  讎  鍾  餘  鯰  鹼  麼  鼕  㘭  㨪  㩗  䥑  並  乗  亂  亙  亞  佇  佈  佔  併  來  侖  侶  係  俔  俠  俥  倀  倆  倉  個  們  倖"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Lohit%20Bengali.ttf",
+        "featureKey": "pstf",
+        "splitText": "ব্য্"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Javanese.ttf",
+        "featureKey": "psts",
+        "splitText": "ꦏꦿꦛꦿ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Tifinagh.ttf",
+        "featureKey": "rtla",
+        "splitText": "ⵎⵉⴷⴷⵏ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Math.ttf",
+        "featureKey": "rtlm",
+        "splitText": " ∫√x"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Work%20Sans.ttf",
+        "featureKey": "tnum",
+        "splitText": " |1|2|3|4|"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Syriac.ttf",
+        "featureKey": "fin2",
+        "splitText": "ܒܐ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Syriac.ttf",
+        "featureKey": "med2",
+        "splitText": "ܒܐ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Syriac.ttf",
+        "featureKey": "fin3",
+        "splitText": "ܕܐ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "cjct",
+        "splitText": "ङ्म"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Devanagari.ttf",
+        "featureKey": "dist",
+        "splitText": "दॗकॗ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Feature%20Sans.ttf",
+        "featureKey": "cpct",
+        "splitText": "か、か"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Aref%20Ruqaa.ttf",
+        "featureKey": "curs",
+        "splitText": "سمر"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Aref%20Ruqaa.ttf",
+        "featureKey": "isol",
+        "splitText": "یڽہ"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Aref%20Ruqaa.ttf",
+        "featureKey": "jalt",
+        "splitText": "سارق الغنم"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Baskervville.ttf",
+        "featureKey": "lnum",
+        "splitText": "ABC1234"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Markazi%20Text.ttf",
+        "featureKey": "mark",
+        "splitText": "تَشْكِيل"
+    },
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Work%20Sans.ttf",
+        "featureKey": "mkmk",
+        "splitText": "é̤̤̱̃̃"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "abvs",
+        "splitText": " ईं"
+    },
+    {
+        "fontLink": "https://fonts.maateen.me/adorsho-lipi/AdorshoLipi.ttf",
+        "featureKey": "pres",
+        "splitText": "ৎল ৎম ৎন ৎথ ৎত "
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "akhn",
+        "splitText": "क्क्ष"
+    },
+
+    {
+        "fontLink": "https://notofonts.github.io/khmer/fonts/NotoSansKhmer/full/otf/NotoSansKhmer-Regular.otf",
+        "featureKey": "clig",
+        "splitText": "កា ក ខា ខ គា គ ឃា ឃ ងា ង ចា ច ឆា ឆ ជា ជ ឈា ឈ ញា ញ"
+    },
+
+    {
+        "fontLink": "https://simoncozens.github.io/feature-tags/css/fonts/Noto%20Sans%20Khmer.ttf",
+        "featureKey": "abvf",
+        "splitText": "យល់ឃើញ"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "abvm",
+        "splitText": "कंसं"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "half",
+        "splitText": "क् ग् त् र् ष् स्"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "haln",
+        "splitText": "ङ् ट् ठ् ड् ढ् द् र् ह् "
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "rkrf",
+        "splitText": "क्र ग्र त्र स्र"
+    },
+    {
+        "fontLink": "https://github.com/itfoundry/hind/raw/master/build/Hind-Bold.otf",
+        "featureKey": "rphf",
+        "splitText": "र्"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
+        "featureKey": "aalt",
+        "splitText": "Sorts Mill Goudy's 1/3 wizard dog."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bickham-script-pro-3-bold.woff2",
+        "featureKey": "swsh",
+        "splitText": "Fred And Ginger",
+        "fontSize": 64
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bello-pro.woff2",
+        "featureKey": "cswh",
+        "splitText": "I feel great today."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/caflisch-script-pro-regular.woff2",
+        "featureKey": "calt",
+        "splitText": "The bloom has gone off the rose"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
+        "featureKey": "hist",
+        "splitText": "Aparadise lost"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "hlig",
+        "splitText": "ſinful ſingular"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "locl",
+        "splitText": "гпклдвзитжц",
+        "lang": "bg"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ff-kosmik-pro-bold.woff2",
+        "featureKey": "rand",
+        "splitText": "Free stood speech 777!"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/exo-bold.woff2",
+        "featureKey": "salt",
+        "splitText": "Easy Sunday morning & my fox."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "subs",
+        "splitText": "H2O, CO2",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/hypatia-sans-pro-bold.woff2",
+        "featureKey": "sups",
+        "splitText": "X2",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/allan-regular.woff2",
+        "featureKey": "titl",
+        "splitText": "Quick brown lazy Grumpy"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "liga",
+        "splitText": "Different first Afliction affidavit There"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "dlig",
+        "splitText": "ct sp st"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/clara-regular.woff2",
+        "featureKey": "ornm",
+        "splitText": "abcdefg"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "kern",
+        "splitText": "Try As You Will"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "smcp",
+        "splitText": "Changing case to Small Caps."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "c2sc",
+        "splitText": "Changing case to Small Caps."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/eb-garamond-bold.woff2",
+        "featureKey": "pcap",
+        "splitText": "Georg Duffner - Principal Design"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/eb-garamond-bold.woff2",
+        "featureKey": "c2pc",
+        "splitText": "Georg Duffner - Principal Design"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/arial-bold.woff2",
+        "featureKey": "unic",
+        "splitText": "Server Offline"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sorts-mill-goudy-regular.woff2",
+        "featureKey": "cpsp",
+        "splitText": "THE LAZY DOG."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "case",
+        "splitText": "{¿¡HO-HO—HO!?} [HO-HO—HO] (HO-HO—HO)"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "ordn",
+        "splitText": "1st, 2nd, 3rd"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "onum",
+        "splitText": "0123456789"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/hypatia-sans-pro-bold.woff2",
+        "featureKey": "pnum",
+        "splitText": "0123456789"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "frac",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "afrc",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "dnom",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/ubuntu-mono-bold.woff2",
+        "featureKey": "numr",
+        "splitText": "1 3/4 C of flour, 1/2 cup."
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/bree-bold.woff2",
+        "featureKey": "sinf",
+        "splitText": "H2O SOx YCbCr NO2"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/warnock-pro-bold.woff2",
+        "featureKey": "zero",
+        "splitText": "0",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/fira-sans-bold.woff2",
+        "featureKey": "mgrk",
+        "splitText": "Σ∑",
+        "splitCount": 1
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "rlig",
+        "splitText": "لا",
+        "splitCount": 2,
+        "lang": "ar"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "init",
+        "direction": "rtl",
+        "splitText": "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "medi",
+        "direction": "rtl",
+        "splitText": "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق"
+    },
+    {
+        "fontLink": "https://cdn.statically.io/gh/KonghaYao/chinese-free-web-font-storage/branch/packages/dyh/fonts/SmileySans-Oblique.ttf",
+        "featureKey": "fwid",
+        "splitText": "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 . , : ; ! ? * # / - _ ( ) { } [ ] "
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
+        "featureKey": "hwid",
+        "splitText": "Ｗ Ｘ Ｙ Ｚ ［ ＼ ］ ＾ ＿ ‵ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ｛ ｜ ｝ ￥ ￦"
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
+        "featureKey": "vpal",
+        "splitText": "︵ ︶ ︷ ︸ ︽ ︾ ﹀ ﹂ ＾"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "halt",
+        "splitText": "きょう、『広辞苑』を買いたいです。"
+    },
+    {
+        "fontLink": "https://github.com/adobe-fonts/source-han-serif/raw/release/Variable/OTF/SourceHanSerifSC-VF.otf",
+        "featureKey": "vhal",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
+        "splitText": "きょう、『広辞苑』を買いたいです。",
+        "height": "360px"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "expt",
+        "splitText": "唖  芦  飴  溢  茨  鰯  淫  迂  嘘  欝  厩  噂  餌  焔  襖  鴎  迦  牙  恢  晦  葛  鞄  噛  澗  翰  翫  徽  祇  汲  笈  侠  卿  饗  僅  躯  喰  櫛  屑  祁  繋  倦  拳  捲  鹸  諺  巷  麹  鵠  甑  采  榊  柵  薩  鯖  錆  珊  餐  屡  杓  灼  繍  酋  曙  薯  藷  哨  廠  蒋  醤  鞘  蝕  靭  逗  摺  蝉  撰  煎  煽  穿  箭  詮  噌  遡  創  掻  痩  揃  遜  騨  腿  黛  啄  蛸  巽  辿  鱈  樽  箪  註  瀦  凋  捗  槌  鎚  掴  鄭  擢  溺  填  顛  堵  屠  菟  賭  塘  祷  涜  瀞  遁  謎  灘  楢  禰  祢  嚢  牌  這  秤  剥  箸  溌  醗  叛  挽  樋  柊  稗  逼  媛  謬  廟  瀕  蔽  瞥  篇  娩  庖  蓬  頬  鱒  迄  麺  儲  餅  籾  鑓  愈  猷  熔  耀  莱  漣  煉  簾  蓮  榔  蝋  僊  兔  冤  匕  唹  唳  喩  嘲  嚥  嚮  堋  堙  夛 "
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "fina",
+        "direction": "rtl",
+        "lang": "ar",
+        "splitText": "ا  ‍‍أ  ‍‍إ  ‍‍آ  ‍‍ٱ  ‍‍ٮ  ‍‍ب  ‍‍پ  ‍‍ت  ‍‍ث  ‍‍ٹ  ‍‍ج  ‍‍چ  ‍‍ح  ‍‍خ  ‍‍د  ‍‍ذ  ‍‍ڈ  ‍‍ر  ‍‍ز  ‍‍ڑ  ‍‍ژ  ‍‍س  ‍‍ش  ‍‍ص  ‍‍ض  ‍‍ط  ‍‍ظ  ‍‍ع  ‍‍غ  ‍‍ف  ‍‍ڤ  ‍‍ڡ  ‍‍ٯ  ‍‍ق  ‍‍ك  ‍‍ک  ‍‍گ  ‍‍ل  ‍‍م  ‍‍ن  ‍‍ں  ‍‍ه  ‍‍ہ  ‍‍ۂ  ‍‍ھ  ‍‍ة  ‍‍ۃ  ‍‍و  ‍‍ؤ  ‍‍ى  ‍‍ي  ‍‍ئ  ‍‍ی  ‍‍ے  ‍‍ۓ  ‍‍ﻻ  ‍‍ﻷ  ‍‍ﻹ  ‍‍ﻵ  ‍‍  ‍‍ﴎ  ‍‍ﳻ  ‍‍ﳼ  ‍‍ﴍ  ‍‍ﳽ  ‍‍ﳾ  ‍‍ﴏ  ‍‍ﴅ  ‍‍ﴆ  ‍‍ﴐ  ‍‍ﴇ  ‍‍ﴈ "
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cairo-bold.woff2",
+        "featureKey": "ccmp",
+        "direction": "rtl",
+        "lang": "ar",
+        "splitText": "ّٰ ًٔ ٌٔ َٔ ُٔ ْٔ ٍٕ ِٕ ًٔ ًّ ٌٔ ٌّ ٍٕ ٍّ َٔ َّ ُٔ ُّ ِٕ ِّ ّٰ ًّ ٌّ ٍّ َّ ُّ ِّ ْٔ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss01",
+        "direction": "rtl",
+        "splitText": " ̀  ́  ̂  ̃  ̄  ̅  ̊  ̋  ̌  ̍  ̐  ̓  ̔  ̛  ̜  ̝  Α  Β  Γ  ∆  Ε  Ζ  Η  Θ  Ι  Κ  Λ  Μ  Ν  Ξ  Ο  Π  Ρ  Σ  Τ  Υ  Φ  Χ  Ψ  Ω  Ϙ  Ϛ  Ϝ  Ϡ  Ϸ  Ϲ  Ϻ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss02",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss03",
+        "splitText": "ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss04",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss05",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss06",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss07",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss08",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss09",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss10",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss11",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss12",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss13",
+        "splitText": " ↀ  ↁ  ↂ  ↇ  ↈ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/cardo-regular.woff2",
+        "featureKey": "ss15",
+        "splitText": " a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  á  æ  ð  þ  ę  ı  œ  ſ  ȷ  ꜳ  ꜵ    "
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv01",
+        "splitText": "6"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv02",
+        "splitText": "9"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv03",
+        
+        "splitText": "4"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv04",
+        "splitText": ":"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv05",
+        "splitText": " I  İ  Ì  Ȉ  Í  Î  Ǐ  Ï  Ḯ  Ĭ  Ị  Ȋ  Ī  Ḭ  Ỉ  Ĩ  Į  Ι  Ί  Ϊ  Ӏ  І  Ї"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv06",
+        "splitText": " l  ĺ  ḽ  ḷ  ḹ  ḻ  ļ  ľ  ł  ǉ  ﬂ"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv07",
+        "splitText": "a  à  á  ä  ǟ  å  ǻ  ã  ằ  ǡ  ḁ  â  ậ  ấ  ẫ  ầ  ẩ  ă  ắ  ẵ  ẳ  ặ  ȃ  ǎ  ȧ  ạ  ả  ȁ  ā  ą"
+    },
+    {
+        "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
+        "featureKey": "cv08",
+        "splitText": " 0    ₀  ⁰"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "trad",
+        "splitText": "亜  悪  鯵  圧  囲  為  医  壱  逸  稲  隠  営  栄  衛  駅  謁  円  縁  塩  奥  応  横  欧  殴  鴬  黄  温  穏  仮  価  禍  画  会  壊  悔  懐  海  絵  慨  概  蛎  拡  撹  殻  覚  学  岳  楽  喝  渇  褐  竃  勧  巻  寛  歓  漢  潅  缶  観  諌  関  陥  巌  器  既  帰  気  祈  偽  戯  犠  旧  拠  挙  虚  峡  挟  狭  郷  響  暁  勤  謹  区  駆  勲  薫  径  恵  掲  渓  経"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "hkna",
+        "splitText": " ヽ  ヾ  ゝ  ゞ  ー  ぁ  あ  ぃ  い  ぅ  う  ぇ  え  ぉ  お  か  が  き  ぎ  く  ぐ  け  げ  こ  ご  さ  ざ  し  じ  す  ず  せ  ぜ  そ  ぞ  た  だ  ち  ぢ  っ  つ  づ  て  で  と  ど  な  に  ぬ  ね  の  は  ば  ぱ  ひ  び  ぴ  ふ  ぶ  ぷ  へ  べ  ぺ  ほ  ぼ  ぽ  ま  み  む  め  も  ゃ  や  ゅ  ゆ  ょ  よ  ら  り  る  れ  ろ  ゎ  わ  ゐ  ゑ  を  ん  ァ  ア  ィ  イ  ゥ  ウ  ェ  エ  ォ  オ  カ  ガ  キ  ギ  ク  グ  ケ  ゲ  コ  ゴ  サ  ザ  シ  ジ  ス  ズ  セ  ゼ  ソ  ゾ  タ  ダ  チ  ヂ  ッ  ツ  ヅ  テ  デ  ト  ド  ナ  ニ  ヌ  ネ  ノ  ハ  バ  パ  ヒ  ビ  ピ  フ  ブ  プ  ヘ  ベ  ペ  ホ  ボ  ポ  マ  ミ  ム  メ  モ  ャ  ヤ  ュ  ユ  ョ  ヨ  ラ  リ  ル  レ  ロ  ヮ  ワ  ヰ  ヱ  ヲ  ン  ヴ  ヵ  ヶ  ゔ  ゕ  ゖ  ヷ  ヸ  ヹ  ヺ    ㇰ  ㇱ  ㇲ  ㇳ  ㇴ  ㇵ  ㇶ  ㇷ  ㇸ  ㇹ  ㇺ  ㇻ  ㇼ  ㇽ  ㇾ  ㇿ"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "hojo",
+        "splitText": "瘦 瓯 廋  濹  熳  嶲  僲  晷  瑢  瘈  盔  礴  絜  鍥  鬭  嫚  槾  瓘  瞢  籩  葜  貛  鎡  鎋  雚  鳦  鶿  卥  叠  嘅  旟  橕  瞍  羀  舀  蕝  螣  衋  霡  鬵"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "ital",
+        "splitText": "!  #  $  %  &  '  (  )  *  +  ,  ‑  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  ¥  ]  ^  ̲  ̀  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z  {  ¦  }  ̃  ’ ‘  |  ∼  ¡  ¢  £  ⁄  ƒ    ¤  “  «  ‹  ›  ﬁ  ﬂ  –  ∙  •  ‚  „  ”  »  ¿  ́  ̂  ̄  ̆  ̇  ̈  ̊  ̧  ̋  ̨  ̌  —  Æ  ª  Ł  Ø  Œ  º  æ  ı  ł  ø  œ  ß "
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "jp78",
+        "splitText": "唖  鯵  偉  緯  違  欝  閏  衛  延  沿  焔  鉛  翁  鴬  鴎  芽  雅  拐  害  慨  概  蛎  撹  殻  喝  竃  噛  敢  澗  潅  諌  貫  巌  頑  帰  軌  窮  侠  均  躯  靴  慧  稽  繋  荊  頚  傑  穴  健  嫌  建  鹸  鈷  檎  交  公  昂  更  校  溝  硬  絞  考  購  砿  降  拷  麹  采  罪  冴  柵  捌  珊  使  史  姉  叱  屡  蕊  謝  遮  邪  収  繍  輯  柔  瞬  舜  曙  渚  廠  松  梢  蒋  訟  醤  丈  埴  植  職  親  靭  翠  遂  据  逝  摂  蝉  栓  船  賎  創  掻  痩  総  聡  像  騨  黛  啄  濯  琢  巽  棚  鱈  箪  誕  恥  兆  凋  眺  聴  跳  塚  掴  壷  庭  廷  艇  填  顛  菟  砺  塘  桃  梼  涛  祷  逃  鴇  涜  噸  頓  那  迩  嚢  派  排  輩  蝿  剥  溌  醗  班  頒  悲  扉  斐  緋  柊  桧  媛  貧  頻  父  葺  分  噴  憤  粉  紛  雰  便  捧 "
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "jp83",
+        "splitText": "偉  緯  違  衛  延  沿  鉛  翁  芽  雅  害  慨  概  殻  敢  貫  巌  頑  帰  軌  窮  均  傑  穴  健  建  鈷  檎  交  公  更  校  硬  絞  考  購  降  拷  罪  使  史  姉  謝  邪  収  輯  柔  瞬  舜  松  訟  丈  埴  植  職  親  遂  据  摂  船  総  聡  像  誕  恥  兆  眺  聴  跳  庭  廷  艇  桃  逃  派  排  輩  班  頒  悲  扉  斐  緋  貧  父  葺  分  噴  憤  粉  紛  雰  便"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "jp90",
+        "splitText": "飴  溢  鰯  淫  迂  噂  襖  迦  晦  葛  鞄  翰  翫  徽  祇  卿  僅  喰    屑  祁  倦  捲  諺  巷  鵠  榊  薩  鯖  錆    灼  酋  薯  藷  哨  鞘  蝕  逗  摺  撰  煎  詮  噌  遡  遜  腿  蛸  辿  樽  註  瀦  捗  槌  鎚  鄭  擢   堵    賭  瀞  謎  灘  楢  禰  牌  這  秤  箸  挽  樋  稗  逼  謬  廟  瀕  蔽  瞥  娩  庖  蓬  鱒  儲  餅  鑓  愈  榔    嘲  芦  茨  牙  汲  饗  餐  煽  穿  箭  揃  叛  篇  迄  扁  篝  騙  逢  辻  楯  誹  徘  靱  餌  廻  訊  歎  兎  蔑  猷  叟  囀"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "jp04",
+        "lang": "ja",
+        "splitText": "餌 嘘  頴  焔  鴎  撹  噛  侠  倶  躯  繋  鹸  麹  叱  屡  繍  蒋  醤  靭  蝉  曽  掻  痩  騨  箪  掴  填  顛  祷  涜  呑  嚢  剥  溌  醗  頬  桝  麺  莱  蝋 "
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "nalt",
+        "splitText": "気  禁  劇  欠  減  呼  後  交  控  項  合  左  再  済  祭  司  至  自  写  手  宗  出  女  勝  小  上  新  正  声  前  双  増  多  代  大  段  男  中  調  適  天  電  年  秘  標  負  副  文  夜  優  立  Ⅰ  Ⅱ  Ⅲ  Ⅳ  Ⅴ  Ⅵ  Ⅶ  Ⅷ  Ⅸ  Ⅹ  ⅰ  ⅱ  ⅲ  ⅳ  ⅴ  ⅵ  ⅶ  ⅷ  ⅸ  ⅹ  Ⅺ  Ⅻ  ⅺ  ⅻ  +  0  1  2  3  4  5"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "nlck",
+        "splitText": "嘘  頴  焔  鴎  撹  噛  侠  倶  躯  繋  鹸  麹  叱  屡  繍  蒋  醤  靭  蝉  曽  掻  痩  騨  箪  掴  填  顛  祷  涜  呑  嚢  剥  溌  醗  頬  桝  麺  莱  蝋 "
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "pkna",
+        "splitText": "ｦ  ｧ  ｨ  ｩ  ｪ  ｫ  ｬ  ｭ  ｮ  ｯ  ｰ  ｱ  ｲ  ｳ  ｴ  ｵ  ｶ  ｷ  ｸ  ｹ  ｺ  ｻ  ｼ  ｽ  ｾ  ｿ  ﾀ  ﾁ  ﾂ  ﾃ  ﾄ  ﾅ  ﾆ  ﾇ  ﾈ  ﾉ  ﾊ  ﾋ  ﾌ  ﾍ  ﾎ  ﾏ  ﾐ  ﾑ  ﾒ  ﾓ  ﾔ  ﾕ  ﾖ  ﾗ  ﾘ  ﾙ  ﾚ  ﾛ  ﾜ  ﾝ"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "qwid",
+        "splitText": " (  )  ,  ‑  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  =  –  —    ，  ．  ：  ；  ―  ‐  ／  （  ）  ＝  ０  １  ２  ３  ４  ５  ６  ７  ８  ９"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "ruby",
+        "splitText": "、  。  ・  ヽ  ヾ  ゝ  ゞ  ー  （  ）  〔  〕  ＊  ○  ◎  △  ▲  ※  ０  １  ２  ３  ４  ５  ６  ７  ８  ９  ぁ  あ  ぃ  い  ぅ  う  ぇ  え  ぉ  お  か  が  き  ぎ  く  ぐ  け  げ  こ  ご  さ  ざ  し  じ  す  ず  せ  ぜ  そ  ぞ  た  だ  ち  ぢ  っ  つ  づ  て  で  と  ど  な  に  ぬ  ね  の  は  ば  ぱ  ひ  び  ぴ  ふ  ぶ  ぷ "
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "twid",
+        "splitText": "(  )  ,  ‑  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  =  –  ∙  •  —    ･  ，  ．  ・  ：  ；  ―  ‐  ／  （  ）  ＝  ０  １  ２  ３  ４  ５  ６  ７  ８  ９"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "vert",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
+        "fontSize": 32,
+        "height": "360px",
+        "splitText": "、  。  ，  ．  ：  ゛  ゜  ￣  ＿  ー  ―  ‐  ～  ‖  ｜  …  ‥    （  ）  〔  〕  ［  ］  ｛  ｝  〈  〉  《  》  「  」  『  』  【  】  ＝  °  ′  ″  →  ←  ↑  ↓  ぁ  ぃ  ぅ  ぇ  ぉ  っ  ゃ  ゅ  ょ  ゎ  ァ  ィ  ゥ  ェ  ォ  ッ  ャ  ュ  ョ  ヮ  ヵ  ヶ  ─  ━  │  ┃  ┄  ┅  ┆  ┇"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "vkna",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
+        "fontSize": 24,
+        "height": "10em",
+        "splitText": "ヽヾゝゞあいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんアイウ"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "pwid",
+        "splitText": "＆  ＊  ＠  §  ∈  ∋  ⊆  ⊇  ⊂  ⊃  ∪  ∩  ∧  ∨  ⇒  ⇔  ∀  ∃  ∠  ⊥  ∂  ∇  ≡  ≒  ≪  ≫  √  ∽  ∝  ∵  ∫  ∬  ‰  †  ‡  ¶  ０  １  ２  ３  ４  ５  ６  ７  ８  ９  Ａ  Ｂ  Ｃ  Ｄ  Ｅ  Ｆ  Ｇ  Ｈ  Ｉ  Ｊ  Ｋ  Ｌ  Ｍ  Ｎ  Ｏ  Ｐ  Ｑ  Ｒ  Ｓ  Ｔ  Ｕ  Ｖ  Ｗ  Ｘ  Ｙ  Ｚ  ａ  ｂ  ｃ  ｄ  ｅ  ｆ  ｇ  ｈ  ｉ  ｊ  ｋ  ｌ  ｍ  ｎ  ｏ  ｐ  ｑ  ｒ  ｓ  ｔ  ｕ  ｖ  ｗ  ｘ  ｙ  ｚ  ぁ  あ  ぃ  い  ぅ  う  ぇ  え  ぉ  お  か  が  き  ぎ  く  ぐ  け  げ  こ  ご  さ  ざ  し  じ  す  ず  せ  ぜ  そ  ぞ  た  だ  ち  ぢ  っ  つ  づ  て  で  と  ど  な  に  ぬ  ね  の  は  ば  ぱ  ひ  び  ぴ  ふ  ぶ  ぷ  へ  べ  ぺ  ほ  ぼ  ぽ  ま  み  む  め  も  ゃ  や  ゅ  ゆ  ょ  よ  ら  り  る  れ  ろ  ゎ  わ  ゐ  ゑ  を  ん  ァ  ア  ィ  イ  ゥ"
+    },
+    {
+        "fontLink": "Kozuka Mincho Pro.otf",
+        "featureKey": "vrt2",
+        "direction": "rtl",
+        "writing-mode": "vertical-rl",
+        "text-orientation": "upright",
+        "fontSize": 32,
+        "height": "360px",
+        "splitText": "!  #  $  %  &  '  (  )  *  +  ,  ‑  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z  [  ¥  ]  ^  ̲  ̀  a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r  s  t  u "
+    }
+]

@@ -1,0 +1,27 @@
+{
+  "name": "cn-font-metrics",
+  "version": "2.1.6",
+  "description": "",
+  "main": "dist/cn-font-metrics.js",
+  "module": "dist/cn-font-metrics.mjs",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "build:font": "node ./fontaine.mjs ",
+    "build":" vite build&&tsc",
+    "prepublish": "pnpm build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fontaine": "^0.5.0"
+  },
+  "devDependencies": {
+    "glob": "^10.4.1"
+  }
+}

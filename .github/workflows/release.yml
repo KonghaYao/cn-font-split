@@ -1,0 +1,24 @@
+name: release
+
+on:
+    push:
+        tags:
+            - '*'
+    workflow_dispatch: # 添加 workflow_dispatch 触发器
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: 18
+                  registry-url: 'https://registry.npmjs.org'
+            - run: npm install pnpm -g
+            - run: pnpm install --no-frozen-lockfile
+            - run: pnpm -C ./packages/font-sharp build
+            - run: pnpm publish --access public --no-git-checks
+              working-directory: packages/subsets
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

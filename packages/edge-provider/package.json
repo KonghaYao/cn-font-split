@@ -1,0 +1,24 @@
+{
+    "name": "edge-provider",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "scripts": {
+        "build": "vite build",
+        "start": "deno serve -A --unstable-kv --unstable-sloppy-imports ./server/index.ts",
+        "start:woff2": "deno serve -A --port 8001 --unstable-sloppy-imports ./server/woff2.ts"
+    },
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.685.0",
+        "hono": "^4.6.9",
+        "unstorage": "^1.13.1"
+    },
+    "devDependencies": {
+        "@chinese-fonts/wawoff2": "2.0.6",
+        "cn-font-split": "^6.0.0-1",
+        "dotenv": "^16.4.5"
+    }
+}

@@ -1,0 +1,14 @@
+[package]
+name = "subsets-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+harfbuzz_rs_now = "2.2.2"
+opentype = "0.38.0"
+prost = "0.13.3"
+prost-types = {version="0.13.3",optional=true}
+woff = "0.3.3"
+
+[build-dependencies]
+prost-build = "0.13.3"

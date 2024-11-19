@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <textarea style="font-size: 24px;">中文网字计划
+    </textarea>
+    <select id="font-select">
+    </select>
+</body>
+<script type="module">
+    import { FontReplacer, getChineseFontsMap } from './src/index.ts'
+    const CNFontMap = await getChineseFontsMap()
+    const fontReplacer = new FontReplacer(CNFontMap)
+
+    console.log(fontReplacer.source);
+    const select = document.getElementById('font-select')
+    Object.keys(fontReplacer.source).map(i => {
+        const option = document.createElement('option')
+        option.innerText = i
+        option.value = i
+        select.appendChild(option)
+
+    })
+    const replaceFont = () => {
+        fontReplacer.applyFont(document.querySelector('textarea'), select.value)
+        console.log(select.value);
+    }
+    select.addEventListener('input', replaceFont)
+    replaceFont()
+</script>
+
+</html>

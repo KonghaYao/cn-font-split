@@ -1,0 +1,10 @@
+node_modules
+fonts
+build
+dist
+otf
+**/temp
+.rollup.cache
+.DS_Store
+target
+.idea
