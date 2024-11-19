@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
  
 package api_interface;
 
@@ -6,7 +6,7 @@ message InputTemplate {
     /**
      * 对接此层，需要直接输入 buffer
      */
-    bytes input = 1;
+    required bytes input = 1;
     /**
      * 切割后放置文件的文件夹
      */
@@ -49,18 +49,18 @@ message InputTemplate {
     optional bool subset_remain_chars = 25;
 
     message PolyfillType {
-        string name = 1;
-        string format = 2;
+        required string name = 1;
+        required string format = 2;
     }
 
     message PreviewImage {
-        string text = 1;
-        string name = 2;
+        required string text = 1;
+        required string name = 2;
     }
 }
  
 message EventMessage {
-    string event = 1;
+    required string event = 1;
     optional bytes data = 2;
     optional string message = 3;
 }

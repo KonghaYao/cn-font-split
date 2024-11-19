@@ -4,7 +4,7 @@ use woff::version2::compress;
 use crate::protos::EventMessage;
 use crate::runner::Context;
 
-
+// 构建单个分包为字体文件
 pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
     let subset_runner =
         Subset::new();
@@ -17,8 +17,9 @@ pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
     woff2_binary
 }
 
+/// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context, callback: fn(event: EventMessage)) {
-    let subset_packages = ctx.pre_subset_result.clone().expect("No subset packages found");
+    let subset_packages = ctx.pre_subset_result.as_mut().expect("No subset packages found");
     let face = Face::from_bytes(&ctx.input.input, 0);
     subset_packages.iter().enumerate().for_each(|(index, r)| {
         let result = build_single_subset(&face, r);
