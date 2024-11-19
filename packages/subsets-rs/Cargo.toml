@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 harfbuzz_rs_now = "2.2.2"
+md5 = "0.7.0"
 opentype = "0.38.0"
 prost = "0.13.3"
 prost-types = {version="0.13.3",optional=true}

@@ -23,10 +23,19 @@ pub fn run_subset(ctx: &mut Context, callback: fn(event: EventMessage)) {
     let face = Face::from_bytes(&ctx.input.input, 0);
     subset_packages.iter().enumerate().for_each(|(index, r)| {
         let result = build_single_subset(&face, r);
+        let hash = md5::compute(result.as_slice());
+        let hash_string = format!("{:x}", hash);
         callback(EventMessage {
             event: "output_data".to_string(),
             data: Option::from(result),
-            message: Option::from(index.to_string()),
-        })
+            message: Option::from(hash_string.clone()),
+        });
+        ctx.run_subset_result.push(RunSubsetResult {
+            hash: hash_string.clone(),
+        });
     });
+}
+
+pub struct RunSubsetResult {
+    hash: String,
 }

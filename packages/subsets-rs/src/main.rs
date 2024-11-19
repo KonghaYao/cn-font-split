@@ -1,6 +1,7 @@
 mod run_subset;
 mod runner;
 mod pre_subset;
+mod link_subset;
 
 use std::io::Read;
 use prost::Message;
