@@ -1,4 +1,5 @@
 mod plugin;
+pub mod name_table;
 
 use opentype::layout::feature::Header;
 use opentype::layout::{ChainedContext, Coverage};
@@ -10,7 +11,7 @@ use opentype::truetype::tables::character_mapping::{
 use opentype::truetype::tables::CharacterMapping;
 use opentype::Font;
 use std::collections::{HashMap, HashSet};
-
+use std::hash::Hash;
 use std::io::Cursor;
 use crate::protos::EventMessage;
 use crate::runner::Context;
@@ -20,8 +21,10 @@ pub fn pre_subset(ctx: &mut Context, callback: fn(event: EventMessage)) {
     let mut font_file = Cursor::new(file_binary);
     let font = opentype::Font::read(&mut font_file).expect("TODO: panic message");
     let set = analyze_gsub(&font, &mut font_file);
-    ctx.pre_subset_result = Option::from(set);
+    ctx.pre_subset_result = set;
+    ctx.name_table = name_table::analyze_name_table(&font, &mut font_file);
 }
+
 
 pub fn analyze_gpos(font: &Font, font_file: &mut Cursor<&Vec<u8>>) {
     // GPOS table
@@ -181,8 +184,8 @@ pub fn analyze_gsub(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> Vec<Vec<u3
                                     r.records
                                         .iter()
                                         .map(|liga|
-                            // 由于 liga 生成的 glyph 是没有算入 unicode 位置的，故不加入 glyph_id:
-                            liga.glyph_ids.clone() as Vec<u16>)
+                                            // 由于 liga 生成的 glyph 是没有算入 unicode 位置的，故不加入 glyph_id:
+                                            liga.glyph_ids.clone() as Vec<u16>)
                                         .collect::<Vec<Vec<u16>>>()
                                 })
                                 .collect::<Vec<Vec<u16>>>();
