@@ -1,17 +1,70 @@
-use opentype::truetype::tables::names::{NameID, PlatformID};
-use std::io::Cursor;
-use opentype::Font;
+use opentype::layout::language;
+use opentype::truetype::tables::names::language::{Macintosh, Windows};
+use opentype::truetype::tables::names::{LanguageID, NameID, PlatformID};
 use opentype::truetype::tables::Names;
-pub type NameTable = Vec<(String, String, String)>;
+use opentype::Font;
+use std::io::Cursor;
+
+type PlatformString = String;
+type LanguageString = String;
+type NameString = String;
+type ValueString = String;
+
+#[derive(Debug)]
+pub struct NameTable {
+    pub table: Vec<NameTableRow>,
+}
+#[derive(Debug)]
+pub struct NameTableRow {
+    language: String,
+    platform: String,
+    name: String,
+    value: String,
+}
+impl NameTable {
+    fn get_language(&self, str: &str) -> Vec<&NameTableRow> {
+        self.table.iter().filter(|x| x.language == str).collect()
+    }
+    /// 默认获取 Windows 下面的 en 的标签，这个是用于机器看的
+    pub fn get_name(
+        &self,
+        str: &str,
+        platform: Option<&str>,
+        language: Option<&str>,
+    ) -> Vec<&NameTableRow> {
+        let platform = platform.unwrap_or("Windows");
+        let table = self.get_language(language.unwrap_or(&"en"));
+        table
+            .iter()
+            .filter(|x| x.name == str && x.platform == platform)
+            .map(|x| *x)
+            .collect()
+    }
+}
 
 /// 解析 name table 可以得知关于整个字体的头部信息
 pub fn analyze_name_table(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> NameTable {
     let data: Names = font.take(font_file).unwrap().unwrap();
-    let mut table: NameTable = vec![];
-    data.iter().for_each(|((platform, _, __, name), value)| {
-        let key = name_id_to_string(name);
-        table.push((platform_to_string(platform), key, value.unwrap_or("".to_string())));
-    });
+    let mut table = NameTable { table: vec![] };
+    data.iter()
+        .for_each(|((platform, _, language, name), value)| {
+            let key = name_id_to_string(name);
+            let void_language_tag_decode: [Option<&str>; 1] = [None];
+            match value {
+                Some(value) => {
+                    table.table.push(NameTableRow {
+                        language: language
+                            .tag(&void_language_tag_decode)
+                            .unwrap_or("en")
+                            .to_string(),
+                        platform: platform_to_string(platform),
+                        name: key,
+                        value,
+                    });
+                }
+                None => {}
+            };
+        });
     table
 }
 
@@ -25,31 +78,31 @@ pub fn platform_to_string(platform_id: PlatformID) -> String {
 
 pub fn name_id_to_string(name_id: NameID) -> String {
     match name_id {
-        NameID::CopyrightNotice => "Copyright Notice".to_string(),
-        NameID::FontFamilyName => "Font Family Name".to_string(),
-        NameID::FontSubfamilyName => "Font Subfamily Name".to_string(),
-        NameID::UniqueFontID => "Unique Font ID".to_string(),
-        NameID::FullFontName => "Full Font Name".to_string(),
-        NameID::VersionString => "Version String".to_string(),
-        NameID::PostScriptFontName => "PostScript Font Name".to_string(),
+        NameID::CopyrightNotice => "CopyrightNotice".to_string(),
+        NameID::FontFamilyName => "FontFamilyName".to_string(),
+        NameID::FontSubfamilyName => "FontSubfamilyName".to_string(),
+        NameID::UniqueFontID => "UniqueFontID".to_string(),
+        NameID::FullFontName => "FullFontName".to_string(),
+        NameID::VersionString => "VersionString".to_string(),
+        NameID::PostScriptFontName => "PostScriptFontName".to_string(),
         NameID::Trademark => "Trademark".to_string(),
-        NameID::ManufacturerName => "Manufacturer Name".to_string(),
-        NameID::DesignerName => "Designer Name".to_string(),
+        NameID::ManufacturerName => "ManufacturerName".to_string(),
+        NameID::DesignerName => "DesignerName".to_string(),
         NameID::Description => "Description".to_string(),
-        NameID::VendorURL => "Vendor URL".to_string(),
-        NameID::DesignerURL => "Designer URL".to_string(),
-        NameID::LicenseDescription => "License Description".to_string(),
-        NameID::LicenseURL => "License URL".to_string(),
-        NameID::TypographicFamilyName => "Typographic Family Name".to_string(),
-        NameID::TypographicSubfamilyName => "Typographic Subfamily Name".to_string(),
-        NameID::CompatibleFullFontName => "Compatible Full Font Name".to_string(),
-        NameID::SampleText => "Sample Text".to_string(),
-        NameID::PostScriptCIDFindFontName => "PostScript CID Find Font Name".to_string(),
-        NameID::WWSFamilyName => "WWS Family Name".to_string(),
-        NameID::WWSSubfamilyName => "WWS Subfamily Name".to_string(),
-        NameID::LightBackgroundPalette => "Light Background Palette".to_string(),
-        NameID::DarkBackgroundPalette => "Dark Background Palette".to_string(),
-        NameID::PostScriptVariationNamePrefix => "PostScript Variation Name Prefix".to_string(),
+        NameID::VendorURL => "VendorURL".to_string(),
+        NameID::DesignerURL => "DesignerURL".to_string(),
+        NameID::LicenseDescription => "LicenseDescription".to_string(),
+        NameID::LicenseURL => "LicenseURL".to_string(),
+        NameID::TypographicFamilyName => "TypographicFamilyName".to_string(),
+        NameID::TypographicSubfamilyName => "TypographicSubfamilyName".to_string(),
+        NameID::CompatibleFullFontName => "CompatibleFullFontName".to_string(),
+        NameID::SampleText => "SampleText".to_string(),
+        NameID::PostScriptCIDFindFontName => "PostScriptCIDFindFontName".to_string(),
+        NameID::WWSFamilyName => "WWSFamilyName".to_string(),
+        NameID::WWSSubfamilyName => "WWSSubfamilyName".to_string(),
+        NameID::LightBackgroundPalette => "LightBackgroundPalette".to_string(),
+        NameID::DarkBackgroundPalette => "DarkBackgroundPalette".to_string(),
+        NameID::PostScriptVariationNamePrefix => "PostScriptVariationNamePrefix".to_string(),
         _ => "Other".to_string(),
     }
 }
@@ -61,11 +114,14 @@ fn test_name_table() {
     let file_binary = read_binary_file(&path).expect("Failed to read file");
     let mut font_file = Cursor::new(&file_binary);
     let font = Font::read(&mut font_file).expect("TODO: panic message");
-    // println!("Decoded: {:?}", decoded);
     let data = analyze_name_table(&font, &mut font_file);
-    data.iter().for_each(|(platform_id, key, value)| {
-        assert_eq!(platform_id.is_ascii(), true);
-        assert_eq!(key.is_ascii(), true);
-        assert_eq!(value.is_empty(), false);
-    })
+
+    // data.table.iter().for_each(|x| {
+    //     println!("{:?}", x);
+    // });
+
+    assert_eq!(
+        data.get_name("FontFamilyName", None, None)[0].value,
+        "Smiley Sans Oblique"
+    )
 }
