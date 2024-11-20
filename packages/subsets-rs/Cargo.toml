@@ -13,3 +13,6 @@ woff = "0.3.3"
 
 [build-dependencies]
 prost-build = "0.13.3"
+
+[workspace]
+members = ["crates/unicode-range"]
