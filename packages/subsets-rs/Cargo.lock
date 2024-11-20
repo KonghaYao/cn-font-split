@@ -343,6 +343,7 @@ dependencies = [
  "prost",
  "prost-build",
  "prost-types",
+ "unicode-range",
  "woff",
 ]
 

@@ -13,10 +13,9 @@ use opentype::Font;
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use std::io::Cursor;
-use crate::protos::EventMessage;
 use crate::runner::Context;
 
-pub fn pre_subset(ctx: &mut Context, callback: fn(event: EventMessage)) {
+pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &ctx.input.input;
     let mut font_file = Cursor::new(file_binary);
     let font = opentype::Font::read(&mut font_file).expect("TODO: panic message");
