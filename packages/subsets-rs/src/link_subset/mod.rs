@@ -1,11 +1,12 @@
 use crate::runner::Context;
 use unicode_range::UnicodeRange;
 pub fn link_subset(ctx: &mut Context) {
-    output_css(ctx);
+    let css_code = output_css(ctx);
+    println!("{}", css_code);
 }
 
 pub fn output_css(ctx: &mut Context) -> String {
-    let css = ctx.input.css.clone().unwrap();
+    let css = ctx.input.css.clone().unwrap_or_default();
     let name_table = &ctx.name_table;
 
     let comment_setting = css.comment.unwrap_or_default();
@@ -76,12 +77,12 @@ pub fn output_css(ctx: &mut Context) -> String {
             let unicode_range = &UnicodeRange::stringify(&res.unicodes);
             let face_code = format!(
                 r#"@font-face {{
-        font-family:"{font_family}";
-        src:{src_str};
-        font-style: {font_style};
-        font-display: {display};
-        unicode-range:{unicode_range};
-        }}"#
+font-family:"{font_family}";
+src:{src_str};
+font-style: {font_style};
+font-display: {display};
+unicode-range:{unicode_range};
+}}"#
             );
             // css 这个句尾不需要分号😭
             // 根据注释设置生成Unicode范围的注释。

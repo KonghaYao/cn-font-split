@@ -1,3 +1,4 @@
+use crate::link_subset::link_subset;
 use crate::pre_subset::name_table::NameTable;
 use crate::pre_subset::pre_subset;
 use crate::protos::{EventMessage, InputTemplate};
@@ -22,6 +23,6 @@ pub fn font_split(config: InputTemplate, callback: fn(event: EventMessage)) {
         callback,
     };
 
-    let process: Vec<SubsetRuntime<Context>> = vec![pre_subset, run_subset];
+    let process: Vec<SubsetRuntime<Context>> = vec![pre_subset, run_subset, link_subset];
     process.iter().for_each(|r| r(&mut ctx));
 }
