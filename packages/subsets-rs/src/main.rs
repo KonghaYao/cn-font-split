@@ -3,6 +3,7 @@ mod pre_subset;
 mod run_subset;
 mod runner;
 use crate::runner::font_split;
+use log::{debug, info};
 use prost::Message;
 use std::io::{Read, Write};
 
@@ -36,6 +37,8 @@ fn main() {
     };
 
     let start = std::time::Instant::now();
+    env_logger::init();
+    info!("this is a debug {}", "message");
     font_split(input, |m| {
         // println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
         // 打开一个文件以供写入，如果文件不存在，则创建它

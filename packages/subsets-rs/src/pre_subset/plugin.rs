@@ -1,5 +1,7 @@
 use std::collections::BTreeSet;
 
+use log::{info, trace};
+
 pub fn add_remain_chars_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
     remaining_chars_set: &mut BTreeSet<u32>,
