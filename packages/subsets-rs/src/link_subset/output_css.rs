@@ -1,6 +1,6 @@
-use unicode_range::UnicodeRange;
 use crate::protos::input_template::CssProperties;
 use crate::runner::Context;
+use unicode_range::UnicodeRange;
 
 pub fn output_css(ctx: &&mut Context, css: &CssProperties) -> String {
     let name_table = &ctx.name_table;
@@ -15,14 +15,12 @@ pub fn output_css(ctx: &&mut Context, css: &CssProperties) -> String {
     );
 
     // 优先使用preferredSubFamily，如果没有，则使用fontSubFamily或fontSubfamily。
-    let preferred_sub_family = name_table.get_name_first("FontSubfamilyName").unwrap_or(
-        name_table
-            .get_name_first("FullFontName")
-            .unwrap_or("".to_string()),
-    );
-    let font_style = css
-        .font_style.clone()
-        .unwrap_or(if is_italic(&preferred_sub_family) {
+    let preferred_sub_family =
+        name_table.get_name_first("FontSubfamilyName").unwrap_or(
+            name_table.get_name_first("FullFontName").unwrap_or("".to_string()),
+        );
+    let font_style =
+        css.font_style.clone().unwrap_or(if is_italic(&preferred_sub_family) {
             "italic".to_string()
         } else {
             "normal".to_string()
@@ -60,9 +58,13 @@ pub fn output_css(ctx: &&mut Context, css: &CssProperties) -> String {
         .map(|res| {
             let src_str: String = [
                 locals.join(","),
-                format!(r#"url("./{}") format("woff2")"#, res.hash.clone() + ".woff2")
+                format!(
+                    r#"url("./{}") format("woff2")"#,
+                    res.hash.clone() + ".woff2"
+                ),
             ]
-                .join(",") + polyfill_str.as_str();
+            .join(",")
+                + polyfill_str.as_str();
             let unicode_range = &UnicodeRange::stringify(&res.unicodes);
             let face_code = format!(
                 r#"@font-face {{

@@ -1,6 +1,9 @@
-mod plugin;
 pub mod name_table;
+mod plugin;
 
+use crate::pre_subset::plugin::{add_remain_chars_plugin, auto_subset_plugin};
+use crate::runner::Context;
+use harfbuzz_rs_now::Face;
 use opentype::layout::feature::Header;
 use opentype::layout::{ChainedContext, Coverage};
 use opentype::tables::glyph_substitution::Type;
@@ -12,17 +15,16 @@ use opentype::truetype::tables::CharacterMapping;
 use opentype::Font;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::Cursor;
-use harfbuzz_rs_now::Face;
-use crate::pre_subset::plugin::{add_remain_chars_plugin, auto_subset_plugin};
-use crate::runner::Context;
 
 pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &ctx.input.input;
     let face = Face::from_bytes(&ctx.input.input, 0);
-    let mut all_unicodes: BTreeSet<u32> = BTreeSet::from_iter(face.collect_unicodes());
+    let mut all_unicodes: BTreeSet<u32> =
+        BTreeSet::from_iter(face.collect_unicodes());
 
     let mut font_file = Cursor::new(file_binary);
-    let font = opentype::Font::read(&mut font_file).expect("TODO: panic message");
+    let font =
+        opentype::Font::read(&mut font_file).expect("TODO: panic message");
 
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
     for p in [add_remain_chars_plugin, auto_subset_plugin] {
@@ -30,26 +32,32 @@ pub fn pre_subset(ctx: &mut Context) {
     }
 
     // let set = analyze_gsub(&font, &mut font_file);
-    ctx.pre_subset_result = subsets.iter().map(|v| v.iter().map(|i| i.clone()).collect::<Vec<u32>>()).collect();
+    ctx.pre_subset_result = subsets
+        .iter()
+        .map(|v| v.iter().map(|i| i.clone()).collect::<Vec<u32>>())
+        .collect();
     ctx.name_table = name_table::analyze_name_table(&font, &mut font_file);
 }
-
 
 pub fn analyze_gpos(font: &Font, font_file: &mut Cursor<&Vec<u8>>) {
     // GPOS table
     let data: GlyphPositioning = font.take(font_file).unwrap().unwrap();
     let headers: Vec<Header> = data.features.headers;
-    let data: Vec<&str> = headers
-        .iter()
-        .map(|h| h.tag.as_str().expect("Invalid tag"))
-        .collect();
+    let data: Vec<&str> =
+        headers.iter().map(|h| h.tag.as_str().expect("Invalid tag")).collect();
     println!("{:?}", data);
 }
-pub fn analyze_cmap(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> HashMap<u16, u32> {
+pub fn analyze_cmap(
+    font: &Font,
+    font_file: &mut Cursor<&Vec<u8>>,
+) -> HashMap<u16, u32> {
     // GSUB
     let data: CharacterMapping = font.take(font_file).unwrap().unwrap();
     let mut cmap: HashMap<u16, u32> = HashMap::new();
-    fn inject_unicode_glyph_id_map(map: HashMap<u32, u16>, cmap: &mut HashMap<u16, u32>) {
+    fn inject_unicode_glyph_id_map(
+        map: HashMap<u32, u16>,
+        cmap: &mut HashMap<u16, u32>,
+    ) {
         map.iter().for_each(|(k, v)| {
             cmap.insert(v.clone(), k.clone() as u32);
         })
@@ -82,7 +90,10 @@ pub fn analyze_cmap(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> HashMap<u1
     });
     cmap
 }
-pub fn analyze_gsub(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> Vec<Vec<u32>> {
+pub fn analyze_gsub(
+    font: &Font,
+    font_file: &mut Cursor<&Vec<u8>>,
+) -> Vec<Vec<u32>> {
     let cmap = analyze_cmap(font, font_file);
     // GSUB
     let data: GlyphSubstitution = font.take(font_file).unwrap().unwrap();
@@ -296,7 +307,10 @@ pub fn analyze_gsub(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> Vec<Vec<u3
 }
 
 /// 将 cover 中的 glyph_id 直接注入 result
-fn collect_glyph_id_from_format_1_and_2(coverages: &Vec<Coverage>, result: &mut Vec<u16>) {
+fn collect_glyph_id_from_format_1_and_2(
+    coverages: &Vec<Coverage>,
+    result: &mut Vec<u16>,
+) {
     coverages.iter().for_each(|c| match c {
         Coverage::Format1(cov) => cov.glyph_ids.iter().for_each(|center| {
             result.push(center.clone());

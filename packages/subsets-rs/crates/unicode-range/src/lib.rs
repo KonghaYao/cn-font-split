@@ -10,8 +10,14 @@ impl UnicodeRange {
                 let parts: Vec<&str> = range.split('-').collect();
                 if parts.len() == 2 {
                     if let (Ok(start), Ok(end)) = (
-                        u32::from_str_radix(parts[0].trim_start_matches("U+"), 16),
-                        u32::from_str_radix(parts[1].trim_start_matches("U+"), 16),
+                        u32::from_str_radix(
+                            parts[0].trim_start_matches("U+"),
+                            16,
+                        ),
+                        u32::from_str_radix(
+                            parts[1].trim_start_matches("U+"),
+                            16,
+                        ),
                     ) {
                         for code_point in start..=end {
                             result.push(code_point);
@@ -21,15 +27,19 @@ impl UnicodeRange {
             } else if range.contains('?') {
                 let base = range.trim_start_matches("U+").replace('?', "0");
                 if let Ok(base_value) = u32::from_str_radix(&base, 16) {
-                    let wildcard_count = range.chars().filter(|&c| c == '?').count();
+                    let wildcard_count =
+                        range.chars().filter(|&c| c == '?').count();
                     let start = base_value;
-                    let end = base_value + (16u32.pow(wildcard_count as u32) - 1);
+                    let end =
+                        base_value + (16u32.pow(wildcard_count as u32) - 1);
                     for code_point in start..=end {
                         result.push(code_point);
                     }
                 }
             } else {
-                if let Ok(code_point) = u32::from_str_radix(range.trim_start_matches("U+"), 16) {
+                if let Ok(code_point) =
+                    u32::from_str_radix(range.trim_start_matches("U+"), 16)
+                {
                     result.push(code_point);
                 }
             }
@@ -94,7 +104,8 @@ mod tests {
 
     #[test]
     fn parse() {
-        let test_cases = vec!["U+ff65", "U+0-7F", "U+007F-00FF", "U+4??"].join(",");
+        let test_cases =
+            vec!["U+ff65", "U+0-7F", "U+007F-00FF", "U+4??"].join(",");
 
         let mut data = UnicodeRange::parse(&test_cases);
         let mut target: Vec<u32> = vec![0xff65];
