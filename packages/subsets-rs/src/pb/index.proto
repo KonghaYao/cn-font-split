@@ -65,3 +65,43 @@ message EventMessage {
     optional bytes data = 2;
     optional string message = 3;
 }
+
+
+message OutputReport {
+  string version = 1;
+  Css css = 2;
+  BundleMessage bundleMessage = 3;
+  repeated NameTable nameTable = 4;
+  repeated SubsetDetail subsetDetail = 5;
+
+  message NameTable{
+    string platform = 1;
+    string language = 2;
+    string name = 3;
+    string value = 4;
+  }
+
+  message SubsetDetail {
+    string name = 1;
+    int32 size = 2;
+    string chars = 3;
+    int32 diff = 4;
+    int32 charsSize = 5;
+  }
+
+
+  message BundleMessage {
+    uint32 originLength = 1;
+    uint32 originSize = 3;
+    uint32 bundledSize = 4;
+    uint32 bundledLength = 5;
+  }
+
+  message Css {
+    string family = 1;
+    string style = 2;
+    string weight = 3;
+    string display = 4;
+  }
+
+}

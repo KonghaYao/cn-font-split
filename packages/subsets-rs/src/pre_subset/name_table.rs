@@ -42,28 +42,30 @@ impl NameTable {
 }
 
 /// 解析 name table 可以得知关于整个字体的头部信息
-pub fn analyze_name_table(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> NameTable {
+pub fn analyze_name_table(
+    font: &Font,
+    font_file: &mut Cursor<&Vec<u8>>,
+) -> NameTable {
     let data: Names = font.take(font_file).unwrap().unwrap();
     let mut table = NameTable { table: vec![] };
-    data.iter()
-        .for_each(|((platform, _, language, name), value)| {
-            let key = name_id_to_string(name);
-            let void_language_tag_decode: [Option<&str>; 1] = [None];
-            match value {
-                Some(value) => {
-                    table.table.push(NameTableRow {
-                        language: language
-                            .tag(&void_language_tag_decode)
-                            .unwrap_or("en")
-                            .to_string(),
-                        platform: platform_to_string(platform),
-                        name: key,
-                        value,
-                    });
-                }
-                None => {}
-            };
-        });
+    data.iter().for_each(|((platform, _, language, name), value)| {
+        let key = name_id_to_string(name);
+        let void_language_tag_decode: [Option<&str>; 1] = [None];
+        match value {
+            Some(value) => {
+                table.table.push(NameTableRow {
+                    language: language
+                        .tag(&void_language_tag_decode)
+                        .unwrap_or("en")
+                        .to_string(),
+                    platform: platform_to_string(platform),
+                    name: key,
+                    value,
+                });
+            }
+            None => {}
+        };
+    });
     table
 }
 
@@ -78,30 +80,36 @@ pub fn platform_to_string(platform_id: PlatformID) -> String {
 pub fn name_id_to_string(name_id: NameID) -> String {
     match name_id {
         NameID::CopyrightNotice => "CopyrightNotice".to_string(), // 版权声明
-        NameID::FontFamilyName => "FontFamilyName".to_string(),   // 字体家族名称
+        NameID::FontFamilyName => "FontFamilyName".to_string(), // 字体家族名称
         NameID::FontSubfamilyName => "FontSubfamilyName".to_string(), // 字体子家族名称
-        NameID::UniqueFontID => "UniqueFontID".to_string(),       // 唯一字体标识
-        NameID::FullFontName => "FullFontName".to_string(),       // 完整字体名称
-        NameID::VersionString => "VersionString".to_string(),     // 版本字符串
+        NameID::UniqueFontID => "UniqueFontID".to_string(), // 唯一字体标识
+        NameID::FullFontName => "FullFontName".to_string(), // 完整字体名称
+        NameID::VersionString => "VersionString".to_string(), // 版本字符串
         NameID::PostScriptFontName => "PostScriptFontName".to_string(), // PostScript 字体名称
-        NameID::Trademark => "Trademark".to_string(),             // 商标
+        NameID::Trademark => "Trademark".to_string(),                   // 商标
         NameID::ManufacturerName => "ManufacturerName".to_string(), // 制造商名称
-        NameID::DesignerName => "DesignerName".to_string(),       // 设计师名称
-        NameID::Description => "Description".to_string(),         // 描述
-        NameID::VendorURL => "VendorURL".to_string(),             // 供应商 URL
-        NameID::DesignerURL => "DesignerURL".to_string(),         // 设计师 URL
+        NameID::DesignerName => "DesignerName".to_string(), // 设计师名称
+        NameID::Description => "Description".to_string(),   // 描述
+        NameID::VendorURL => "VendorURL".to_string(),       // 供应商 URL
+        NameID::DesignerURL => "DesignerURL".to_string(),   // 设计师 URL
         NameID::LicenseDescription => "LicenseDescription".to_string(), // 许可证描述
-        NameID::LicenseURL => "LicenseURL".to_string(),           // 许可证 URL
+        NameID::LicenseURL => "LicenseURL".to_string(), // 许可证 URL
         NameID::TypographicFamilyName => "TypographicFamilyName".to_string(), // 排版家族名称
-        NameID::TypographicSubfamilyName => "TypographicSubfamilyName".to_string(), // 排版子家族名称
+        NameID::TypographicSubfamilyName => {
+            "TypographicSubfamilyName".to_string()
+        } // 排版子家族名称
         NameID::CompatibleFullFontName => "CompatibleFullFontName".to_string(), // 兼容的完整字体名称
-        NameID::SampleText => "SampleText".to_string(),                         // 示例文本
-        NameID::PostScriptCIDFindFontName => "PostScriptCIDFindFontName".to_string(), // PostScript CID 查找字体名称
+        NameID::SampleText => "SampleText".to_string(), // 示例文本
+        NameID::PostScriptCIDFindFontName => {
+            "PostScriptCIDFindFontName".to_string()
+        } // PostScript CID 查找字体名称
         NameID::WWSFamilyName => "WWSFamilyName".to_string(), // WWS 家族名称
         NameID::WWSSubfamilyName => "WWSSubfamilyName".to_string(), // WWS 子家族名称
         NameID::LightBackgroundPalette => "LightBackgroundPalette".to_string(), // 浅色背景调色板
         NameID::DarkBackgroundPalette => "DarkBackgroundPalette".to_string(), // 深色背景调色板
-        NameID::PostScriptVariationNamePrefix => "PostScriptVariationNamePrefix".to_string(), // PostScript 变体名称前缀
+        NameID::PostScriptVariationNamePrefix => {
+            "PostScriptVariationNamePrefix".to_string()
+        } // PostScript 变体名称前缀
         _ => "Other".to_string(), // 其他
     }
 }

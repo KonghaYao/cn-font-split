@@ -1,8 +1,9 @@
-use unicode_range::UnicodeRange;
 use crate::protos::input_template::CssProperties;
+use crate::protos::{output_report, OutputReport};
 use crate::runner::Context;
+use unicode_range::UnicodeRange;
 
-pub fn output_css(ctx: &&mut Context, css: &CssProperties) -> String {
+pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
     let name_table = &ctx.name_table;
 
     let comment_setting = css.comment.unwrap_or_default();
@@ -15,18 +16,21 @@ pub fn output_css(ctx: &&mut Context, css: &CssProperties) -> String {
     );
 
     // 优先使用preferredSubFamily，如果没有，则使用fontSubFamily或fontSubfamily。
-    let preferred_sub_family = name_table.get_name_first("FontSubfamilyName").unwrap_or(
-        name_table
-            .get_name_first("FullFontName")
-            .unwrap_or("".to_string()),
-    );
-    let font_style = css
-        .font_style.clone()
-        .unwrap_or(if is_italic(&preferred_sub_family) {
+    let preferred_sub_family =
+        name_table.get_name_first("FontSubfamilyName").unwrap_or(
+            name_table.get_name_first("FullFontName").unwrap_or("".to_string()),
+        );
+    let font_style =
+        css.font_style.clone().unwrap_or(if is_italic(&preferred_sub_family) {
             "italic".to_string()
         } else {
             "normal".to_string()
         });
+
+    let font_weight = css
+        .font_weight
+        .clone()
+        .unwrap_or(get_weight(&preferred_sub_family).to_string());
 
     // 创建本地字体声明字符串。
     let locals = if css.local_family.len() == 0 {
@@ -60,9 +64,13 @@ pub fn output_css(ctx: &&mut Context, css: &CssProperties) -> String {
         .map(|res| {
             let src_str: String = [
                 locals.join(","),
-                format!(r#"url("./{}") format("woff2")"#, res.hash.clone() + ".woff2")
+                format!(
+                    r#"url("./{}") format("woff2")"#,
+                    res.hash.clone() + ".woff2"
+                ),
             ]
-                .join(",") + polyfill_str.as_str();
+            .join(",")
+                + polyfill_str.as_str();
             let unicode_range = &UnicodeRange::stringify(&res.unicodes);
             let face_code = format!(
                 r#"@font-face {{
@@ -70,6 +78,7 @@ font-family:"{font_family}";
 src:{src_str};
 font-style: {font_style};
 font-display: {display};
+font-weight: {font_weight};
 unicode-range:{unicode_range};
 }}"#
             );
@@ -90,6 +99,13 @@ unicode-range:{unicode_range};
             comment + &compressed
         })
         .collect();
+    ctx.reporter.css = Some(output_report::Css {
+        family: font_family.clone(),
+        style: font_style.clone(),
+        display: display.clone(),
+        weight: font_weight.clone(),
+    });
+
     codes.join("\n")
 }
 
@@ -104,4 +120,30 @@ pub fn vec_u32_to_string(vec: &Vec<u32>) -> String {
         .map(|u| std::char::from_u32(u.clone()).unwrap_or(' '))
         .collect();
     chars.into_iter().collect()
+}
+
+const FONT_WEIGHT_NAME: [(&str, u32); 13] = [
+    ("extra light", 200),
+    ("ultra light", 200),
+    ("extra bold", 800),
+    ("ultra bold", 800),
+    ("semi bold", 600),
+    ("demi bold", 600),
+    ("light", 300),
+    ("normal", 400),
+    ("regular", 400),
+    ("medium", 500),
+    ("bold", 700),
+    ("heavy", 900),
+    ("black", 900),
+];
+
+pub fn get_weight(sub_family: &str) -> u32 {
+    let sub_family = sub_family.to_ascii_lowercase();
+    for (name, weight) in FONT_WEIGHT_NAME {
+        if sub_family.contains(name) {
+            return weight;
+        }
+    }
+    600
 }
