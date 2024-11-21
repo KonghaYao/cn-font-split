@@ -10,17 +10,27 @@ use opentype::truetype::tables::character_mapping::{
 };
 use opentype::truetype::tables::CharacterMapping;
 use opentype::Font;
-use std::collections::{HashMap, HashSet};
-use std::hash::Hash;
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::Cursor;
+use harfbuzz_rs_now::Face;
+use crate::pre_subset::plugin::{add_remain_chars_plugin, auto_subset_plugin};
 use crate::runner::Context;
 
 pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &ctx.input.input;
+    let face = Face::from_bytes(&ctx.input.input, 0);
+    let mut all_unicodes: BTreeSet<u32> = BTreeSet::from_iter(face.collect_unicodes());
+
     let mut font_file = Cursor::new(file_binary);
     let font = opentype::Font::read(&mut font_file).expect("TODO: panic message");
-    let set = analyze_gsub(&font, &mut font_file);
-    ctx.pre_subset_result = set;
+
+    let mut subsets: Vec<BTreeSet<u32>> = vec![];
+    for p in [add_remain_chars_plugin, auto_subset_plugin] {
+        p(&mut subsets, &mut all_unicodes)
+    }
+
+    // let set = analyze_gsub(&font, &mut font_file);
+    ctx.pre_subset_result = subsets.iter().map(|v| v.iter().map(|i| i.clone()).collect::<Vec<u32>>()).collect();
     ctx.name_table = name_table::analyze_name_table(&font, &mut font_file);
 }
 
@@ -182,9 +192,9 @@ pub fn analyze_gsub(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> Vec<Vec<u3
                                 .flat_map(|r| {
                                     r.records
                                         .iter()
-                                        .map(|liga|
+                                        .map(|ligature|
                                             // 由于 liga 生成的 glyph 是没有算入 unicode 位置的，故不加入 glyph_id:
-                                            liga.glyph_ids.clone() as Vec<u16>)
+                                            ligature.glyph_ids.clone() as Vec<u16>)
                                         .collect::<Vec<Vec<u16>>>()
                                 })
                                 .collect::<Vec<Vec<u16>>>();
@@ -272,7 +282,7 @@ pub fn analyze_gsub(font: &Font, font_file: &mut Cursor<&Vec<u8>>) -> Vec<Vec<u3
                 })
                 .collect::<Vec<Vec<u16>>>()
         })
-        .filter(|i| i.len() > 1)
+        .filter(|i| !i.is_empty())
         .collect();
     // println!("{:?}", all_maybe_relative_glyph);
     all_maybe_relative_glyph

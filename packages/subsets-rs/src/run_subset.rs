@@ -32,7 +32,7 @@ pub fn run_subset(ctx: &mut Context) {
             (ctx.callback)(EventMessage {
                 event: "output_data".to_string(),
                 data: Option::from(result),
-                message: Option::from(hash_string.to_string()),
+                message: Option::from(hash_string.to_string() + ".woff2"),
             });
             ctx.run_subset_result.push(RunSubsetResult {
                 hash: hash_string.to_string(),

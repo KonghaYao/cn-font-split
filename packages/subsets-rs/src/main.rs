@@ -2,7 +2,7 @@ mod run_subset;
 mod runner;
 mod pre_subset;
 mod link_subset;
-use std::io::Read;
+use std::io::{Read, Write};
 use prost::Message;
 use crate::runner::font_split;
 
@@ -13,19 +13,29 @@ pub mod protos {
 fn main() {
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
-    let input = protos::InputTemplate { input: font_file, out_dir: None, css: None, target_type: None, subsets: None, language_areas: None, chunk_size: None, chunk_size_tolerance: None, max_allow_subsets_count: None, css_file_name: None, test_html: None, reporter: None, preview_image: None, rename_output_font: None, build_mode: None, multi_threads: None, font_feature: None, reduce_mins: None, auto_subset: None, subset_remain_chars: None };
+    let input = protos::InputTemplate { input: font_file, out_dir: None, css: None, target_type: None, subsets: None, language_areas: None, chunk_size: None, chunk_size_tolerance: None, max_allow_subsets_count: None, test_html: None, reporter: None, preview_image: None, rename_output_font: None, build_mode: None, multi_threads: None, font_feature: None, reduce_mins: None, auto_subset: None, subset_remain_chars: None };
 
-
+    let start = std::time::Instant::now();
     font_split(input, |m| {
-        println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
-    })
+        // println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
+        // 打开一个文件以供写入，如果文件不存在，则创建它
+        match m.data {
+            Some(data) => {
+                std::fs::File::create("dist/".to_string() + m.message.unwrap().as_str()).unwrap().write_all(&data).expect("write file error");
+            }
+            _ => ()
+        }
+    });
+    let duration = start.elapsed();
+
+    println!("Time: {:?}", duration);
 }
 
 #[test]
 fn test() {
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
-    let person = protos::InputTemplate { input: font_file, out_dir: None, css: None, target_type: None, subsets: None, language_areas: None, chunk_size: None, chunk_size_tolerance: None, max_allow_subsets_count: None, css_file_name: None, test_html: None, reporter: None, preview_image: None, rename_output_font: None, build_mode: None, multi_threads: None, font_feature: None, reduce_mins: None, auto_subset: None, subset_remain_chars: None };
+    let person = protos::InputTemplate { input: font_file, out_dir: None, css: None, target_type: None, subsets: None, language_areas: None, chunk_size: None, chunk_size_tolerance: None, max_allow_subsets_count: None, test_html: None, reporter: None, preview_image: None, rename_output_font: None, build_mode: None, multi_threads: None, font_feature: None, reduce_mins: None, auto_subset: None, subset_remain_chars: None };
     let mut encoded = Vec::new();
     person.encode(&mut encoded).expect("encoding failed");
 

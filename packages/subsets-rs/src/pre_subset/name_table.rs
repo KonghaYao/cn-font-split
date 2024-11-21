@@ -1,14 +1,7 @@
-use opentype::layout::language;
-use opentype::truetype::tables::names::language::{Macintosh, Windows};
-use opentype::truetype::tables::names::{LanguageID, NameID, PlatformID};
+use opentype::truetype::tables::names::{NameID, PlatformID};
 use opentype::truetype::tables::Names;
 use opentype::Font;
 use std::io::Cursor;
-
-type PlatformString = String;
-type LanguageString = String;
-type NameString = String;
-type ValueString = String;
 
 #[derive(Debug)]
 pub struct NameTable {

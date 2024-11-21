@@ -26,6 +26,7 @@ message InputTemplate {
         }
         optional CommentProperties comment = 7;
         optional bool compress = 8;
+        optional string file_name = 9;
     }
     optional CssProperties css = 5;
 
@@ -35,7 +36,7 @@ message InputTemplate {
     optional int32 chunk_size = 9;
     optional float chunk_size_tolerance = 10;
     optional int32 max_allow_subsets_count = 11;
-    optional string css_file_name = 12;
+
     optional bool test_html = 13;
     optional bool reporter = 14;
     optional PreviewImage preview_image = 15;
