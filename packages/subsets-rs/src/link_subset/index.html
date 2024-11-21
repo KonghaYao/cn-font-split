@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+    </head>
+
+    <style>
+        body {
+            overflow-wrap: break-word;
+            font-size: 18px;
+        }
+
+        h3 {
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                'Segoe UI',
+                Roboto,
+                Oxygen,
+                Ubuntu,
+                Cantarell,
+                'Open Sans',
+                'Helvetica Neue',
+                sans-serif;
+            font-weight: normal;
+        }
+    </style>
+
+    <body></body>
+    <script type="module">
+        import { createResource, createEffect } from 'https://esm.sh/solid-js';
+        import html from 'https://esm.sh/solid-js/html';
+        import protobuf from 'https://esm.sh/protobufjs';
+        const App = () => {
+            const [data] = createResource(
+                () =>
+                    new Promise((resolve, reject) => {
+                        protobuf.load('./index.proto', (err, root) => {
+                            if (err) return reject(err);
+                            fetch('./reporter.bin')
+                                .then((res) => res.arrayBuffer())
+                                .then((buf) => {
+                                    const OutputReport =
+                                        root.lookup('OutputReport');
+                                    const data = OutputReport.decode(
+                                        new Uint8Array(buf),
+                                    );
+                                    // console.log(data);
+                                    resolve(data);
+                                })
+                                .catch(reject);
+                        });
+                    }),
+            );
+            createEffect(() => {
+                if (data()) {
+                    const reporter = data();
+                    document.body.style.fontFamily = `"${reporter.css.family}"`;
+
+                    document.querySelector('title').textContent =
+                        reporter.css.family;
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = './' + 'result' + '.css';
+                    document.head.appendChild(link);
+                }
+            });
+            return html` <div>
+                ${() =>
+                    !data()
+                        ? html`<div>加载中</div>`
+                        : html`
+                              <section>
+                                  ${ReporterTable({ reporter: data() })}
+                              </section>
+                          `}
+            </div>`;
+        };
+
+        function ReporterTable(props) {
+            return html`
+                <div>
+                    ${props.reporter.subsetDetail.map((i) => {
+                        return html`
+                            <section>
+                                <h3>${i.hash}</h3>
+                                <div>${String.fromCodePoint(...i.chars)}</div>
+                            </section>
+                        `;
+                    })}
+                </div>
+            `;
+        }
+
+        import { render } from 'https://esm.sh/solid-js/web';
+
+        render(App, document.body);
+    </script>
+</html>

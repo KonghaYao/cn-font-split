@@ -4,6 +4,7 @@ use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
 use log::info;
 use woff::version2::compress;
+use std::time::Instant;
 
 // 构建单个分包为字体文件
 pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
@@ -17,7 +18,7 @@ pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
         .expect("Failed to compress subset");
     woff2_binary
 }
-use std::time::Instant;
+
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) {
     let face = Face::from_bytes(&ctx.input.input, 0);
@@ -47,6 +48,7 @@ pub fn run_subset(ctx: &mut Context) {
             unicodes: r.clone(),
         });
 
+        // 后面均是日志
         let duration = start_time.elapsed();
 
         bundled_size += r.len() as u32;
