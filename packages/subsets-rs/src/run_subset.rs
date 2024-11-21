@@ -51,19 +51,29 @@ pub fn run_subset(ctx: &mut Context) {
 
         bundled_size += r.len() as u32;
         bundled_length += result_bytes;
+
+        ctx.reporter.subset_detail.push(
+            output_report::SubsetDetail {
+                id: index as u32,
+                hash: hash_string.to_string(),
+                chars: r.clone(),
+                bytes: result_bytes as u32,
+                duration: duration.as_millis() as u32,
+            }
+        );
         info!(
-            "{}\t{}ms/{}/{}kb\t{:x}",
+            "{}\t{}ms/{}/{}kb\t{}",
             index,
             duration.as_millis(),
             r.len(),
             result_bytes as u32,
-            digest
+            hash_string.to_string()
         )
     });
 
     ctx.reporter.bundle_message = Some(output_report::BundleMessage {
         origin_length: origin_length as u32,
-        origin_size: origin_size,
+        origin_size,
         bundled_length: bundled_length as u32,
         bundled_size,
     })

@@ -1,5 +1,5 @@
 syntax = "proto3";
- 
+
 package api_interface;
 
 message InputTemplate {
@@ -11,7 +11,7 @@ message InputTemplate {
      * 切割后放置文件的文件夹
      */
     optional string out_dir = 2;
-    
+
     message CssProperties {
         optional string font_family = 1;
         optional string font_weight = 2;
@@ -40,7 +40,7 @@ message InputTemplate {
     optional bool test_html = 13;
     optional bool reporter = 14;
     optional PreviewImage preview_image = 15;
-    
+
     optional string rename_output_font = 18;
     optional string build_mode = 20;
     optional bool multi_threads = 21;
@@ -59,7 +59,7 @@ message InputTemplate {
         string name = 2;
     }
 }
- 
+
 message EventMessage {
     string event = 1;
     optional bytes data = 2;
@@ -68,40 +68,40 @@ message EventMessage {
 
 
 message OutputReport {
-  string version = 1;
-  Css css = 2;
-  BundleMessage bundleMessage = 3;
-  repeated NameTable nameTable = 4;
-  repeated SubsetDetail subsetDetail = 5;
+    string version = 1;
+    Css css = 2;
+    BundleMessage bundle_message = 3;
+    repeated NameTable name_table = 4;
+    repeated SubsetDetail subset_detail = 5;
 
-  message NameTable{
-    string platform = 1;
-    string language = 2;
-    string name = 3;
-    string value = 4;
-  }
+    message NameTable {
+        string platform = 1;
+        string language = 2;
+        string name = 3;
+        string value = 4;
+    }
 
-  message SubsetDetail {
-    string name = 1;
-    int32 size = 2;
-    string chars = 3;
-    int32 diff = 4;
-    int32 charsSize = 5;
-  }
+    message SubsetDetail {
+        uint32 id = 1;
+        string hash = 2;
+        uint32 bytes = 3;
+        repeated uint32 chars = 4;
+        uint32 duration = 5;
+    }
 
 
-  message BundleMessage {
-    uint32 originLength = 1;
-    uint32 originSize = 3;
-    uint32 bundledSize = 4;
-    uint32 bundledLength = 5;
-  }
+    message BundleMessage {
+        uint32 origin_length = 1;
+        uint32 origin_size = 3;
+        uint32 bundled_size = 4;
+        uint32 bundled_length = 5;
+    }
 
-  message Css {
-    string family = 1;
-    string style = 2;
-    string weight = 3;
-    string display = 4;
-  }
+    message Css {
+        string family = 1;
+        string style = 2;
+        string weight = 3;
+        string display = 4;
+    }
 
 }
