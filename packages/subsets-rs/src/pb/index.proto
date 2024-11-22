@@ -62,8 +62,8 @@ message InputTemplate {
 
 message EventMessage {
     string event = 1;
-    optional bytes data = 2;
-    optional string message = 3;
+    string message = 2;
+    optional bytes data = 3;
 }
 
 

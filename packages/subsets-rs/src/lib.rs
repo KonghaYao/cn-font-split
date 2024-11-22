@@ -45,7 +45,7 @@ fn main_test() {
         // 打开一个文件以供写入，如果文件不存在，则创建它
         match m.data {
             Some(data) => {
-                output_file(&format!("dist/{}", m.message.unwrap()), &data)
+                output_file(&format!("dist/{}", m.message), &data)
                     .expect("write file error");
             }
             _ => (),

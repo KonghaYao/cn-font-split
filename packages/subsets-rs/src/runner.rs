@@ -38,7 +38,7 @@ pub fn font_split(config: InputTemplate, callback: fn(event: EventMessage)) {
     callback(EventMessage {
         event: "output_data".to_string(),
         data: Some(reporter_buffer),
-        message: Some("reporter.bin".to_string()),
+        message: "reporter.bin".to_string(),
     });
     ()
 }

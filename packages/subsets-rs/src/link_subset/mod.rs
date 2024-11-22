@@ -13,16 +13,16 @@ pub fn link_subset(ctx: &mut Context) {
     (ctx.callback)(EventMessage {
         event: "output_data".to_string(),
         data: Some(css_code.as_bytes().to_vec()),
-        message: Some(file_name),
+        message: file_name,
     });
     (ctx.callback)(EventMessage {
         event: "output_data".to_string(),
         data: Some(HTML_TEMPLATE.to_vec()),
-        message: Some("index.html".to_string()),
+        message: "index.html".to_string(),
     });
     (ctx.callback)(EventMessage {
         event: "output_data".to_string(),
         data: Some(INDEX_PROTO.to_vec()),
-        message: Some("index.proto".to_string()),
+        message: "index.proto".to_string(),
     });
 }
