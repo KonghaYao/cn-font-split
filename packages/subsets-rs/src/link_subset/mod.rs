@@ -12,17 +12,17 @@ pub fn link_subset(ctx: &mut Context) {
     let file_name = css.file_name.unwrap_or("result.css".to_string());
     (ctx.callback)(EventMessage {
         event: "output_data".to_string(),
-        data: Option::from(css_code.as_bytes().to_vec()),
-        message: Option::from(file_name),
+        data: Some(css_code.as_bytes().to_vec()),
+        message: Some(file_name),
     });
     (ctx.callback)(EventMessage {
         event: "output_data".to_string(),
-        data: Option::from(HTML_TEMPLATE.to_vec()),
-        message: Option::from("index.html".to_string()),
+        data: Some(HTML_TEMPLATE.to_vec()),
+        message: Some("index.html".to_string()),
     });
     (ctx.callback)(EventMessage {
         event: "output_data".to_string(),
-        data: Option::from(INDEX_PROTO.to_vec()),
-        message: Option::from("index.proto".to_string()),
+        data: Some(INDEX_PROTO.to_vec()),
+        message: Some("index.proto".to_string()),
     });
 }
