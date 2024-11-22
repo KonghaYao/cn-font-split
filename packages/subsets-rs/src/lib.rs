@@ -91,7 +91,7 @@ fn test() {
     person.encode(&mut encoded).expect("encoding failed");
 
     let decoded = protos::InputTemplate::decode(&encoded[..]).unwrap();
-    println!("Decoded: {:?}", decoded);
+    println!("Decoded: {:?}", decoded.css);
 }
 pub fn read_binary_file(file_path: &str) -> std::io::Result<Vec<u8>> {
     use std::io::Read;

@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 harfbuzz_rs_now = "2.2.2"
+lang_unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
 log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.0"

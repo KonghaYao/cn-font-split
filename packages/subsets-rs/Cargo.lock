@@ -105,6 +105,7 @@ version = "7.0.0"
 dependencies = [
  "env_logger",
  "harfbuzz_rs_now",
+ "lang_unicodes",
  "log",
  "md5",
  "opentype",

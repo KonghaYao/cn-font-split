@@ -13,6 +13,7 @@ use opentype::truetype::tables::character_mapping::{
 };
 use opentype::truetype::tables::CharacterMapping;
 use opentype::Font;
+use plugin::language_area_plugin;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::Cursor;
 
@@ -27,7 +28,8 @@ pub fn pre_subset(ctx: &mut Context) {
         opentype::Font::read(&mut font_file).expect("TODO: panic message");
 
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
-    for p in [add_remain_chars_plugin, auto_subset_plugin] {
+    for p in [language_area_plugin, add_remain_chars_plugin, auto_subset_plugin]
+    {
         p(&mut subsets, &mut all_unicodes)
     }
 

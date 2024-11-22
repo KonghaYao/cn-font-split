@@ -43,7 +43,7 @@ fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
 }
 
 lazy_static! {
-    pub static ref Zh_COMMON: Vec<u32> = get_part_from_cn_pkg(0).unwrap();
+    pub static ref ZH_COMMON: Vec<u32> = get_part_from_cn_pkg(0).unwrap();
     pub static ref ZH_SC: Vec<u32> = get_part_from_cn_pkg(1).unwrap();
     pub static ref ZH_TC: Vec<u32> = get_part_from_cn_pkg(2).unwrap();
 
@@ -61,7 +61,7 @@ mod tests {
     #[test]
     fn test() {
         assert_eq!(HIRAGANA_AND_KATAKANA.len(), 192);
-        assert_eq!(Zh_COMMON.len(), 4329);
+        assert_eq!(ZH_COMMON.len(), 4329);
         assert_eq!(ZH_SC.len(), 2508);
         assert_eq!(ZH_TC.len(), 2481);
     }

@@ -1,3 +1,6 @@
+use cjk_unicodes::{
+    HANGUL_JAMO, HANGUL_SYL, HIRAGANA_AND_KATAKANA, ZH_COMMON, ZH_SC, ZH_TC,
+};
 use lazy_static::lazy_static;
 pub mod cjk_unicodes;
 pub fn expand_ranges(ranges: &[(u32, u32)]) -> Vec<u32> {
@@ -15,9 +18,7 @@ lazy_static! {
     pub static ref LATIN: Vec<u32> = expand_ranges(&[(0x0001, 0x024F)]);
     pub static ref GREEK: Vec<u32> = expand_ranges(&[(0x0370, 0x03FF), (0x1F00, 0x1FFF)]);
 
-    /**
-     * 西里尔文范围
-     */
+    /// 西里尔文范围
     pub static ref CYRILLIC: Vec<u32> = expand_ranges(&[
         (0x0400, 0x052F),
         (0x1C80, 0x1C8F),
@@ -110,6 +111,7 @@ lazy_static! {
 
     /** 纳西文 */
     pub static ref NAXI_DONGBA: Vec<u32> = expand_ranges(&[(0x10FB0, 0x10FDF)]);
+
 }
 
 #[cfg(test)]
@@ -119,4 +121,39 @@ mod tests {
     fn test() {
         assert_eq!(LATIN.len(), 591)
     }
+}
+
+pub fn create_default_unicode_area() -> [Vec<u32>; 27] {
+    [
+        LATIN.to_vec(),
+        GREEK.to_vec(),
+        CYRILLIC.to_vec(),
+        // 中文处理
+        ZH_COMMON.to_vec(),
+        ZH_SC.to_vec(),
+        ZH_TC.to_vec(),
+        // 日文处理
+        HIRAGANA_AND_KATAKANA.to_vec(),
+        // 韩文处理
+        HANGUL_JAMO.to_vec(),
+        HANGUL_SYL.to_vec(),
+        BENGALI.to_vec(),
+        ARABIC.to_vec(),
+        DEVANAGARI.to_vec(),
+        THAI.to_vec(),
+        KHMER.to_vec(),
+        TIBETAN.to_vec(),
+        MONGOLIAN.to_vec(),
+        TAI_LUE.to_vec(),
+        YI.to_vec(),
+        PHAGS_PA.to_vec(),
+        LISU.to_vec(),
+        BUHID.to_vec(),
+        MIAO.to_vec(),
+        HANI.to_vec(),
+        LAHU.to_vec(),
+        VA.to_vec(),
+        ZHUANG.to_vec(),
+        NAXI_DONGBA.to_vec(),
+    ]
 }
