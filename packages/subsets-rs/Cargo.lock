@@ -103,6 +103,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "cn_font_split"
 version = "7.0.0"
 dependencies = [
+ "cn_font_utils",
  "env_logger",
  "harfbuzz_rs_now",
  "lang_unicodes",
@@ -115,6 +116,10 @@ dependencies = [
  "unicode-range",
  "woff",
 ]
+
+[[package]]
+name = "cn_font_utils"
+version = "0.1.0"
 
 [[package]]
 name = "colorchoice"

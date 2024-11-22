@@ -1,7 +1,6 @@
 pub mod name_table;
-mod plugin;
+pub mod plugin;
 
-use crate::pre_subset::plugin::{add_remain_chars_plugin, auto_subset_plugin};
 use crate::runner::Context;
 use harfbuzz_rs_now::Face;
 use opentype::layout::feature::Header;
@@ -13,7 +12,9 @@ use opentype::truetype::tables::character_mapping::{
 };
 use opentype::truetype::tables::CharacterMapping;
 use opentype::Font;
-use plugin::language_area_plugin;
+use plugin::{
+    add_remain_chars_plugin, auto_subset_plugin, language_area_plugin,
+};
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::Cursor;
 

@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use lang_unicodes::create_default_unicode_area;
-use log::{debug, info};
+use log::info;
 pub fn add_remain_chars_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
     remaining_chars_set: &mut BTreeSet<u32>,
@@ -57,6 +57,8 @@ pub fn language_area_plugin(
                 })
                 .map(|c| c.clone()),
         );
-        subsets.push(set);
+        if set.len() > 0 {
+            subsets.push(set);
+        }
     });
 }
