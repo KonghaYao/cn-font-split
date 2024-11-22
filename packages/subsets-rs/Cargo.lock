@@ -100,6 +100,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "cn_font_split"
+version = "7.0.0"
+dependencies = [
+ "env_logger",
+ "harfbuzz_rs_now",
+ "log",
+ "md5",
+ "opentype",
+ "prost",
+ "prost-build",
+ "prost-types",
+ "unicode-range",
+ "woff",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -215,6 +231,10 @@ checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
+
+[[package]]
+name = "lang_unicodes"
+version = "0.1.0"
 
 [[package]]
 name = "libc"
@@ -422,22 +442,6 @@ name = "shlex"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
-
-[[package]]
-name = "subsets-rs"
-version = "0.1.0"
-dependencies = [
- "env_logger",
- "harfbuzz_rs_now",
- "log",
- "md5",
- "opentype",
- "prost",
- "prost-build",
- "prost-types",
- "unicode-range",
- "woff",
-]
 
 [[package]]
 name = "syn"

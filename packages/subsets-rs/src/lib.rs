@@ -1,17 +1,19 @@
-mod link_subset;
-mod pre_subset;
-mod run_subset;
-mod runner;
-use crate::runner::font_split;
-use log::{debug, info};
-use prost::Message;
-use std::io::{Read, Write};
+pub mod link_subset;
+pub mod pre_subset;
+pub mod run_subset;
+pub mod runner;
+pub use runner::font_split;
 
 pub mod protos {
     include!("./pb/api_interface.rs");
 }
 
-fn main() {
+#[test]
+fn main_test() {
+    use log::info;
+    use runner::font_split;
+    use std::io::Write;
+
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let input = protos::InputTemplate {
@@ -61,6 +63,7 @@ fn main() {
 
 #[test]
 fn test() {
+    use prost::Message;
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let person = protos::InputTemplate {
@@ -88,9 +91,10 @@ fn test() {
     person.encode(&mut encoded).expect("encoding failed");
 
     let decoded = protos::InputTemplate::decode(&encoded[..]).unwrap();
-    // println!("Decoded: {:?}", decoded);
+    println!("Decoded: {:?}", decoded);
 }
 pub fn read_binary_file(file_path: &str) -> std::io::Result<Vec<u8>> {
+    use std::io::Read;
     // 打开文件
     let mut file = std::fs::File::open(file_path)?;
 

@@ -1,7 +1,7 @@
 use crate::link_subset::link_subset;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
-use crate::protos::{output_report, EventMessage, InputTemplate, OutputReport};
+use crate::protos::{EventMessage, InputTemplate, OutputReport};
 use crate::run_subset::{run_subset, RunSubsetResult};
 use prost::Message;
 
