@@ -3,19 +3,14 @@ use opentype::truetype::tables::Names;
 use opentype::Font;
 use std::io::Cursor;
 
+use crate::protos::output_report::NameTable;
+
 #[derive(Debug)]
-pub struct NameTable {
-    pub table: Vec<NameTableRow>,
+pub struct NameTableSets {
+    pub table: Vec<NameTable>,
 }
-#[derive(Debug)]
-pub struct NameTableRow {
-    pub language: String,
-    pub platform: String,
-    pub name: String,
-    pub value: String,
-}
-impl NameTable {
-    fn get_language(&self, str: &str) -> Vec<&NameTableRow> {
+impl NameTableSets {
+    fn get_language(&self, str: &str) -> Vec<&NameTable> {
         self.table.iter().filter(|x| x.language == str).collect()
     }
     /// 默认获取 Windows 下面的 en 的标签，这个是用于机器看的
@@ -24,7 +19,7 @@ impl NameTable {
         str: &str,
         platform: Option<&str>,
         language: Option<&str>,
-    ) -> Vec<&NameTableRow> {
+    ) -> Vec<&NameTable> {
         let platform = platform.unwrap_or("Windows");
         let table = self.get_language(language.unwrap_or(&"en"));
         table
@@ -45,15 +40,15 @@ impl NameTable {
 pub fn analyze_name_table(
     font: &Font,
     font_file: &mut Cursor<&Vec<u8>>,
-) -> NameTable {
+) -> NameTableSets {
     let data: Names = font.take(font_file).unwrap().unwrap();
-    let mut table = NameTable { table: vec![] };
+    let mut table = NameTableSets { table: vec![] };
     data.iter().for_each(|((platform, _, language, name), value)| {
         let key = name_id_to_string(name);
         let void_language_tag_decode: [Option<&str>; 1] = [None];
         match value {
             Some(value) => {
-                table.table.push(NameTableRow {
+                table.table.push(NameTable {
                     language: language
                         .tag(&void_language_tag_decode)
                         .unwrap_or("en")
@@ -116,7 +111,7 @@ pub fn name_id_to_string(name_id: NameID) -> String {
 
 #[test]
 fn test_name_table() {
-    use crate::read_binary_file;
+    use cn_font_utils::read_binary_file;
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let file_binary = read_binary_file(&path).expect("Failed to read file");
     let mut font_file = Cursor::new(&file_binary);

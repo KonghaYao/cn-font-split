@@ -84,17 +84,17 @@ message OutputReport {
     message SubsetDetail {
         uint32 id = 1;
         string hash = 2;
-        uint32 bytes = 3;
+        float bytes = 3;
         repeated uint32 chars = 4;
         uint32 duration = 5;
     }
 
 
     message BundleMessage {
-        uint32 origin_length = 1;
-        uint32 origin_size = 3;
-        uint32 bundled_size = 4;
-        uint32 bundled_length = 5;
+        uint32 origin_size = 1;
+        uint32 bundled_size = 2;
+        float origin_bytes = 3;
+        float bundled_bytes = 4;
     }
 
     message Css {

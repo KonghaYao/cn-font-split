@@ -1,21 +1,31 @@
 [package]
-name = "subsets-rs"
-version = "0.1.0"
+name = "cn-font-split"
+version = "7.0.0"
 edition = "2021"
 
 [dependencies]
-env_logger = "0.11.5"
+cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
 harfbuzz_rs_now = "2.2.2"
+lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
 log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.0"
 prost = "0.13.3"
-prost-types = {version="0.13.3",optional=true}
-unicode-range = { version = "0.1.0", path = "crates/unicode-range" }
+prost-types = { version = "0.13.3", optional = true }
+rayon = "1.10.0"
+unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
+
+[dev-dependencies]
+env_logger = "0.11.5"
+
 
 [build-dependencies]
 prost-build = "0.13.3"
 
 [workspace]
-members = ["crates/unicode-range"]
+members = [
+    "crates/cn_font_utils",
+    "crates/lang_unicodes",
+    "crates/unicode_range",
+]

@@ -17,3 +17,9 @@ cn-font-split 代码架构
     3. RunSubset
     4. CssLinker
     5. Analyzer
+
+## 命名规范
+
+1. 统一采用 snake_case, 不论文件名或文件夹、模块名、变量、函数名
+
+2. 包名统一用 `-` 链接，而不是 `_`。

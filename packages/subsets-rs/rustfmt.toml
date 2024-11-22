@@ -1,5 +1,5 @@
-max_width = 80                    
-tab_spaces = 4                     
-edition = "2021"                  
-use_small_heuristics = "Max"      
-newline_style = "unix"            
+max_width = 80
+tab_spaces = 4
+edition = "2021"
+use_small_heuristics = "Max"
+newline_style = "unix"

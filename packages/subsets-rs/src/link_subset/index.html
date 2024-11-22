@@ -75,6 +75,18 @@
                         ? html`<div>加载中</div>`
                         : html`
                               <section>
+                                  ${TableComponent({
+                                      data: data().nameTable,
+                                      columns: [
+                                          { header: '名称', accessor: 'name' },
+                                          {
+                                              header: '平台',
+                                              accessor: 'platform',
+                                          },
+                                          { header: '', accessor: 'language' },
+                                          { header: '值', accessor: 'value' },
+                                      ],
+                                  })}
                                   ${ReporterTable({ reporter: data() })}
                               </section>
                           `}
@@ -93,6 +105,32 @@
                         `;
                     })}
                 </div>
+            `;
+        }
+        function TableComponent(props) {
+            return html`
+                <table>
+                    <thead>
+                        <tr>
+                            ${props.columns.map(
+                                (column) => html`<th>${column.header}</th>`,
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${props.data.map(
+                            (row) =>
+                                html`<tr>
+                                    ${props.columns.map(
+                                        (column) =>
+                                            html`<td>
+                                                ${row[column.accessor]}
+                                            </td>`,
+                                    )}
+                                </tr>`,
+                        )}
+                    </tbody>
+                </table>
             `;
         }
 
