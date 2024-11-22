@@ -2,7 +2,6 @@ pub mod link_subset;
 pub mod pre_subset;
 pub mod run_subset;
 pub mod runner;
-use cn_font_utils::{output_file, read_binary_file};
 pub use runner::font_split;
 
 pub mod protos {
@@ -12,8 +11,8 @@ pub mod protos {
 #[test]
 fn main_test() {
     use log::info;
-    use runner::font_split;
-
+    use cn_font_utils::{output_file, read_binary_file};
+    
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let input = protos::InputTemplate {
@@ -60,6 +59,7 @@ fn main_test() {
 #[test]
 fn test() {
     use prost::Message;
+    use cn_font_utils::{output_file, read_binary_file};
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let person = protos::InputTemplate {

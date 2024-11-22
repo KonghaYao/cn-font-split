@@ -13,7 +13,7 @@ opentype = "0.38.0"
 prost = "0.13.3"
 prost-types = { version = "0.13.3", optional = true }
 rayon = "1.10.0"
-unicode-range = { version = "0.1.0", path = "crates/unicode-range" }
+unicode_range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
 
 [dev-dependencies]
@@ -27,5 +27,5 @@ prost-build = "0.13.3"
 members = [
     "crates/cn_font_utils",
     "crates/lang_unicodes",
-    "crates/unicode-range",
+    "crates/unicode_range",
 ]

@@ -1,5 +1,5 @@
 use crate::protos::input_template::CssProperties;
-use crate::protos::{output_report, OutputReport};
+use crate::protos::output_report;
 use crate::runner::Context;
 use cn_font_utils::vec_u32_to_string;
 use unicode_range::UnicodeRange;
@@ -114,7 +114,6 @@ unicode-range:{unicode_range};
 fn is_italic(str: &str) -> bool {
     str.to_lowercase().contains("italic")
 }
-
 
 const FONT_WEIGHT_NAME: [(&str, u32); 13] = [
     ("extra light", 200),
