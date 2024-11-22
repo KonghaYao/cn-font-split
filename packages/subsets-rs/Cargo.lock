@@ -100,13 +100,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "cn_font_split"
+name = "cn-font-split"
 version = "7.0.0"
 dependencies = [
- "cn_font_utils",
+ "cn-font-utils",
  "env_logger",
  "harfbuzz_rs_now",
- "lang_unicodes",
+ "lang-unicodes",
  "log",
  "md5",
  "opentype",
@@ -114,12 +114,12 @@ dependencies = [
  "prost-build",
  "prost-types",
  "rayon",
- "unicode_range",
+ "unicode-range",
  "woff",
 ]
 
 [[package]]
-name = "cn_font_utils"
+name = "cn-font-utils"
 version = "0.1.0"
 
 [[package]]
@@ -265,7 +265,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "lang_unicodes"
+name = "lang-unicodes"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
@@ -550,7 +550,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
 
 [[package]]
-name = "unicode_range"
+name = "unicode-range"
 version = "0.1.0"
 
 [[package]]

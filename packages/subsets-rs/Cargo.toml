@@ -1,19 +1,19 @@
 [package]
-name = "cn_font_split"
+name = "cn-font-split"
 version = "7.0.0"
 edition = "2021"
 
 [dependencies]
-cn_font_utils = { version = "0.1.0", path = "crates/cn_font_utils" }
+cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
 harfbuzz_rs_now = "2.2.2"
-lang_unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
+lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
 log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.0"
 prost = "0.13.3"
 prost-types = { version = "0.13.3", optional = true }
 rayon = "1.10.0"
-unicode_range = { version = "0.1.0", path = "crates/unicode_range" }
+unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
 
 [dev-dependencies]

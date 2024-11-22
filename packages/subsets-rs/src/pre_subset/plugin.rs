@@ -12,7 +12,7 @@ pub fn add_remain_chars_plugin(
 }
 pub fn auto_subset_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
-    remaining_chars_set: &mut BTreeSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
 ) {
     let new_subsets = subsets
         .iter()

@@ -10,9 +10,9 @@ pub mod protos {
 
 #[test]
 fn main_test() {
-    use log::info;
     use cn_font_utils::{output_file, read_binary_file};
-    
+    use log::info;
+
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let input = protos::InputTemplate {
@@ -58,8 +58,8 @@ fn main_test() {
 
 #[test]
 fn test() {
+    use cn_font_utils::read_binary_file;
     use prost::Message;
-    use cn_font_utils::{output_file, read_binary_file};
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let person = protos::InputTemplate {

@@ -1,5 +1,5 @@
 [package]
-name = "unicode_range"
+name = "unicode-range"
 version = "0.1.0"
 edition = "2021"
 
