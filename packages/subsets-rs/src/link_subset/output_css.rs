@@ -28,10 +28,12 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
             "normal".to_string()
         });
 
-    let font_weight = css
-        .font_weight
-        .clone()
-        .unwrap_or(get_weight(&preferred_sub_family).to_string());
+    let font_weight = css.font_weight.clone().unwrap_or(
+        ctx.fvar_table
+            .clone()
+            .map(|x| x.vf_weight)
+            .unwrap_or(get_weight(&preferred_sub_family).to_string()),
+    );
 
     // 创建本地字体声明字符串。
     let locals = if css.local_family.len() == 0 {

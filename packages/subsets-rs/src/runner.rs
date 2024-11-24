@@ -1,4 +1,5 @@
 use crate::link_subset::link_subset;
+use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
 use crate::protos::{EventMessage, InputTemplate, OutputReport};
@@ -12,6 +13,7 @@ pub struct Context<'a> {
     pub name_table: NameTableSets,
     pub callback: &'a dyn Fn(EventMessage),
     pub reporter: &'a mut OutputReport,
+    pub fvar_table: Option<FvarTable>,
 }
 
 pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
@@ -25,6 +27,7 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
             callback(data);
         }),
         reporter: &mut reporter,
+        fvar_table: None,
     };
     ctx.reporter.version = "7.0.0".to_string();
     for process in [pre_subset, run_subset, link_subset] {

@@ -1,10 +1,11 @@
+pub mod fvar;
 pub mod name_table;
 pub mod plugin;
 
 use crate::runner::Context;
 use harfbuzz_rs_now::Face;
 use opentype::layout::feature::Header;
-use opentype::layout::{ChainedContext, Coverage};
+use opentype::layout::{context, ChainedContext, Coverage};
 use opentype::tables::glyph_substitution::Type;
 use opentype::tables::{GlyphPositioning, GlyphSubstitution};
 use opentype::truetype::tables::character_mapping::{
@@ -215,6 +216,11 @@ pub fn analyze_gsub(
                             result
                         }
                         Type::ContextualSubstitution(context) => {
+                            match context {
+                                context::Context::Format1(context1) => todo!(),
+                                context::Context::Format2(context2) => todo!(),
+                                context::Context::Format3(context3) => todo!(),
+                            }
                             // TODO 需要测试
                             // println!("{:?}", context);
                             vec![vec![]]
@@ -286,10 +292,26 @@ pub fn analyze_gsub(
                         //     // println!("{:?}", t);
                         //     vec![vec![]]
                         // }
-                        Type::ReverseChainedContextualSubstibution(t) => {
+                        Type::ReverseChainedContextualSubstibution(context) => {
                             // TODO 需要测试
-                            // println!("{:?}", t);
-                            vec![vec![]]
+                            // forward_coverages 和 backward_coverages 是左右匹配的 glyph
+                            // 反正所有的字形都是相关的，合并到一块
+                            let mut result: Vec<u16> = vec![];
+                            collect_glyph_id_from_format_1_and_2(
+                                &[context.coverage.clone()].to_vec(),
+                                &mut result,
+                            );
+                            collect_glyph_id_from_format_1_and_2(
+                                &context.forward_coverages,
+                                &mut result,
+                            );
+                            collect_glyph_id_from_format_1_and_2(
+                                &context.backward_coverages,
+                                &mut result,
+                            );
+                            // vec![result]
+                            // println!("||| {:?}\n", result);
+                            vec![result]
                         }
                         _ => vec![vec![]],
                     }
