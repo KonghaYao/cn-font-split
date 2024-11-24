@@ -30,27 +30,7 @@ async fn main() {
 
 async fn upload(file: Bytes) -> Response<Body> {
     let file_vec: Vec<u8> = file.into();
-    let template = InputTemplate {
-        input: file_vec,
-        out_dir: None,
-        css: None,
-        target_type: None,
-        subsets: None,
-        language_areas: None,
-        chunk_size: None,
-        chunk_size_tolerance: None,
-        max_allow_subsets_count: None,
-        test_html: None,
-        reporter: None,
-        preview_image: None,
-        rename_output_font: None,
-        build_mode: None,
-        multi_threads: None,
-        font_feature: None,
-        reduce_mins: None,
-        auto_subset: None,
-        subset_remain_chars: None,
-    };
+    let template = InputTemplate { input: file_vec, ..Default::default() };
 
     // 设置响应头
     let mut headers = HeaderMap::new();

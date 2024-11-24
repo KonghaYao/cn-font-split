@@ -15,27 +15,8 @@ fn main_test() {
 
     let path = "../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
-    let input = protos::InputTemplate {
-        input: font_file,
-        out_dir: None,
-        css: None,
-        target_type: None,
-        subsets: None,
-        language_areas: None,
-        chunk_size: None,
-        chunk_size_tolerance: None,
-        max_allow_subsets_count: None,
-        test_html: None,
-        reporter: None,
-        preview_image: None,
-        rename_output_font: None,
-        build_mode: None,
-        multi_threads: None,
-        font_feature: None,
-        reduce_mins: None,
-        auto_subset: None,
-        subset_remain_chars: None,
-    };
+    let input =
+        protos::InputTemplate { input: font_file, ..Default::default() };
 
     let start = std::time::Instant::now();
     env_logger::init();
