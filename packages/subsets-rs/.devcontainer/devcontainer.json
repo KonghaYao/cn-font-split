@@ -1,0 +1,7 @@
+{
+    "name": "cn-font-split-dev",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "runArgs": ["--name", "cn-font-split-dev"]
+}
