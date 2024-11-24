@@ -10,18 +10,20 @@ pub struct Context<'a> {
     pub pre_subset_result: Vec<Vec<u32>>,
     pub run_subset_result: Vec<RunSubsetResult>,
     pub name_table: NameTableSets,
-    pub callback: fn(message: EventMessage) -> (),
+    pub callback: &'a dyn Fn(EventMessage),
     pub reporter: &'a mut OutputReport,
 }
 
-pub fn font_split(config: InputTemplate, callback: fn(event: EventMessage)) {
+pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     let mut reporter = OutputReport::default();
     let mut ctx = Context {
         input: config,
         pre_subset_result: vec![],
         run_subset_result: vec![],
         name_table: NameTableSets { table: vec![] },
-        callback,
+        callback: &(|data| {
+            callback(data);
+        }),
         reporter: &mut reporter,
     };
     ctx.reporter.version = "7.0.0".to_string();

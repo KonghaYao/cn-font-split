@@ -5,7 +5,9 @@ use cn_font_utils::u8_size_in_kb;
 use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
 use log::info;
-use rayon::iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
+use rayon::iter::{
+    IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
+};
 use std::time::Instant;
 use woff::version2::compress;
 
@@ -25,6 +27,7 @@ pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
 struct ThreadResult {
     pub subset_result: RunSubsetResult,
     pub log: SubsetDetail,
+    pub message: EventMessage,
 }
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) {
@@ -46,12 +49,6 @@ pub fn run_subset(ctx: &mut Context) {
             let digest = md5::compute(result.as_slice());
             // println!("{:?}", hash);
             let hash_string = format!("{:x}", digest);
-
-            (ctx.callback)(EventMessage {
-                event: "output_data".to_string(),
-                data: Option::from(result),
-                message: (hash_string.to_string() + ".woff2"),
-            });
             let duration = start_time.elapsed();
             info!(
                 "{}\t{}ms/{}/{}kb\t{}",
@@ -73,9 +70,16 @@ pub fn run_subset(ctx: &mut Context) {
                     bytes: result_bytes as f32,
                     duration: duration.as_millis() as u32,
                 },
+                message: EventMessage {
+                    event: "output_data".to_string(),
+                    data: Option::from(result),
+                    message: (hash_string.to_string() + ".woff2"),
+                },
             }
         })
         .collect::<Vec<ThreadResult>>();
+    // ? 克隆损失可能有点大
+    thread_result.iter().for_each(|c| (ctx.callback)(c.message.clone()));
     let mut bundled_bytes: f32 = 0.0;
     let mut bundled_size: u32 = 0;
 
