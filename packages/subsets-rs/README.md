@@ -23,3 +23,12 @@ cn-font-split 代码架构
 1. 统一采用 snake_case, 不论文件名或文件夹、模块名、变量、函数名
 
 2. 包名统一用 `-` 链接，而不是 `_`。
+
+## Dev
+
+开发使用设备最好 MacOS 8GB 以上
+
+```sh
+apt update -y
+apt install -y protobuf-compiler && protoc --version
+```
