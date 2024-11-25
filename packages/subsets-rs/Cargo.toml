@@ -13,6 +13,7 @@ opentype = "0.38.0"
 prost = "0.13.3"
 prost-types = { version = "0.13.3", optional = true }
 rayon = "1.10.0"
+tonic = "0.12.3"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
 
@@ -21,7 +22,7 @@ env_logger = "0.11.5"
 
 
 [build-dependencies]
-prost-build = "0.13.3"
+tonic-build = "0.12.3"
 
 [workspace]
 members = [
