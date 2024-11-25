@@ -32,3 +32,11 @@ cn-font-split 代码架构
 apt update -y
 apt install -y protobuf-compiler && protoc --version
 ```
+
+vscode 不识别 tonic 的 proto 问题
+
+```json
+{
+    "rust-analyzer.cargo.buildScripts.enable": true,
+}
+```

@@ -1,8 +1,13 @@
 fn main() {
-    // protoc 3.12.4
-    prost_build::Config::new()
-        .out_dir("src/pb/") //设置proto输出目录
-        .protoc_arg("--experimental_allow_proto3_optional")
-        .compile_protos(&["src/pb/index.proto"], &["."]) //我们要处理的proto文件
+    let out_dir = std::path::PathBuf::from("src/pb");
+    // std::env::set_var("OUT_DIR", &out_dir);
+    tonic_build::configure()
+        .build_server(true)
+        .build_client(true)
+        .out_dir(out_dir)
+        .compile_protos(
+            &["src/pb/index.proto", "src/pb/services.proto"],
+            &["src/pb"],
+        )
         .unwrap();
 }

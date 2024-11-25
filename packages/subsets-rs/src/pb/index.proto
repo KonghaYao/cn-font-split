@@ -3,11 +3,11 @@ syntax = "proto3";
 package api_interface;
 
 message InputTemplate {
-    /**
+    /*
      * 对接此层，需要直接输入 buffer
      */
     bytes input = 1;
-    /**
+    /*
      * 切割后放置文件的文件夹
      */
     optional string out_dir = 2;
