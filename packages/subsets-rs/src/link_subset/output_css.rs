@@ -1,7 +1,7 @@
-use crate::protos::input_template::CssProperties;
-use crate::protos::output_report;
 use crate::runner::Context;
 use cn_font_utils::vec_u32_to_string;
+use cn_font_proto::api_interface::input_template::CssProperties;
+use cn_font_proto::api_interface::output_report;
 use unicode_range::UnicodeRange;
 
 pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {

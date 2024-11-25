@@ -1,13 +1,12 @@
-use cn_font_split::font_split;
-use cn_font_split::protos::{
-    font_api_server::{FontApi, FontApiServer},
-    EventMessage, InputTemplate,
+use cn_font_proto::{
+    api_interface::{EventMessage, InputTemplate},
+    font_services::font_api_server::{FontApi, FontApiServer},
 };
+use cn_font_split::font_split;
 use std::pin::Pin;
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use tokio_stream::Stream;
-// use tonic::codegen::futures_core::Stream;
 use tonic::{transport::Server, Request, Response, Status};
 
 #[derive(Debug, Default)]
@@ -54,7 +53,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_font_split() {
-    use cn_font_split::protos::font_api_client::FontApiClient;
+    use cn_font_proto::font_services::font_api_client::FontApiClient;
     use cn_font_utils::read_binary_file;
     let path = "../../../demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");

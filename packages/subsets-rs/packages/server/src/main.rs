@@ -9,10 +9,8 @@ use axum::{
     Router,
 };
 mod storage;
-use cn_font_split::{
-    font_split,
-    protos::{EventMessage, InputTemplate},
-};
+use cn_font_proto::api_interface::{EventMessage, InputTemplate};
+use cn_font_split::font_split;
 use tokio::sync::mpsc::{self};
 use tokio_stream::StreamExt as _;
 

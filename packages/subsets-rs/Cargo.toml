@@ -11,9 +11,8 @@ log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.0"
 prost = "0.13.3"
-prost-types = { version = "0.13.3", optional = true }
+cn-font-proto = { version = "0.1.0", path = "crates/proto" }
 rayon = "1.10.0"
-tonic = "0.12.3"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
 
@@ -28,6 +27,9 @@ tonic-build = "0.12.3"
 members = [
     "crates/cn_font_utils",
     "crates/lang_unicodes",
-    "crates/unicode_range", "packages/grpc", "packages/server",
+    "crates/proto",
+    "crates/unicode_range",
+    "packages/grpc",
+    "packages/server",
     "packages/wasm-edge",
 ]

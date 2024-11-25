@@ -3,7 +3,7 @@ use opentype::truetype::tables::Names;
 use opentype::Font;
 use std::io::Cursor;
 
-use crate::protos::output_report::NameTable;
+use cn_font_proto::api_interface::output_report::NameTable;
 
 #[derive(Debug)]
 pub struct NameTableSets {

@@ -1,0 +1,15 @@
+[package]
+name = "cn-font-proto"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tonic = "0.12.3"
+prost = "0.13.3"
+prost-types = { version = "0.13.3", optional = true }
+
+[build-dependencies]
+tonic-build = "0.12.3"
+
+[lib]
+path = "src/lib/mod.rs"

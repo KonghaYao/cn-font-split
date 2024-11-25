@@ -2,9 +2,9 @@ use crate::link_subset::link_subset;
 use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
-use crate::protos::{EventMessage, InputTemplate, OutputReport};
 use crate::run_subset::{run_subset, RunSubsetResult};
 use prost::Message;
+use cn_font_proto::api_interface::{EventMessage, InputTemplate, OutputReport};
 
 pub struct Context<'a> {
     pub input: InputTemplate,

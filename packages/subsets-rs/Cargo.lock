@@ -297,9 +297,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "cn-font-proto"
+version = "0.1.0"
+dependencies = [
+ "prost",
+ "prost-types",
+ "tonic",
+ "tonic-build",
+]
+
+[[package]]
 name = "cn-font-split"
 version = "7.0.0"
 dependencies = [
+ "cn-font-proto",
  "cn-font-utils",
  "env_logger",
  "harfbuzz_rs_now",
@@ -308,9 +319,7 @@ dependencies = [
  "md5",
  "opentype",
  "prost",
- "prost-types",
  "rayon",
- "tonic",
  "tonic-build",
  "unicode-range",
  "woff",
@@ -660,6 +669,7 @@ checksum = "07e28edb80900c19c28f1072f2e8aeca7fa06b23cd4169cefe1af5aa3260783f"
 name = "grpc"
 version = "0.1.0"
 dependencies = [
+ "cn-font-proto",
  "cn-font-split",
  "cn-font-utils",
  "prost",
@@ -1800,6 +1810,7 @@ version = "0.1.0"
 dependencies = [
  "async-stream",
  "axum",
+ "cn-font-proto",
  "cn-font-split",
  "futures",
  "futures-util",

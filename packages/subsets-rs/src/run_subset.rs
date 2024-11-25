@@ -1,6 +1,8 @@
-use crate::protos::output_report::{BundleMessage, SubsetDetail};
-use crate::protos::EventMessage;
 use crate::runner::Context;
+use cn_font_proto::api_interface::output_report::{
+    BundleMessage, SubsetDetail,
+};
+use cn_font_proto::api_interface::EventMessage;
 use cn_font_utils::u8_size_in_kb;
 use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};

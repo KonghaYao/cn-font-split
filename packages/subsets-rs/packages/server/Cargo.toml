@@ -14,3 +14,4 @@ tokio-stream = "0.1.16"
 async-stream = "0.3.6"
 futures-util = "0.3.31"
 rust-s3 = "0.35.1"
+cn-font-proto = { version = "0.1.0", path = "../../crates/proto" }
