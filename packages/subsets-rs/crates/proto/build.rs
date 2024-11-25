@@ -19,7 +19,15 @@ fn main() {
         .map(|x| {
             let file_name = x.unwrap().file_name();
             let name = file_name.to_str().unwrap();
-            format!("pub mod {};", name.replace(".rs", "")).clone()
+            let import_code =
+                format!("pub mod {};", name.replace(".rs", "")).clone();
+            if name.ends_with("_services.rs") {
+                return format!(
+                    "#[cfg(feature = \"server\")]\n{}",
+                    import_code
+                );
+            }
+            import_code
         })
         .collect::<Vec<String>>()
         .join("\n");

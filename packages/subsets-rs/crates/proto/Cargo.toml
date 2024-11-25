@@ -4,9 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tonic = "0.12.3"
+tonic = { version = "0.12.3", optional = true }
 prost = "0.13.3"
 prost-types = { version = "0.13.3", optional = true }
+
+[features]
+server = ["tonic"]
 
 [build-dependencies]
 tonic-build = "0.12.3"
