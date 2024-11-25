@@ -5,6 +5,9 @@ fn main() {
         .build_server(true)
         .build_client(true)
         .out_dir(out_dir)
-        .compile_protos(&["src/pb/index.proto"], &["src/pb"])
+        .compile_protos(
+            &["src/pb/index.proto", "src/pb/services.proto"],
+            &["src/pb"],
+        )
         .unwrap();
 }
