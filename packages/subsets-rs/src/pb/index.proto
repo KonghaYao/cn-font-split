@@ -2,6 +2,11 @@ syntax = "proto3";
 
 package api_interface;
 
+service FontApi {
+  rpc FontSplit (InputTemplate) returns (stream EventMessage);
+}
+
+
 message InputTemplate {
     /**
      * 对接此层，需要直接输入 buffer
