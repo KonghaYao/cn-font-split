@@ -21,6 +21,5 @@ pub extern "C" fn font_split(
         let size = output_data.len();
         let p = output_data.as_mut_ptr();
         callback(p, size);
-        std::mem::forget(output_data); // 防止 Rust 自动释放内存
     });
 }
