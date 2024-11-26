@@ -28,7 +28,7 @@ members = [
     "crates/cn_font_utils",
     "crates/lang_unicodes",
     "crates/proto",
-    "crates/unicode_range",
+    "crates/unicode_range", "packages/ffi",
     "packages/grpc",
     "packages/server",
     "packages/wasm-edge",
