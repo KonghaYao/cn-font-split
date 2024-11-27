@@ -41,7 +41,9 @@ export const useSubset = async (
     if (input.threads) {
         await Promise.all(
             totalChunk.map(async (chunk, index) =>
-                runSubSet(createContext(chunk, index)).catch((e: Error) => {}),
+                runSubSet(createContext(chunk, index)).catch((e: Error) => {
+                    console.error(e);
+                }),
             ),
         );
     } else {

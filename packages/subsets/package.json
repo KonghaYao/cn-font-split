@@ -1,6 +1,6 @@
 {
     "name": "cn-font-split",
-    "version": "6.0.1",
+    "version": "6.0.2",
     "description": "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size.",
     "main": "dist/cn-font-split.cjs",
     "module": "dist/cn-font-split.js",
@@ -52,7 +52,7 @@
         "mri": "^1.2.0",
         "os-locale": "^6.0.2",
         "tslog": "^4.9.2",
-        "workerpool": "^9.1.1"
+        "workerpool": "9.1.1"
     },
     "devDependencies": {
         "@chinese-fonts/wawoff2": "2.0.6",
