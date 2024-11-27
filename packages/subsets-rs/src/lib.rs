@@ -28,7 +28,7 @@ fn main_test() {
             _ => (),
         }
     });
-    let duration = start.elapsed();
 
+    let duration = start.elapsed();
     println!("Time: {:?}", duration);
 }

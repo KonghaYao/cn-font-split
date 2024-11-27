@@ -185,11 +185,18 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
 
-  packages/subsets-rs/packages/ffi/test:
+  packages/subsets-rs/packages/ffi:
     dependencies:
       ffi-rs:
         specifier: ^1.1.1
         version: 1.1.1
+      google-protobuf:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@types/google-protobuf':
+        specifier: ^3.15.12
+        version: 3.15.12
 
   packages/test:
     dependencies:
@@ -1421,6 +1428,9 @@ packages:
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
 
+  '@types/google-protobuf@3.15.12':
+    resolution: {integrity: sha512-40um9QqwHjRS92qnOaDpL7RmDK15NuZYo9HihiJRbYkMQZlWnuH8AdvbMy8/o6lgLmKbDUKa+OALCltHdbOTpQ==}
+
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
@@ -1889,6 +1899,9 @@ packages:
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
+
+  google-protobuf@3.21.4:
+    resolution: {integrity: sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -4234,6 +4247,8 @@ snapshots:
       '@types/minimatch': 5.1.2
       '@types/node': 20.14.2
 
+  '@types/google-protobuf@3.15.12': {}
+
   '@types/jsonfile@6.1.4':
     dependencies:
       '@types/node': 22.8.2
@@ -4722,6 +4737,8 @@ snapshots:
       path-is-absolute: 1.0.1
 
   globals@11.12.0: {}
+
+  google-protobuf@3.21.4: {}
 
   graceful-fs@4.2.11: {}
 

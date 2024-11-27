@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "cn-font-split-rs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ffi-rs": "^1.1.1"
+    "ffi-rs": "^1.1.1",
+    "google-protobuf": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/google-protobuf": "^3.15.12"
   }
 }
