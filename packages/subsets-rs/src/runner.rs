@@ -3,8 +3,8 @@ use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
 use crate::run_subset::{run_subset, RunSubsetResult};
-use prost::Message;
 use cn_font_proto::api_interface::{EventMessage, InputTemplate, OutputReport};
+use prost::Message;
 
 pub struct Context<'a> {
     pub input: InputTemplate,
@@ -30,6 +30,7 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
         fvar_table: None,
     };
     ctx.reporter.version = "7.0.0".to_string();
+    ctx.reporter.platform = current_platform::CURRENT_PLATFORM.to_string();
     for process in [pre_subset, run_subset, link_subset] {
         process(&mut ctx)
     }
@@ -44,6 +45,13 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
         event: "output_data".to_string(),
         data: Some(reporter_buffer),
         message: "reporter.bin".to_string(),
+    });
+
+    // 发送一个结束信息
+    callback(EventMessage {
+        event: "end".to_string(),
+        message: "end".to_string(),
+        data: None,
     });
     ()
 }

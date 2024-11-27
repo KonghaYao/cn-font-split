@@ -13,7 +13,7 @@ use rayon::iter::{
 use std::time::Instant;
 use woff::version2::compress;
 
-// 构建单个分包为字体文件
+/// 构建单个分包为字体文件
 pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
     let subset_runner = Subset::new();
     subset_runner.clear_drop_table();
@@ -80,12 +80,12 @@ pub fn run_subset(ctx: &mut Context) {
             }
         })
         .collect::<Vec<ThreadResult>>();
-    // ? 克隆损失可能有点大
-    thread_result.iter().for_each(|c| (ctx.callback)(c.message.clone()));
     let mut bundled_bytes: f32 = 0.0;
     let mut bundled_size: u32 = 0;
-
+    
     for res in thread_result {
+        (ctx.callback)(res.message);
+        
         bundled_bytes += res.log.bytes;
         bundled_size += res.log.chars.len() as u32;
         ctx.run_subset_result.push(res.subset_result);

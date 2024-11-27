@@ -73,6 +73,7 @@ message OutputReport {
     BundleMessage bundle_message = 3;
     repeated NameTable name_table = 4;
     repeated SubsetDetail subset_detail = 5;
+    string platform = 6;
 
     message NameTable {
         string platform = 1;
