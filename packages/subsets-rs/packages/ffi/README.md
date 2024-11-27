@@ -11,3 +11,5 @@
 
 需求实现
 1. CN_FONT_SPLIT_BIN 环境变量将会写入二进制 ffi 产物的地址，各个语言可直接获取
+2. gen 文件夹存储生成的文件
+3. dist 文件夹存储生产代码 dist/node 表示 node 版本的代码
