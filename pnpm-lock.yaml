@@ -194,9 +194,9 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      protoc-gen-ts:
-        specifier: ^0.8.7
-        version: 0.8.7
+      '@types/google-protobuf':
+        specifier: ^3.15.12
+        version: 3.15.12
 
   packages/test:
     dependencies:
@@ -1428,6 +1428,9 @@ packages:
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
 
+  '@types/google-protobuf@3.15.12':
+    resolution: {integrity: sha512-40um9QqwHjRS92qnOaDpL7RmDK15NuZYo9HihiJRbYkMQZlWnuH8AdvbMy8/o6lgLmKbDUKa+OALCltHdbOTpQ==}
+
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
@@ -2272,10 +2275,6 @@ packages:
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
-
-  protoc-gen-ts@0.8.7:
-    resolution: {integrity: sha512-jr4VJey2J9LVYCV7EVyVe53g1VMw28cCmYJhBe5e3YX5wiyiDwgxWxeDf9oTqAe4P1bN/YGAkW2jhlH8LohwiQ==}
-    hasBin: true
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -4245,6 +4244,8 @@ snapshots:
       '@types/minimatch': 5.1.2
       '@types/node': 20.14.2
 
+  '@types/google-protobuf@3.15.12': {}
+
   '@types/jsonfile@6.1.4':
     dependencies:
       '@types/node': 22.8.2
@@ -5089,8 +5090,6 @@ snapshots:
   prettier@3.0.3: {}
 
   process-nextick-args@2.0.1: {}
-
-  protoc-gen-ts@0.8.7: {}
 
   queue-microtask@1.2.3: {}
 
