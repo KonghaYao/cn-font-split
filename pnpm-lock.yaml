@@ -185,6 +185,19 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
 
+  packages/subsets-rs/packages/ffi:
+    dependencies:
+      ffi-rs:
+        specifier: ^1.1.1
+        version: 1.1.1
+      google-protobuf:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      protoc-gen-ts:
+        specifier: ^0.8.7
+        version: 0.8.7
+
   packages/test:
     dependencies:
       '@cn-ui/reactive':
@@ -1471,6 +1484,70 @@ packages:
   '@vitest/utils@2.1.4':
     resolution: {integrity: sha512-MXDnZn0Awl2S86PSNIim5PWXgIAx8CIkzu35mBdSApUip6RFOGXBCf3YFyeEu8n1IHk4bWD46DeYFu9mQlFIRg==}
 
+  '@yuuang/ffi-rs-darwin-arm64@1.1.1':
+    resolution: {integrity: sha512-WtsJFO6TBglbOetiNEkuXfXEf957XYUlrB9iNm4fk6quixhIS6YGdCoSzsPghEbH8DlEkXzkCopkW5sCpyDsCw==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@yuuang/ffi-rs-darwin-x64@1.1.1':
+    resolution: {integrity: sha512-zYRg+GvDJdZLJSjd3PpvGUZ7Zu1TVtl0Lcbr373SQ5loxlEXCAT38HPKoewaWmPfJNDfdHPikmXJFND9qeGjrg==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@yuuang/ffi-rs-linux-arm-gnueabihf@1.1.1':
+    resolution: {integrity: sha512-aSIX8f5MVVoUnc+j1Al2KhbZx1crQVDYVLGtkjLQgV6iWbaH/o6sXGdqo0Jz33b0+GxgUxDCjZMCC7uMvnmnbg==}
+    engines: {node: '>= 12'}
+    cpu: [arm]
+    os: [linux]
+
+  '@yuuang/ffi-rs-linux-arm64-gnu@1.1.1':
+    resolution: {integrity: sha512-npICoIE+CYhGpp72BKxj5KC4O6g1WuAetljPB0TFp+zdBIJQLxxWPzTLPg3RumlEpoZ63J59QTEgmIAvsQ/N5g==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@yuuang/ffi-rs-linux-arm64-musl@1.1.1':
+    resolution: {integrity: sha512-J4V1ra9lVYp3bE7KIgCKUeXhrymrvePOX4qURd4dsF0VQQu9SPiE7rDj0l6H4LRfpTDSq1HnbWn2R9ZaHN5YSg==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@yuuang/ffi-rs-linux-x64-gnu@1.1.1':
+    resolution: {integrity: sha512-wQ6QV6At7FcAia/6amvAODHyRLVlKAbTs61w6RxD7k84TTgRyD4QJsINgdGYISXG2peilrMXqALlm2w7cKcllQ==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@yuuang/ffi-rs-linux-x64-musl@1.1.1':
+    resolution: {integrity: sha512-JQITz02Oz1RLpXzofqT1DOWyVR+uyADftp+s2+Kiq6CZXSPyxOiHY40QBugUrby6vYH0qCADUzjpX5aLDkZHag==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@yuuang/ffi-rs-win32-arm64-msvc@1.1.1':
+    resolution: {integrity: sha512-sqA3tM9g/kH0T86iNYD8imMaskCaFCeW7K+Dr/3Mm6atkvVOcg94n8lHq54MU5wWOwKBgIfGtmVyQetUEhOO0Q==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@yuuang/ffi-rs-win32-ia32-msvc@1.1.1':
+    resolution: {integrity: sha512-yze+xpuaeFWDeGyHoV9e/EJuoLq7JHVYgYS26j/QtbBUg8nDSrq3F4kO2ymFGYqDJhy69zBojbCLGN+eOHrFcA==}
+    engines: {node: '>= 12'}
+    cpu: [x64, ia32]
+    os: [win32]
+
+  '@yuuang/ffi-rs-win32-x64-msvc@1.1.1':
+    resolution: {integrity: sha512-nUsy7tocOGsMVGUei/MwjT4FdUJRuipiQAuV2sMjFxb3UT9rZsph7mAryggW+TSqhzCc4tkpyEKZtlqslpTh8Q==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [win32]
+
   acorn@8.11.3:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
@@ -1743,6 +1820,9 @@ packages:
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
 
+  ffi-rs@1.1.1:
+    resolution: {integrity: sha512-9291xUexLwtBU/NOorDFa7h2iepnQL1mcpG+DpvnL1U8Wa1Lz/bt2/R35rEn9vSPp/YbeaG6lUM3eRZSAwS2Jw==}
+
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
@@ -1816,6 +1896,9 @@ packages:
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
+
+  google-protobuf@3.21.4:
+    resolution: {integrity: sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -2189,6 +2272,10 @@ packages:
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
+
+  protoc-gen-ts@0.8.7:
+    resolution: {integrity: sha512-jr4VJey2J9LVYCV7EVyVe53g1VMw28cCmYJhBe5e3YX5wiyiDwgxWxeDf9oTqAe4P1bN/YGAkW2jhlH8LohwiQ==}
+    hasBin: true
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -4227,6 +4314,36 @@ snapshots:
       loupe: 3.1.2
       tinyrainbow: 1.2.0
 
+  '@yuuang/ffi-rs-darwin-arm64@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-darwin-x64@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-linux-arm-gnueabihf@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-linux-arm64-gnu@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-linux-arm64-musl@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-linux-x64-gnu@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-linux-x64-musl@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-win32-arm64-msvc@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-win32-ia32-msvc@1.1.1':
+    optional: true
+
+  '@yuuang/ffi-rs-win32-x64-msvc@1.1.1':
+    optional: true
+
   acorn@8.11.3: {}
 
   acorn@8.14.0: {}
@@ -4505,6 +4622,19 @@ snapshots:
     dependencies:
       reusify: 1.0.4
 
+  ffi-rs@1.1.1:
+    optionalDependencies:
+      '@yuuang/ffi-rs-darwin-arm64': 1.1.1
+      '@yuuang/ffi-rs-darwin-x64': 1.1.1
+      '@yuuang/ffi-rs-linux-arm-gnueabihf': 1.1.1
+      '@yuuang/ffi-rs-linux-arm64-gnu': 1.1.1
+      '@yuuang/ffi-rs-linux-arm64-musl': 1.1.1
+      '@yuuang/ffi-rs-linux-x64-gnu': 1.1.1
+      '@yuuang/ffi-rs-linux-x64-musl': 1.1.1
+      '@yuuang/ffi-rs-win32-arm64-msvc': 1.1.1
+      '@yuuang/ffi-rs-win32-ia32-msvc': 1.1.1
+      '@yuuang/ffi-rs-win32-x64-msvc': 1.1.1
+
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -4603,6 +4733,8 @@ snapshots:
       path-is-absolute: 1.0.1
 
   globals@11.12.0: {}
+
+  google-protobuf@3.21.4: {}
 
   graceful-fs@4.2.11: {}
 
@@ -4957,6 +5089,8 @@ snapshots:
   prettier@3.0.3: {}
 
   process-nextick-args@2.0.1: {}
+
+  protoc-gen-ts@0.8.7: {}
 
   queue-microtask@1.2.3: {}
 
