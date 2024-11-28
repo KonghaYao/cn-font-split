@@ -16,7 +16,6 @@ export async function fontSplit(data: FontSplitConifg, manualClose = false) {
         const buffer = input.serialize()
         font_split(ptr(buffer), buffer.length, createCallback((data: Uint8Array) => {
             let e = api_interface.EventMessage.deserialize(data)
-            console.log(e.event)
             switch (e.event) {
                 case "end":
                     res()
@@ -42,18 +41,18 @@ const {
     process.env.CN_FONT_SPLIT_BIN,
     {
         font_split: {
-            args: [FFIType.ptr, FFIType.i32, FFIType.callback],
+            args: [FFIType.ptr, FFIType.usize, FFIType.callback],
             returns: FFIType.void,
         },
     },
 );
 const createCallback = (cb: (data: Uint8Array) => void) => new JSCallback(
-    (ptr: any, length: number) => {
-        const data = new Uint8Array(toArrayBuffer(ptr, 0, length), 0, length)
+    (ptr: any, length: BigInt) => {
+        const data = new Uint8Array(toArrayBuffer(ptr, 0, Number(length)), 0, Number(length))
         cb(data)
     },
     {
         returns: FFIType.void,
-        args: ["ptr", FFIType.usize],
+        args: [FFIType.ptr, FFIType.usize],
     },
 ).ptr;
