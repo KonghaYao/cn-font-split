@@ -33,10 +33,9 @@ struct ThreadResult {
 }
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) {
-    let face = Face::from_bytes(&ctx.input.input, 0);
-
     let origin_bytes = u8_size_in_kb(&ctx.input.input) as f32;
-    let origin_size: u32 = face.collect_unicodes().len().try_into().unwrap();
+    let origin_size: u32 =
+        ctx.face.collect_unicodes().len().try_into().unwrap();
 
     info!("font subset result log");
     let thread_result: Vec<ThreadResult> = ctx
@@ -46,7 +45,7 @@ pub fn run_subset(ctx: &mut Context) {
         .map(|(index, r)| {
             let start_time = Instant::now();
 
-            let result = build_single_subset(&face, r);
+            let result = build_single_subset(&ctx.face, r);
             let result_bytes = u8_size_in_kb(&result);
             let digest = md5::compute(result.as_slice());
             // println!("{:?}", hash);
@@ -82,10 +81,10 @@ pub fn run_subset(ctx: &mut Context) {
         .collect::<Vec<ThreadResult>>();
     let mut bundled_bytes: f32 = 0.0;
     let mut bundled_size: u32 = 0;
-    
+
     for res in thread_result {
         (ctx.callback)(res.message);
-        
+
         bundled_bytes += res.log.bytes;
         bundled_size += res.log.chars.len() as u32;
         ctx.run_subset_result.push(res.subset_result);

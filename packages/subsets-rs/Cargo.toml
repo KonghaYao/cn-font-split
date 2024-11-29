@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
-harfbuzz_rs_now = "2.2.2"
+harfbuzz_rs_now = "2.2.3"
 lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
 log = "0.4.22"
 md5 = "0.7.0"

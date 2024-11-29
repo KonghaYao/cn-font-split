@@ -55,6 +55,7 @@ pub fn chunk_iterable_and_flat(
         })
         .collect::<Vec<BTreeSet<u32>>>()
 }
+
 #[test]
 fn for_chunk_iterable_and_flat() {
     let mut subsets = vec![

@@ -1,13 +1,15 @@
 mod auto_subset_plugin;
 pub mod fvar;
+pub mod gen_svg;
 pub mod name_table;
 pub mod plugin;
 
 use crate::runner::Context;
 use auto_subset_plugin::auto_subset_plugin;
+use gen_svg::gen_svg_from_ctx;
 use harfbuzz_rs_now::{Face, Owned};
 use plugin::{add_remain_chars_plugin, language_area_plugin};
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::BTreeSet;
 use std::io::Cursor;
 
 pub struct PreSubsetContext<'a, 'b>
@@ -20,21 +22,23 @@ where
 }
 pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &ctx.input.input;
-    let mut face = Face::from_bytes(&ctx.input.input, 0);
     let mut all_unicodes: BTreeSet<u32> =
-        BTreeSet::from_iter(face.collect_unicodes());
+        BTreeSet::from_iter(ctx.face.collect_unicodes());
 
     let mut font_file = Cursor::new(file_binary);
-    let font =
-        opentype::Font::read(&mut font_file).expect("TODO: panic message");
+    let font = opentype::Font::read(&mut font_file)
+        .expect("cn-font-split | pre_subset | read otp file error");
+
+    gen_svg_from_ctx(ctx);
 
     let chunk_size = ctx.input.chunk_size.clone().unwrap_or(1024 * 70);
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
-    let mut context = PreSubsetContext {
+    let mut context: PreSubsetContext<'_, '_> = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
-        face: &mut face,
+        face: &mut ctx.face,
         predict_bytes_pre_subset: chunk_size as u32,
     };
+
     for p in [language_area_plugin, add_remain_chars_plugin, auto_subset_plugin]
     {
         p(&mut subsets, &mut all_unicodes, &mut context);
