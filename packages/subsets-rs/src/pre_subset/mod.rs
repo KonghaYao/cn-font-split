@@ -6,9 +6,8 @@ pub mod plugin;
 
 use crate::runner::Context;
 use auto_subset_plugin::auto_subset_plugin;
-use cn_font_proto::api_interface::EventMessage;
-use gen_svg::gen_svg;
-use harfbuzz_rs_now::{Face, Font, Owned};
+use gen_svg::gen_svg_from_ctx;
+use harfbuzz_rs_now::{Face, Owned};
 use plugin::{add_remain_chars_plugin, language_area_plugin};
 use std::collections::BTreeSet;
 use std::io::Cursor;
@@ -27,18 +26,11 @@ pub fn pre_subset(ctx: &mut Context) {
         BTreeSet::from_iter(ctx.face.collect_unicodes());
 
     let mut font_file = Cursor::new(file_binary);
-    let font =
-        opentype::Font::read(&mut font_file).expect("TODO: panic message");
+    let font = opentype::Font::read(&mut font_file)
+        .expect("cn-font-split | pre_subset | read otp file error");
 
-    if let Some(preview) = &ctx.input.preview_image {
-        let text = gen_svg(&mut ctx.face, &preview.text);
-        (ctx.callback)(EventMessage {
-            event: "output_data".to_string(),
-            message: format!("{}.svg", preview.name),
-            data: Some(text.as_bytes().to_vec()),
-        })
-    }
-    
+    gen_svg_from_ctx(ctx);
+
     let chunk_size = ctx.input.chunk_size.clone().unwrap_or(1024 * 70);
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
     let mut context: PreSubsetContext<'_, '_> = PreSubsetContext {
