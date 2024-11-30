@@ -5,3 +5,7 @@ protoc \
     --ts_out="${OUT_DIR}" \
     --proto_path="../../crates/proto/src/" \
     index.proto
+protoc \
+    --ts_out="${OUT_DIR}" \
+    --proto_path="../../crates/proto/src/" \
+    services.proto

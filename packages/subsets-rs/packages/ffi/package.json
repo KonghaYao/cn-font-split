@@ -15,6 +15,7 @@
     "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
+    "@grpc/grpc-js": "^1.12.2",
     "@types/google-protobuf": "^3.15.12"
   }
 }

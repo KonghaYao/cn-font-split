@@ -233,6 +233,18 @@ pub fn analyze_gsub(
     all_maybe_relative_glyph
 }
 
+#[test]
+fn test_gsub() {
+    let font_file = include_bytes!(
+        "../../../../demo/public/WorkSans-VariableFont_wght.ttf"
+    )
+    .to_vec();
+    let mut font_file = Cursor::new(&font_file);
+    let font = Font::read(&mut font_file).unwrap();
+    let result = analyze_gsub(&font, &mut font_file);
+    // println!("{:?}", result);
+}
+
 /// 将 cover 中的 glyph_id 直接注入 result
 pub fn collect_glyph_id_from_format_1_and_2(
     coverages: &Vec<Coverage>,

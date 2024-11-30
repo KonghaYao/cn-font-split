@@ -31,7 +31,7 @@ message InputTemplate {
     optional CssProperties css = 5;
 
     optional string target_type = 6;
-    optional bytes subsets = 7;
+    repeated bytes subsets = 7;
     optional bool language_areas = 8;
     optional int32 chunk_size = 9;
     optional float chunk_size_tolerance = 10;
