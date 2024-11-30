@@ -60,8 +60,14 @@ message InputTemplate {
     }
 }
 
+enum EventName {
+  UNSPECIFIED = 0; 
+  OUTPUT_DATA = 1; // "output_data"
+  END = 2;         // "end"
+}
+
 message EventMessage {
-    string event = 1;
+    EventName event = 1;
     string message = 2;
     optional bytes data = 3;
 }

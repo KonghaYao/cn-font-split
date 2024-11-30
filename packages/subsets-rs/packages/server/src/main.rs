@@ -9,7 +9,7 @@ use axum::{
     Router,
 };
 mod storage;
-use cn_font_proto::api_interface::{EventMessage, InputTemplate};
+use cn_font_proto::api_interface::{EventMessage, EventName, InputTemplate};
 use cn_font_split::font_split;
 use tokio::sync::mpsc::{self};
 use tokio_stream::StreamExt as _;
@@ -58,5 +58,6 @@ async fn upload(file: Bytes) -> Response<Body> {
 
 fn event_message_to_event(message: EventMessage) -> Event {
     let binding = message.data.unwrap();
-    Event::default().id(message.message).event(message.event)
+    let event = EventName::try_from(message.event).unwrap().as_str_name();
+    Event::default().id(message.message).event(event)
 }
