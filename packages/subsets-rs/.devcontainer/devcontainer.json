@@ -3,5 +3,16 @@
     "build": {
         "dockerfile": "Dockerfile"
     },
-    "runArgs": ["--name", "cn-font-split-dev"]
+    "runArgs": ["--name", "cn-font-split-dev"],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "streetsidesoftware.code-spell-checker",
+                "tamasfe.even-better-toml",
+                "mhutchie.git-graph",
+                "pbkit.vscode-pbkit"
+            ]
+        }
+    }
 }
