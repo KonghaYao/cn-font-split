@@ -1,5 +1,7 @@
 use std::collections::BTreeSet;
 
+use log::info;
+
 use crate::run_subset::build_single_subset;
 
 use super::PreSubsetContext;
@@ -18,7 +20,7 @@ pub fn auto_subset_plugin(
     let chars_per_subset =
         ctx.predict_bytes_pre_subset / (bytes_per_char as u32);
 
-    println!("{}, {}", bytes_per_char, chars_per_subset);
+    info!("{}, {}", bytes_per_char, chars_per_subset);
     let new_subsets = chunk_iterable_and_flat(subsets, chars_per_subset);
     subsets.clear();
     for i in new_subsets {

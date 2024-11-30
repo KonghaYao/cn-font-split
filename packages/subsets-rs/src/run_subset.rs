@@ -1,3 +1,4 @@
+use crate::message::EventFactory;
 use crate::runner::Context;
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
@@ -71,11 +72,10 @@ pub fn run_subset(ctx: &mut Context) {
                     bytes: result_bytes as f32,
                     duration: duration.as_millis() as u32,
                 },
-                message: EventMessage {
-                    event: "output_data".to_string(),
-                    data: Option::from(result),
-                    message: (hash_string.to_string() + ".woff2"),
-                },
+                message: EventMessage::output_data(
+                    (hash_string.to_string() + ".woff2").as_str(),
+                    result,
+                ),
             }
         })
         .collect::<Vec<ThreadResult>>();

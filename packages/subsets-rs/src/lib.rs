@@ -3,6 +3,7 @@ pub mod pre_subset;
 pub mod run_subset;
 pub mod runner;
 pub use runner::font_split;
+mod message;
 
 #[test]
 fn main_test() {

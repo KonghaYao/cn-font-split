@@ -1,10 +1,12 @@
 use crate::link_subset::link_subset;
+use crate::message::EventFactory;
 use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
 use crate::run_subset::{run_subset, RunSubsetResult};
 use cn_font_proto::api_interface::{EventMessage, InputTemplate, OutputReport};
 use harfbuzz_rs_now::{Face, Owned};
+use log::info;
 use prost::Message;
 
 pub struct Context<'a, 'b, 'c>
@@ -41,6 +43,12 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
 
     ctx.reporter.version = "7.0.0".to_string();
     ctx.reporter.platform = current_platform::CURRENT_PLATFORM.to_string();
+
+    info!(
+        "version {}; platform {}",
+        ctx.reporter.version, ctx.reporter.platform
+    );
+
     for process in [pre_subset, run_subset, link_subset] {
         process(&mut ctx)
     }
@@ -51,17 +59,9 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     let mut reporter_buffer = Vec::new();
     ctx.reporter.encode(&mut reporter_buffer).unwrap();
 
-    callback(EventMessage {
-        event: "output_data".to_string(),
-        data: Some(reporter_buffer),
-        message: "reporter.bin".to_string(),
-    });
+    callback(EventMessage::output_data("reporter.bin", reporter_buffer));
 
     // 发送一个结束信息
-    callback(EventMessage {
-        event: "end".to_string(),
-        message: "end".to_string(),
-        data: None,
-    });
+    callback(EventMessage::create_end_message());
     ()
 }
