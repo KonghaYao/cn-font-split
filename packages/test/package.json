@@ -1,28 +1,32 @@
 {
-	"name": "test",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc && vite build",
-		"test": "playwright test",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"@cn-ui/reactive": "^2.3.0",
-		"jszip": "^3.10.1",
-		"lodash-es": "^4.17.21",
-		"pixelmatch": "^5.3.0",
-		"pngjs": "^7.0.0",
-		"shelljs": "^0.8.5",
-		"solid-js": "^1.8.17",
-		"solidjs-use": "^2.3.0"
-	},
-	"devDependencies": {
-		"cn-font-split": "workspace:^",
-		"@playwright/test": "^1.44.1",
-		"@types/pngjs": "^6.0.5",
-		"@types/shelljs": "^0.8.15"
-	}
+    "name": "test",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "test": "playwright test",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@cn-ui/reactive": "^2.3.0",
+        "@grpc/grpc-js": "^1.12.2",
+        "google-protobuf": "^3.21.4",
+        "gzip": "^0.1.0",
+        "jszip": "^3.10.1",
+        "lodash-es": "^4.17.21",
+        "pixelmatch": "^5.3.0",
+        "pngjs": "^7.0.0",
+        "protobufjs": "^7.4.0",
+        "shelljs": "^0.8.5",
+        "solid-js": "^1.8.17",
+        "solidjs-use": "^2.3.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.44.1",
+        "@types/pngjs": "^6.0.5",
+        "@types/shelljs": "^0.8.15",
+        "cn-font-split": "workspace:^"
+    }
 }
