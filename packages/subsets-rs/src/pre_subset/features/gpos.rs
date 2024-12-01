@@ -13,11 +13,17 @@ pub fn analyze_gpos(
     font_file: &mut Cursor<&Vec<u8>>,
 ) -> Vec<Vec<u16>> {
     // GPOS table
-    let data: GlyphPositioning = font.take(font_file).unwrap().unwrap();
+    let data: Option<GlyphPositioning> =
+        font.take(font_file).ok().and_then(|nested_option| nested_option);
+    if data.is_none() {
+        return vec![];
+    }
+    let data: GlyphPositioning = data.unwrap();
+
     let headers: Vec<Header> = data.features.headers;
     let feature_tags: Vec<&str> =
         headers.iter().map(|h| h.tag.as_str().expect("Invalid tag")).collect();
-    println!("{:?}", feature_tags);
+    // println!("{:?}", feature_tags);
 
     // data.scripts
     //     .records
@@ -101,7 +107,7 @@ pub fn analyze_gpos(
                     opentype::layout::Context::Format3(context3) => (),
                 },
                 Type::ChainedContextualPositioning(chained_context) => {
-                    println!("context {:#?}", chained_context);
+                    // println!("context {:#?}", chained_context);
                 }
                 Type::ExtensionPositioning(extension_positioning) => (),
             }

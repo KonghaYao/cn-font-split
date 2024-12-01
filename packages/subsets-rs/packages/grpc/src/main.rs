@@ -3,11 +3,13 @@ use cn_font_proto::{
     font_services::font_api_server::{FontApi, FontApiServer},
 };
 use cn_font_split::font_split;
-use std::pin::Pin;
+use std::{pin::Pin, time::Duration, usize};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use tokio_stream::Stream;
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::{
+    codec::CompressionEncoding, transport::Server, Request, Response, Status,
+};
 
 #[derive(Debug, Default)]
 pub struct FontApiPort {}
@@ -16,7 +18,6 @@ pub struct FontApiPort {}
 impl FontApi for FontApiPort {
     type FontSplitStream =
         Pin<Box<dyn Stream<Item = Result<EventMessage, Status>> + Send>>;
-
     async fn font_split(
         &self,
         request: Request<InputTemplate>,
@@ -27,11 +28,11 @@ impl FontApi for FontApiPort {
         println!("{}", input.input.len());
         tokio::spawn(async move {
             font_split(input, |e| {
-                println!("{} {}", &e.message, tx.is_closed());
+                // println!("{} {}", &e.message, tx.is_closed());
                 let _ = tx.send(Ok(e));
             });
         });
-        println!("{}", rx.is_closed());
+        // println!("{}", rx.is_closed());
         let output_stream = UnboundedReceiverStream::new(rx);
         Ok(Response::new(Box::pin(output_stream) as Self::FontSplitStream))
     }
@@ -39,12 +40,30 @@ impl FontApi for FontApiPort {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "0.0.0.0:50051".parse()?;
+    tracing_subscriber::fmt().with_max_level(tracing::Level::DEBUG).init();
+    let addr = "127.0.0.1:50051".parse()?;
+    // let data_dir =
+    //     std::path::PathBuf::from_iter([std::env!("CARGO_MANIFEST_DIR")]);
+    // let cert = std::fs::read_to_string(data_dir.join("tls/server.pem"))?;
+    // let key = std::fs::read_to_string(data_dir.join("tls/server.key"))?;
 
+    // let identity = Identity::from_pem(cert, key);
     println!("server listening on {}", addr);
 
     Server::builder()
-        .add_service(FontApiServer::new(FontApiPort::default()))
+        .initial_stream_window_size(Some(1 << 24)) // 设置初始流窗口大小
+        .initial_connection_window_size(Some(1 << 24)) // 设置初始连接窗口大小
+        .max_frame_size(Some(0xFFFFFF))
+        .concurrency_limit_per_connection(1)
+        .http2_max_pending_accept_reset_streams(Some(1000))
+        .timeout(Duration::from_secs(60))
+        .http2_keepalive_timeout(Some(Duration::from_secs(60)))
+        .add_service(
+            FontApiServer::new(FontApiPort::default())
+                .max_decoding_message_size(100 * 1024 * 1024)
+                .max_encoding_message_size(100 * 1024 * 1024)
+                .accept_compressed(CompressionEncoding::Gzip),
+        )
         .serve(addr)
         .await?;
 

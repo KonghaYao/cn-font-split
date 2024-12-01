@@ -12,7 +12,7 @@ pub fn auto_subset_plugin(
     ctx: &mut PreSubsetContext,
 ) {
     let size = ctx.all_unicodes.len();
-    let space: usize = size / 100;
+    let space: usize = (size / 100).min(1);
     let sample = extract_every_nth(&ctx.all_unicodes, space);
     let result = build_single_subset(&ctx.face, &sample);
     let byte_length = result.len();
@@ -80,9 +80,7 @@ fn for_chunk_iterable_and_flat() {
 /// 每隔 n 个元素抽取一个元素
 fn extract_every_nth<T: Clone>(set: &BTreeSet<T>, n: usize) -> Vec<T> {
     // 检查 n 是否有效
-    if n == 0 {
-        panic!("n must be greater than 0");
-    }
+    let n = if n == 0 { 1_usize } else { n };
 
     // 创建一个新的向量用于存储结果
     let mut result = Vec::new();

@@ -19,7 +19,7 @@ pub fn analyze_gsub(
         .collect();
     let unique_feature_tags: HashSet<&str> = feature_tags.drain(..).collect();
 
-    println!("{:?}", unique_feature_tags);
+    // println!("{:?}", unique_feature_tags);
     // println!("{:?}", data.features.get(Tag::from_str("fwid").expect("222")));
 
     let records = data.lookups.records;
@@ -157,6 +157,9 @@ pub fn analyze_gsub(
                                     ctx.records
                                         .iter()
                                         .flat_map(|r| {
+                                            if r.clone().is_none() {
+                                                return vec![];
+                                            }
                                             let record = r.clone().unwrap();
                                             record
                                                 .records
