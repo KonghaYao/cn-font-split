@@ -27,28 +27,19 @@ wrapper 是 cn-font-split 对外提供的功能接口，支持多种语言调用
 - ✅ gRPC Wrapper：基于 HTTP/2 协议，提供独立的字体构建服务。gRPC 方案简单易用，适用于所有支持 gRPC 的项目。
 - ✅ FFI Wrapper：通过标准的 C API 调用 Rust 生成的二进制动态链接库，使用 protobuf 解析二进制数据，支持双边语言通信。
 - ✅ CLI Wrapper：提供一个命令行接口，完全由 Rust 编写，用户可以通过简单的命令完成基础的字体分包操作。
-- ❌ WASM Wrapper：将核心功能编译为 WebAssembly 模块，支持在浏览器环境中运行，适用于前端开发。
-- ❌ WASI Wrapper：基于 WebAssembly System Interface (WASI)，支持在多种操作系统环境中运行，提供更广泛的部署可能性。
+- ✅ WASI Wrapper：基于 WebAssembly System Interface (WASI)，支持在多种操作系统环境中运行，提供更广泛的部署可能性。浏览器可以通过 WASI（@tybys/wasm-util
+）实现完成接入。
 
 ## 命名规范
 
-1. 统一采用 snake_case, 不论文件名或文件夹、模块名、变量、函数名
+1. Rust 项目统一采用 snake_case, 会有 IDE 相应提示。
 
 2. 包名统一用 `-` 链接，而不是 `_`。
 
 ## Dev
 
-开发使用设备最好 MacOS 8GB 以上, 具备 docker 环境，一键进入开发状态！
+为统一不同开发环境，采用 VSCode Dev Container 方法
 
-```sh
-apt update -y
-apt install -y protobuf-compiler && protoc --version
-```
+开发使用设备最好 MacOS 8GB、Windows 16GB 以上, 具备 Docker 环境，一键进入开发状态！
 
-修复 vscode 不识别 tonic 的 proto 问题
-
-```json
-{
-    "rust-analyzer.cargo.buildScripts.enable": true,
-}
-```
+如果遇到某些依赖没安装，可以参考 [Developer.md](./Developer.md)
