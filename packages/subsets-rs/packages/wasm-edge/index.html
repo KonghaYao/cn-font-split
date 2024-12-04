@@ -59,7 +59,8 @@
             };
 
             const { module, instance } = await load(
-                '/target/wasm32-wasip1/release/wasm_edge.wasm',
+                // '/target/wasm32-wasip1/release/wasm_edge.wasm',
+                '/target/wasm32-wasip1/release/wasm_edge.Oz.wasm',
                 imports,
             );
             wasi.initialize(instance);
