@@ -1,7 +1,8 @@
 fn main() {
     let out_dir = std::path::PathBuf::from("./src/lib");
     let _ = std::fs::create_dir_all("./src/lib");
-    // std::env::set_var("OUT_DIR", &out_dir);
+   
+    // 构建 proto 代码
     tonic_build::configure()
         .build_server(true)
         .build_client(true)
@@ -11,8 +12,9 @@ fn main() {
             &["./src"],
         )
         .unwrap();
+    
+    // 构建 mod.rs 出口
     let files = std::fs::read_dir("./src/lib").unwrap();
-
     let mod_code = files
         .into_iter()
         .filter(|x| x.as_ref().unwrap().file_name() != "mod.rs")

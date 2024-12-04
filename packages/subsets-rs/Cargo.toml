@@ -35,3 +35,6 @@ members = [
     "packages/server",
     "packages/wasm-edge",
 ]
+
+[profile.release]
+lto = true

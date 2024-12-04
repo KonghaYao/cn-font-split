@@ -1,9 +1,7 @@
 use opentype::layout::feature::Header;
 use opentype::tables::glyph_positioning::Type;
-use opentype::tables::{self, glyph_positioning, GlyphPositioning};
-use opentype::truetype::Tag;
+use opentype::tables::{glyph_positioning, GlyphPositioning};
 use opentype::Font;
-use std::collections::{BTreeSet, HashMap};
 use std::io::Cursor;
 
 use crate::pre_subset::features::gsub::collect_glyph_id_from_format_1_and_2;
@@ -20,9 +18,9 @@ pub fn analyze_gpos(
     }
     let data: GlyphPositioning = data.unwrap();
 
-    let headers: Vec<Header> = data.features.headers;
-    let feature_tags: Vec<&str> =
-        headers.iter().map(|h| h.tag.as_str().expect("Invalid tag")).collect();
+    // let headers: Vec<Header> = data.features.headers;
+    // let feature_tags: Vec<&str> =
+    //     headers.iter().map(|h| h.tag.as_str().expect("Invalid tag")).collect();
     // println!("{:?}", feature_tags);
 
     // data.scripts
