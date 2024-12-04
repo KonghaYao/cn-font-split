@@ -71,7 +71,9 @@ message EventMessage {
     string message = 2;
     optional bytes data = 3;
 }
-
+message MultiMessages {
+    repeated EventMessage messages = 1;
+}
 
 message OutputReport {
     string version = 1;
