@@ -7,6 +7,8 @@ const doubleFontWeightName = new Map([
     ['demi bold', 600],
 ]);
 const singleFontWeightName = new Map([
+    ['thin', 100],
+    ['hairline', 100],
     ['light', 300],
     ['normal', 400],
     ['regular', 400],
