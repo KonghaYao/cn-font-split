@@ -57,7 +57,7 @@ async fn upload(file: Bytes) -> Response<Body> {
 }
 
 fn event_message_to_event(message: EventMessage) -> Event {
-    let binding = message.data.unwrap();
+    // let binding = message.data.unwrap();
     let event = EventName::try_from(message.event).unwrap().as_str_name();
     Event::default().id(message.message).event(event)
 }
