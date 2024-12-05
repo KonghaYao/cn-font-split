@@ -1,0 +1,20 @@
+[package]
+name = 'cn-font-split/cn-font-split'
+version = '7.0.0'
+description = 'Description for package cn-font-split'
+readme = 'README.md'
+
+# See more keys and definitions at https://docs.wasmer.io/registry/manifest
+
+[[module]]
+name = 'cn-font-split'
+source = '../../target/wasm32-wasip1/release/wasm_edge.Oz.wasm'
+abi = 'wasi'
+
+[module.interfaces]
+wasi = '0.1.0-unstable'
+
+[[command]]
+name = 'cn-font-split'
+module = 'cn-font-split'
+runner = 'wasi'
