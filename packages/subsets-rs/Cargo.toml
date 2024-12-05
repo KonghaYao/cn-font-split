@@ -16,6 +16,7 @@ rayon = "1.10.0"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
 current_platform = "0.2.0"
+clap = { version = "4.5.22", features = ["derive"] }
 
 [dev-dependencies]
 env_logger = "0.11.5"

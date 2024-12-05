@@ -2,11 +2,11 @@
 <html>
     <head>
         <script type="module">
-            import { load, WASI } from 'http://esm.sh/@tybys/wasm-util';
+            import { load, WASI } from 'https://esm.sh/@tybys/wasm-util/dist/wasm-util.esm.min.js';
             import {
                 Volume,
                 createFsFromVolume,
-            } from 'http://esm.sh/memfs-browser/dist/memfs.esm.min.js';
+            } from 'https://esm.sh/memfs-browser/dist/memfs.esm.min.js';
 
             const input = await fetch(
                 'https://jsdelivr.deno.dev/gh/KonghaYao/cn-font-split/packages/demo/public/SmileySans-Oblique.ttf',

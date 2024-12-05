@@ -4,4 +4,4 @@ if [ ! -d "/opt/binaryen/" ]; then
 fi
 tar xvf binaryen-version_119-x86_64-linux.tar.gz -C /opt/binaryen/
 rm binaryen-version_119-x86_64-linux.tar.gz
-echo -e "\nexport PATH=\$PATH:/opt/binaryen/binaryen-version_119/bin\n" >> ~/.bashrc
+echo "\nexport PATH=\$PATH:/opt/binaryen/binaryen-version_119/bin\n" >> ~/.bashrc

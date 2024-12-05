@@ -11,5 +11,5 @@ fi
 tar xvf wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}.tar.gz -C /opt/wasi-sdk
 rm wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}.tar.gz
 export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}/share/wasi-sysroot"
-echo -e "\nexport WASI_SYSROOT=\"${WASI_SYSROOT}\"\n" >> ~/.bashrc
-echo -e "\nexport WASI_SDK_PATH=\"/opt/wasi-sdk/wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}/\"\n" >> ~/.bashrc
+echo "\nexport WASI_SYSROOT=\"${WASI_SYSROOT}\"\n" >> ~/.bashrc
+echo "\nexport WASI_SDK_PATH=\"/opt/wasi-sdk/wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}/\"\n" >> ~/.bashrc
