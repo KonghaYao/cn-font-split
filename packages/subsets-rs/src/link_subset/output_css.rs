@@ -117,9 +117,9 @@ fn is_italic(str: &str) -> bool {
     str.to_lowercase().contains("italic")
 }
 
-const FONT_WEIGHT_NAME: [(&str, u32); 13] = [
-    ('thin', 100),
-    ('hairline', 100),
+const FONT_WEIGHT_NAME: [(&str, u32); 15] = [
+    ("thin", 100),
+    ("hairline", 100),
     ("extra light", 200),
     ("ultra light", 200),
     ("extra bold", 800),
