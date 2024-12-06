@@ -1,4 +1,3 @@
-use opentype::layout::feature::Header;
 use opentype::tables::glyph_positioning::Type;
 use opentype::tables::{glyph_positioning, GlyphPositioning};
 use opentype::Font;
@@ -35,7 +34,7 @@ pub fn analyze_gpos(
         // println!("{:#?}", i);
         for t in &i.tables {
             match t {
-                Type::SingleAdjustment(single_adjustment) => (),
+                Type::SingleAdjustment(_single_adjustment) => (),
                 Type::PairAdjustment(pair_adjustment) => {
                     let mut linked_pairs: Vec<u16> = vec![];
                     match pair_adjustment {
@@ -100,14 +99,14 @@ pub fn analyze_gpos(
                     relation_list.push(linked_pairs);
                 }
                 Type::ContextualPositioning(context) => match context {
-                    opentype::layout::Context::Format1(context1) => (),
-                    opentype::layout::Context::Format2(context2) => (),
-                    opentype::layout::Context::Format3(context3) => (),
+                    opentype::layout::Context::Format1(_context1) => (),
+                    opentype::layout::Context::Format2(_context2) => (),
+                    opentype::layout::Context::Format3(_context3) => (),
                 },
-                Type::ChainedContextualPositioning(chained_context) => {
+                Type::ChainedContextualPositioning(_chained_context) => {
                     // println!("context {:#?}", chained_context);
                 }
-                Type::ExtensionPositioning(extension_positioning) => (),
+                Type::ExtensionPositioning(_extension_positioning) => (),
             }
         }
     }

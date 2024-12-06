@@ -8,7 +8,7 @@ use super::PreSubsetContext;
 pub fn language_area_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
     remaining_chars_set: &mut BTreeSet<u32>,
-    ctx: &mut PreSubsetContext,
+    _ctx: &mut PreSubsetContext,
 ) {
     let language_area = create_default_unicode_area();
     language_area.iter().for_each(|area| {
@@ -33,7 +33,7 @@ pub fn language_area_plugin(
 pub fn add_remain_chars_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
     remaining_chars_set: &mut BTreeSet<u32>,
-    ctx: &mut PreSubsetContext,
+    _ctx: &mut PreSubsetContext,
 ) {
     info!("{} 个剩余字符被处理", remaining_chars_set.len());
     subsets.push(remaining_chars_set.clone());

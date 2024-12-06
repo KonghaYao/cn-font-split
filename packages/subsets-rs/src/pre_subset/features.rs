@@ -9,7 +9,7 @@ pub mod gpos;
 pub mod gsub;
 pub fn features_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
-    remaining_chars_set: &mut BTreeSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let cmap = analyze_cmap(ctx.font, ctx.font_file);

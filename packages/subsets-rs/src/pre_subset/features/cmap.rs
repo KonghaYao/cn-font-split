@@ -42,8 +42,8 @@ pub fn analyze_cmap(
                 let map = Encoding12::mapping::<u32>(e);
                 inject_unicode_glyph_id_map(map, &mut cmap)
             }
-            Encoding::Format14(e) => {}
-            Encoding::Unknown(e) => {}
+            Encoding::Format14(_e) => {}
+            Encoding::Unknown(_e) => {}
         }
     });
     cmap

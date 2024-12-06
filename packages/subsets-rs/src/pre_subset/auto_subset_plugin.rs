@@ -8,7 +8,7 @@ use super::PreSubsetContext;
 
 pub fn auto_subset_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
-    remaining_chars_set: &mut BTreeSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let size = ctx.all_unicodes.len();

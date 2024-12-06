@@ -2,7 +2,6 @@ use opentype::layout::{context, ChainedContext, Coverage};
 use opentype::tables::glyph_substitution::Type;
 use opentype::tables::GlyphSubstitution;
 use opentype::Font;
-use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::Cursor;
 pub fn analyze_gsub(
     font: &Font,
@@ -11,13 +10,13 @@ pub fn analyze_gsub(
     // GSUB
     let data: GlyphSubstitution = font.take(font_file).unwrap().unwrap();
 
-    let mut feature_tags: Vec<&str> = data
-        .features
-        .headers
-        .iter()
-        .map(|h| h.tag.as_str().expect("Invalid tag"))
-        .collect();
-    let unique_feature_tags: HashSet<&str> = feature_tags.drain(..).collect();
+    // let mut feature_tags: Vec<&str> = data
+    //     .features
+    //     .headers
+    //     .iter()
+    //     .map(|h| h.tag.as_str().expect("Invalid tag"))
+    //     .collect();
+    // let unique_feature_tags: HashSet<&str> = feature_tags.drain(..).collect();
 
     // println!("{:?}", unique_feature_tags);
     // println!("{:?}", data.features.get(Tag::from_str("fwid").expect("222")));
@@ -126,9 +125,9 @@ pub fn analyze_gsub(
                         }
                         Type::ContextualSubstitution(context) => {
                             match context {
-                                context::Context::Format1(context1) => (),
-                                context::Context::Format2(context2) => (),
-                                context::Context::Format3(context3) => (),
+                                context::Context::Format1(_context1) => (),
+                                context::Context::Format2(_context2) => (),
+                                context::Context::Format3(_context3) => (),
                             }
                             // TODO 需要测试
                             // println!("{:?}", context);
