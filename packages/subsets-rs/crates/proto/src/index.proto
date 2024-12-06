@@ -3,60 +3,62 @@ syntax = "proto3";
 package api_interface;
 
 message InputTemplate {
-    /*
-     * 对接此层，需要直接输入 buffer
-     */
-    bytes input = 1;
-    /*
-     * 切割后放置文件的文件夹
-     */
-    optional string out_dir = 2;
+    bytes input = 1; // ttf 文件的 buffer
+    optional string out_dir = 2; // 切割后放置文件的文件夹
 
+    // ====== 构建产物配置 ======
+
+    optional CssProperties css = 5; // CSS 配置
+    optional string target_type = 6; // 目标类型
+    repeated bytes subsets = 7; // 子集
+    optional int32 chunk_size = 9; // 包大小
+    optional float chunk_size_tolerance = 10; // 包大小容差
+    optional int32 max_allow_subsets_count = 11; // 最大允许子集数量
+
+    optional bool test_html = 13; // 是否生成测试 HTML
+    optional bool reporter = 14; // 是否生成 reporter.bin
+    optional PreviewImage preview_image = 15; // 预览图像
+
+    optional string rename_output_font = 18; // 重命名输出字体
+    optional string build_mode = 20; // TODO 构建模式
+
+    // ====== 预分包优化项配置 =======
+
+    optional bool language_areas = 8; // 是否进行语言区域优化
+    optional bool multi_threads = 21; // TODO 是否使用多线程
+    optional bool font_feature = 22; // 是否启用字体特性
+    optional bool reduce_mins = 23; // TODO 是否减少最小分包，
+    optional bool auto_subset = 24; // 是否自动子集化
+    optional bool subset_remain_chars = 25; // 是否自动添加没有声明的字符
+
+    // CSS 属性配置
     message CssProperties {
-        optional string font_family = 1;
-        optional string font_weight = 2;
-        optional string font_style = 3;
-        optional string font_display = 4;
-        repeated string local_family = 5;
-        repeated PolyfillType polyfill = 6;
-        message CommentProperties {
-            optional bool base = 1;
-            optional bool name_table = 2;
-            optional bool unicodes = 3;
-        }
-        optional CommentProperties comment = 7;
-        optional bool compress = 8;
-        optional string file_name = 9;
+        optional string font_family = 1; // 字体家族名称
+        optional string font_weight = 2; // 字体粗细
+        optional string font_style = 3; // 字体样式
+        optional string font_display = 4; // 字体显示方式
+        repeated string local_family = 5; // 本地字体家族名称
+        repeated PolyfillType polyfill = 6; // Polyfill 类型
+
+        // 注释属性
+        
+        optional bool comment_base = 11; // 基础注释
+        optional bool comment_name_table = 12; // 名称表注释
+        optional bool comment_unicodes = 13; // Unicode 注释
+        optional bool compress = 8; // 是否压缩
+        optional string file_name = 9; // 文件名
     }
-    optional CssProperties css = 5;
 
-    optional string target_type = 6;
-    repeated bytes subsets = 7;
-    optional bool language_areas = 8;
-    optional int32 chunk_size = 9;
-    optional float chunk_size_tolerance = 10;
-    optional int32 max_allow_subsets_count = 11;
-
-    optional bool test_html = 13;
-    optional bool reporter = 14;
-    optional PreviewImage preview_image = 15;
-
-    optional string rename_output_font = 18;
-    optional string build_mode = 20;
-    optional bool multi_threads = 21;
-    optional bool font_feature = 22;
-    optional bool reduce_mins = 23;
-    optional bool auto_subset = 24;
-    optional bool subset_remain_chars = 25;
-
+    // Polyfill 类型
     message PolyfillType {
-        string name = 1;
-        string format = 2;
+        string name = 1; // 名称
+        string format = 2; // 格式
     }
 
+    // 预览图像
     message PreviewImage {
-        string text = 1;
-        string name = 2;
+        string text = 1; // 会显示在 svg 中的文本
+        string name = 2; // svg 文件的名称
     }
 }
 
@@ -74,43 +76,41 @@ message EventMessage {
 message MultiMessages {
     repeated EventMessage messages = 1;
 }
-
 message OutputReport {
-    string version = 1;
-    Css css = 2;
-    BundleMessage bundle_message = 3;
-    repeated NameTable name_table = 4;
-    repeated SubsetDetail subset_detail = 5;
-    string platform = 6;
+    string version = 1; // 版本号
+    Css css = 2; // CSS相关信息，可以直接用
+    string platform = 3; // 平台信息，rust 的构建平台
+
+    BundleMessage bundle_message = 24; // 构建消息
+    repeated NameTable name_table = 25; // name 表信息
+    repeated SubsetDetail subset_detail = 26; // 子集详情
 
     message NameTable {
-        string platform = 1;
-        string language = 2;
-        string name = 3;
-        string value = 4;
+        string platform = 1; // 平台
+        string language = 2; // 语言
+        string name = 3; // 名称
+        string value = 4; // 值
     }
 
     message SubsetDetail {
-        uint32 id = 1;
-        string hash = 2;
-        float bytes = 3;
-        repeated uint32 chars = 4;
-        uint32 duration = 5;
+        uint32 id = 1; // ID
+        string hash = 2; // 哈希值
+        float bytes = 3; // 字节数
+        repeated uint32 chars = 4; // 字符数组
+        uint32 duration = 5; // 构建时间
     }
 
-
     message BundleMessage {
-        uint32 origin_size = 1;
-        uint32 bundled_size = 2;
-        float origin_bytes = 3;
-        float bundled_bytes = 4;
+        uint32 origin_size = 1; // 原始大小
+        uint32 bundled_size = 2; // 产物大小
+        float origin_bytes = 3; // 原始字节数
+        float bundled_bytes = 4; // 产物字节数
     }
 
     message Css {
-        string family = 1;
-        string style = 2;
-        string weight = 3;
-        string display = 4;
+        string family = 1; // 字体家族
+        string style = 2; // 样式
+        string weight = 3; // 字重
+        string display = 4; // 显示方式
     }
-
 }
