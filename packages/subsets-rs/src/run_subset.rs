@@ -34,7 +34,7 @@ struct ThreadResult {
 }
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) {
-    let origin_bytes = u8_size_in_kb(&ctx.input.input) as f32;
+    let origin_bytes: u32 = (&ctx.input.input).len() as u32;
     let origin_size: u32 =
         ctx.face.collect_unicodes().len().try_into().unwrap();
 
@@ -57,7 +57,7 @@ pub fn run_subset(ctx: &mut Context) {
                 index,
                 duration.as_millis(),
                 r.len(),
-                result_bytes as u32,
+                result_bytes,
                 hash_string.to_string()
             );
             ThreadResult {
@@ -69,7 +69,7 @@ pub fn run_subset(ctx: &mut Context) {
                     id: index as u32,
                     hash: hash_string.to_string(),
                     chars: r.clone(),
-                    bytes: result_bytes as f32,
+                    bytes: result.len() as u32,
                     duration: duration.as_millis() as u32,
                 },
                 message: EventMessage::output_data(
@@ -79,7 +79,7 @@ pub fn run_subset(ctx: &mut Context) {
             }
         })
         .collect::<Vec<ThreadResult>>();
-    let mut bundled_bytes: f32 = 0.0;
+    let mut bundled_bytes: u32 = 0;
     let mut bundled_size: u32 = 0;
 
     for res in thread_result {

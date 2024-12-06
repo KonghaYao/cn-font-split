@@ -37,7 +37,8 @@ pub fn pre_subset(ctx: &mut Context) {
 
     gen_svg_from_ctx(ctx);
 
-    let chunk_size = ctx.input.chunk_size.clone().unwrap_or(1024 * 70);
+    // 每个包的大小
+    let chunk_size = ctx.input.chunk_size.unwrap_or(1024 * 70);
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),

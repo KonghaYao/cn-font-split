@@ -78,12 +78,12 @@
                                   ${TableComponent({
                                       data: data().nameTable,
                                       columns: [
+                                          { header: '', accessor: 'language' },
                                           { header: '名称', accessor: 'name' },
                                           {
                                               header: '平台',
                                               accessor: 'platform',
                                           },
-                                          { header: '', accessor: 'language' },
                                           { header: '值', accessor: 'value' },
                                       ],
                                   })}
@@ -97,9 +97,14 @@
             return html`
                 <div>
                     ${props.reporter.subsetDetail.map((i) => {
+                        console.log(i);
                         return html`
                             <section>
-                                <h3>${i.hash}</h3>
+                                <h3>
+                                    <span>${i.hash}</span>
+                                    <b>${Math.round(i.bytes/1024)}KB</b>
+                                </h3>
+                                
                                 <div>${String.fromCodePoint(...i.chars)}</div>
                             </section>
                         `;

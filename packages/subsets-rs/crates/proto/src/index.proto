@@ -95,7 +95,7 @@ message OutputReport {
     message SubsetDetail {
         uint32 id = 1; // ID
         string hash = 2; // 哈希值
-        float bytes = 3; // 字节数
+        uint32 bytes = 3; // 字节数
         repeated uint32 chars = 4; // 字符数组
         uint32 duration = 5; // 构建时间
     }
@@ -103,8 +103,8 @@ message OutputReport {
     message BundleMessage {
         uint32 origin_size = 1; // 原始大小
         uint32 bundled_size = 2; // 产物大小
-        float origin_bytes = 3; // 原始字节数
-        float bundled_bytes = 4; // 产物字节数
+        uint32 origin_bytes = 3; // 原始字节数
+        uint32 bundled_bytes = 4; // 产物字节数
     }
 
     message Css {
