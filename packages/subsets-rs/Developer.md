@@ -7,7 +7,7 @@ apt update -y
 apt install -y protobuf-compiler && protoc --version
 ```
 
-## 安装 Wasm-sdk 
+## 安装 Wasm-sdk
 
 安装并自动配置，执行文件在 .devcontainer/wasi-install.sh，需要在容器中执行
 
@@ -15,6 +15,6 @@ apt install -y protobuf-compiler && protoc --version
 
 ```json
 {
-    "rust-analyzer.cargo.buildScripts.enable": true,
+    "rust-analyzer.cargo.buildScripts.enable": true
 }
 ```

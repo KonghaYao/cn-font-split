@@ -1,0 +1,45 @@
+name: release-rust-core
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version number' # 输入字段的描述
+                required: true # 是否为必填项
+                default: '7.0.0'
+
+jobs:
+    build:
+        #运行的环境
+        runs-on: ubuntu-latest
+        env:
+            TZ: Asia/Shanghai
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4 # 检出代码到 runner
+            - name: Setup Environment
+              run: |
+                  sudo apt-get update
+                  sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
+            - name: Setup Rust Environment
+              run: |
+                  sudo rustup component add wasm32-wasip1
+            - name: Setup WASI Environment
+              run: |
+                  sudo sh ./.devcontainer/wasi-install.sh
+                  sudo sh ./.devcontainer/wasm-opt-install.sh
+
+            - name: To Workspace
+              run: cd ./packages/subsets-rs
+            - name: Build
+              run: cd ./packages/wasm-edge && sh build-wasi.sh && cd ../../
+            - name: Rename Package
+              run: |
+                  mv ./target/wasm32-wasip1/release/wasm_edge.wasm ./target/wasm32-wasip1/release/cn-font-split-${{ github.event.inputs.version }}-wasm32-wasi.wasm
+                  mv ./target/wasm32-wasip1/release/wasm_edge.Oz.wasm ./target/wasm32-wasip1/release/cn-font-split-${{ github.event.inputs.version }}-wasm32-wasi.Oz.wasm
+            - name: Release Upload Assets
+              uses: jaywcjlove/github-action-upload-assets@main
+              continue-on-error: true
+              with:
+                  tag: ${{ github.event.inputs.version }}
+                  asset-path: '["./target/wasm32-wasip1/release/*.wasm"]'
