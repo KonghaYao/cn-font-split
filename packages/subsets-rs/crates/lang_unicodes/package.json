@@ -1,16 +1,16 @@
 {
-  "name": "lang_unicodes",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "chinese-simple2traditional": "^2.2.2",
-    "fs-extra": "^11.2.0"
-  }
+    "name": "lang_unicodes",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "node ./scripts/cn_char_rank.mjs && node ./scripts/hangul.mjs"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "chinese-simple2traditional": "^2.2.2",
+        "fs-extra": "^11.2.0"
+    }
 }

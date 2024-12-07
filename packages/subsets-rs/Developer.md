@@ -18,3 +18,8 @@ apt install -y protobuf-compiler && protoc --version
     "rust-analyzer.cargo.buildScripts.enable": true
 }
 ```
+
+## 构建失败
+
+1. 只有 Ubuntu 24 是稳定的构建服务器，其他均未测试过，所以会有很多问题，请更换为官方镜像
+2. 我们有标准的 github action 能够通过构建，你可以参考相关的配置，检查是否少了什么
