@@ -185,6 +185,15 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
 
+  packages/subsets-rs/crates/lang_unicodes:
+    devDependencies:
+      chinese-simple2traditional:
+        specifier: ^2.2.2
+        version: 2.2.2
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.2.0
+
   packages/subsets-rs/packages/ffi:
     dependencies:
       ffi-rs:

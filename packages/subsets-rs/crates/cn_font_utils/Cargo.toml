@@ -2,5 +2,11 @@
 name = "cn-font-utils"
 version = "0.1.0"
 edition = "2021"
+description = "utils of cn-font-split"
+authors = ["KonghaYao<3446798488@qq.com>"]
+homepage = "https://chinese-font.netlify.app/"
+repository = "https://github.com/konghaYao/cn-font-split"
+license = "Apache-2.0"
+include = ["src/**/*"]
 
 [dependencies]

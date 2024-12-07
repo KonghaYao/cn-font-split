@@ -1,7 +1,12 @@
 [package]
 name = "cn-font-split"
+description = "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size."
 version = "7.0.0"
 edition = "2021"
+authors = ["KonghaYao<3446798488@qq.com>"]
+homepage = "https://chinese-font.netlify.app/"
+repository = "https://github.com/konghaYao/cn-font-split"
+license = "Apache-2.0"
 
 [dependencies]
 cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
@@ -11,7 +16,7 @@ log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.0"
 prost = "0.13.3"
-cn-font-proto = { version = "0.1.0", path = "crates/proto" }
+cn-font-proto = { version = "0.1.1", path = "crates/proto" }
 rayon = "1.10.0"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"

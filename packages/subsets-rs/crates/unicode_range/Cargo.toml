@@ -2,5 +2,10 @@
 name = "unicode-range"
 version = "0.1.0"
 edition = "2021"
+description = "UnicodeRange is a Rust library for parsing and stringifying Unicode ranges. It provides functionality to convert a string representation of Unicode ranges into a vector of code points and vice versa."
+authors = ["KonghaYao<3446798488@qq.com>"]
+homepage = "https://chinese-font.netlify.app/"
+repository = "https://github.com/konghaYao/cn-font-split"
+license = "Apache-2.0"
 
 [dependencies]

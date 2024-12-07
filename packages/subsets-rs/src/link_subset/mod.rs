@@ -1,9 +1,7 @@
 mod output_css;
-const HTML_TEMPLATE: &[u8] = include_bytes!("./index.html");
-const INDEX_PROTO: &[u8] = include_bytes!("../../crates/proto/src/index.proto");
-
 use crate::{message::EventFactory, runner::Context};
-use cn_font_proto::api_interface::EventMessage;
+use cn_font_proto::{api_interface::EventMessage, INDEX_PROTO};
+const HTML_TEMPLATE: &[u8] = include_bytes!("./index.html");
 pub fn link_subset(ctx: &mut Context) {
     let css = ctx.input.css.clone().unwrap_or_default();
 

@@ -2,6 +2,15 @@
 name = "lang-unicodes"
 version = "0.1.0"
 edition = "2021"
+description = "Effortlessly convert and validate text across various Unicode ranges, supporting multiple languages for seamless internationalization in your applications."
+authors = ["KonghaYao<3446798488@qq.com>"]
+homepage = "https://chinese-font.netlify.app/"
+repository = "https://github.com/konghaYao/cn-font-split"
+license = "Apache-2.0"
+include = ["data", "src"]
 
 [dependencies]
 lazy_static = "1.5.0"
+
+[lib]
+path = "src/lib.rs"

@@ -1,7 +1,7 @@
 fn main() {
     let out_dir = std::path::PathBuf::from("./src/lib");
     let _ = std::fs::create_dir_all("./src/lib");
-   
+
     // 构建 proto 代码
     tonic_build::configure()
         .build_server(true)
@@ -12,7 +12,7 @@ fn main() {
             &["./src"],
         )
         .unwrap();
-    
+
     // 构建 mod.rs 出口
     let files = std::fs::read_dir("./src/lib").unwrap();
     let mod_code = files
@@ -33,5 +33,6 @@ fn main() {
         })
         .collect::<Vec<String>>()
         .join("\n");
+    let mod_code = mod_code+"\npub const INDEX_PROTO: &[u8] = include_bytes!(\"../index.proto\");";
     let _ = std::fs::write("src/lib/mod.rs", mod_code);
 }
