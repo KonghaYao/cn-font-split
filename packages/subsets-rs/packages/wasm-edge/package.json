@@ -1,10 +1,14 @@
 {
-    "name": "wasm-edge",
+    "name": "cn-font-split-wasm",
     "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "description": "wasm version of cn-font-split",
+    "main": "dist/index.mjs",
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org"
+    },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "vite build",
+        "prepublish": "pnpm build"
     },
     "keywords": [],
     "author": "",
@@ -12,7 +16,6 @@
     "dependencies": {
         "@tybys/wasm-util": "^0.9.0",
         "buffer": "^6.0.3",
-        "memfs": "^4.14.1",
         "memfs-browser": "^4.6.10002"
     }
 }

@@ -7,16 +7,17 @@ export default defineConfig(({ mode }) => {
         define: {},
         plugins: [
             nodeExternals({
-                exclude: [],
+                exclude: ['google-protobuf'],
             }),
         ],
         build: {
             target: 'esnext',
             lib: {
-                entry: ['./src/unplugin.ts'],
-                formats: ['es', 'cjs'],
+                entry: ['./src/index.ts'],
+                formats: ['es'],
             },
-            minify: false, // 禁用代码混淆
+            minify: true, // 禁用代码混淆
+            sourcemap: true,
             assetsDir: '',
             assetsInlineLimit: 0,
             rollupOptions: {

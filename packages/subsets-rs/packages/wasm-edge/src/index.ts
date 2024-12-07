@@ -1,4 +1,4 @@
-import { load, WASI } from '@tybys/wasm-util';
+import { WASI } from '@tybys/wasm-util';
 import 'buffer';
 import { Volume, createFsFromVolume } from 'memfs-browser';
 import { api_interface } from '../../ffi/gen/index';
