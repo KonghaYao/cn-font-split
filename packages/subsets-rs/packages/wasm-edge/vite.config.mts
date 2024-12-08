@@ -5,13 +5,25 @@ export default defineConfig(({ mode }) => {
     return {
         base: '',
         mode: 'production',
-        define: {},
+        define: {
+            __webpack_public_path__: 'true',
+        },
         plugins: [
-            nodeExternals({}),
+            nodeExternals({
+                builtinsPrefix: 'ignore',
+                exclude: ['memfs-browser'],
+            }),
             dts({
                 include: ['src/**/*', '../ffi/gen/index.ts'],
                 exclude: ['src/*.test.ts'],
             }),
+            {
+                transform(code, id) {
+                    if (id.includes('memfs')) {
+                        return 'import {Buffer} from "buffer";\n' + code;
+                    }
+                },
+            },
         ],
         build: {
             target: 'esnext',

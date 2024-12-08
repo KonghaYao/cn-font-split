@@ -18,7 +18,7 @@ export class APIInterface {
     constructor(
         public key: string = Math.random().toString().replace('.', ''),
     ) {}
-    fs: IFs;
+    fs!: IFs;
     async init(fs = createFsFromVolume(new Volume())) {
         await fs.promises.mkdir('/tmp/fonts', { recursive: true });
         await fs.promises.mkdir('/tmp/' + this.key);
@@ -142,7 +142,7 @@ export class StaticWasm {
     }
     WasiHandle = async (imports: any) => {
         return WebAssembly.instantiate(
-            new Uint8Array((await this.wasmBuffer).slice()),
+            new Uint8Array((await this.wasmBuffer).slice(0)),
 
             // './target/wasm32-wasip1/release/wasm_edge.Oz.wasm',
             imports as any,
