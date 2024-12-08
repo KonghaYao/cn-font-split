@@ -5,13 +5,10 @@ export default defineConfig(({ mode }) => {
     return {
         base: '',
         mode: 'production',
-        define: {
-            __webpack_public_path__: 'true',
-        },
         plugins: [
             nodeExternals({
                 builtinsPrefix: 'ignore',
-                exclude: ['memfs-browser'],
+                exclude: ['memfs-browser', '@tybys/wasm-util'],
             }),
             dts({
                 include: ['src/**/*', '../ffi/gen/index.ts'],
@@ -22,6 +19,7 @@ export default defineConfig(({ mode }) => {
                     if (id.includes('memfs')) {
                         return 'import {Buffer} from "buffer";\n' + code;
                     }
+                    return code.replaceAll('process.env', 'import.meta.env');
                 },
             },
         ],

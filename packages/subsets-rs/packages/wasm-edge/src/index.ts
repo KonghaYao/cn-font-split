@@ -2,13 +2,6 @@ import { api_interface } from '../../ffi/gen/index';
 import { IFs, Volume, createFsFromVolume } from 'memfs-browser';
 import { WASI } from '@tybys/wasm-util';
 
-// @ts-ignore
-globalThis.process = {
-    env: {
-        // NODE_DEBUG_NATIVE: 'wasi',
-    },
-};
-
 export type FontSplitProps = ConstructorParameters<
     typeof api_interface.InputTemplate
 >[0];
