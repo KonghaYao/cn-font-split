@@ -1,13 +1,16 @@
 import { defineConfig } from 'vite';
 import nodeExternals from 'rollup-plugin-node-externals';
+import dts from 'vite-plugin-dts';
 export default defineConfig(({ mode }) => {
     return {
         base: '',
         mode: 'production',
         define: {},
         plugins: [
-            nodeExternals({
-                exclude: ['google-protobuf'],
+            nodeExternals({}),
+            dts({
+                include: ['src/**/*', '../ffi/gen/index.ts'],
+                exclude: ['src/*.test.ts'],
             }),
         ],
         build: {
