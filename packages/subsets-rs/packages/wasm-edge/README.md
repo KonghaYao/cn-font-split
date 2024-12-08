@@ -12,7 +12,7 @@ const input = await fetch(
 
 // 只需要初始化一次
 const wasm = new StaticWasm(
-    'https:/ik.imagekit.io/github/KonghaYao/cn-font-split/releases/download/7.0.0-beta-1/cn-font-split-7.0.0-beta-1-wasm32-wasi.Oz.wasm',
+    'https://ik.imagekit.io/github/KonghaYao/cn-font-split/releases/download/7.0.0-beta-1/cn-font-split-7.0.0-beta-1-wasm32-wasi.Oz.wasm',
 );
 
 const data = await fontSplit(
