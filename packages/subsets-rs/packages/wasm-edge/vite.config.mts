@@ -6,10 +6,10 @@ export default defineConfig(({ mode }) => {
         base: '',
         mode: 'production',
         plugins: [
-            nodeExternals({
-                builtinsPrefix: 'ignore',
-                exclude: ['memfs-browser', '@tybys/wasm-util'],
-            }),
+            // nodeExternals({
+            //     builtinsPrefix: 'ignore',
+            //     exclude: ['memfs-browser', '@tybys/wasm-util'],
+            // }),
             dts({
                 include: ['src/**/*', '../ffi/gen/index.ts'],
                 exclude: ['src/*.test.ts'],
