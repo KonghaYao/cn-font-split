@@ -6,7 +6,8 @@ import {
 } from "https://deno.land/x/zipjs/index.js";
 
 const wasm = new StaticWasm(
-    'https://ik.imagekit.io/github/KonghaYao/cn-font-split/releases/download/7.0.0-beta-1/cn-font-split-7.0.0-beta-1-wasm32-wasi.Oz.wasm',
+    // 静态加载保证冷启动性能
+    new URL('./cn-font-split-7.0.0-beta-1-wasm32-wasi.Oz.wasm', import.meta.url),
 );
 await wasm.wasmBuffer;
 Deno.serve(
@@ -36,22 +37,20 @@ Deno.serve(
             const zipFileWriter = new BlobWriter();
             const zipWriter = new ZipWriter(zipFileWriter);
             for (const item of data) {
-
                 await zipWriter.add(item.name, new BlobReader(new Blob([item.data])));
             }
             await zipWriter.close();
             const zipFileBlob = await zipFileWriter.getData();
+            const file = await zipFileBlob.arrayBuffer()
             console.timeEnd("compress")
-            return new Response(
-                zipFileBlob,
-                {
-                    headers: {
-                        "content-type": "application/octet-stream",
-                        "Cache-Control": "no-cache",
-                        "Connection": "keep-alive"
-                    }
-                }
-            )
+            const key = crypto.randomUUID().replaceAll("-", '') + ".zip"
+            const formData = new FormData();
+            formData.append('file', new Blob([new Uint8Array(file)]), key); // 将文件添加到表单数据中
+            const url = await fetch("https://temp.sh/upload", {
+                method: "POST",
+                body: formData
+            }).then(res => res.text())
+            return new Response(url)
         }
         return new Response("请使用 post 请求")
     }
