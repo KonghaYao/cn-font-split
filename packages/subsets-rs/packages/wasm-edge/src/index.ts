@@ -10,19 +10,19 @@ export { api_interface as proto };
 export class APIInterface {
     constructor(
         public key: string = Math.random().toString().replace('.', ''),
-    ) {}
+    ) { }
     fs!: IFs;
     async init(fs = createFsFromVolume(new Volume())) {
         await fs.promises.mkdir('/tmp/fonts', { recursive: true });
         await fs.promises.mkdir('/tmp/' + this.key);
         this.fs = fs;
     }
-    async setConfig(config: FontSplitProps) {
-        const i = new api_interface.InputTemplate(config);
+    async setConfig(config: FontSplitProps | ArrayBuffer) {
+        const buffer = config instanceof ArrayBuffer ? new Uint8Array(config) : (new api_interface.InputTemplate(config)).serialize();
 
         await this.fs.promises.writeFile(
             '/tmp/fonts/' + this.key,
-            i.serialize(),
+            buffer,
         );
     }
     async callback() {
@@ -52,7 +52,7 @@ export class APIInterface {
 }
 
 export async function fontSplit(
-    input: FontSplitProps,
+    input: FontSplitProps | ArrayBuffer,
     loadWasm: (
         imports: any,
     ) => Promise<WebAssembly.WebAssemblyInstantiatedSource>,
@@ -80,10 +80,10 @@ export function createWasi(
     api: APIInterface,
     options:
         | {
-              key?: string;
-              logger: (str: string, type: 'log' | 'error') => void;
-              fs?: IFs;
-          }
+            key?: string;
+            logger: (str: string, type: 'log' | 'error') => void;
+            fs?: IFs;
+        }
         | undefined,
 ) {
     const wasi = new WASI({

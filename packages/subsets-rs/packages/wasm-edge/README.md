@@ -1,6 +1,6 @@
 ## cn-font-split 性能爆表 Wasm 版本
 
-虽然在浏览器，但是速度极快。
+虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](./scripts/deno.mjs)。
 
 ```ts
 import { fontSplit, StaticWasm } from './index';
@@ -30,3 +30,4 @@ const data = await fontSplit(
 console.log(data);
 // { name: string, data: Uint8Array }[]
 ```
+
