@@ -1,0 +1,23 @@
+[build]
+build-std = false # do not build the std library. has precedence over xargo
+xargo = false     # enable the use of xargo by default
+zig = false       # do not use zig cc for the builds
+context = "."     # the context folder to build the script in. defaults to `.`
+
+[target.x86_64-unknown-freebsd]
+pre-build = []
+
+[target.x86_64-unknown-linux-musl]
+pre-build = []
+
+[target.aarch64-unknown-linux-musl]
+pre-build = []
+
+[target.riscv64gc-unknown-linux-gnu]
+pre-build = []
+
+[target.x86_64-pc-windows-msvc]
+pre-build = []
+
+[target.x86_64-apple-darwin]
+pre-build = []

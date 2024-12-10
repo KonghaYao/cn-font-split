@@ -29,6 +29,7 @@ env_logger = "0.11.5"
 
 
 [build-dependencies]
+cross = "0.2.5"
 tonic-build = "0.12.3"
 
 [workspace]
@@ -47,5 +48,5 @@ members = [
 lto = true
 
 [[bin]]
-name="cn-font-split"
-path="./src/main.rs"
+name = "cn-font-split"
+path = "./src/main.rs"
