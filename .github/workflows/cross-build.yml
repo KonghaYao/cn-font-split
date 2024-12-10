@@ -7,10 +7,8 @@ permissions:
   contents: write
   id-token: write
 
-'on':
-  push:
-    branches:
-      - main
+on:
+    workflow_dispatch:
       
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,8 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - host: macos-latest
-            target: x86_64-apple-darwin
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
           # - host: windows-latest
           #   target: x86_64-pc-windows-msvc
           # - host: windows-latest
@@ -64,9 +62,7 @@ jobs:
       - name: Setup Mac Environment
         if: runner.os == 'macOS'
         run: |
-              sudo apt update
-              sudo apt upgrade
-              sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
+              sudo brew install -y llvm clang pkg-config libssl-dev protobuf-compiler
         
       - name: Install
         uses: actions-rs/toolchain@v1
@@ -93,7 +89,9 @@ jobs:
 
       - name: Build
         working-directory: ./packages/subsets-rs/packages/ffi
-        run: cross build --target ${{ matrix.settings.target }}
+        run: |
+          cargo build --lib --target ${{ matrix.settings.target }} --release
+          rm ../../target/${{ matrix.settings.target }}/release/libffi.d
         shell: bash
 
       
@@ -101,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: ./packages/subsets-rs/target/${{ matrix.settings.target }}/libffi.*
+          path: ./packages/subsets-rs/target/${{ matrix.settings.target }}/release/libffi.*
           if-no-files-found: error
       
   # build-freebsd:
