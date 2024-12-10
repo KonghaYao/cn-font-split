@@ -45,3 +45,7 @@ members = [
 
 [profile.release]
 lto = true
+
+[[bin]]
+name="cn-font-split"
+path="./src/main.rs"

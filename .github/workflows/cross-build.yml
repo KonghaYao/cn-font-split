@@ -1,0 +1,410 @@
+name: Cross Build for ffi
+env:
+  MACOSX_DEPLOYMENT_TARGET: '10.13'
+  CARGO_INCREMENTAL: '1'
+
+permissions:
+  contents: write
+  id-token: write
+
+on:
+    workflow_dispatch:
+      
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          # - host: windows-latest
+          #   target: x86_64-pc-windows-msvc
+          # - host: windows-latest
+          #   target: i686-pc-windows-msvc
+          # - host: windows-latest
+          #   target: aarch64-pc-windows-msvc
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - host: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - host: macos-latest
+            target: aarch64-apple-darwin
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          - host: ubuntu-latest
+            target: armv7-unknown-linux-gnueabihf
+          - host: ubuntu-latest
+            target: aarch64-linux-android
+          - host: ubuntu-latest
+            target: armv7-linux-androideabi
+          - host: ubuntu-latest
+            target: aarch64-unknown-linux-musl        
+    
+    name: stable - ${{ matrix.settings.target }}
+    runs-on: ${{ matrix.settings.host }}
+    env:
+        TZ: Asia/Shanghai
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Linux Environment
+        if: runner.os == 'Linux'
+        run: |
+              sudo apt update
+              sudo apt upgrade
+              sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
+        
+      - name: Setup Mac Environment
+        if: runner.os == 'macOS'
+        run: |
+              sudo brew install -y llvm clang pkg-config libssl-dev protobuf-compiler
+        
+      - name: Install
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          targets: ${{ matrix.settings.target }}
+
+      
+      # - name: Cache cargo
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       .cargo-cache
+      #       target/
+      #     key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+
+      - name: Setup toolchain
+        run: ${{ matrix.settings.setup }}
+        if: ${{ matrix.settings.setup }}
+        shell: bash
+
+      - name: Build
+        working-directory: ./packages/subsets-rs/packages/ffi
+        run: |
+          cargo build --lib --target ${{ matrix.settings.target }} --release
+          rm ../../target/${{ matrix.settings.target }}/release/libffi.d
+        shell: bash
+
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: ./packages/subsets-rs/target/${{ matrix.settings.target }}/release/libffi.*
+          if-no-files-found: error
+      
+  # build-freebsd:
+  #   runs-on: ubuntu-latest
+  #   name: Build FreeBSD
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build
+  #       id: build
+  #       uses: cross-platform-actions/action@v0.26.0
+  #       env:
+  #         RUSTUP_IO_THREADS: 1
+  #       with:
+  #         operating_system: freebsd
+  #         version: '14.2'
+  #         memory: 8G
+  #         cpu_count: 3
+  #         environment_variables: 'DEBUG RUSTUP_IO_THREADS'
+  #         shell: bash
+  #         run: |
+  #           sudo pkg install -y -f curl node libnghttp2 npm
+  #           sudo npm install -g yarn --ignore-scripts
+  #           curl https://sh.rustup.rs -sSf --output rustup.sh
+  #           sh rustup.sh -y --profile minimal --default-toolchain beta
+  #           source "$HOME/.cargo/env"
+  #           echo "~~~~ rustc --version ~~~~"
+  #           rustc --version
+  #           echo "~~~~ node -v ~~~~"
+  #           node -v
+  #           echo "~~~~ yarn --version ~~~~"
+  #           yarn --version
+  #           pwd
+  #           ls -lah
+  #           whoami
+  #           env
+  #           freebsd-version
+  #           yarn install
+  #           yarn build
+  #           rm -rf node_modules
+  #           rm -rf target
+  #           rm -rf .yarn/cache
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: bindings-freebsd
+  #         path: ${{ env.APP_NAME }}.*.node
+  #         if-no-files-found: error
+  # test-macOS-windows-binding:
+  #   name: Test bindings on ${{ matrix.settings.target }} - node@${{ matrix.node }}
+  #   needs:
+  #     - build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       settings:
+  #         - host: windows-latest
+  #           target: x86_64-pc-windows-msvc
+  #           architecture: x64
+  #         - host: macos-latest
+  #           target: aarch64-apple-darwin
+  #           architecture: arm64
+  #         - host: macos-latest
+  #           target: x86_64-apple-darwin
+  #           architecture: x64
+  #       node:
+  #         - '18'
+  #         - '20'
+  #   runs-on: ${{ matrix.settings.host }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node }}
+  #         cache: yarn
+  #         architecture: ${{ matrix.settings.architecture }}
+  #     - name: Install dependencies
+  #       run: yarn install
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-${{ matrix.settings.target }}
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Test bindings
+  #       run: yarn test
+  # test-linux-x64-gnu-binding:
+  #   name: Test bindings on Linux-x64-gnu - node@${{ matrix.node }}
+  #   needs:
+  #     - build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node:
+  #         - '18'
+  #         - '20'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node }}
+  #         cache: yarn
+  #     - name: Install dependencies
+  #       run: yarn install
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-x86_64-unknown-linux-gnu
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Test bindings
+  #       run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-slim yarn test
+  # test-linux-x64-musl-binding:
+  #   name: Test bindings on x86_64-unknown-linux-musl - node@${{ matrix.node }}
+  #   needs:
+  #     - build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node:
+  #         - '18'
+  #         - '20'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node }}
+  #         cache: yarn
+  #     - name: Install dependencies
+  #       run: |
+  #         yarn config set supportedArchitectures.libc "musl"
+  #         yarn install
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-x86_64-unknown-linux-musl
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Test bindings
+  #       run: docker run --rm -v $(pwd):/build -w /build node:${{ matrix.node }}-alpine yarn test
+  # test-linux-aarch64-gnu-binding:
+  #   name: Test bindings on aarch64-unknown-linux-gnu - node@${{ matrix.node }}
+  #   needs:
+  #     - build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node:
+  #         - '18'
+  #         - '20'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-aarch64-unknown-linux-gnu
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Install dependencies
+  #       run: |
+  #         yarn config set supportedArchitectures.cpu "arm64"
+  #         yarn config set supportedArchitectures.libc "glibc"
+  #         yarn install
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
+  #       with:
+  #         platforms: arm64
+  #     - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  #     - name: Setup and run tests
+  #       uses: addnab/docker-run-action@v3
+  #       with:
+  #         image: node:${{ matrix.node }}-slim
+  #         options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
+  #         run: |
+  #           set -e
+  #           yarn test
+  #           ls -la
+  # test-linux-aarch64-musl-binding:
+  #   name: Test bindings on aarch64-unknown-linux-musl - node@lts
+  #   needs:
+  #     - build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-aarch64-unknown-linux-musl
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Install dependencies
+  #       run: |
+  #         yarn config set supportedArchitectures.cpu "arm64"
+  #         yarn config set supportedArchitectures.libc "musl"
+  #         yarn install
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
+  #       with:
+  #         platforms: arm64
+  #     - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  #     - name: Setup and run tests
+  #       uses: addnab/docker-run-action@v3
+  #       with:
+  #         image: node:lts-alpine
+  #         options: '--platform linux/arm64 -v ${{ github.workspace }}:/build -w /build'
+  #         run: |
+  #           set -e
+  #           yarn test
+  # test-linux-arm-gnueabihf-binding:
+  #   name: Test bindings on armv7-unknown-linux-gnueabihf - node@${{ matrix.node }}
+  #   needs:
+  #     - build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node:
+  #         - '18'
+  #         - '20'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-armv7-unknown-linux-gnueabihf
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Install dependencies
+  #       run: |
+  #         yarn config set supportedArchitectures.cpu "arm"
+  #         yarn install
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
+  #       with:
+  #         platforms: arm
+  #     - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  #     - name: Setup and run tests
+  #       uses: addnab/docker-run-action@v3
+  #       with:
+  #         image: node:${{ matrix.node }}-bullseye-slim
+  #         options: '--platform linux/arm/v7 -v ${{ github.workspace }}:/build -w /build'
+  #         run: |
+  #           set -e
+  #           yarn test
+  #           ls -la
+  # publish:
+  #   name: Publish
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build-freebsd
+  #     - test-macOS-windows-binding
+  #     - test-linux-x64-gnu-binding
+  #     - test-linux-x64-musl-binding
+  #     - test-linux-aarch64-gnu-binding
+  #     - test-linux-aarch64-musl-binding
+  #     - test-linux-arm-gnueabihf-binding
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #         cache: yarn
+  #     - name: Install dependencies
+  #       run: yarn install
+  #     - name: Download all artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         path: artifacts
+  #     - name: Move artifacts
+  #       run: yarn artifacts
+  #     - name: List packages
+  #       run: ls -R ./npm
+  #       shell: bash
+  #     - name: Publish
+  #       run: |
+  #         npm config set provenance true
+  #         if git log -1 --pretty=%B | grep "^[0-9]\+\.[0-9]\+\.[0-9]\+$";
+  #         then
+  #           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+  #           npm publish --access public
+  #         elif git log -1 --pretty=%B | grep "^[0-9]\+\.[0-9]\+\.[0-9]\+";
+  #         then
+  #           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+  #           npm publish --tag next --access public
+  #         else
+  #           echo "Not a release, skipping publish"
+  #         fi
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

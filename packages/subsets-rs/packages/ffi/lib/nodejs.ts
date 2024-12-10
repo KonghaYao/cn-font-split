@@ -2,7 +2,8 @@ import { DataType, open, close, load, createPointer, funcConstructor, arrayConst
 import { api_interface } from '../gen/index'
 import fs from 'fs-extra'
 import path from 'path'
-
+import { FontSplitProps } from "./js";
+export * from './js'
 
 let opened = false
 function startFontSplit() {
@@ -21,11 +22,8 @@ export function endFontSplit() {
     opened = false
 }
 
-type ProtoInput = Parameters<typeof api_interface.InputTemplate.fromObject>[0]
-export interface FontSplitConifg extends ProtoInput {
-}
 
-export async function fontSplit(data: FontSplitConifg, manualClose = false) {
+export async function fontSplit(data: FontSplitProps, manualClose = false) {
     startFontSplit()
     const input = new api_interface.InputTemplate(data)
     if (!input.out_dir) throw new Error("cn-font-split need out_dir")
@@ -35,10 +33,10 @@ export async function fontSplit(data: FontSplitConifg, manualClose = false) {
             let e = api_interface.EventMessage.deserialize(data)
             console.log(e.event)
             switch (e.event) {
-                case "end":
+                case api_interface.EventName.END:
                     res()
                     break
-                case "output_data":
+                case api_interface.EventName.OUTPUT_DATA:
                     fs.outputFile(path.join(input.out_dir, e.message), e.data)
                     break
                 default:

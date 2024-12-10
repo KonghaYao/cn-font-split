@@ -24,6 +24,7 @@ Deno.serve(
             const data = await fontSplit(
                 {
                     input: new Uint8Array(input),
+                    
                 },
                 wasm.WasiHandle,
                 {
