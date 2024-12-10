@@ -2,8 +2,8 @@ import { api_interface } from '../../ffi/gen/index';
 import { IFs, Volume, createFsFromVolume } from 'memfs-browser';
 import { WASI } from '@tybys/wasm-util';
 
-export type FontSplitProps = ConstructorParameters<
-    typeof api_interface.InputTemplate
+export type FontSplitProps = Parameters<
+    (typeof api_interface.InputTemplate)["fromObject"]
 >[0];
 export { api_interface as proto };
 
@@ -18,8 +18,7 @@ export class APIInterface {
         this.fs = fs;
     }
     async setConfig(config: FontSplitProps | ArrayBuffer) {
-        const buffer = config instanceof ArrayBuffer ? new Uint8Array(config) : (new api_interface.InputTemplate(config)).serialize();
-
+        const buffer = config instanceof ArrayBuffer ? new Uint8Array(config) : (api_interface.InputTemplate.fromObject(config)).serialize();
         await this.fs.promises.writeFile(
             '/tmp/fonts/' + this.key,
             buffer,
