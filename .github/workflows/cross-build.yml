@@ -19,7 +19,7 @@ jobs:
 
             - os-name: Linux-x86_64
               runs-on: ubuntu-24.04
-              setup: sudo apt install -y musl-gcc
+              setup: 
               target: x86_64-unknown-linux-musl
 
             - os-name: Linux-aarch64
@@ -77,6 +77,8 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: "--locked --release -p ffi"
           strip: false
+        env:
+          CROSS_CONFIG: "./packages/subsets-rs/Cross.toml"
 
       - name: Watch Release
         working-directory: ./packages/subsets-rs/
