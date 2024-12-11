@@ -1059,9 +1059,9 @@ dependencies = [
 
 [[package]]
 name = "harfbuzz_rs_now"
-version = "2.2.4"
+version = "2.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2caee5c8485f4d8e7efa14f8f4c3ded65dd3579f130b6eff3f79dd34f018cb0c"
+checksum = "094abd0642e1397b2c7fdb8388365f7f5756712632b6554a366076b28dc44649"
 dependencies = [
  "bitflags 2.6.0",
  "cc",
