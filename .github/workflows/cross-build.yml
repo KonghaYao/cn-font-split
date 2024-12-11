@@ -134,6 +134,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.platform.target }}
-          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/*
+          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/*.*
           if-no-files-found: error
       
