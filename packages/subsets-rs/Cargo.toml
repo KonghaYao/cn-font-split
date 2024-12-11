@@ -10,7 +10,7 @@ license = "Apache-2.0"
 
 [dependencies]
 cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
-harfbuzz_rs_now = "2.2.5"
+harfbuzz_rs_now = "2.2.6"
 lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
 log = "0.4.22"
 md5 = "0.7.0"
