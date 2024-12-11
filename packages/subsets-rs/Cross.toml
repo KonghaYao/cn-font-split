@@ -4,20 +4,50 @@ xargo = false     # enable the use of xargo by default
 zig = false       # do not use zig cc for the builds
 context = "."     # the context folder to build the script in. defaults to `.`
 
-[target.x86_64-unknown-freebsd]
-pre-build = []
+[build.env]
+passthrough = ["CARGO_WITH_NO_EXTRA", "HARFBUZZ_SYS_NO_PKG_CONFIG"]
+
+[target.aarch64-unknown-linux-gnu]
+pre-build = [
+    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+]
+
+[target.x86_64-unknown-linux-gnu]
+pre-build = [
+    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+]
 
 [target.x86_64-unknown-linux-musl]
-pre-build = []
+pre-build = [
+    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+]
 
 [target.aarch64-unknown-linux-musl]
-pre-build = []
+pre-build = [
+    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+]
 
 [target.riscv64gc-unknown-linux-gnu]
-pre-build = []
+pre-build = [
+    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+]
 
 [target.x86_64-pc-windows-msvc]
-pre-build = []
+pre-build = [
+    "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser",
+    "Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression",
+    "scoop install main/llvm",
+    "scoop install main/mingw",
+    "scoop install main/clangd"
+]
+[target.x86_64-pc-windows-gnu]
+pre-build = [
+    "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser",
+    "Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression",
+    "scoop install main/llvm",
+    "scoop install main/mingw",
+    "scoop install main/clangd"
+]
 
 [target.x86_64-apple-darwin]
 pre-build = []

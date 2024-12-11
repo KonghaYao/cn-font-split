@@ -1,4 +1,7 @@
 fn main() {
+    if std::env::var("CARGO_WITH_NO_EXTRA").is_ok() {
+        return;
+    }
     let out_dir = std::path::PathBuf::from("./src/lib");
     let _ = std::fs::create_dir_all("./src/lib");
 

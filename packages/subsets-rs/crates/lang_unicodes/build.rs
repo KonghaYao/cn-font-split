@@ -2,6 +2,9 @@ use std::env;
 use std::process::Command;
 
 fn main() {
+    if env::var("CARGO_WITH_NO_EXTRA").is_ok() {
+        return;
+    }
     // 检查 npm 是否存在
     if Command::new("npm").arg("--version").status().is_err() {
         panic!("npm is not installed or not in PATH");

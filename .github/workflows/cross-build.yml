@@ -1,7 +1,7 @@
 name: Cross Build for ffi
 on:
     workflow_dispatch:
-      
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,26 +17,47 @@ jobs:
             #   target: x86_64-unknown-freebsd
             #   skip_tests: true
 
-            - os-name: Linux-x86_64
+            - os-name: aarch64-unknown-linux-gnu
               runs-on: ubuntu-24.04
               setup: 
-              target: x86_64-unknown-linux-musl
+              protoc: true
+              target: aarch64-unknown-linux-gnu
 
-            - os-name: Linux-aarch64
+            - os-name: x86_64-unknown-linux-gnu
               runs-on: ubuntu-24.04
-              target: aarch64-unknown-linux-musl
+              setup: 
+              target: x86_64-unknown-linux-gnu
+
+            # - os-name: Linux-x86_64-musl
+            #   runs-on: ubuntu-20.04
+            #   setup: 
+            #   target: x86_64-unknown-linux-musl
+
+            # - os-name: Linux-aarch64-musl
+            #   runs-on: ubuntu-20.04
+            #   target: aarch64-unknown-linux-musl
               
-            - os-name: Linux-riscv64
-              runs-on: ubuntu-24.04
-              target: riscv64gc-unknown-linux-gnu
+            # - os-name: Linux-riscv64
+            #   runs-on: ubuntu-20.04
+            #   target: riscv64gc-unknown-linux-gnu
 
-            # - os-name: Windows-x86_64
-            #   runs-on: windows-latest
-            #   target: x86_64-pc-windows-msvc
+            - os-name: Windows-x86_64-msvc
+              runs-on: windows-latest
+              protoc: true
+              target: x86_64-pc-windows-msvc
+
+            - os-name: Windows-x86_64-gnu
+              runs-on: windows-latest
+              protoc: true
+              target: x86_64-pc-windows-gnu
 
             - os-name: macOS-x86_64
               runs-on: macOS-latest
               target: x86_64-apple-darwin
+
+            - os-name: macOS-aarch64
+              runs-on: macOS-latest
+              target: aarch64-apple-darwin
 
             # more targets here ...
     env:
@@ -45,29 +66,57 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Setup Windows Environment
+        if: ${{ runner.os == 'Windows' }}
+        shell: pwsh
+        run: |
+              Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+              Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+              scoop install main/llvm
+              scoop install main/mingw
+              scoop install main/nodejs
+              ${{ matrix.platform.setup }}
       - name: Setup Linux Environment
         if: ${{ runner.os == 'Linux' }}
         run: |
               sudo apt update
               sudo apt upgrade
-              sudo apt install -y nodejs llvm clang pkg-config libssl-dev protobuf-compiler
+              sudo apt install -y nodejs llvm clang pkg-config libssl-dev
               ${{ matrix.platform.setup }}
+
+
       - name: Build Node
         working-directory: ./packages/subsets-rs/crates/lang_unicodes
         run: |
            npm i
            npm run build
 
-     
       - name: Set up Homebrew
         id: set-up-homebrew
         if: ${{ runner.os == 'macOS' }}
         uses: Homebrew/actions/setup-homebrew@master
+
       - name: Setup MacOS Environment
         if: ${{ runner.os == 'macOS' }}
         run: |
             brew install llvm protobuf automake libtool
+            ${{ matrix.platform.setup }}
+    
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "23.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install latest stable
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable      
+
+      - name: BUILD PROTO
+        working-directory: ./packages/subsets-rs/
+        run: |
+          cargo build -p cn-font-proto
 
       - name: Build binary
         uses: houseabsolute/actions-rust-cross@v0
@@ -78,20 +127,13 @@ jobs:
           args: "--locked --release -p ffi"
           strip: false
         env:
-          CROSS_CONFIG: "./packages/subsets-rs/Cross.toml"
-
-      - name: Watch Release
-        working-directory: ./packages/subsets-rs/
-        run: |
-          ls ./target/${{ matrix.platform.target }}/release/
-          rm ./target/${{ matrix.platform.target }}/release/libffi.d
-        shell: bash
-
-      
+          CARGO_WITH_NO_EXTRA: "True"
+          HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+          
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.platform.target }}
-          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/libffi.*
+          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/*
           if-no-files-found: error
       
