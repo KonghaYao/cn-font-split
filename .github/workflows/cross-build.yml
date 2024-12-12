@@ -137,7 +137,7 @@ jobs:
           HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
       
       - name: Rename Package On Mac
-        if: ${{ runner.os == 'Mac'}}
+        if: ${{ runner.os == 'macOS'}}
         working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
         run: |
           mv ./libffi.dylib ./libffi-${{ matrix.platform.target }}.dylib
