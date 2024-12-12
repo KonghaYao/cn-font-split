@@ -6,7 +6,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  build:
+  cross-build:
     name: Release - ${{ matrix.platform.os-name }}
     strategy:
         fail-fast: false
@@ -130,11 +130,118 @@ jobs:
         env:
           CARGO_WITH_NO_EXTRA: "True"
           HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+      
+      - name: Rename Package On Mac
+        if: ${{ runner.os == 'Mac'}}
+        working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
+        run: |
+          mv ./libffi.dylib ./libffi-${{ matrix.platform.target }}.dylib
+
+      - name: Rename Package On Linux
+        if: ${{ runner.os == 'Linux'}}
+        working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
+        run: |
+          mv ./libffi.so ./libffi-${{ matrix.platform.target }}.so
+
+      - name: Rename Package on Windows
+        if: ${{ runner.os == 'Windows' }}
+        working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
+        run: |
+          ren ffi.dll libffi-${{ matrix.platform.target }}.dll
           
+      #  这里先不重命名，因为每个环境的架构不一样，操作繁琐
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.platform.target }}
-          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/*.*
+          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/libffi-${{ matrix.platform.target }}.*
           if-no-files-found: error
+  build-wasm:
+      name: Release - WASM
+      #运行的环境
+      runs-on: ubuntu-24.04
+      env:
+          TZ: Asia/Shanghai
+      steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+          - name: Setup Environment
+            run: |
+                sudo apt update
+                sudo apt upgrade
+                sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
+          
+          - name: Setup WASI Environment
+            working-directory: ./packages/subsets-rs
+            run: |
+                sudo sh ./.devcontainer/wasi-install.sh
+                sudo sh ./.devcontainer/wasm-opt-install.sh
+          - name: Install latest stable
+            uses: actions-rs/toolchain@v1
+            with:
+                toolchain: stable
+          - name: Update Rust
+            run: /home/runner/.cargo/bin/rustup  target add wasm32-wasip1
+
+
+          - name: Build Node
+            working-directory: ./packages/subsets-rs/crates/lang_unicodes
+            run: |
+                npm i
+                npm run build
+
+          - name: Build
+            working-directory: ./packages/subsets-rs/packages/wasm-edge
+            run: |
+                export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-24.0-x86_64-linux/share/wasi-sysroot/"
+                export PATH=$PATH:/opt/binaryen/binaryen-version_119/bin
+                sh build-wasi.sh
+                
+          - name: Rename Package
+            working-directory: ./packages/subsets-rs
+            run: |
+                mv ./target/wasm32-wasip1/release/wasm_edge.Oz.wasm ./target/wasm32-wasip1/release/libffi-wasm32-wasip1.wasm
+                
+          - name: Upload artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: bindings-wasm32-wasip1
+              path: ./packages/subsets-rs/target/wasm32-wasip1/release/libffi-wasm32-wasip1.wasm
+              if-no-files-found: error
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [build-wasm, cross-build]
+    steps:
+      - name: Create Release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: Release ${{ github.event.inputs.version }}
+          body: |
+            Release ${{ github.event.inputs.version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
       
+      - name: Display structure of downloaded files
+        run: ls -R ./artifacts
+
+      - name: prepare upload
+        run: |
+          mkdir release
+
+      - name: Release Upload Assets
+        uses: jaywcjlove/github-action-upload-assets@main
+        with:
+          tag: ${{github.event.inputs.version}}
+          asset-path: '["./artifacts/*"]'
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+              
