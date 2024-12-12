@@ -12,43 +12,36 @@ jobs:
         fail-fast: false
         matrix:
           platform:
-            # - os-name: FreeBSD-x86_64
-            #   runs-on: ubuntu-24.04
-            #   target: x86_64-unknown-freebsd
-            #   skip_tests: true
+            - os-name: FreeBSD-x86_64
+              runs-on: ubuntu-24.04
+              target: x86_64-unknown-freebsd
 
             - os-name: aarch64-unknown-linux-gnu
               runs-on: ubuntu-24.04
-              setup: 
-              protoc: true
               target: aarch64-unknown-linux-gnu
 
             - os-name: x86_64-unknown-linux-gnu
               runs-on: ubuntu-24.04
-              setup: 
               target: x86_64-unknown-linux-gnu
 
-            # - os-name: Linux-x86_64-musl
-            #   runs-on: ubuntu-20.04
-            #   setup: 
-            #   target: x86_64-unknown-linux-musl
+            - os-name: Linux-x86_64-musl
+              runs-on: ubuntu-20.04
+              target: x86_64-unknown-linux-musl
 
-            # - os-name: Linux-aarch64-musl
-            #   runs-on: ubuntu-20.04
-            #   target: aarch64-unknown-linux-musl
+            - os-name: Linux-aarch64-musl
+              runs-on: ubuntu-20.04
+              target: aarch64-unknown-linux-musl
               
-            # - os-name: Linux-riscv64
-            #   runs-on: ubuntu-20.04
-            #   target: riscv64gc-unknown-linux-gnu
+            - os-name: Linux-riscv64
+              runs-on: ubuntu-20.04
+              target: riscv64gc-unknown-linux-gnu
 
             - os-name: Windows-x86_64-msvc
               runs-on: windows-latest
-              protoc: true
               target: x86_64-pc-windows-msvc
 
             - os-name: Windows-x86_64-gnu
               runs-on: windows-latest
-              protoc: true
               target: x86_64-pc-windows-gnu
 
             - os-name: macOS-x86_64
