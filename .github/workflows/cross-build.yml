@@ -86,7 +86,6 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: |
               sudo apt update
-              sudo apt upgrade
               sudo apt install -y nodejs llvm clang pkg-config libssl-dev
               ${{ matrix.platform.setup }}
 
