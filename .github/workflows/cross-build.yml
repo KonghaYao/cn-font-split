@@ -1,6 +1,11 @@
-name: Cross Build for ffi
+name: Rust Cross Build
 on:
-    workflow_dispatch:
+  workflow_dispatch:
+      inputs:
+          version:
+              description: 'Version number'
+              required: true
+              default: '7.0.0-beta-2'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
