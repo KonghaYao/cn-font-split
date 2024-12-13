@@ -5,7 +5,7 @@ on:
           version:
               description: 'Version number'
               required: true
-              default: '7.0.0-beta-2'
+              default: '7.0.0-beta-3'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -91,7 +91,7 @@ jobs:
 
 
       - name: Build Node
-        working-directory: ./packages/subsets-rs/crates/lang_unicodes
+        working-directory: ./crates/lang_unicodes
         run: |
            npm i
            npm run build
@@ -119,14 +119,12 @@ jobs:
             toolchain: stable      
 
       - name: BUILD PROTO
-        working-directory: ./packages/subsets-rs/
         run: |
           cargo build -p cn-font-proto
 
       - name: Build binary
         uses: houseabsolute/actions-rust-cross@v0
         with:
-          working-directory: ./packages/subsets-rs/
           command: build
           target: ${{ matrix.platform.target }}
           args: "--locked --release -p ffi"
@@ -137,19 +135,19 @@ jobs:
       
       - name: Rename Package On Mac
         if: ${{ runner.os == 'macOS'}}
-        working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
+        working-directory: ./target/${{ matrix.platform.target }}/release
         run: |
           mv ./libffi.dylib ./libffi-${{ matrix.platform.target }}.dylib
 
       - name: Rename Package On Linux
         if: ${{ runner.os == 'Linux'}}
-        working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
+        working-directory: ./target/${{ matrix.platform.target }}/release
         run: |
           mv ./libffi.so ./libffi-${{ matrix.platform.target }}.so
 
       - name: Rename Package on Windows
         if: ${{ runner.os == 'Windows' }}
-        working-directory: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release
+        working-directory: ./target/${{ matrix.platform.target }}/release
         run: |
           ren ffi.dll libffi-${{ matrix.platform.target }}.dll
           
@@ -158,11 +156,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.platform.target }}
-          path: ./packages/subsets-rs/target/${{ matrix.platform.target }}/release/libffi-${{ matrix.platform.target }}.*
+          path: ./target/${{ matrix.platform.target }}/release/libffi-${{ matrix.platform.target }}.*
           if-no-files-found: error
   build-wasm:
       name: Release - WASM
-      #运行的环境
       runs-on: ubuntu-24.04
       env:
           TZ: Asia/Shanghai
@@ -176,7 +173,7 @@ jobs:
                 sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
           
           - name: Setup WASI Environment
-            working-directory: ./packages/subsets-rs
+            working-directory: .
             run: |
                 sudo sh ./.devcontainer/wasi-install.sh
                 sudo sh ./.devcontainer/wasm-opt-install.sh
@@ -189,20 +186,20 @@ jobs:
 
 
           - name: Build Node
-            working-directory: ./packages/subsets-rs/crates/lang_unicodes
+            working-directory: ./crates/lang_unicodes
             run: |
                 npm i
                 npm run build
 
           - name: Build
-            working-directory: ./packages/subsets-rs/packages/wasm-edge
+            working-directory: ./packages/wasm-edge
             run: |
                 export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-24.0-x86_64-linux/share/wasi-sysroot/"
                 export PATH=$PATH:/opt/binaryen/binaryen-version_119/bin
                 sh build-wasi.sh
                 
           - name: Rename Package
-            working-directory: ./packages/subsets-rs
+            working-directory: .
             run: |
                 mv ./target/wasm32-wasip1/release/wasm_edge.Oz.wasm ./target/wasm32-wasip1/release/libffi-wasm32-wasip1.wasm
                 
@@ -210,7 +207,7 @@ jobs:
             uses: actions/upload-artifact@v4
             with:
               name: bindings-wasm32-wasip1
-              path: ./packages/subsets-rs/target/wasm32-wasip1/release/libffi-wasm32-wasip1.wasm
+              path: ./target/wasm32-wasip1/release/libffi-wasm32-wasip1.wasm
               if-no-files-found: error
   create-release:
     runs-on: ubuntu-latest

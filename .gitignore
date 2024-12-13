@@ -8,3 +8,7 @@ otf
 .DS_Store
 target
 .idea
+src/pb/*.rs
+*.lock
+*.lockb
+*.wasm

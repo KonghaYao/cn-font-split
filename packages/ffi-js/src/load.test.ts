@@ -1,5 +1,5 @@
 // bun test ./src/load.test.ts
-import { matchPlatform } from './load';
+import { getLatestVersion, matchPlatform, getBinaryFile } from './load';
 // @ts-ignore
 import { test } from 'bun:test';
 import assert from 'node:assert';
@@ -66,3 +66,7 @@ test('multi-platform', () => {
         'wasm32-wasip1',
     );
 });
+test('getVersion', async () => {
+    const version = await getLatestVersion();
+    assert(version.length > 5);
+},);

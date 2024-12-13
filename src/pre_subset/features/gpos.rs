@@ -115,10 +115,10 @@ pub fn analyze_gpos(
 
 #[test]
 fn test_gpos() {
-    let font_file = include_bytes!(
-        "../../../../demo/public/WorkSans-VariableFont_wght.ttf"
-    )
-    .to_vec();
+    use cn_font_utils::read_binary_file;
+    let font_file =
+        read_binary_file("./packages/demo/public/WorkSans-VariableFont_wght.ttf")
+            .unwrap();
     let mut font_file = Cursor::new(&font_file);
     let font = Font::read(&mut font_file).unwrap();
     let result = analyze_gpos(&font, &mut font_file);

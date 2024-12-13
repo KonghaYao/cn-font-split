@@ -1,3 +1,4 @@
 packages:
     # 所有在 packages/ 子目录下的 package
     - "packages/**"
+    - "crates/**"

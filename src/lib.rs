@@ -12,7 +12,7 @@ fn main_test() {
     use cn_font_utils::{output_file, read_binary_file};
     use log::info;
 
-    let path = "../demo/public/SmileySans-Oblique.ttf";
+    let path = "./packages/demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
     let input = InputTemplate {
         input: font_file,

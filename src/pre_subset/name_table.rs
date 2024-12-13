@@ -112,7 +112,7 @@ pub fn name_id_to_string(name_id: NameID) -> String {
 #[test]
 fn test_name_table() {
     use cn_font_utils::read_binary_file;
-    let path = "../demo/public/SmileySans-Oblique.ttf";
+    let path = "./packages/demo/public/SmileySans-Oblique.ttf";
     let file_binary = read_binary_file(&path).expect("Failed to read file");
     let mut font_file = Cursor::new(&file_binary);
     let font = Font::read(&mut font_file).expect("TODO: panic message");
