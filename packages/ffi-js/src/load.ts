@@ -30,3 +30,43 @@ export const matchPlatform = (
         };
     return platformArchMap?.[platform]?.[arch] ?? 'wasm32-wasip1';
 };
+
+export const getBinaryFile = async (platform: string, version: string) => {
+    const fileName = getBinName(platform);
+    const binary = await fetch(
+        `https://github.moeyy.xyz/https://github.com/KonghaYao/cn-font-split/releases/download/${version}/${fileName}`,
+    ).then((res) => res.arrayBuffer());
+
+    return { binary, fileName };
+};
+
+export const getLatestVersion = async () => {
+    const data: {
+        release: {
+            id: number;
+            tag: string;
+            author: string;
+            name: string;
+            draft: boolean;
+            prerelease: boolean;
+            createdAt: string;
+            publishedAt: string;
+            markdown: string;
+            html: string;
+        };
+    } = await fetch(
+        `https://ungh.cc/repos/KonghaYao/cn-font-split/releases/latest`,
+    ).then((res) => res.json());
+    return data.release.tag;
+};
+export function getBinName(platform: string) {
+    const ext = platform.includes('windows')
+        ? 'dll'
+        : platform.includes('darwin')
+        ? 'dylib'
+        : platform.includes('wasm')
+        ? 'wasm'
+        : 'so';
+    const fileName = `libffi-${platform}.${ext}`;
+    return fileName;
+}

@@ -105,7 +105,21 @@ importers:
         specifier: ^3.15.12
         version: 3.15.12
 
-  packages/ffi-js: {}
+  packages/ffi-js:
+    dependencies:
+      ffi-rs:
+        specifier: ^1.1.1
+        version: 1.1.1
+      google-protobuf:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@grpc/grpc-js':
+        specifier: ^1.12.2
+        version: 1.12.2
+      '@types/google-protobuf':
+        specifier: ^3.15.12
+        version: 3.15.12
 
   packages/font-analyze:
     dependencies:
