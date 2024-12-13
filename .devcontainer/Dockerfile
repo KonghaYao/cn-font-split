@@ -1,9 +1,11 @@
 FROM konghayao123/best-cn-dev-container:1.1.0
-RUN . /init/rust.sh
 RUN apt install -y llvm clang pkg-config libssl-dev
 RUN apt install -y protobuf-compiler && protoc --version
-RUN rustup target add wasm32-wasip1
-COPY wasi-install.sh wasi-install.sh
-RUN . wasi-install.sh
-COPY wasm-opt-install.sh wasm-opt-install.sh
-RUN . wasm-opt-install.sh
+RUN bash /init/rust.sh
+ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
+ENV RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
+RUN /root/.cargo/bin/rustup target add wasm32-wasip1
+COPY wasi-install.sh /init/
+RUN . /init/wasi-install.sh
+COPY wasm-opt-install.sh /init/
+RUN . /init/wasm-opt-install.sh
