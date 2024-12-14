@@ -11,7 +11,7 @@ import {
     PointerType,
     JsExternal,
 } from 'ffi-rs';
-import { api_interface } from '../../gen/index.js';
+import { api_interface } from '../gen/index.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { FontSplitProps } from '../interface.js';
@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 export * from '../interface.js';
 
-// @ts-ignore 获取当前模块的 URL 
+// @ts-ignore 获取当前模块的 URL
 const __filename = fileURLToPath(import.meta.url);
 
 // 获取当前模块所在的目录
@@ -36,7 +36,6 @@ function startFontSplit() {
             __dirname,
             getBinName(matchPlatform(process.platform, process.arch, isMusl)),
         );
-        console.log(binPath);
         // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
     }
     open({
@@ -53,7 +52,7 @@ export function endFontSplit() {
 
 export async function fontSplit(data: FontSplitProps, manualClose = false) {
     startFontSplit();
-    const input = new api_interface.InputTemplate(data);
+    const input = api_interface.InputTemplate.fromObject(data);
     if (!input.out_dir) throw new Error('cn-font-split need out_dir');
     let pointer: HelpfulPointer;
     return new Promise<void>((res) => {
@@ -95,7 +94,7 @@ class HelpfulPointer {
                     paramsType: [
                         arrayConstructor({
                             type: DataType.U8Array,
-                            length: 1024 * 256,
+                            length: 4 * 1024 * 1024,
                         }),
                         DataType.I32,
                     ],
@@ -119,7 +118,7 @@ class HelpfulPointer {
                     paramsType: [
                         arrayConstructor({
                             type: DataType.U8Array,
-                            length: 1024 * 256,
+                            length: 4 * 1024 * 1024,
                         }),
                         DataType.I32,
                     ],
@@ -137,6 +136,9 @@ class HelpfulPointer {
 
 function runFFI(binary: Uint8Array, callback: (res: Uint8Array) => void) {
     const func = (a: Uint8Array, b: number) => {
+        if (a.length <= b) {
+            console.warn('缓存区溢出');
+        }
         let rightArray = a.slice(0, b);
         callback(rightArray);
     };

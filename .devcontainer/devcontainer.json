@@ -11,7 +11,10 @@
                 "streetsidesoftware.code-spell-checker",
                 "tamasfe.even-better-toml",
                 "mhutchie.git-graph",
-                "pbkit.vscode-pbkit"
+                "pbkit.vscode-pbkit",
+                "bodil.file-browser",
+                "EditorConfig.EditorConfig",
+                "esbenp.prettier-vscode"
             ]
         }
     }

@@ -1,4 +1,4 @@
-import { api_interface } from '../../gen/index.js';
+import { api_interface } from '../gen/index.js';
 import fs from 'fs-extra';
 import path from 'node:path';
 import { FontSplitProps } from '../interface.js';
@@ -15,7 +15,6 @@ if (!binPath) {
             ),
         import.meta.url,
     );
-    console.log(binPath);
     // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
 }
 const dylib = D.dlopen(binPath, {
@@ -37,7 +36,7 @@ const createCallback = (cb: (data: Uint8Array) => void) =>
 
 const font_split = dylib.symbols.font_split;
 export async function fontSplit(data: FontSplitProps, manualClose = false) {
-    const input = new api_interface.InputTemplate(data);
+    const input = api_interface.InputTemplate.fromObject(data);
     if (!input.out_dir) throw new Error('cn-font-split need out_dir');
     return new Promise<void>((res) => {
         const buffer = input.serialize();

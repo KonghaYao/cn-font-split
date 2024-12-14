@@ -1,6 +1,8 @@
 import fs from 'fs-extra';
 import _ from 'lodash-es';
-import { fontSplit, convert } from 'cn-font-split';
+import { convert } from './convert.mjs';
+// import { fontSplit } from 'cn-font-split/dist/bun/index.js';
+import { fontSplit } from 'cn-font-split/dist/node/index.js';
 const features = fs.readJSONSync('./FeatureConfig.json');
 const allKey = new Set();
 
@@ -10,7 +12,7 @@ features.forEach((i) => {
 });
 
 // fs.emptyDirSync('./temp');
-for (const i of features) {
+for await (const i of features) {
     console.log(i.featureKey);
     // if (fs.existsSync('./temp/' + i.featureKey)) continue
     const buffer = fs.readFileSync(
@@ -21,32 +23,20 @@ for (const i of features) {
         i.fontLink.replace(/.*\.(.*?)/g, '.$1'),
     );
     const b = await convert(new Uint8Array(buffer), 'ttf');
-    const charset = [...i.splitText]
-        .filter(Boolean)
-        .map((i) => i.codePointAt(0));
-    await fontSplit({
-        outDir: './temp/' + i.featureKey,
-        input: Buffer.from(b),
-        reporter: false,
-        testHTML: false,
+    const config = {
+        out_dir: './temp/' + i.featureKey,
+        input: b,
         css: {
-            localFamily: false,
-            fontFamily: i.featureKey + '-demo',
-            comment: {
-                base: false,
-                nameTable: false,
-                unicodes: true,
-            },
+            font_family: i.featureKey + '-demo',
+            comment_base: false
+            // comment: {
+            //     base: false,
+            //     name_table: false,
+            //     unicodes: true,
+            // },
         },
-        autoChunk: false,
-        subsetRemainChars: false,
-        reduceMins: false,
-        languageAreas: false,
-        targetType: 'woff2',
-        // subsets: chunk(
-        //     charset,
-        //     i.splitCount ?? 3
-        // ),
-        subsets: [[...new Set(charset)]],
-    });
+    }
+    // console.log(config);
+    await fontSplit(config);
 }
+// await endFontSplit()

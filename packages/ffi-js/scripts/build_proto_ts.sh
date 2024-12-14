@@ -1,7 +1,7 @@
 # npm i -g protoc-gen-ts
-OUT_DIR="./gen"
-if [ ! -d "./gen" ]; then
-  mkdir ./gen
+OUT_DIR="./src/gen"
+if [ ! -d "./src/gen" ]; then
+  mkdir ./src/gen
 fi
 protoc \
     --ts_out="${OUT_DIR}" \

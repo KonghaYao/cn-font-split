@@ -1,22 +1,23 @@
 {
-  "name": "ffi-js",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "build": "sh scripts/build_proto_ts.sh",
-    "prepublish": "pnpm build"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "ffi-rs": "^1.1.1",
-    "google-protobuf": "^3.21.4"
-  },
-  "devDependencies": {
-    "@grpc/grpc-js": "^1.12.2",
-    "@types/google-protobuf": "^3.15.12"
-  }
+    "name": "cn-font-split",
+    "version": "7.0.0",
+    "description": "dist/node/index.js",
+    "main": "dist/node/index.js",
+    "type": "module",
+    "scripts": {
+        "postinstall": "node ./dist/node/init.js",
+        "build": "sh scripts/build_proto_ts.sh && tsc",
+        "prepublish": "pnpm build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "ffi-rs": "^1.1.1",
+        "google-protobuf": "^3.21.4"
+    },
+    "devDependencies": {
+        "@grpc/grpc-js": "^1.12.2",
+        "@types/google-protobuf": "^3.15.12"
+    }
 }

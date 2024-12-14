@@ -147,7 +147,7 @@ importers:
         version: 8.1.1
       cn-font-split:
         specifier: workspace:^
-        version: link:../subsets
+        version: link:../ffi-js
       solid-js:
         specifier: ^1.7.8
         version: 1.8.17
@@ -252,6 +252,9 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
+      '@napi-rs/woff-build':
+        specifier: ^0.2.0
+        version: 0.2.0
       '@playwright/test':
         specifier: ^1.44.1
         version: 1.44.1
@@ -263,7 +266,7 @@ importers:
         version: 0.8.15
       cn-font-split:
         specifier: workspace:^
-        version: link:../subsets
+        version: link:../ffi-js
 
   packages/vite:
     dependencies:
@@ -272,7 +275,7 @@ importers:
         version: 2.1.6(webpack-sources@3.2.3)
       cn-font-split:
         specifier: workspace:^
-        version: link:../subsets
+        version: link:../ffi-js
       fontaine:
         specifier: ^0.5.0
         version: 0.5.0(webpack-sources@3.2.3)

@@ -24,6 +24,7 @@
         "solidjs-use": "^2.3.0"
     },
     "devDependencies": {
+        "@napi-rs/woff-build": "^0.2.0",
         "@playwright/test": "^1.44.1",
         "@types/pngjs": "^6.0.5",
         "@types/shelljs": "^0.8.15",

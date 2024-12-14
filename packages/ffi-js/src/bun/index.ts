@@ -1,7 +1,7 @@
 /** @ts-ignore */
 import { dlopen, FFIType, ptr, JSCallback, toArrayBuffer } from 'bun:ffi';
 
-import { api_interface } from '../../gen/index.js';
+import { api_interface } from '../gen/index.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { FontSplitProps } from '../interface.js';
@@ -61,7 +61,7 @@ const createCallback = (cb: (data: Uint8Array) => void) =>
     new JSCallback(
         (ptr: any, length: BigInt) => {
             const data = new Uint8Array(
-                toArrayBuffer(ptr, 0, Number(length)),
+                toArrayBuffer(ptr, 0, Number(length)).slice(),
                 0,
                 Number(length),
             );
