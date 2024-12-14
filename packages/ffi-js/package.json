@@ -13,11 +13,12 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "ffi-rs": "^1.1.1",
+        "ffi-napi": "^4.0.3",
         "google-protobuf": "^3.21.4"
     },
     "devDependencies": {
         "@grpc/grpc-js": "^1.12.2",
+        "@types/ffi-napi": "^4.0.10",
         "@types/google-protobuf": "^3.15.12"
     }
 }
