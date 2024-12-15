@@ -1,5 +1,6 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
+import path from 'path';
 export const isMusl = () => {
     let musl: boolean | null = false;
     if (process.platform === 'linux') {
@@ -55,9 +56,28 @@ export const isMuslFromChildProcess = () => {
     }
 };
 
-export const saveBinaryToDist = (filePath: string, binary: ArrayBuffer) => {
+export const saveBinaryToDist = (
+    version: string,
+    filePath: string,
+    binary: ArrayBuffer,
+) => {
+    writeFileSync(path.resolve(__dirname, '../version'), version);
     return writeFileSync(filePath, new Uint8Array(binary));
 };
-export const isBinaryExists = (filePath: string) => {
-    return existsSync(filePath);
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// @ts-ignore 获取当前模块的 URL
+const __filename = fileURLToPath(import.meta.url);
+
+// 获取当前模块所在的目录
+const __dirname = dirname(__filename);
+export const isBinaryExists = (version: string, fileName: string) => {
+    const filePath = path.resolve(__dirname, '../' + fileName);
+    const versionPath = path.resolve(__dirname, '../version');
+    let isExists = false;
+    try {
+        isExists = readFileSync(versionPath, 'utf-8') === version;
+    } catch (e) {}
+    return isExists && existsSync(filePath);
 };

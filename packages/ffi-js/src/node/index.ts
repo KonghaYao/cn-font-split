@@ -4,10 +4,10 @@ import path from 'path';
 import { FontSplitProps } from '../interface.js';
 import { getBinName, matchPlatform } from '../load.js';
 import { isMusl } from './isMusl.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 export * from '../interface.js';
 import ffi from 'ffi-napi';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 // @ts-ignore 获取当前模块的 URL
 const __filename = fileURLToPath(import.meta.url);

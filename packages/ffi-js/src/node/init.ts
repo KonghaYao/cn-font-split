@@ -22,8 +22,7 @@ async function main() {
         `cn-font-split ${version} ${platform} library downloading -> ${platform}`,
     );
     const fileName = getBinName(platform);
-    const ffiPath = path.resolve(__dirname, '../' + fileName);
-    if (isBinaryExists(ffiPath))
+    if (isBinaryExists(version, fileName))
         return console.log(
             `cn-font-split ${version} ${platform} library -> already exists`,
         );
@@ -32,7 +31,8 @@ async function main() {
         version,
         process.env.CN_FONT_SPLIT_GH_HOST,
     );
+    const ffiPath = path.resolve(__dirname, '../' + fileName);
     console.table({ version, platform, fileName, __dirname });
-    return saveBinaryToDist(ffiPath, binary);
+    return saveBinaryToDist(version, ffiPath, binary);
 }
 main();
