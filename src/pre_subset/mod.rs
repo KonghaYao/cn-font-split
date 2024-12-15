@@ -60,6 +60,7 @@ pub fn pre_subset(ctx: &mut Context) {
     // let set = analyze_gsub(&font, &mut font_file);
     ctx.pre_subset_result = subsets
         .iter()
+        .filter(|v| v.len() > 0)
         .map(|v| v.iter().map(|i| i.clone()).collect::<Vec<u32>>())
         .collect();
     ctx.name_table = name_table::analyze_name_table(&font, &mut font_file);
