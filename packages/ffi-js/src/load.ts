@@ -31,13 +31,19 @@ export const matchPlatform = (
     return platformArchMap?.[platform]?.[arch] ?? 'wasm32-wasip1';
 };
 
-export const getBinaryFile = async (platform: string, version: string) => {
+export const getBinaryFile = async (
+    platform: string,
+    version: string,
+    proxy = 'https://github.com',
+) => {
     const fileName = getBinName(platform);
+    console.log(`using gh proxy ${proxy}`);
     const binary = await fetch(
-        `https://github.moeyy.xyz/https://github.com/KonghaYao/cn-font-split/releases/download/${version}/${fileName}`,
+        proxy +
+            `/KonghaYao/cn-font-split/releases/download/${version}/${fileName}`,
     ).then((res) => res.arrayBuffer());
 
-    return { binary, fileName };
+    return binary;
 };
 
 export const getLatestVersion = async () => {

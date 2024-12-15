@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 export const isMusl = () => {
     let musl: boolean | null = false;
@@ -58,4 +58,6 @@ export const isMuslFromChildProcess = () => {
 export const saveBinaryToDist = (filePath: string, binary: ArrayBuffer) => {
     return writeFileSync(filePath, new Uint8Array(binary));
 };
-
+export const isBinaryExists = (filePath: string) => {
+    return existsSync(filePath);
+};

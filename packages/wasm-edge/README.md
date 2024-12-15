@@ -30,4 +30,3 @@ const data = await fontSplit(
 console.log(data);
 // { name: string, data: Uint8Array }[]
 ```
-

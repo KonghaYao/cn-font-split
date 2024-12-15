@@ -9,7 +9,7 @@ import { getBinName, matchPlatform } from '../load.js';
 import { isMusl } from '../node/isMusl.js';
 export * from '../interface.js';
 
-export async function fontSplit(data: FontSplitProps, manualClose = false) {
+export async function fontSplit(data: FontSplitProps) {
     const input = api_interface.InputTemplate.fromObject(data);
     if (!input.out_dir) throw new Error('cn-font-split need out_dir');
     return new Promise<void>((res) => {
@@ -41,11 +41,12 @@ export async function fontSplit(data: FontSplitProps, manualClose = false) {
 
 let binPath = process.env.CN_FONT_SPLIT_BIN;
 if (!binPath) {
-    binPath = path.join(
+    binPath = path.resolve(
         __dirname,
-        getBinName(matchPlatform(process.platform, process.arch, isMusl)),
+        '../' +
+            getBinName(matchPlatform(process.platform, process.arch, isMusl)),
     );
-    console.log(binPath);
+    // console.log(binPath);
     // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
 }
 const {

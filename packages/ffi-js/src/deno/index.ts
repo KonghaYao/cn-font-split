@@ -9,7 +9,7 @@ const D = Deno;
 let binPath = D.env.get('CN_FONT_SPLIT_BIN');
 if (!binPath) {
     binPath = new URL(
-        './' +
+        '../' +
             getBinName(
                 matchPlatform(process.platform, process.arch, () => false),
             ),
@@ -35,7 +35,7 @@ const createCallback = (cb: (data: Uint8Array) => void) =>
     ).pointer;
 
 const font_split = dylib.symbols.font_split;
-export async function fontSplit(data: FontSplitProps, manualClose = false) {
+export async function fontSplit(data: FontSplitProps) {
     const input = api_interface.InputTemplate.fromObject(data);
     if (!input.out_dir) throw new Error('cn-font-split need out_dir');
     return new Promise<void>((res) => {
@@ -45,12 +45,12 @@ export async function fontSplit(data: FontSplitProps, manualClose = false) {
             buffer.length,
             createCallback((data: Uint8Array) => {
                 let e = api_interface.EventMessage.deserialize(data);
-                console.log(e.event);
                 switch (e.event) {
                     case api_interface.EventName.END:
                         res();
                         break;
                     case api_interface.EventName.OUTPUT_DATA:
+                        console.log(e.message);
                         fs.outputFile(
                             path.join(input.out_dir, e.message),
                             e.data,

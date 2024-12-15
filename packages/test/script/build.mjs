@@ -28,7 +28,7 @@ for await (const i of features) {
         input: b,
         css: {
             font_family: i.featureKey + '-demo',
-            comment_base: false
+            comment_base: true
             // comment: {
             //     base: false,
             //     name_table: false,

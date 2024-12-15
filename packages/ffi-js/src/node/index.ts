@@ -24,9 +24,10 @@ export function createCallback(cb: (res: Uint8Array) => void) {
 
 let binPath = process.env.CN_FONT_SPLIT_BIN;
 if (!binPath) {
-    binPath = path.join(
+    binPath = path.resolve(
         __dirname,
-        getBinName(matchPlatform(process.platform, process.arch, isMusl)),
+        '../' +
+            getBinName(matchPlatform(process.platform, process.arch, isMusl)),
     );
     // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
 }
