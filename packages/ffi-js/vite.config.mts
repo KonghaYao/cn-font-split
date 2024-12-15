@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite';
 import nodeExternals from 'rollup-plugin-node-externals';
 import dts from 'vite-plugin-dts';
+import { readFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 export default defineConfig(({ mode }) => {
     return {
         base: '',
@@ -17,10 +20,28 @@ export default defineConfig(({ mode }) => {
             }),
             {
                 transform(code, id) {
-                    if (id.includes('memfs')) {
-                        return 'import {Buffer} from "buffer";\n' + code;
+                    if (mode === 'production' && id.includes('memfs')) {
+                        return (
+                            'import { Buffer } from "cn-font:buffer";\n' + code
+                        );
                     }
-                    // return code.replaceAll('process.env', 'import.meta.env');
+                    if (id.includes('wasm-util.esm')) {
+                        return code.replaceAll(
+                            'process.env',
+                            'import.meta.env',
+                        );
+                    }
+                },
+
+                resolveId(id, options) {
+                    if (id === 'cn-font:buffer') {
+                        return fileURLToPath(
+                            new URL(
+                                './node_modules/buffer/index.js',
+                                import.meta.url,
+                            ),
+                        );
+                    }
                 },
             },
         ],

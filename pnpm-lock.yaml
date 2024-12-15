@@ -88,28 +88,37 @@ importers:
 
   packages/ffi-js:
     dependencies:
-      '@tybys/wasm-util':
-        specifier: ^0.9.0
-        version: 0.9.0
       ffi-napi:
         specifier: ^4.0.3
         version: 4.0.3
       google-protobuf:
         specifier: ^3.21.4
         version: 3.21.4
-      memfs-browser:
-        specifier: ^3.5.10302
-        version: 3.5.10302
     devDependencies:
       '@grpc/grpc-js':
         specifier: ^1.12.2
         version: 1.12.2
+      '@tybys/wasm-util':
+        specifier: ^0.9.0
+        version: 0.9.0
       '@types/ffi-napi':
         specifier: ^4.0.10
         version: 4.0.10
       '@types/google-protobuf':
         specifier: ^3.15.12
         version: 3.15.12
+      base64-js:
+        specifier: ^1.5.1
+        version: 1.5.1
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
+      ieee754:
+        specifier: ^1.2.1
+        version: 1.2.1
+      memfs-browser:
+        specifier: ^3.5.10302
+        version: 3.5.10302
 
   packages/font-analyze:
     dependencies:
@@ -307,21 +316,6 @@ importers:
       vite:
         specifier: ^5.4.10
         version: 5.4.10(@types/node@22.8.2)(terser@5.31.0)
-
-  packages/wasm-edge:
-    dependencies:
-      '@tybys/wasm-util':
-        specifier: ^0.9.0
-        version: 0.9.0
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
-      google-protobuf:
-        specifier: ^3.21.4
-        version: 3.21.4
-      memfs-browser:
-        specifier: ^3.5.10302
-        version: 3.5.10302
 
 packages:
 
