@@ -6,10 +6,11 @@ export default defineConfig(({ mode }) => {
         base: '',
         mode: 'production',
         plugins: [
-            // nodeExternals({
-            //     builtinsPrefix: 'ignore',
-            //     exclude: ['memfs-browser', '@tybys/wasm-util'],
-            // }),
+            nodeExternals({
+                builtinsPrefix: 'ignore',
+                include: ['bun:ffi'],
+                exclude: ['memfs-browser', '@tybys/wasm-util'],
+            }),
             dts({
                 include: ['src/**/*', '../ffi/gen/index.ts'],
                 exclude: ['src/*.test.ts'],
@@ -19,14 +20,21 @@ export default defineConfig(({ mode }) => {
                     if (id.includes('memfs')) {
                         return 'import {Buffer} from "buffer";\n' + code;
                     }
-                    return code.replaceAll('process.env', 'import.meta.env');
+                    // return code.replaceAll('process.env', 'import.meta.env');
                 },
             },
         ],
         build: {
             target: 'esnext',
             lib: {
-                entry: ['./src/index.ts'],
+                entry: [
+                    './src/node/index.ts',
+                    './src/node/init.ts',
+                    './src/bun/index.ts',
+                    './src/bun/init.ts',
+                    './src/deno/index.ts',
+                    './src/wasm/index.ts',
+                ],
                 formats: ['es'],
             },
             minify: true, // 禁用代码混淆
@@ -37,6 +45,8 @@ export default defineConfig(({ mode }) => {
                 output: {
                     assetFileNames: `[name]-[hash].[ext]`,
                     exports: 'named',
+                    preserveModules: true,
+                    preserveModulesRoot: 'src',
                 },
             },
         },

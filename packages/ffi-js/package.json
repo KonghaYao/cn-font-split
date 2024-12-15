@@ -6,15 +6,17 @@
     "type": "module",
     "scripts": {
         "postinstall": "node ./dist/node/init.js",
-        "build": "sh scripts/build_proto_ts.sh && tsc",
+        "build": "sh scripts/build_proto_ts.sh && vite build",
         "prepublish": "pnpm build"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@tybys/wasm-util": "^0.9.0",
         "ffi-napi": "^4.0.3",
-        "google-protobuf": "^3.21.4"
+        "google-protobuf": "^3.21.4",
+        "memfs-browser": "^3.5.10302"
     },
     "devDependencies": {
         "@grpc/grpc-js": "^1.12.2",

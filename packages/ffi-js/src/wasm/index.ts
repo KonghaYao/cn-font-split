@@ -1,16 +1,14 @@
-import { api_interface } from '../../ffi/gen/index';
+import { api_interface } from '../gen/index';
 import { IFs, Volume, createFsFromVolume } from 'memfs-browser';
 import { WASI } from '@tybys/wasm-util';
+import { FontSplitProps } from '../interface';
 
-export type FontSplitProps = Parameters<
-    (typeof api_interface.InputTemplate)["fromObject"]
->[0];
-export { api_interface as proto };
+export { api_interface as proto, api_interface };
 
 export class APIInterface {
     constructor(
         public key: string = Math.random().toString().replace('.', ''),
-    ) { }
+    ) {}
     fs!: IFs;
     async init(fs = createFsFromVolume(new Volume())) {
         await fs.promises.mkdir('/tmp/fonts', { recursive: true });
@@ -18,11 +16,11 @@ export class APIInterface {
         this.fs = fs;
     }
     async setConfig(config: FontSplitProps | ArrayBuffer) {
-        const buffer = config instanceof ArrayBuffer ? new Uint8Array(config) : (api_interface.InputTemplate.fromObject(config)).serialize();
-        await this.fs.promises.writeFile(
-            '/tmp/fonts/' + this.key,
-            buffer,
-        );
+        const buffer =
+            config instanceof ArrayBuffer
+                ? new Uint8Array(config)
+                : api_interface.InputTemplate.fromObject(config).serialize();
+        await this.fs.promises.writeFile('/tmp/fonts/' + this.key, buffer);
     }
     async callback() {
         const files = (await this.fs.promises.readdir(
@@ -79,10 +77,10 @@ export function createWasi(
     api: APIInterface,
     options:
         | {
-            key?: string;
-            logger: (str: string, type: 'log' | 'error') => void;
-            fs?: IFs;
-        }
+              key?: string;
+              logger: (str: string, type: 'log' | 'error') => void;
+              fs?: IFs;
+          }
         | undefined,
 ) {
     const wasi = new WASI({

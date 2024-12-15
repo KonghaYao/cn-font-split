@@ -1,0 +1,1 @@
+deployctl deploy --project=fine-rhino-69 --entrypoint=test/deno-wasm.mjs
