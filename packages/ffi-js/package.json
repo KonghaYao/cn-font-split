@@ -5,7 +5,7 @@
     "main": "dist/node/index.js",
     "type": "module",
     "scripts": {
-        "postinstall": "node ./dist/node/init.js",
+        "postinstall": "node ./dist/node/init.js || node -v",
         "build": "sh scripts/build_proto_ts.sh && vite build",
         "prepublish": "pnpm build"
     },
