@@ -88,9 +88,9 @@ importers:
 
   packages/ffi-js:
     dependencies:
-      ffi-napi:
-        specifier: ^4.0.3
-        version: 4.0.3
+      '@2060.io/ffi-napi':
+        specifier: ^4.0.9
+        version: 4.0.9
       google-protobuf:
         specifier: ^3.21.4
         version: 3.21.4
@@ -101,9 +101,6 @@ importers:
       '@tybys/wasm-util':
         specifier: ^0.9.0
         version: 0.9.0
-      '@types/ffi-napi':
-        specifier: ^4.0.10
-        version: 4.0.10
       '@types/google-protobuf':
         specifier: ^3.15.12
         version: 3.15.12
@@ -318,6 +315,14 @@ importers:
         version: 5.4.10(@types/node@22.8.2)(terser@5.31.0)
 
 packages:
+
+  '@2060.io/ffi-napi@4.0.9':
+    resolution: {integrity: sha512-JfVREbtkJhMXSUpya3JCzDumdjeZDCKv4PemiWK+pts5CYgdoMidxeySVlFeF5pHqbBpox4I0Be7sDwAq4N0VQ==}
+    engines: {node: '>=18'}
+
+  '@2060.io/ref-napi@3.0.6':
+    resolution: {integrity: sha512-8VAIXLdKL85E85jRYpPcZqATBL6fGnC/XjBGNeSgRSMJtrAMSmfRksqIq5AmuZkA2eeJXMWCiN6UQOUdozcymg==}
+    engines: {node: '>= 18.0'}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -1562,9 +1567,6 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/ffi-napi@4.0.10':
-    resolution: {integrity: sha512-Q6TimLDxdg+Obp4W9tgzIhSA25THD6AmR8eM+ZB7bbU96xnkpd7PRXwG4az2rKpreuF90IPr/LlQtetmIfQL2g==}
-
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
 
@@ -1594,12 +1596,6 @@ packages:
 
   '@types/pngjs@6.0.5':
     resolution: {integrity: sha512-0k5eKfrA83JOZPppLtS2C7OUtyNAl2wKNxfyYl9Q5g9lPkgBl/9hNyAu6HuEH2J4XmIv2znEpkDd0SaZVxW6iQ==}
-
-  '@types/ref-napi@3.0.12':
-    resolution: {integrity: sha512-UZPKghRaLlWx2lPAphpdtYe62TbGBaPeqUM6gF1vI6FPRIu/Tff/WMAzpJRFU3jJIiD8HiXpVt2RjcFHtA6YRg==}
-
-  '@types/ref-struct-di@1.1.12':
-    resolution: {integrity: sha512-R2RNkGIROGoJTbXYTXrsXybnsQD4iAy26ih/G6HCeCB9luWFQKkr537XGz0uGJ1kH8y8RMkdbQmD/wBulrOPHw==}
 
   '@types/shelljs@0.8.15':
     resolution: {integrity: sha512-vzmnCHl6hViPu9GNLQJ+DZFd6BQI2DBTUeOvYHqkWQLMfKAAQYMb/xAmZkTogZI/vqXHCWkqDRymDI5p0QTi5Q==}
@@ -1985,10 +1981,6 @@ packages:
 
   fastq@1.17.1:
     resolution: {integrity: sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==}
-
-  ffi-napi@4.0.3:
-    resolution: {integrity: sha512-PMdLCIvDY9mS32RxZ0XGb95sonPRal8aqRhLbeEtWKZTe2A87qRFG9HjOhvG8EX2UmQw5XNRMIOT+1MYlWmdeg==}
-    engines: {node: '>=10'}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -2567,10 +2559,6 @@ packages:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
 
-  ref-napi@3.0.3:
-    resolution: {integrity: sha512-LiMq/XDGcgodTYOMppikEtJelWsKQERbLQsYm0IOOnzhwE9xYZC7x8txNnFC9wJNOkPferQI4vD4ZkC0mDyrOA==}
-    engines: {node: '>= 10.0'}
-
   ref-struct-di@1.1.1:
     resolution: {integrity: sha512-2Xyn/0Qgz89VT+++WP0sTosdm9oeowLP23wRJYhG4BFdMUrLj3jhwHZNEytYNYgtPKLNTP3KJX4HEgBvM1/Y2g==}
 
@@ -3071,6 +3059,26 @@ packages:
     engines: {node: '>=12'}
 
 snapshots:
+
+  '@2060.io/ffi-napi@4.0.9':
+    dependencies:
+      '@2060.io/ref-napi': 3.0.6
+      debug: 4.3.7
+      get-uv-event-loop-napi-h: 1.0.6
+      node-addon-api: 3.2.1
+      node-gyp-build: 4.8.4
+      ref-struct-di: 1.1.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@2060.io/ref-napi@3.0.6':
+    dependencies:
+      debug: 4.3.7
+      get-symbol-from-current-process-h: 1.0.2
+      node-addon-api: 3.2.1
+      node-gyp-build: 4.8.4
+    transitivePeerDependencies:
+      - supports-color
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -4695,12 +4703,6 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
-  '@types/ffi-napi@4.0.10':
-    dependencies:
-      '@types/node': 22.8.2
-      '@types/ref-napi': 3.0.12
-      '@types/ref-struct-di': 1.1.12
-
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
@@ -4734,14 +4736,6 @@ snapshots:
   '@types/pngjs@6.0.5':
     dependencies:
       '@types/node': 20.14.2
-
-  '@types/ref-napi@3.0.12':
-    dependencies:
-      '@types/node': 22.8.2
-
-  '@types/ref-struct-di@1.1.12':
-    dependencies:
-      '@types/ref-napi': 3.0.12
 
   '@types/shelljs@0.8.15':
     dependencies:
@@ -5159,17 +5153,6 @@ snapshots:
   fastq@1.17.1:
     dependencies:
       reusify: 1.0.4
-
-  ffi-napi@4.0.3:
-    dependencies:
-      debug: 4.3.7
-      get-uv-event-loop-napi-h: 1.0.6
-      node-addon-api: 3.2.1
-      node-gyp-build: 4.8.4
-      ref-napi: 3.0.3
-      ref-struct-di: 1.1.1
-    transitivePeerDependencies:
-      - supports-color
 
   fill-range@7.1.1:
     dependencies:
@@ -5754,15 +5737,6 @@ snapshots:
     dependencies:
       redis-errors: 1.2.0
     optional: true
-
-  ref-napi@3.0.3:
-    dependencies:
-      debug: 4.3.7
-      get-symbol-from-current-process-h: 1.0.2
-      node-addon-api: 3.2.1
-      node-gyp-build: 4.8.4
-    transitivePeerDependencies:
-      - supports-color
 
   ref-struct-di@1.1.1:
     dependencies:

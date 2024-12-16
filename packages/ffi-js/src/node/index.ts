@@ -5,7 +5,7 @@ import { FontSplitProps } from '../interface.js';
 import { getBinName, matchPlatform } from '../load.js';
 import { isMusl } from './isMusl.js';
 export * from '../interface.js';
-import ffi from 'ffi-napi';
+import ffi from '@2060.io/ffi-napi';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 

@@ -12,3 +12,4 @@ src/pb/*.rs
 *.lock
 *.lockb
 *.wasm
+.pnpm-store/**/*
