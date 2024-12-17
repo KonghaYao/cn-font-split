@@ -9,7 +9,10 @@ export const createAPI = <
     createCallback: (cb: (data: Uint8Array) => void) => OriginCB,
 ) => {
     return async function fontSplit(config: FontSplitProps) {
-        const input = api_interface.InputTemplate.fromObject(config);
+        if (typeof config.input === 'string') {
+            config.input = await fs.readFile(config.input);
+        }
+        const input = api_interface.InputTemplate.fromObject(config as any);
         if (!input.outDir) throw new Error('cn-font-split need outDir');
         return new Promise<void>((res) => {
             const buf = input.serialize();

@@ -1,8 +1,8 @@
 {
     "name": "cn-font-split",
     "version": "7.0.0",
-    "description": "dist/node/index.js",
-    "main": "dist/node/index.js",
+    "description": "",
+    "main": "./dist/node/index.js",
     "type": "module",
     "scripts": {
         "postinstall": "node ./dist/node/init.js || node -v",
