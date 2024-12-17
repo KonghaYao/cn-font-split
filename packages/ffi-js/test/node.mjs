@@ -4,6 +4,7 @@ const inputBuffer = new Uint8Array(fs.readFileSync("../demo/public/SmileySans-Ob
 console.time("node")
 await fontSplit({
     input: inputBuffer,
-    out_dir: "./dist/font"
+    outDir: "./dist/font"
+    ,
 })
 console.timeEnd("node")
