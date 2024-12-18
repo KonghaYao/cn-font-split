@@ -1,7 +1,7 @@
 #
 
 ```sh
-# 国内请设置环境变量,windows 用 set
+# 国内请设置环境变量, windows 用 set
 export CN_FONT_SPLIT_GH_HOST="https://ik.imagekit.io/github"
 pnpm i cn-font-split
 ```
