@@ -1,8 +1,5 @@
 /** @ts-ignore */
 import { dlopen, FFIType, ptr, JSCallback, toArrayBuffer } from 'bun:ffi';
-
-import { api_interface } from '../gen/index.js';
-import fs from 'fs-extra';
 import path from 'path';
 import { FontSplitProps } from '../interface.js';
 import { getBinName, matchPlatform } from '../load.js';
