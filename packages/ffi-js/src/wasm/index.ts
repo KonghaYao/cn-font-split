@@ -19,7 +19,9 @@ export class APIInterface {
         const buffer =
             config instanceof ArrayBuffer
                 ? new Uint8Array(config)
-                : api_interface.InputTemplate.fromObject(config).serialize();
+                : api_interface.InputTemplate.fromObject(
+                      config as any,
+                  ).serialize();
         await this.fs.promises.writeFile('/tmp/fonts/' + this.key, buffer);
     }
     async callback() {

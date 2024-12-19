@@ -4,9 +4,13 @@
     "description": "",
     "main": "./dist/node/index.js",
     "type": "module",
+    "bin": {
+        "cn-font-split": "./dist/cli.js"
+    },
     "scripts": {
         "postinstall": "node ./dist/node/init.js || node -v",
-        "build": "sh scripts/build_proto_ts.sh && vite build",
+        "update-proto": "proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts && sh scripts/build_proto_ts.sh",
+        "build": "pnpm update-proto && vite build",
         "prepublish": "pnpm build"
     },
     "keywords": [],
@@ -17,7 +21,8 @@
         "buffer": "^6.0.3",
         "commander": "^12.1.0",
         "fs-extra": "^11.2.0",
-        "google-protobuf": "^3.21.4"
+        "google-protobuf": "^3.21.4",
+        "proto-to-cli": "workspace:"
     },
     "devDependencies": {
         "@grpc/grpc-js": "^1.12.2",

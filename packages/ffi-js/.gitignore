@@ -1,2 +1,3 @@
 libffi-*
 gen/
+proto.ts

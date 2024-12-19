@@ -103,6 +103,9 @@ importers:
       google-protobuf:
         specifier: ^3.21.4
         version: 3.21.4
+      proto-to-cli:
+        specifier: 'workspace:'
+        version: link:../proto-to-cli
     devDependencies:
       '@grpc/grpc-js':
         specifier: ^1.12.2
@@ -175,6 +178,18 @@ importers:
       solid-js:
         specifier: ^1.7.8
         version: 1.8.17
+
+  packages/proto-to-cli:
+    dependencies:
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.2.0
+      protobufjs:
+        specifier: ^7.4.0
+        version: 7.4.0
 
   packages/subsets:
     dependencies:

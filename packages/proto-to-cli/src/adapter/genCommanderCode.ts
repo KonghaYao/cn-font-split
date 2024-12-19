@@ -24,7 +24,6 @@ import { Command } from 'commander';
 const program = new Command();
 `;
 
-    console.log(fields);
     const params = `program` + createFlatDefine(fields).join('\n    ');
 
     function createFlatDefine(fields: any, parentKey = ''): string[] {
