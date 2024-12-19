@@ -3,8 +3,9 @@
     "version": "1.0.0",
     "main": "./dist/cli.js",
     "description": "A tool to convert Protocol Buffers files to command line interfaces.",
+    "type": "module",
     "bin": {
-        "proto-to-cli": "./index.js"
+        "proto-to-cli": "dist/cli.js"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",

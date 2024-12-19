@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { genCommanderCode } from './adapter/genCommanderCode';
+import { genCommanderCode } from './adapter/genCommanderCode.js';
 import { outputFile } from 'fs-extra';
 const program = new Command();
 program
