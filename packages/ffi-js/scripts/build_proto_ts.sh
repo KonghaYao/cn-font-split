@@ -6,8 +6,10 @@ fi
 protoc \
     --ts_out="${OUT_DIR}" \
     --proto_path="../../crates/proto/src/" \
+    --ts_opt=json_names \
     index.proto
 protoc \
     --ts_out="${OUT_DIR}" \
     --proto_path="../../crates/proto/src/" \
+    --ts_opt=json_names \
     services.proto

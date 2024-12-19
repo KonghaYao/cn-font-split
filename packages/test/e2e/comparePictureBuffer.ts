@@ -41,6 +41,9 @@ export const compareElAndSave = async (
     const { pixelDiffCount, diff } = comparePictureBuffer(item1, item2, {
         threshold: 0.3,
     });
-    fs.writeFileSync(savePath, PNG.sync.write(diff));
+    fs.writeFileSync(
+        new URL(savePath, new URL('../', import.meta.url).href),
+        PNG.sync.write(diff),
+    );
     expect(pixelDiffCount).toBeLessThanOrEqual(100);
 };

@@ -1,12 +1,10 @@
-import { api_interface } from '../gen/index.js';
-import fs from 'fs-extra';
-import path from 'node:path';
 import { FontSplitProps } from '../interface.js';
 import { getBinName, matchPlatform } from '../load.js';
+import { createAPI } from '../createAPI.js';
 export * from '../interface.js';
 /** @ts-ignore */
-const D = Deno;
-let binPath = D.env.get('CN_FONT_SPLIT_BIN');
+const _Deno = Deno;
+let binPath = _Deno.env.get('CN_FONT_SPLIT_BIN');
 if (!binPath) {
     binPath = new URL(
         '../' +
@@ -17,51 +15,21 @@ if (!binPath) {
     );
     // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
 }
-const dylib = D.dlopen(binPath, {
+const dylib = _Deno.dlopen(binPath, {
     font_split: { parameters: ['buffer', 'usize', 'function'], result: 'void' },
 } as const);
 const createCallback = (cb: (data: Uint8Array) => void) =>
-    new D.UnsafeCallback(
+    new _Deno.UnsafeCallback(
         {
             parameters: ['pointer', 'usize'],
             result: 'void',
         } as const,
         (success: any, length: number) => {
-            let buffer = new D.UnsafePointerView(success).getArrayBuffer(
+            let buffer = new _Deno.UnsafePointerView(success).getArrayBuffer(
                 Number(length),
             );
-            cb(new Uint8Array(buffer));
+            cb(new Uint8Array(buffer.slice()));
         },
     ).pointer;
 
-const font_split = dylib.symbols.font_split;
-export async function fontSplit(data: FontSplitProps) {
-    const input = api_interface.InputTemplate.fromObject(data);
-    if (!input.out_dir) throw new Error('cn-font-split need out_dir');
-    return new Promise<void>((res) => {
-        const buffer = input.serialize();
-        font_split(
-            buffer,
-            buffer.length,
-            createCallback((data: Uint8Array) => {
-                let e = api_interface.EventMessage.deserialize(data);
-                switch (e.event) {
-                    case api_interface.EventName.END:
-                        res();
-                        break;
-                    case api_interface.EventName.OUTPUT_DATA:
-                        console.log(e.message);
-                        fs.outputFile(
-                            path.join(input.out_dir, e.message),
-                            e.data,
-                        );
-                        break;
-                    default:
-                        console.log(e.event);
-                }
-            }),
-        );
-    }).finally(() => {
-        console.log('构建完成');
-    });
-}
+export const fontSplit = createAPI(dylib.symbols.font_split, createCallback);

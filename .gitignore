@@ -13,3 +13,4 @@ src/pb/*.rs
 *.lockb
 *.wasm
 .pnpm-store/**/*
+!cargo.lock

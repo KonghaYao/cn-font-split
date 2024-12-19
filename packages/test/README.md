@@ -6,7 +6,7 @@
 
 ```sh
 pnpm install
-playwright install
+pnpm playwright install
 ```
 
 ```sh
@@ -18,6 +18,9 @@ node ./script/gen_hb.mjs # 【optional】使用 hb-subset 直接进行切割，�
 pnpm dev # 开启服务， 测试之前要开启 Vite 打包服务
 pnpm test # 直接进行测试
 ```
+
+可以使用 VSCode Playwright 插件进行测试，比较简单。
+因为很多 feature 浏览器支持就很差，有些 chromium 行， webkit 又不行。测试一般使用 webkit，部分采用 chromium。
 
 3. 回归测试
 
