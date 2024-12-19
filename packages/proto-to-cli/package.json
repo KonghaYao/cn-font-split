@@ -1,0 +1,28 @@
+{
+    "name": "proto-to-cli",
+    "version": "1.0.0",
+    "main": "./dist/cli.js",
+    "description": "A tool to convert Protocol Buffers files to command line interfaces.",
+    "bin": {
+        "proto-to-cli": "./index.js"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
+    "scripts": {
+        "prepublish": "tsc"
+    },
+    "keywords": [
+        "protobuf",
+        "cli",
+        "commander"
+    ],
+    "author": "",
+    "license": "KonghaYao <3446798488@qq.com>",
+    "dependencies": {
+        "commander": "^12.1.0",
+        "fs-extra": "^11.2.0",
+        "protobufjs": "^7.4.0"
+    }
+}
