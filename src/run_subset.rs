@@ -11,7 +11,7 @@ use log::{info, warn};
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::time::Instant;
 use woff::version2::compress;
 

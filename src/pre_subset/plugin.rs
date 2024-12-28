@@ -43,7 +43,7 @@ pub fn add_remain_chars_plugin(
 /// 把数量低于某个值的包，重新规划，缩减碎片分包数
 pub fn reduce_min_plugin(
     subsets: &mut Vec<BTreeSet<u32>>,
-    remaining_chars_set: &mut BTreeSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
     _ctx: &mut PreSubsetContext,
 ) {
     // TODO 抽取为定义

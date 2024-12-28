@@ -18,11 +18,11 @@
 
 `cn-font-split` 不仅支持中文，针对于中韩日文字、少数民族文字、阿拉伯文等皆有优化，可以根据实际字体包内字符进行智能地分包。
 
--   🚀 `WebAssembly` 或者 `Rust FFI` 实现， 原生运行分包，进入秒级构建；
--   💻 坚持 Web 平台为基底，兼容性极强。浏览器、Node、Deno、CICD 环境，统统可以运行。Rust、JS、Python 多语言使用。
--   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形，支持可变字体！
--   ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
--   🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
+- 🚀 `WebAssembly` 或者 `Rust FFI` 实现， 原生运行分包，进入秒级构建；
+- 💻 坚持 Web 平台为基底，兼容性极强。浏览器、Node、Deno、CICD 环境，统统可以运行。Rust、JS、Python 多语言使用。
+- 🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形，支持可变字体！
+- ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
+- 🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
 > [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
 
@@ -31,7 +31,6 @@
 - [JavaScript 文档](./packages/ffi-js/)
 
 如果您想要支持某些语言，可以提交 Issues 或者 PR。
-
 
 ### 新版本功能
 
@@ -43,7 +42,7 @@
 6. ✅ 🔔 支持 OTF 格式字体打包，支持复杂字形渲染。
 7. ✅ 🏞️ 字体预览图生成
 8. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，跨平台随处可使用、构建产物一致！
-9.  ✅ 🥳 不止中文，只要是包内的字符，统统分包
+9. ✅ 🥳 不止中文，只要是包内的字符，统统分包
 10. ✅ 🏞️ 支持自动识别可变字体字重
 
 ## 感谢

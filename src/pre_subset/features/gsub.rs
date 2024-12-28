@@ -9,7 +9,7 @@ pub fn analyze_gsub(
     font_file: &mut Cursor<&Vec<u8>>,
 ) -> Vec<Vec<u16>> {
     let temp: Result<Option<GlyphSubstitution>, std::io::Error> =
-    font.take(font_file);
+        font.take(font_file);
     // 国标宋体，解析就报错，所以干脆先不解析
     if temp.is_err() {
         error!("{}", temp.unwrap_err());
@@ -181,13 +181,13 @@ pub fn analyze_gsub(
                                         })
                                         .collect()
                                 }
-                                ChainedContext::Format3(ctx) => {
+                                ChainedContext::Format3(_ctx) => {
                                     // println!("??? {:?}\n", context);
                                     // ! BUG 不知为何有这种规则导致匹配贼多
                                     // coverages 是触发的glyph
                                     // forward_coverages 和 backward_coverages 是左右匹配的 glyph
                                     // 反正所有的字形都是相关的，合并到一块
-                                    let mut result: Vec<u16> = vec![];
+                                    let result: Vec<u16> = vec![];
                                     // collect_glyph_id_from_format_1_and_2(
                                     //     &ctx.coverages,
                                     //     &mut result,
