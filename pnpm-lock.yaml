@@ -55,15 +55,6 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4(@types/node@22.8.2)(terser@5.31.0)
 
-  crates/lang_unicodes:
-    devDependencies:
-      chinese-simple2traditional:
-        specifier: ^2.2.2
-        version: 2.2.2
-      fs-extra:
-        specifier: ^11.2.0
-        version: 11.2.0
-
   packages/edge-provider:
     dependencies:
       '@aws-sdk/client-s3':

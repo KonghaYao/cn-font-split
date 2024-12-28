@@ -72,9 +72,9 @@ mod tests {
     #[test]
     fn test() {
         assert_eq!(HIRAGANA_AND_KATAKANA.len(), 192);
-        assert_eq!(ZH_COMMON.len(), 4329);
-        assert_eq!(ZH_SC.len(), 2508);
-        assert_eq!(ZH_TC.len(), 2481);
+        assert_eq!(ZH_COMMON.len(), 4524);
+        assert_eq!(ZH_SC.len(), 2313);
+        assert_eq!(ZH_TC.len(), 2308);
         assert_eq!(HANGUL_SYL.len(), 2026);
     }
 }

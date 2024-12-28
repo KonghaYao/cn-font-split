@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cn-font-split = { version = "7.0.0", path = "../.." }
+cn-font-split = { version = "7.0.0", path = "../..", default-features = false}
 axum = {version = "0.7.9", features = []}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.68"
@@ -14,6 +14,10 @@ tokio-stream = "0.1.16"
 async-stream = "0.3.6"
 futures-util = "0.3.31"
 rust-s3 = "0.35.1"
-cn-font-proto = { version = "0.1.0", path = "../../crates/proto" }
+cn-font-proto = { version = "0.1.0", path = "../../crates/proto", default-features = false }
 zip = "2.2.1"
 md5 = "0.7.0"
+
+[features]
+default = ["with_extra"]
+with_extra = ["cn-font-proto/with_extra", "cn-font-split/with_extra"]

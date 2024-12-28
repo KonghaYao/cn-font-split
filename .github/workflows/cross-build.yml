@@ -91,13 +91,6 @@ jobs:
                   sudo apt update
                   sudo apt install -y nodejs llvm clang pkg-config libssl-dev
                   ${{ matrix.platform.setup }}
-
-            - name: Build Node
-              working-directory: ./crates/lang_unicodes
-              run: |
-                  npm i
-                  npm run build
-
             - name: Set up Homebrew
               id: set-up-homebrew
               if: ${{ runner.os == 'macOS' }}
@@ -120,8 +113,9 @@ jobs:
               with:
                   toolchain: stable
 
-            - name: BUILD PROTO
+            - name: BUILD PROTO & lang-unicodes
               run: |
+                  cargo build -p lang-unicodes
                   cargo build -p cn-font-proto
 
             - name: Build binary
@@ -129,10 +123,9 @@ jobs:
               with:
                   command: build
                   target: ${{ matrix.platform.target }}
-                  args: '--locked --release -p ffi'
+                  args: '--locked --release -p ffi --no-default-features'
                   strip: false
               env:
-                  CARGO_WITH_NO_EXTRA: 'True'
                   HARFBUZZ_SYS_NO_PKG_CONFIG: 'True'
 
             - name: Rename Package On Mac
@@ -185,12 +178,6 @@ jobs:
                   toolchain: stable
             - name: Update Rust
               run: /home/runner/.cargo/bin/rustup  target add wasm32-wasip1
-
-            - name: Build Node
-              working-directory: ./crates/lang_unicodes
-              run: |
-                  npm i
-                  npm run build
 
             - name: Build
               working-directory: ./packages/wasm-edge

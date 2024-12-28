@@ -4,10 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cn-font-proto = { version = "0.1.0", path = "../../crates/proto" }
-cn-font-split = { version = "7.0.0", path = "../.." }
+cn-font-proto = { version = "0.1.0", path = "../../crates/proto", default-features = false }
+cn-font-split = { version = "7.0.0", path = "../..", default-features = false}
 libc = "0.2.165"
 prost = "0.13.3"
+
+[features]
+default = ["with_extra"]
+with_extra = ["cn-font-proto/with_extra", "cn-font-split/with_extra"]
 
 [lib]
 crate-type = ["cdylib"]

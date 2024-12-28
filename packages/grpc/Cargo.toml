@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cn-font-proto = { version = "0.1.0", path = "../../crates/proto", features = [
+cn-font-proto = { version = "0.1.0", path = "../../crates/proto", default-features = false, features = [
     "server",
 ] }
-cn-font-split = { version = "7.0.0", path = "../.." }
+cn-font-split = { version = "7.0.0", path = "../..", default-features = false}
 cn-font-utils = { version = "0.1.0", path = "../../crates/cn_font_utils" }
 prost = "0.13.3"
 tokio = { version = "1.19.2", features = ["macros", "rt-multi-thread"] }
@@ -18,3 +18,7 @@ tracing-subscriber = "0.3.19"
 
 [build-dependencies]
 tonic-build = "0.12.3"
+
+[features]
+default = ["with_extra"]
+with_extra = ["cn-font-split/with_extra", "cn-font-proto/with_extra"]

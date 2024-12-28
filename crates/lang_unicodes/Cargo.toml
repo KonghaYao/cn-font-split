@@ -14,3 +14,11 @@ lazy_static = "1.5.0"
 
 [lib]
 path = "src/lib.rs"
+
+[build-dependencies]
+lazy_static = { version = "1.5.0", optional = true }
+opencc-rs =  { version = "0.4.7", optional = true }
+
+[features]
+default = [ "with_extra" ]
+with_extra = ["lazy_static", "opencc-rs"]

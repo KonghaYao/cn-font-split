@@ -1,7 +1,5 @@
+#[cfg(feature = "with_extra")]
 fn main() {
-    if std::env::var("CARGO_WITH_NO_EXTRA").is_ok() {
-        return;
-    }
     let out_dir = std::path::PathBuf::from("./src/lib");
     let _ = std::fs::create_dir_all("./src/lib");
 
@@ -39,3 +37,6 @@ fn main() {
     let mod_code = mod_code+"\npub const INDEX_PROTO: &[u8] = include_bytes!(\"../index.proto\");";
     let _ = std::fs::write("src/lib/mod.rs", mod_code);
 }
+
+#[cfg(not(feature = "with_extra"))]
+fn main() {}

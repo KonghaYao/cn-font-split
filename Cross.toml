@@ -5,31 +5,31 @@ zig = false       # do not use zig cc for the builds
 context = "."     # the context folder to build the script in. defaults to `.`
 
 [build.env]
-passthrough = ["CARGO_WITH_NO_EXTRA", "HARFBUZZ_SYS_NO_PKG_CONFIG"]
+passthrough = ["HARFBUZZ_SYS_NO_PKG_CONFIG"]
 
 [target.aarch64-unknown-linux-gnu]
 pre-build = [
-    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+    "apt update && apt install -y llvm clang pkg-config libssl-dev",
 ]
 
 [target.x86_64-unknown-linux-gnu]
 pre-build = [
-    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+    "apt update && apt install -y llvm clang pkg-config libssl-dev",
 ]
 
 [target.x86_64-unknown-linux-musl]
 pre-build = [
-    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+    "apt update && apt install -y llvm clang pkg-config libssl-dev",
 ]
 
 [target.aarch64-unknown-linux-musl]
 pre-build = [
-    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+    "apt update && apt install -y llvm clang pkg-config libssl-dev",
 ]
 
 [target.riscv64gc-unknown-linux-gnu]
 pre-build = [
-    "apt update && apt install -y nodejs llvm clang pkg-config libssl-dev",
+    "apt update && apt install -y llvm clang pkg-config libssl-dev",
 ]
 
 [target.x86_64-pc-windows-msvc]

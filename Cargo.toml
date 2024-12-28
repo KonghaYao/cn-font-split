@@ -11,12 +11,12 @@ license = "Apache-2.0"
 [dependencies]
 cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
 harfbuzz_rs_now = "2.2.6"
-lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes" }
+lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes", default-features = false }
 log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.1"
 prost = "0.13.3"
-cn-font-proto = { version = "0.1.1", path = "crates/proto" }
+cn-font-proto = { version = "0.1.1", path = "crates/proto", default-features = false }
 rayon = "1.10.0"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.3"
@@ -27,10 +27,13 @@ chrono = "0.4.38"
 [dev-dependencies]
 env_logger = "0.11.5"
 
-
 [build-dependencies]
 cross = "0.2.5"
 tonic-build = "0.12.3"
+
+[features]
+default = ["with_extra"]
+with_extra = ["lang-unicodes/with_extra", "cn-font-proto/with_extra"]
 
 [workspace]
 members = [

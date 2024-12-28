@@ -15,10 +15,12 @@ prost = "0.13.3"
 prost-types = { version = "0.13.3", optional = true }
 
 [features]
+default = ["with_extra"]
 server = ["tonic"]
+with_extra = ["tonic-build"]
 
 [build-dependencies]
-tonic-build = "0.12.3"
+tonic-build = { version = "0.12.3", optional = true }
 
 [lib]
 path = "src/lib/mod.rs"
