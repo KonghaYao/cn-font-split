@@ -3,6 +3,7 @@ import { FontSplitProps } from '../interface.js';
 import { getBinName, matchPlatform } from '../load.js';
 import { isMusl } from './isMusl.js';
 export * from '../interface.js';
+export * from '../createAPI.js';
 // @ts-ignore
 import { dlopen, Callback } from '@xan105/ffi/koffi';
 import koffi from 'koffi';

@@ -2,6 +2,10 @@ import { api_interface } from './gen/index';
 import { FontSplitProps } from './interface';
 import fs from 'fs-extra';
 import path from 'path';
+export { api_interface as proto };
+export const decodeReporter = (reporterBin: Uint8Array) => {
+    return api_interface.OutputReport.deserialize(reporterBin);
+};
 export const createAPI = <
     OriginCB extends (buffer: any, length: number) => void,
 >(

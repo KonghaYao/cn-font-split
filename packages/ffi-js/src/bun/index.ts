@@ -6,6 +6,7 @@ import { getBinName, matchPlatform } from '../load.js';
 import { isMusl } from '../node/isMusl.js';
 import { createAPI } from '../createAPI.js';
 export * from '../interface.js';
+export * from '../createAPI.js';
 
 let binPath = process.env.CN_FONT_SPLIT_BIN;
 if (!binPath) {

@@ -2,6 +2,7 @@ import { FontSplitProps } from '../interface.js';
 import { getBinName, matchPlatform } from '../load.js';
 import { createAPI } from '../createAPI.js';
 export * from '../interface.js';
+export * from '../createAPI.js';
 /** @ts-ignore */
 const _Deno = Deno;
 let binPath = _Deno.env.get('CN_FONT_SPLIT_BIN');
