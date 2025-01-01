@@ -104,7 +104,7 @@ function cn_i() {
     version=""
 
     # default 和 default@7.0.0 的解析
-    if [[ "$1" == *"@"* ]]; then
+    if [ "$1" != "${1%@*}" ]; then
         p="${1%@*}"
         version="${1#*@}"
     else
