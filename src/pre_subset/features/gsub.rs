@@ -8,6 +8,7 @@ pub fn analyze_gsub(
     font: &Font,
     font_file: &mut Cursor<&Vec<u8>>,
 ) -> Vec<Vec<u16>> {
+    // 丑陋的多层 unwrap 处理
     let temp: Result<Option<GlyphSubstitution>, std::io::Error> =
         font.take(font_file);
     // 国标宋体，解析就报错，所以干脆先不解析
@@ -15,8 +16,14 @@ pub fn analyze_gsub(
         error!("{}", temp.unwrap_err());
         return vec![vec![]];
     }
+
     // GSUB
-    let data: GlyphSubstitution = temp.unwrap().unwrap();
+    let temp1 = temp.unwrap();
+    if temp1.is_none() {
+        error!("Font without GSUB table");
+        return vec![vec![]];
+    }
+    let data: GlyphSubstitution = temp1.unwrap();
 
     // let mut feature_tags: Vec<&str> = data
     //     .features

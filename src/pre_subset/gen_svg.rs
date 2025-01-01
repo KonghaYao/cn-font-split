@@ -18,8 +18,13 @@ pub fn gen_svg_from_font_file(file: &[u8], text: &str) -> String {
 pub fn gen_svg_from_ctx(ctx: &mut Context) {
     if let Some(preview) = &ctx.input.preview_image {
         let text = gen_svg(&mut ctx.face, &preview.text);
+        let name = if preview.name == "" {
+            String::from("preview")
+        } else {
+            preview.name.clone()
+        };
         (ctx.callback)(EventMessage::output_data(
-            format!("{}.svg", preview.name).as_str(),
+            format!("{}.svg", name).as_str(),
             text.as_bytes().to_vec(),
         ));
     }
