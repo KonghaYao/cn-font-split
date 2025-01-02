@@ -1,6 +1,6 @@
 {
     "name": "cn-font-split",
-    "version": "7.1.7",
+    "version": "7.1.8",
     "description": "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size.",
     "main": "./dist/node/index.js",
     "module": "./dist/node/index.mjs",
@@ -13,7 +13,7 @@
         "access": "public"
     },
     "scripts": {
-        "postinstall": "cn-font-split i default",
+        "postinstall": "node ./dist/cli.js i default",
         "update-proto": "proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts && sh scripts/build_proto_ts.sh",
         "build": "pnpm update-proto && vite build",
         "prepublish": "pnpm build"
