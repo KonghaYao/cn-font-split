@@ -4,6 +4,12 @@
 rust_target=""
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 VERSION_FILE="$SCRIPT_DIR/version"
+GH_HOST="$CN_FONT_SPLIT_GH_HOST"
+if [ -z "$GH_HOST" ]; then
+    GH_HOST="https://github.com"
+fi
+echo $GH_HOST
+
 # 定义颜色代码
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -69,7 +75,7 @@ echo "[Info] $rust_target"
 
 function getLatestVersion() {
     # 使用 curl 获取最新版本的 JSON 数据
-    response=$(curl -s https://ungh.cc/repos/KonghaYao/cn-font-split/releases/latest)
+    response=$(curl -sL https://ungh.cc/repos/KonghaYao/cn-font-split/releases/latest)
 
     # 使用 grep 和 sed 解析出 "tag" 的值
     version=$(echo "$response" | grep -o '"tag":"[^"]*"' | sed 's/"tag":"\([^"]*\)"/\1/')
@@ -79,7 +85,7 @@ function getLatestVersion() {
 }
 
 function getAllVersion() {
-    response=$(curl -s https://ungh.cc/repos/KonghaYao/cn-font-split/releases)
+    response=$(curl -sL https://ungh.cc/repos/KonghaYao/cn-font-split/releases)
     # 使用 grep 和 sed 解析出 "tag" 的值
     # 输出版本号
     colorEcho BLUE "All versions: "
@@ -121,14 +127,13 @@ function cn_i() {
     echo "$p@$version"
 
     ext="so"
-    plat=$(uname -s)
-    if [ "$plat" == "Darwin" ]; then
+    if echo "$p" | grep -q "apple"; then
         ext="dylib"
     fi
-    local download_url="$CN_FONT_SPLIT_GH_HOST/KonghaYao/cn-font-split/releases/download/$version/libffi-$p.$ext"
+    local download_url="$GH_HOST/KonghaYao/cn-font-split/releases/download/$version/libffi-$p.$ext"
     echo $download_url
 
-    curl -o "$SCRIPT_DIR/libffi-$p.$ext" "$download_url"
+    curl -fsSL -o "$SCRIPT_DIR/libffi-$p.$ext" "$download_url"
 
     # 检查 version 文件是否存在
     if [ -f "$VERSION_FILE" ]; then
@@ -149,6 +154,8 @@ function cn_ls() {
         colorEcho RED "version 文件不存在; cn-font-cli i default\n"
     fi
     getAllVersion
+
+    ls -l $SCRIPT_DIR/libffi-*
 
     echo -e "\nuse cn-font-split i to install"
 }

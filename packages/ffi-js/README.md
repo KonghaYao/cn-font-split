@@ -18,11 +18,11 @@
 
 `cn-font-split` 不仅支持中文，针对于中韩日文字、少数民族文字、阿拉伯文等皆有优化，可以根据实际字体包内字符进行智能地分包。
 
--   🚀 `WebAssembly` 或者 `Rust FFI` 实现， 原生运行分包，进入秒级构建；
--   💻 坚持 Web 平台为基底，兼容性极强。浏览器、Node、Deno、CICD 环境，统统可以运行。Rust、JS、Python 多语言复用。
--   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形，支持可变字体！
--   ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
--   🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
+- 🚀 `WebAssembly` 或者 `Rust FFI` 实现， 原生运行分包，进入秒级构建；
+- 💻 坚持 Web 平台为基底，兼容性极强。浏览器、Node、Deno、CICD 环境，统统可以运行。Rust、JS、Python 多语言复用。
+- 🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形，支持可变字体！
+- ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
+- 🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
 > 7.0 版本更改了一些使用方式，请阅读文档进行修改。
 >
@@ -50,7 +50,7 @@ await fontSplit({
 console.timeEnd('node');
 ```
 
-## WASM 版本！
+## WASM 版本
 
 ## cn-font-split 性能爆表 Wasm 版本
 

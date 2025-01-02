@@ -3,9 +3,9 @@ on:
     workflow_dispatch:
         inputs:
             version:
-                description: '版本号'
+                description: '核心版本号'
                 required: true
-                default: '7.0.1'
+                default: '7.0.2'
             dryRun:
                 description: '测试写这个为 true'
                 required: true
@@ -51,6 +51,7 @@ jobs:
             - name: Install dependencies
               run: |
                   npm install cn-font-split -g
+                  npm ls -g
                   cn-font-split ls
 
             - name: Create index.mjs file Linux
@@ -170,6 +171,7 @@ jobs:
 
                   # Produce a binary artifact and place it in the mounted volume
                   run: |
+                      apt install curl -q -y
                       npm i cn-font-split -g
                       cn-font-split ls
                       cn-font-split -i ./SmileySans-Oblique.otf -o ./dist/

@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import nodeExternals from 'rollup-plugin-node-externals';
 import dts from 'vite-plugin-dts';
 import fs from 'fs-extra';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 try {
     fs.unlinkSync('./src/version');
@@ -39,15 +40,25 @@ export default defineConfig(({ mode }) => {
                     }
                 },
             },
+            viteStaticCopy({
+                targets: [
+                    {
+                        src: './scripts/init.ps1',
+                        dest: '',
+                    },
+                    {
+                        src: './scripts/init.sh',
+                        dest: '',
+                    },
+                ],
+            }),
         ],
         build: {
             target: 'esnext',
             lib: {
                 entry: [
                     './src/node/index.ts',
-                    './src/node/init.ts',
                     './src/bun/index.ts',
-                    './src/bun/init.ts',
                     './src/deno/index.ts',
                     './src/wasm/index.ts',
                     './src/cli.ts',
