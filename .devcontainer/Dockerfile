@@ -1,5 +1,5 @@
 FROM konghayao123/best-cn-dev-container:1.1.0
-RUN apt install -y llvm clang pkg-config libssl-dev
+RUN apt install -y llvm clang pkg-config libssl-dev cmake
 RUN apt install -y protobuf-compiler && protoc --version
 RUN bash /init/rust.sh
 ENV RUSTUP_DIST_SERVER="https://rsproxy.cn"
