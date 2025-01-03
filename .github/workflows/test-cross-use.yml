@@ -85,20 +85,20 @@ jobs:
             - name: Install unzipper
               run: |
                   npm init -y
-                  npm install unzipper
-                  npm install cn-font-split
-                  cn-font-split ls
+                  npm i pnpm -g
+                  npm i unzipper cn-font-split
+                  pnpm cn-font-split ls
                   node index.mjs
 
             - name: build
               if: ${{ matrix.platform.target !=  'wasm32-wasip1' }}
               run: |
-                  cn-font-split -i ./SmileySans-Oblique.otf -o ./dist/
+                  pnpm cn-font-split -i ./SmileySans-Oblique.otf -o ./dist/
 
             - name: wasm build
               if: ${{ matrix.platform.target ==  'wasm32-wasip1' }}
               run: |
-                  cn-font-split i wasm32-wasip1
+                  pnpm cn-font-split i wasm32-wasip1
                   cat > test.mjs <<EOL
                   import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.mjs';
                   import fs from 'fs';
