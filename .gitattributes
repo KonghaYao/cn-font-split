@@ -1,4 +1,4 @@
 **/data/*.json
 *.otf
 *.ttf
-*.ps1 eol=crlf
+**/*.ps1 eol=crlf
