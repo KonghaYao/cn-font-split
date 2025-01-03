@@ -130,6 +130,9 @@ function cn_i() {
     if echo "$p" | grep -q "apple"; then
         ext="dylib"
     fi
+    if echo "$p" | grep -q "wasm"; then
+        ext="wasm"
+    fi
     local download_url="$GH_HOST/KonghaYao/cn-font-split/releases/download/$version/libffi-$p.$ext"
     echo $download_url
 

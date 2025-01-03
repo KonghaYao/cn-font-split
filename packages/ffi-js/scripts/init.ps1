@@ -107,6 +107,9 @@ function cn_i {
     Write-Host "$p@$version"
 
     $ext = "dll"
+    if ($p -like "*wasm*") {
+        $ext = "wasm"
+    }
     $plat = (Get-CimInstance Win32_OperatingSystem).Caption
     
 
