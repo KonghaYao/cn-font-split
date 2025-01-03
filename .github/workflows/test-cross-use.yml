@@ -37,6 +37,10 @@ jobs:
                       runs-on: macOS-latest
                       target: aarch64-apple-darwin
 
+                    - os-name: wasm32-wasip1
+                      runs-on: macOS-latest
+                      target: wasm32-wasip1
+
                     # more targets here ...
         env:
             TZ: Asia/Shanghai
@@ -47,12 +51,6 @@ jobs:
               with:
                   node-version: '18'
                   registry-url: 'https://registry.npmjs.org'
-
-            - name: Install dependencies
-              run: |
-                  npm install cn-font-split -g
-                  npm ls -g
-                  cn-font-split ls
 
             - name: Create index.mjs file Linux
               if: ${{ runner.os != 'Windows' }}
@@ -88,11 +86,50 @@ jobs:
               run: |
                   npm init -y
                   npm install unzipper
+                  npm install cn-font-split
+                  cn-font-split ls
                   node index.mjs
+
             - name: build
+              if: ${{ matrix.platform.target !=  'wasm32-wasip1' }}
               run: |
                   cn-font-split -i ./SmileySans-Oblique.otf -o ./dist/
 
+            - name: wasm build
+              if: ${{ matrix.platform.target ==  'wasm32-wasip1' }}
+              run: |
+                  cn-font-split i wasm32-wasip1
+                  cat > test.mjs <<EOL
+                  import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.mjs';
+                  import fs from 'fs';
+
+                  const input = fs.readFileSync('./SmileySans-Oblique.otf');
+                  const wasm = new StaticWasm(
+                      fs.readFileSync(
+                          './node_modules/cn-font-split/dist/libffi-wasm32-wasip1.wasm',
+                      ),
+                  );
+
+                  const data = await fontSplit(
+                      {
+                          input: new Uint8Array(input.buffer),
+                          outDir: './dist',
+                      },
+                      wasm.WasiHandle,
+                      {
+                          logger(str, type) {
+                              console.log(str);
+                          },
+                      },
+                  );
+
+                  // console.log(data);
+                  // { name: string, data: Uint8Array }[]
+                  for (const file of data) {
+                      fs.writeFileSync('./dist/' + file.name, file.data);
+                  }
+                  EOL
+                  node test.mjs
             - name: Upload artifact
               uses: actions/upload-artifact@v4
               with:
