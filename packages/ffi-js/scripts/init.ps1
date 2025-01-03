@@ -36,7 +36,7 @@ function matchPlatform {
 
     # 检测编译器环境
     $compiler = "msvc"  # 默认值
-    if ($env:CC -match "gcc" -or $env:CXX -match "g++") {
+    if ($env:CC -match "gcc" -or $env:CXX -match "g") {
         $compiler = "gnu"
     }
     Write-Host "[Debug] System: $platform $arch $compiler"
@@ -130,7 +130,7 @@ function cn_ls {
             Write-Host "  $_" -ForegroundColor $GREEN
         }
     } else {
-        colorEcho $RED "version 文件不存在; cn-font-cli i default`n"
+        colorEcho $RED "version not found; cn-font-cli i default`n"
     }
     getAllVersion
 
