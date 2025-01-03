@@ -2,7 +2,7 @@
 $script:rust_target = ""
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $VERSION_FILE = "$SCRIPT_DIR\version"
-$GH_HOST=$CN_FONT_SPLIT_GH_HOST
+$GH_HOST=$env:CN_FONT_SPLIT_GH_HOST
 if (-not $GH_HOST) {
     $GH_HOST = "https://github.com"
 } 
@@ -113,7 +113,15 @@ function cn_i {
     $download_url = "$GH_HOST/KonghaYao/cn-font-split/releases/download/$version/libffi-$p.$ext"
     Write-Host $download_url
 
-    Invoke-WebRequest -Uri $download_url -OutFile "$SCRIPT_DIR\libffi-$p.$ext"
+    try{
+        Invoke-WebRequest -Uri "$download_url" -OutFile "$SCRIPT_DIR\libffi-$p.$ext" -ErrorAction Stop -MaximumRedirection 10  -Verbose
+    } 
+    catch {
+        colorEcho $RED "Error: $_.Exception.Message"
+        exit 1
+    }
+    Write-Host "$SCRIPT_DIR\libffi-$p.$ext"
+
 
     if (Test-Path $VERSION_FILE) {
         ((Get-Content -Path $VERSION_FILE -Raw) -split "`n" | Where-Object { $_ -notmatch "^$p" } | Where-Object { $_.Trim() -ne ""}) -join "`n" | Set-Content $VERSION_FILE
