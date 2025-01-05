@@ -67,7 +67,7 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
             let src_str: String = [
                 locals.join(","),
                 format!(
-                    r#"url("./{}") format("woff2")"#,
+                    r#"url("./{}")format("woff2")"#,
                     res.hash.clone() + ".woff2"
                 ),
             ]
@@ -75,12 +75,12 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
                 + polyfill_str.as_str();
             let unicode_range = &UnicodeRange::stringify(&res.unicodes);
             let face_code = format!(
-                r#"@font-face {{
+                r#"@font-face{{
 font-family:"{font_family}";
 src:{src_str};
-font-style: {font_style};
-font-display: {display};
-font-weight: {font_weight};
+font-style:{font_style};
+font-display:{display};
+font-weight:{font_weight};
 unicode-range:{unicode_range};
 }}"#
             );
