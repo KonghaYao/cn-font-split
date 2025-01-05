@@ -5,7 +5,7 @@ on:
             version:
                 description: 'Version number'
                 required: true
-                default: '7.0.0-beta-6'
+                default: '7.1.0'
             dryRun:
                 description: '测试写这个为 true'
                 required: true
@@ -89,6 +89,16 @@ jobs:
                   scoop install main/mingw
                   scoop install main/nodejs
                   ${{ matrix.platform.setup }}
+            - name: Change Version Windows
+              if: ${{ matrix.platform.name == 'Windows' }}
+              run: |
+                  (Get-Content -Path .\Cargo.toml -Raw) -replace 'version\s*=\s*".*?"', "version = `"${{inputs.version}}`"" |
+                  Set-Content -Path .\Cargo.toml
+              shell: pwsh
+            - name: Change Version Linux
+              if: ${{ matrix.platform.name != 'linux' }}
+              run: |
+                  sed -i '' 's/^version = \"[^\"]*\"/version = "${{inputs.version}}"/' Cargo.toml
             - name: Setup Linux Environment
               if: ${{ runner.os == 'Linux' }}
               run: |
@@ -170,7 +180,9 @@ jobs:
                   sudo apt update
                   sudo apt upgrade
                   sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
-
+            - name: Change Version Linux
+              run: |
+                  sed -i '' 's/^version = \"[^\"]*\"/version = "${{inputs.version}}"/' Cargo.toml
             - name: Setup WASI Environment
               working-directory: .
               run: |
