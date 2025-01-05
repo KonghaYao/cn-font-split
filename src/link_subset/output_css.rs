@@ -74,20 +74,23 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
             .join(",")
                 + polyfill_str.as_str();
             let unicode_range = &UnicodeRange::stringify(&res.unicodes);
+            let space =
+                if css.compress.unwrap_or(true) == true { "" } else { "    " };
             let face_code = format!(
                 r#"@font-face{{
-font-family:"{font_family}";
-src:{src_str};
-font-style:{font_style};
-font-display:{display};
-font-weight:{font_weight};
-unicode-range:{unicode_range};
+{space}font-family:"{font_family}";
+{space}src:{src_str};
+{space}font-style:{font_style};
+{space}font-display:{display};
+{space}font-weight:{font_weight};
+{space}unicode-range:{unicode_range};
 }}"#
             );
             // css 这个句尾不需要分号😭
             // 根据注释设置生成Unicode范围的注释。
             let comment = if css.comment_unicodes.unwrap_or(false) {
-                vec_u32_to_string(&res.unicodes)
+                let code_string = vec_u32_to_string(&res.unicodes);
+                format!("/* {} */\n", code_string)
             } else {
                 "".to_string()
             };

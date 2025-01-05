@@ -7,6 +7,7 @@ mod message;
 
 #[test]
 fn main_test() {
+    use cn_font_proto::api_interface::input_template::CssProperties;
     use cn_font_proto::api_interface::input_template::PreviewImage;
     use cn_font_proto::api_interface::InputTemplate;
     use cn_font_utils::{output_file, read_binary_file};
@@ -19,6 +20,20 @@ fn main_test() {
         preview_image: Some(PreviewImage {
             name: "preview".to_string(),
             text: "中文网字计划\nThe Chinese Web Font Project".to_string(),
+        }),
+        css: Some(CssProperties {
+            // font_family: Some("New".to_string()),
+            // font_weight: Some("200".to_string()),
+            // font_style: Some("italic".to_string()),
+            // font_display: Some("auto".to_string()),
+            // local_family: vec!["New2".to_string()],
+            // polyfill: vec![],
+            // comment_base: Some(true),
+            // comment_name_table: Some(true),
+            // comment_unicodes: Some(true),
+            // compress: Some(true),
+            // file_name: Some("input.css".to_string()),
+            ..Default::default()
         }),
         ..Default::default()
     };
