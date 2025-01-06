@@ -43,11 +43,11 @@ export default defineConfig(({ mode }) => {
             viteStaticCopy({
                 targets: [
                     {
-                        src: './scripts/init.ps1',
+                        src: '../ffi/scripts/init.ps1',
                         dest: '',
                     },
                     {
-                        src: './scripts/init.sh',
+                        src: '../ffi/scripts/init.sh',
                         dest: '',
                     },
                 ],
