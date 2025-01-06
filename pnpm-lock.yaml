@@ -122,6 +122,9 @@ importers:
       protobufjs:
         specifier: ^7.4.0
         version: 7.4.0
+      protoc-gen-ts:
+        specifier: ^0.8.7
+        version: 0.8.7
 
   packages/font-analyze:
     dependencies:
@@ -2569,6 +2572,10 @@ packages:
   protobufjs@7.4.0:
     resolution: {integrity: sha512-mRUWCc3KUU4w1jU8sGxICXH/gNS94DvI1gxqDvBzhj1JpcsimQkYiOJfwsPUykUI5ZaspFbSgmBLER8IrQ3tqw==}
     engines: {node: '>=12.0.0'}
+
+  protoc-gen-ts@0.8.7:
+    resolution: {integrity: sha512-jr4VJey2J9LVYCV7EVyVe53g1VMw28cCmYJhBe5e3YX5wiyiDwgxWxeDf9oTqAe4P1bN/YGAkW2jhlH8LohwiQ==}
+    hasBin: true
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -5769,6 +5776,8 @@ snapshots:
       '@protobufjs/utf8': 1.1.0
       '@types/node': 22.10.2
       long: 5.2.3
+
+  protoc-gen-ts@0.8.7: {}
 
   punycode@2.3.1: {}
 
