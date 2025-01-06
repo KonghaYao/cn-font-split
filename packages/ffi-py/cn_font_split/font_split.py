@@ -1,6 +1,7 @@
 import os
 from ctypes import CDLL, CFUNCTYPE, c_size_t, POINTER, c_ubyte, string_at
 import sys
+from typing import Any
 from .gen import index_pb2
 from pathlib import Path
 import platform
@@ -105,7 +106,7 @@ current_platform = platform_map.get(current_platform, current_platform)
 current_arch = arch_map.get(current_arch, current_arch)
 
 
-def match_platform(platform: str, arch: str, is_musl: callable) -> str:
+def match_platform(platform: str, arch: str, is_musl: Any) -> str:
     platform_arch_map = {
         "android": {
             "arm64": None,

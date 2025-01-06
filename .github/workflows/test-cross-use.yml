@@ -319,7 +319,7 @@ jobs:
                       apt update -y -q
                       apt install python3 python3-pip -y -q
                       pip3 install cn-font-split ${{ matrix.platform.break_python }}
-                      cn-font-split-py --install ${{ matrix.platform.target }}@${{inputs.version}}
+                      cn-font-split-py i ${{ matrix.platform.target }}@${{inputs.version}}
                       cn-font-split-py -i ./SmileySans-Oblique.otf -o ./dist/
 
             - name: Upload artifact

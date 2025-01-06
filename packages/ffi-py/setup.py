@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cn_font_split",
-    version="7.0.9",
+    version="7.1.0",
     description="A revolutionary font subsetter that supports CJK and any characters!",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -34,6 +34,12 @@ setup(
             # Assuming you have a CLI entry point
             "cn-font-split-py=cn_font_split.cli:main",
         ],
+    },
+    package_dir={"cn_font_split": "cn_font_split"},
+    package_data={
+        "": ["*.ps1", "*.sh"],  # 空字符串表示所有包
+        # 或者针对特定包
+        # 'specific_package': ['*.ps1', '*.sh'],
     },
     project_urls={
         "Homepage": "https://chinese-font.netlify.app/",
