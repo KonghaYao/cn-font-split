@@ -1,4 +1,4 @@
-# npm i -g protoc-gen-ts
+# python 依赖生成脚本
 OUT_DIR="./cn_font_split/gen"
 if [ ! -d "./cn_font_split/gen" ]; then
   mkdir ./cn_font_split/gen
@@ -13,3 +13,6 @@ protoc \
     services.proto
 
 echo "from . import *" > "${OUT_DIR}/__init__.py"
+
+# 脚本放置到 gen 文件夹中
+cp ../ffi/scripts/* ./cn_font_split/gen
