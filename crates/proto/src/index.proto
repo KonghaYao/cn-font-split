@@ -95,6 +95,7 @@ message OutputReport {
     message SubsetDetail {
         uint32 id = 1; // ID
         string hash = 2; // 哈希值
+        string file_name = 6; // 文件名称
         uint32 bytes = 3; // 字节数
         repeated uint32 chars = 4; // 字符数组
         uint32 duration = 5; // 构建时间

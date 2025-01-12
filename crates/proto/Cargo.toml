@@ -1,6 +1,6 @@
 [package]
 name = "cn-font-proto"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "proto of cn-font-split"
 authors = ["KonghaYao<3446798488@qq.com>"]
