@@ -64,7 +64,6 @@ pub fn pre_subset(ctx: &mut Context) {
         ),
     > = vec![];
     process.push(plugin_add_user_subset::plugin_add_user_subset);
-    print!("{:#?}", ctx.input.language_areas);
     if ctx.input.language_areas.is_some_and(|x| x == true) {
         process.push(language_area_plugin);
     }

@@ -26,10 +26,10 @@ pub fn read_binary_file(file_path: &str) -> std::io::Result<Vec<u8>> {
 pub fn u32_array_to_u8_array(input: &[u32]) -> Vec<u8> {
     let mut output = Vec::with_capacity(input.len() * 4);
     for &num in input {
-        output.push((num >> 24) as u8);
-        output.push((num >> 16) as u8);
-        output.push((num >> 8) as u8);
         output.push(num as u8);
+        output.push((num >> 8) as u8);
+        output.push((num >> 16) as u8);
+        output.push((num >> 24) as u8);
     }
     output
 }
@@ -38,7 +38,7 @@ pub fn u8_array_to_u32_array(arr: &[u8]) -> Vec<u32> {
     assert!(arr.len() % 4 == 0, "File length is not a multiple of 4");
     arr.chunks(4)
         .map(|chunk| {
-            u32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]])
+            u32::from_be_bytes([chunk[3], chunk[2], chunk[1], chunk[0]])
         })
         .collect()
 }
@@ -100,14 +100,14 @@ mod tests {
     fn test_u32_array_to_u8_array() {
         let input = vec![0x12345678, 0x90abcdef];
         let expected_output =
-            vec![0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef];
+            vec![0x78, 0x56, 0x34, 0x12, 0xef, 0xcd, 0xab, 0x90];
         let output = u32_array_to_u8_array(&input);
         assert_eq!(output, expected_output);
     }
 
     #[test]
     fn test_u8_array_to_u32_array() {
-        let input = vec![0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef];
+        let input = vec![0x78, 0x56, 0x34, 0x12, 0xef, 0xcd, 0xab, 0x90];
         let expected_output = vec![0x12345678, 0x90abcdef];
         let output = u8_array_to_u32_array(&input);
         assert_eq!(output, expected_output);
