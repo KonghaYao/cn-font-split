@@ -23,6 +23,25 @@ pub fn read_binary_file(file_path: &str) -> std::io::Result<Vec<u8>> {
     Ok(buffer)
 }
 
+pub fn u32_array_to_u8_array(input: &[u32]) -> Vec<u8> {
+    let mut output = Vec::with_capacity(input.len() * 4);
+    for &num in input {
+        output.push((num >> 24) as u8);
+        output.push((num >> 16) as u8);
+        output.push((num >> 8) as u8);
+        output.push(num as u8);
+    }
+    output
+}
+
+pub fn u8_array_to_u32_array(arr: &[u8]) -> Vec<u32> {
+    assert!(arr.len() % 4 == 0, "File length is not a multiple of 4");
+    arr.chunks(4)
+        .map(|chunk| {
+            u32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]])
+        })
+        .collect()
+}
 /// 输出一个文件，会自动创建文件夹
 pub fn output_file(file_path: &str, buffer: &Vec<u8>) -> std::io::Result<()> {
     use std::fs::File;
@@ -75,5 +94,30 @@ mod tests {
 
         // 删除测试文件
         std::fs::remove_file(file_path).unwrap();
+    }
+
+    #[test]
+    fn test_u32_array_to_u8_array() {
+        let input = vec![0x12345678, 0x90abcdef];
+        let expected_output =
+            vec![0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef];
+        let output = u32_array_to_u8_array(&input);
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_u8_array_to_u32_array() {
+        let input = vec![0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef];
+        let expected_output = vec![0x12345678, 0x90abcdef];
+        let output = u8_array_to_u32_array(&input);
+        assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_round_trip_conversion() {
+        let input = vec![0x12345678, 0x90abcdef, 0xdeadbeef];
+        let u8_array = u32_array_to_u8_array(&input);
+        let output = u8_array_to_u32_array(&u8_array);
+        assert_eq!(input, output);
     }
 }
