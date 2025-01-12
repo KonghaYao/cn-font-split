@@ -1,18 +1,20 @@
-mod auto_subset_plugin;
 pub mod features;
 pub mod fvar;
 pub mod gen_svg;
 pub mod name_table;
 pub mod plugin;
+mod plugin_auto_subset;
 
 use crate::runner::Context;
-use auto_subset_plugin::auto_subset_plugin;
+mod plugin_add_user_subset;
+use cn_font_utils::u8_array_to_u32_array;
 use features::features_plugin;
 use gen_svg::gen_svg_from_ctx;
 use harfbuzz_rs_now::{Face, Owned};
 use plugin::{
     add_remain_chars_plugin, language_area_plugin, reduce_min_plugin,
 };
+use plugin_auto_subset::plugin_auto_subset;
 use std::collections::BTreeSet;
 use std::io::Cursor;
 
@@ -26,6 +28,7 @@ where
     predict_bytes_pre_subset: u32,
     font: &'a opentype::Font,
     font_file: &'a mut Cursor<&'c Vec<u8>>,
+    subsets: &'c Vec<Vec<u32>>,
 }
 
 pub fn pre_subset(ctx: &mut Context) {
@@ -42,21 +45,41 @@ pub fn pre_subset(ctx: &mut Context) {
     // 每个包的大小
     let chunk_size = ctx.input.chunk_size.unwrap_or(1024 * 70);
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
+    let user_subsets: Vec<Vec<u32>> =
+        ctx.input.subsets.iter().map(|x| u8_array_to_u32_array(x)).collect();
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
         face: &mut ctx.face,
         predict_bytes_pre_subset: chunk_size as u32,
         font: &font,
+        subsets: &user_subsets,
         font_file: &mut font_file,
     };
 
-    for p in [
-        language_area_plugin,
-        add_remain_chars_plugin,
-        auto_subset_plugin,
-        features_plugin,
-        reduce_min_plugin,
-    ] {
+    let mut process: Vec<
+        fn(
+            &mut Vec<BTreeSet<u32>>,
+            &mut BTreeSet<u32>,
+            &mut PreSubsetContext<'_, '_, '_>,
+        ),
+    > = vec![];
+    process.push(plugin_add_user_subset::plugin_add_user_subset);
+    if ctx.input.language_areas.unwrap_or(true) {
+        process.push(language_area_plugin);
+    }
+    if ctx.input.auto_subset.unwrap_or(true) {
+        process.push(add_remain_chars_plugin);
+    }
+    if ctx.input.auto_subset.unwrap_or(true) {
+        process.push(plugin_auto_subset);
+    }
+    if ctx.input.font_feature.unwrap_or(true) {
+        process.push(features_plugin);
+    }
+    if ctx.input.reduce_mins.unwrap_or(true) {
+        process.push(reduce_min_plugin);
+    }
+    for p in process {
         p(&mut subsets, &mut all_unicodes, &mut context);
     }
 
