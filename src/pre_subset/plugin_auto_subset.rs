@@ -6,7 +6,7 @@ use crate::run_subset::build_single_subset;
 
 use super::PreSubsetContext;
 
-pub fn auto_subset_plugin(
+pub fn plugin_auto_subset(
     subsets: &mut Vec<BTreeSet<u32>>,
     _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,

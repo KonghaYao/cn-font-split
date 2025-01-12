@@ -10,11 +10,13 @@ fn main_test() {
     use cn_font_proto::api_interface::input_template::CssProperties;
     use cn_font_proto::api_interface::input_template::PreviewImage;
     use cn_font_proto::api_interface::InputTemplate;
+    use cn_font_utils::u32_array_to_u8_array;
     use cn_font_utils::{output_file, read_binary_file};
     use log::info;
 
     let path = "./packages/demo/public/SmileySans-Oblique.ttf";
     let font_file = read_binary_file(&path).expect("Failed to read file");
+    let subsets = vec![[65]].iter().map(|x| u32_array_to_u8_array(x)).collect();
     let input = InputTemplate {
         input: font_file,
         preview_image: Some(PreviewImage {
@@ -35,6 +37,12 @@ fn main_test() {
             // file_name: Some("input.css".to_string()),
             ..Default::default()
         }),
+        subsets,
+        language_areas: Some(false),
+        auto_subset: Some(false),
+        font_feature: Some(false),
+        reduce_mins: Some(false),
+        
         ..Default::default()
     };
 
