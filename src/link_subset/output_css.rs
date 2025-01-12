@@ -66,10 +66,7 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
         .map(|res| {
             let src_str: String = [
                 locals.join(","),
-                format!(
-                    r#"url("./{}")format("woff2")"#,
-                    res.hash.clone() + ".woff2"
-                ),
+                format!(r#"url("./{}")format("woff2")"#, res.file_name.clone()),
             ]
             .join(",")
                 + polyfill_str.as_str();

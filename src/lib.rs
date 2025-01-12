@@ -43,7 +43,7 @@ fn main_test() {
         // auto_subset: Some(false),
         // font_feature: Some(false),
         // reduce_mins: Some(false),
-
+        // rename_output_font: Some("font_[hash:6].[ext]".to_string()),
         ..Default::default()
     };
 

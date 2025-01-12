@@ -1,6 +1,8 @@
+pub(crate) mod name_template;
 mod output_css;
 use crate::{message::EventFactory, runner::Context};
 use cn_font_proto::{api_interface::EventMessage, INDEX_PROTO};
+
 const HTML_TEMPLATE: &[u8] = include_bytes!("./index.html");
 pub fn link_subset(ctx: &mut Context) {
     let css = ctx.input.css.clone().unwrap_or_default();
@@ -12,10 +14,12 @@ pub fn link_subset(ctx: &mut Context) {
         &file_name,
         css_code.as_bytes().to_vec(),
     ));
-    (ctx.callback)(EventMessage::output_data(
-        "index.html",
-        HTML_TEMPLATE.to_vec(),
-    ));
+    if ctx.input.test_html.unwrap_or(true) {
+        (ctx.callback)(EventMessage::output_data(
+            "index.html",
+            HTML_TEMPLATE.to_vec(),
+        ));
+    }
     (ctx.callback)(EventMessage::output_data(
         "index.proto",
         INDEX_PROTO.to_vec(),

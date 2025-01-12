@@ -1,3 +1,4 @@
+use crate::link_subset::name_template::name_template;
 use crate::message::EventFactory;
 use crate::runner::Context;
 use cn_font_proto::api_interface::output_report::{
@@ -40,7 +41,7 @@ pub fn run_subset(ctx: &mut Context) {
         ctx.face.collect_unicodes().iter().map(|x| x.clone()),
     );
     let origin_size: u32 = all_chars.len().try_into().unwrap();
-
+    let file_name_template = ctx.input.rename_output_font.clone();
     info!("font subset result log");
     let thread_result: Vec<ThreadResult> = ctx
         .pre_subset_result
@@ -63,22 +64,26 @@ pub fn run_subset(ctx: &mut Context) {
                 result_bytes,
                 hash_string.to_string()
             );
+            let file_name = if let Some(name) = &file_name_template {
+                name_template(&name, &hash_string, "woff2", &index)
+            } else {
+                hash_string.to_string() + ".woff2"
+            };
             ThreadResult {
                 subset_result: RunSubsetResult {
                     hash: hash_string.to_string(),
                     unicodes: r.clone(),
+                    file_name: file_name.clone(),
                 },
                 log: SubsetDetail {
                     id: (index as u32) + 1_u32,
+                    file_name: file_name.clone(),
                     hash: hash_string.to_string(),
                     chars: r.clone(),
                     bytes: result.len() as u32,
                     duration: duration.as_millis() as u32,
                 },
-                message: EventMessage::output_data(
-                    (hash_string.to_string() + ".woff2").as_str(),
-                    result,
-                ),
+                message: EventMessage::output_data(&file_name, result),
             }
         })
         .collect::<Vec<ThreadResult>>();
@@ -124,4 +129,5 @@ pub fn run_subset(ctx: &mut Context) {
 pub struct RunSubsetResult {
     pub hash: String,
     pub unicodes: Vec<u32>,
+    pub file_name: String,
 }

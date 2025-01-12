@@ -59,7 +59,9 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     let mut reporter_buffer = Vec::new();
     ctx.reporter.encode(&mut reporter_buffer).unwrap();
 
-    callback(EventMessage::output_data("reporter.bin", reporter_buffer));
+    if ctx.input.reporter.unwrap_or(true) {
+        callback(EventMessage::output_data("reporter.bin", reporter_buffer));
+    }
 
     // 发送一个结束信息
     callback(EventMessage::create_end_message());
