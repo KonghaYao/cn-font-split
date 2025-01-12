@@ -64,19 +64,19 @@ pub fn pre_subset(ctx: &mut Context) {
         ),
     > = vec![];
     process.push(plugin_add_user_subset::plugin_add_user_subset);
-    if ctx.input.language_areas.is_some_and(|x| x == true) {
+    if ctx.input.language_areas.unwrap_or(true) {
         process.push(language_area_plugin);
     }
-    if ctx.input.auto_subset.is_some_and(|x| x == true) {
+    if ctx.input.auto_subset.unwrap_or(true) {
         process.push(add_remain_chars_plugin);
     }
-    if ctx.input.auto_subset.is_some_and(|x| x == true) {
+    if ctx.input.auto_subset.unwrap_or(true) {
         process.push(plugin_auto_subset);
     }
-    if ctx.input.font_feature.is_some_and(|x| x == true) {
+    if ctx.input.font_feature.unwrap_or(true) {
         process.push(features_plugin);
     }
-    if ctx.input.reduce_mins.is_some_and(|x| x == true) {
+    if ctx.input.reduce_mins.unwrap_or(true) {
         process.push(reduce_min_plugin);
     }
     for p in process {
