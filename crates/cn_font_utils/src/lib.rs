@@ -23,6 +23,7 @@ pub fn read_binary_file(file_path: &str) -> std::io::Result<Vec<u8>> {
     Ok(buffer)
 }
 
+// 将 Vec<u32> 转换为 Vec<u8>
 pub fn u32_array_to_u8_array(input: &[u32]) -> Vec<u8> {
     let mut output = Vec::with_capacity(input.len() * 4);
     for &num in input {
@@ -34,6 +35,7 @@ pub fn u32_array_to_u8_array(input: &[u32]) -> Vec<u8> {
     output
 }
 
+// 将 Vec<u8> 转换为 Vec<u32>
 pub fn u8_array_to_u32_array(arr: &[u8]) -> Vec<u32> {
     assert!(arr.len() % 4 == 0, "File length is not a multiple of 4");
     arr.chunks(4)
@@ -55,6 +57,25 @@ pub fn output_file(file_path: &str, buffer: &Vec<u8>) -> std::io::Result<()> {
     let mut file = File::create(path)?;
     file.write_all(buffer)?;
     Ok(())
+}
+
+// 直接获取切片字符串，类似于 slice 方法
+pub fn slice_string(s: &str, start: isize, end: isize) -> String {
+    let len = s.chars().count() as isize;
+    let start = if start < 0 { len + start } else { start } as usize;
+    let end = if end < 0 { len + end } else { end } as usize;
+
+    // Ensure indices are within bounds and start <= end
+    let start = start.min(len as usize).max(0);
+    let end = end.min(len as usize).max(start);
+
+    s.chars().skip(start).take(end - start).collect()
+}
+
+#[test]
+fn test_slice() {
+    let text = "Hello, world!";
+    assert_eq!("ello, worl", slice_string(text, 1, -2)); // Should print "ello, world"
 }
 
 #[cfg(test)]

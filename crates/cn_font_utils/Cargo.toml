@@ -1,6 +1,6 @@
 [package]
 name = "cn-font-utils"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2021"
 description = "utils of cn-font-split"
 authors = ["KonghaYao<3446798488@qq.com>"]
