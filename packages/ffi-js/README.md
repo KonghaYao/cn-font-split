@@ -2,9 +2,9 @@
 
 ![中文网字计划](/assets/chinese-fonts.png)
 
-![updateTime](https://img.shields.io/badge/更新时间-2025/01/03-green)
+![updateTime](https://img.shields.io/badge/更新时间-2025/01/12-green)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-7.1.11-green)
+![npmVersion](https://img.shields.io/badge/LTS_version-7.2.0-green)
 [![](https://data.jsdelivr.com/v1/package/npm/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/cn-font-split)
 
 ![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
