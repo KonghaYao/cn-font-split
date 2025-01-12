@@ -177,7 +177,7 @@
         "splitText": " ईं"
     },
     {
-        "fontLink": "https://fonts.maateen.me/adorsho-lipi/AdorshoLipi.ttf",
+        "fontLink": "https://raw.githubusercontent.com/shabab/AdorshoLipi-font/master/AdorshoLipi_18-08-2011.ttf",
         "featureKey": "pres",
         "splitText": "ৎল ৎম ৎন ৎথ ৎত "
     },
@@ -545,7 +545,7 @@
     {
         "fontLink": "https://sparanoid.com/lab/opentype-features/assets/fonts/sf-pro-display-bold.woff2",
         "featureKey": "cv03",
-        
+
         "splitText": "4"
     },
     {
