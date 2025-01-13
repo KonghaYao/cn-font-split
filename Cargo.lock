@@ -1554,7 +1554,7 @@ dependencies = [
 
 [[package]]
 name = "lang-unicodes"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "lazy_static",
  "opencc-rs",

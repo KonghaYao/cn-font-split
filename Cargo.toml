@@ -7,11 +7,12 @@ authors = ["KonghaYao<3446798488@qq.com>"]
 homepage = "https://chinese-font.netlify.app/"
 repository = "https://github.com/konghaYao/cn-font-split"
 license = "Apache-2.0"
+exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode"]
 
 [dependencies]
 cn-font-utils = { version = "0.1.0", path = "crates/cn_font_utils" }
 harfbuzz_rs_now = "2.2.6"
-lang-unicodes = { version = "0.1.0", path = "crates/lang_unicodes", default-features = false }
+lang-unicodes = { version = "0.1.1", path = "crates/lang_unicodes", default-features = false }
 log = "0.4.22"
 md5 = "0.7.0"
 opentype = "0.38.1"

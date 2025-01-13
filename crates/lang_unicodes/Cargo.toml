@@ -1,6 +1,6 @@
 [package]
 name = "lang-unicodes"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Effortlessly convert and validate text across various Unicode ranges, supporting multiple languages for seamless internationalization in your applications."
 authors = ["KonghaYao<3446798488@qq.com>"]
