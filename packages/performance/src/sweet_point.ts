@@ -28,13 +28,36 @@ export async function main(build = false) {
         const mapper = buildCMapForCssFromReporter(reporter);
         sampleReporter.push(mapper);
     }
-
+    const textOnlyReporter: Map<string, Mapper> = new Map();
+    for (const text of sampleText) {
+        const chars = [...new Set([...text.content])]
+            .map((i) => i.codePointAt(0))
+            .filter(Boolean) as number[];
+        await fontSplit({
+            input,
+            outDir: './build/mini/' + text.id,
+            // chunkSize: 50 * 1024,
+            subsets: [chars],
+            languageAreas: false,
+            subsetRemainChars: false,
+            autoSubset: true,
+            fontFeature: false,
+            reduceMins: false,
+        });
+        await new Promise((res) => setTimeout(() => res(null), 100));
+        const reporter = await getAllReporter('mini/' + text.id);
+        const mapper = buildCMapForCssFromReporter(reporter);
+        textOnlyReporter.set(text.id, mapper);
+    }
     // 根据 sampleText 生成所需要拿到的实际字体分包
     const UsageAnalyzeData = sampleText.map((text) => {
         const chars = [...new Set([...text.content])]
             .map((i) => i.codePointAt(0))
             .filter(Boolean) as number[];
-        const usageData = sampleReporter.map((mapper, index) => {
+        const usageData = [
+            ...sampleReporter,
+            textOnlyReporter.get(text.id)!,
+        ].map((mapper, index) => {
             let usage = new Set<proto.OutputReport.SubsetDetail>();
             let miss = 0;
             chars.forEach((char) => {
@@ -45,7 +68,11 @@ export async function main(build = false) {
                     miss++;
                 }
             });
-            return { usage: [...usage], splitSize: sample[index], miss };
+            return {
+                usage: [...usage],
+                splitSize: sample[index] || 'mini',
+                miss,
+            };
         });
         return { text, usageData };
     });
@@ -55,7 +82,6 @@ export async function main(build = false) {
      *   id     | 10            | 20
      * text1  | avgSize/count | avgSize/count
      */
-
     const final = UsageAnalyzeData.map((i) => {
         const entries = i.usageData.map((data) => {
             const count = data.usage.length;
@@ -68,7 +94,7 @@ export async function main(build = false) {
                 `${(totalSize / (count * 1024)).toFixed(0)}KiB / ${count} / ${(
                     totalSize /
                     (1024 * 1024)
-                ).toFixed(2)}MiB`,
+                ).toFixed(2)}MiB ${data.miss}`,
             ];
         });
         return {
@@ -76,8 +102,9 @@ export async function main(build = false) {
             ...Object.fromEntries(entries),
         };
     });
+
+    console.log('预设大小 / 均包 / 包数 / 总大小 ');
     final.forEach((i) => {
-        console.log('预设大小 / 均包 / 包数 / 总大小 ');
         console.table(i);
     });
 }
@@ -96,7 +123,7 @@ function buildCMapForCssFromReporter(reporter: proto.OutputReport) {
     return map;
 }
 
-async function getAllReporter(id: number) {
+async function getAllReporter(id: number | string) {
     const buffer = await fs.promises.readFile(
         './build/' + id + '/reporter.bin',
     );
