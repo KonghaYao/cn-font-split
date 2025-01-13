@@ -170,8 +170,8 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1
       cn-font-split:
-        specifier: workspace:^
-        version: link:../ffi-js
+        specifier: 7.2.0
+        version: 7.2.0
       solid-js:
         specifier: ^1.7.8
         version: 1.8.17
@@ -1870,6 +1870,10 @@ packages:
 
   cn-font-split@6.0.0-1:
     resolution: {integrity: sha512-/yfCD7U54Lr8T54OGtkpyuaIEVkaiut+tyKT2zF5g2+X7GFs6jJubTjIbx45Leg7m1+MomD1sWQQsEZFY5Ipgw==}
+    hasBin: true
+
+  cn-font-split@7.2.0:
+    resolution: {integrity: sha512-fApOvUPDJgiKGUlYhf45neMRqg1zqZaaN7/D9++pVjeaEIoVvuP0uftNC7zhADh1omNElp0JV4yBsoH6Qpy8ZQ==}
     hasBin: true
 
   color-convert@2.0.1:
@@ -5076,6 +5080,15 @@ snapshots:
       os-locale: 6.0.2
       tslog: 4.9.3
       workerpool: 9.2.0
+
+  cn-font-split@7.2.0:
+    dependencies:
+      buffer: 6.0.3
+      commander: 12.1.0
+      fs-extra: 11.2.0
+      google-protobuf: 3.21.4
+      koffi: 2.10.0
+      proto-to-cli: 1.1.5
 
   color-convert@2.0.1:
     dependencies:
