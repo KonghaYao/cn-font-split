@@ -27,7 +27,7 @@ message InputTemplate {
     optional bool language_areas = 8; // 是否进行语言区域优化
     optional bool multi_threads = 21; // TODO 是否使用多线程
     optional bool font_feature = 22; // 是否启用字体特性
-    optional bool reduce_mins = 23; // TODO 是否减少最小分包，
+    optional bool reduce_mins = 23; // 是否减少最小分包，
     optional bool auto_subset = 24; // 是否自动子集化
     optional bool subset_remain_chars = 25; // 是否自动添加没有声明的字符
 

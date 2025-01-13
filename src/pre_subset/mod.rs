@@ -42,15 +42,15 @@ pub fn pre_subset(ctx: &mut Context) {
 
     gen_svg_from_ctx(ctx);
 
-    // 每个包的大小
-    let chunk_size = ctx.input.chunk_size.unwrap_or(1024 * 70);
     let mut subsets: Vec<BTreeSet<u32>> = vec![];
     let user_subsets: Vec<Vec<u32>> =
         ctx.input.subsets.iter().map(|x| u8_array_to_u32_array(x)).collect();
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
         face: &mut ctx.face,
-        predict_bytes_pre_subset: chunk_size as u32,
+        // 每个包的大小
+        predict_bytes_pre_subset: ctx.input.chunk_size.unwrap_or(1024 * 70)
+            as u32,
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
