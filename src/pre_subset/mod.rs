@@ -67,7 +67,7 @@ pub fn pre_subset(ctx: &mut Context) {
     if ctx.input.language_areas.unwrap_or(true) {
         process.push(language_area_plugin);
     }
-    if ctx.input.auto_subset.unwrap_or(true) {
+    if ctx.input.subset_remain_chars.unwrap_or(true) {
         process.push(add_remain_chars_plugin);
     }
     if ctx.input.auto_subset.unwrap_or(true) {

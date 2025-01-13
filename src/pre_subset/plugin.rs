@@ -15,12 +15,10 @@ pub fn language_area_plugin(
         let set = BTreeSet::from_iter(
             area.iter()
                 .filter(|c| {
-                    {
-                        let is_in_remain = remaining_chars_set.contains(c);
-                        // ! 副作用，从剩余字符中删除这个字符
-                        remaining_chars_set.remove(c);
-                        is_in_remain
-                    }
+                    let is_in_remain = remaining_chars_set.contains(c);
+                    // ! 副作用，从剩余字符中删除这个字符
+                    remaining_chars_set.remove(c);
+                    is_in_remain
                 })
                 .map(|c| c.clone()),
         );
