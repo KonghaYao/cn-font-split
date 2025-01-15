@@ -17,7 +17,12 @@ use serde::Deserialize;
 use tokio::sync::mpsc::{self};
 use tokio_stream::StreamExt as _;
 #[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
+async fn main(
+    #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
+) -> shuttle_axum::ShuttleAxum {
+    secrets.into_iter().for_each(|(key, val)| {
+        std::env::set_var(key, val);
+    });
     let app = Router::new().route("/", get(|| async { "Hello, Rust!" })).route(
         "/upload",
         post(upload).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
@@ -52,7 +57,9 @@ async fn upload(Json(payload): Json<UploadPayload>) -> Response<Body> {
                     let event =
                         EventName::try_from(data.event).unwrap().as_str_name();
                     let _ = tx.send(
-                        Event::default().id(data.message.clone()).event(event),
+                        Event::default()
+                            .data(data.message.clone())
+                            .event(event),
                     );
                     let binary = data.data.unwrap();
                     let folder = payload.file_folder.clone();
@@ -98,13 +105,13 @@ async fn upload_data(binary: Vec<u8>, folder: String, file_name: String) {
         .text("useUniqueFileName", "false")
         .text("folder", folder)
         .text("isPrivateFile", "false");
-
     // 发送 POST 请求
+    let token = "Basic ".to_owned() + &env::var("IMAGEKIT_TOKEN").unwrap();
     let client = reqwest::Client::new();
     let response = client
-        .post("https://upload.imagekit.io/api/v2/files/upload")
+        .post("https://upload.imagekit.io/api/v1/files/upload")
         .header("Accept", "application/json")
-        .header("Authorization", env::var("IMAGEKIT_TOKEN").unwrap())
+        .header("authorization", token.clone())
         .multipart(form)
         .send()
         .await
@@ -114,7 +121,11 @@ async fn upload_data(binary: Vec<u8>, folder: String, file_name: String) {
     if response.status().is_success() {
         println!("{} 上传成功", file_name.clone());
     } else {
-        println!("Failed to upload file");
+        println!(
+            "Failed to upload file {} {}",
+            response.status().as_str(),
+            response.text().await.unwrap()
+        );
     }
 }
 

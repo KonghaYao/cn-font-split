@@ -14,3 +14,6 @@ src/pb/*.rs
 *.wasm
 .pnpm-store/**/*
 !cargo.lock
+/target
+.shuttle*
+Secrets*.toml
