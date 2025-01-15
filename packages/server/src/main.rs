@@ -1,40 +1,37 @@
-use std::{
-    convert::Infallible,
-    env,
-    io::Write,
-    sync::{Arc, Mutex},
-};
+use std::{convert::Infallible, env};
 
 use axum::{
-    body::{Body, Bytes},
+    body::Body,
     extract::DefaultBodyLimit,
     http::{HeaderMap, Response},
     response::{sse::Event, IntoResponse, Sse},
     routing::{get, post},
-    Router,
+    Json, Router,
 };
-mod storage;
 use cn_font_proto::api_interface::{EventMessage, EventName, InputTemplate};
 use cn_font_split::font_split;
-use storage::OssApi;
+use reqwest;
+use reqwest::multipart;
+use reqwest::Error;
+use serde::Deserialize;
 use tokio::sync::mpsc::{self};
 use tokio_stream::StreamExt as _;
-use zip::write::FileOptions;
-
-#[tokio::main]
-async fn main() {
+#[shuttle_runtime::main]
+async fn main() -> shuttle_axum::ShuttleAxum {
     let app = Router::new().route("/", get(|| async { "Hello, Rust!" })).route(
         "/upload",
-        post(upload).layer(DefaultBodyLimit::max(1024 * 1024 * 100)),
+        post(upload).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
     );
-
-    println!("Running on http://localhost:3000");
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    Ok(app.into())
 }
 
-async fn upload(file: Bytes) -> Response<Body> {
-    let file_vec: Vec<u8> = file.into();
+#[derive(Deserialize)]
+struct UploadPayload {
+    file_folder: String,
+    file_url: String,
+}
+async fn upload(Json(payload): Json<UploadPayload>) -> Response<Body> {
+    let file_vec = fetch_binary_file(&payload.file_url).await.unwrap();
     let template = InputTemplate { input: file_vec, ..Default::default() };
 
     // 设置响应头
@@ -42,45 +39,37 @@ async fn upload(file: Bytes) -> Response<Body> {
     headers.insert("Content-Type", "text/event-stream".parse().unwrap());
     headers.insert("Cache-Control", "no-cache".parse().unwrap());
     headers.insert("Connection", "keep-alive".parse().unwrap());
-    
-    let oss = OssApi::new(&env::var("S3_ENDPOINT").unwrap());
-    oss.init_font_system().await;
 
     let (tx, mut rx) = mpsc::unbounded_channel::<Event>();
     // 启动异步任务，该任务会调用回调函数并将数据发送到通道中
     tokio::spawn(async move {
-        let mut buffer = Vec::new();
+        let buffer = Vec::new();
         let hash = format!("{:?}", md5::compute(buffer.as_slice()));
-        let zip_writer = zip::ZipWriter::new(std::io::Cursor::new(&mut buffer));
-        let safe_zip = Arc::new(Mutex::new(zip_writer));
-        let result_font = oss.get_bucket("result-font");
         font_split(template, |data: EventMessage| {
-            let a = Arc::clone(&safe_zip);
-            let mut safe_zip = a.lock().unwrap();
             match EventName::try_from(data.event).unwrap() {
                 EventName::Unspecified => {}
                 EventName::OutputData => {
-                    safe_zip
-                        .start_file::<String, ()>(
-                            data.message.clone(),
-                            FileOptions::default(),
-                        )
-                        .unwrap();
+                    let event =
+                        EventName::try_from(data.event).unwrap().as_str_name();
+                    let _ = tx.send(
+                        Event::default().id(data.message.clone()).event(event),
+                    );
                     let binary = data.data.unwrap();
-                    safe_zip.write_all(&binary).unwrap();
+                    let folder = payload.file_folder.clone();
+                    // safe_collection.push(binary);
+                    tokio::spawn(async move {
+                        upload_data(
+                            binary,
+                            folder,
+                            String::from(data.message.clone()),
+                        )
+                        .await
+                    });
                 }
                 EventName::End => {}
             };
-
-            let event = EventName::try_from(data.event).unwrap().as_str_name();
-            let _ =
-                tx.send(Event::default().id(data.message.clone()).event(event));
         });
 
-        let safe_zip =
-            Arc::try_unwrap(safe_zip).ok().unwrap().into_inner().unwrap();
-        safe_zip.finish().unwrap();
-        let _ = result_font.put_object(hash.clone() + ".zip", &buffer).await;
         let _ = tx.send(Event::default().id("result").event(hash));
     });
 
@@ -95,4 +84,42 @@ async fn upload(file: Bytes) -> Response<Body> {
     let sse_response =
         Sse::new(try_str).keep_alive(axum::response::sse::KeepAlive::new());
     sse_response.into_response()
+}
+
+async fn upload_data(binary: Vec<u8>, folder: String, file_name: String) {
+    //
+    // 创建 multipart 表单
+    let form = multipart::Form::new()
+        .part(
+            "file",
+            multipart::Part::bytes(binary).file_name(file_name.clone()),
+        )
+        .text("fileName", file_name.clone())
+        .text("useUniqueFileName", "false")
+        .text("folder", folder)
+        .text("isPrivateFile", "false");
+
+    // 发送 POST 请求
+    let client = reqwest::Client::new();
+    let response = client
+        .post("https://upload.imagekit.io/api/v2/files/upload")
+        .header("Accept", "application/json")
+        .header("Authorization", env::var("IMAGEKIT_TOKEN").unwrap())
+        .multipart(form)
+        .send()
+        .await
+        .unwrap();
+
+    // 检查响应状态
+    if response.status().is_success() {
+        println!("{} 上传成功", file_name.clone());
+    } else {
+        println!("Failed to upload file");
+    }
+}
+
+async fn fetch_binary_file(url: &str) -> Result<Vec<u8>, Error> {
+    let response = reqwest::get(url).await?;
+    let bytes = response.bytes().await?;
+    Ok(bytes.to_vec())
 }
