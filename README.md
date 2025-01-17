@@ -2,14 +2,13 @@
 
 ![中文网字计划](/assets/chinese-fonts.png)
 
-![updateTime](https://img.shields.io/badge/更新时间-2024/07/16-green)
+![NPM License](https://img.shields.io/npm/v/cn-font-split)
+![NPM License](https://img.shields.io/npm/l/cn-font-split)
+![NPM License](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![npmVersion](https://img.shields.io/badge/LTS_version-5.1.0-green)
-[![](https://data.jsdelivr.com/v1/package/npm/cn-font-split/badge)](https://www.jsdelivr.com/package/npm/cn-font-split)
+![updateTime](https://img.shields.io/badge/更新时间-2025/01/17-green)
 
-![NPM License](https://img.shields.io/npm/l/%40konghayao%2Fcn-font-split)
-
-| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/online-split/) |
+| [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/zh-cn/online-split/) |
 | ------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------- |
 
 ## 简介
@@ -25,13 +24,15 @@
 - ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
 - 🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
-> [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
+欢迎提交 PR 和 Issue，12/7 解决你的问题。
 
 ## 使用文档指引
 
+- [关于架构、项目历史相关 Wiki](https://github.com/KonghaYao/cn-font-split/wiki)
 - [JavaScript 文档](./packages/ffi-js/)
+- [Python 文档](./packages/ffi-py/) [你可以完善它]
 
-如果您想要支持某些语言，可以提交 Issues 或者 PR。
+如果您想要支持某些语言，欢迎提交 Issues 或者 PR。
 
 ### 新版本功能
 
@@ -45,6 +46,7 @@
 8. ✅ ⌨️ 支持 Nodejs、Deno、Bun、Browser，跨平台随处可使用、构建产物一致！
 9. ✅ 🥳 不止中文，只要是包内的字符，统统分包
 10. ✅ 🏞️ 支持自动识别可变字体字重
+11. ✅ [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
 
 ## 感谢
 

@@ -28,6 +28,9 @@
 ## 📦 Install
 
 ```sh
+# 国内请设置环境变量, windows 用 set
+export CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github
+# set CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github # windows
 npm i -D vite-plugin-font
 ```
 
