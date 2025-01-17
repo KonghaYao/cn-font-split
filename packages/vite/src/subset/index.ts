@@ -1,4 +1,4 @@
-import { InputTemplate, fontSplit } from 'cn-font-split';
+import { proto, fontSplit, decodeReporter } from 'cn-font-split';
 import path from 'path';
 import fs from 'fs-extra';
 import url from 'url';
@@ -20,7 +20,7 @@ function chunk(arr?: number[], size = 500) {
     }
 }
 
-export type BundlePluginConfig = Partial<InputTemplate> & {
+export type BundlePluginConfig = Partial<proto.InputTemplate> & {
     cacheDir?: string;
     server?: boolean;
 };
@@ -37,10 +37,13 @@ export class BundlePlugin {
     }
     async createSourceCode(p: string) {
         const resolvedPath = this.getResolvedPath(p);
-        const json = await fs.readJSON(resolvedPath + '/reporter.json');
-        const json1 = await fs.readJSON(resolvedPath + '/metrics.json');
-        const obj = { ...json, ...json1 };
-        const code = Object.entries(obj)
+        const reporter = decodeReporter(
+            await fs.promises.readFile(resolvedPath + '/reporter.bin'),
+        );
+
+        const metrics = await fs.readJSON(resolvedPath + '/metrics.json');
+        const details = { ...reporter.toObject(), ...metrics };
+        const code = Object.entries(details)
             .map(([k, v]) => {
                 return `export const ${k} = ${JSON.stringify(v)};`;
             })
@@ -78,14 +81,12 @@ export class BundlePlugin {
                 outDir: resolvedPath,
                 reporter: true,
                 languageAreas: !onlySubset as false,
-                autoSubset: !onlySubset,
+                autoSubset: true,
+                fontFeature: true,
+                reduceMins: !onlySubset,
                 subsetRemainChars: !onlySubset,
                 subsets: onlySubset ? chunk(this.subsets?.flat()) : undefined,
-                logger: {
-                    settings: {
-                        minLevel: 5,
-                    },
-                },
+                silent: true,
             }).catch((e) => {
                 console.error(e);
             });
