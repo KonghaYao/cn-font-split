@@ -1,21 +1,23 @@
-use std::{convert::Infallible, env};
+use std::{
+    env,
+    sync::{Arc, Mutex},
+};
 
 use axum::{
     body::Body,
     extract::DefaultBodyLimit,
-    http::{HeaderMap, Response},
-    response::{sse::Event, IntoResponse, Sse},
+    http::Response,
     routing::{get, post},
     Json, Router,
 };
 use cn_font_proto::api_interface::{EventMessage, EventName, InputTemplate};
 use cn_font_split::font_split;
+use futures::future::join_all;
 use reqwest;
 use reqwest::multipart;
 use reqwest::Error;
 use serde::Deserialize;
-use tokio::sync::mpsc::{self};
-use tokio_stream::StreamExt as _;
+
 #[shuttle_runtime::main]
 async fn main(
     #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
@@ -39,58 +41,38 @@ async fn upload(Json(payload): Json<UploadPayload>) -> Response<Body> {
     let file_vec = fetch_binary_file(&payload.file_url).await.unwrap();
     let template = InputTemplate { input: file_vec, ..Default::default() };
 
-    // 设置响应头
-    let mut headers = HeaderMap::new();
-    headers.insert("Content-Type", "text/event-stream".parse().unwrap());
-    headers.insert("Cache-Control", "no-cache".parse().unwrap());
-    headers.insert("Connection", "keep-alive".parse().unwrap());
+    let handles: Arc<Mutex<Vec<EventMessage>>> =
+        Arc::new(Mutex::new(Vec::new())); // 创建一个可以在线程间共享的可变向量
 
-    let (tx, mut rx) = mpsc::unbounded_channel::<Event>();
-    // 启动异步任务，该任务会调用回调函数并将数据发送到通道中
-    tokio::spawn(async move {
-        let buffer = Vec::new();
-        let hash = format!("{:?}", md5::compute(buffer.as_slice()));
-        font_split(template, |data: EventMessage| {
-            match EventName::try_from(data.event).unwrap() {
-                EventName::Unspecified => {}
-                EventName::OutputData => {
-                    let event =
-                        EventName::try_from(data.event).unwrap().as_str_name();
-                    let _ = tx.send(
-                        Event::default()
-                            .data(data.message.clone())
-                            .event(event),
-                    );
-                    let binary = data.data.unwrap();
-                    let folder = payload.file_folder.clone();
-                    // safe_collection.push(binary);
-                    tokio::spawn(async move {
-                        upload_data(
-                            binary,
-                            folder,
-                            String::from(data.message.clone()),
-                        )
-                        .await
-                    });
+    font_split(template, |data: EventMessage| {
+        match EventName::try_from(data.event).unwrap() {
+            EventName::Unspecified => {}
+            EventName::OutputData => {
+                // 锁定 mutex 并插入新的任务句柄
+                if let Ok(mut handles_guard) = handles.lock() {
+                    handles_guard.push(data.clone());
                 }
-                EventName::End => {}
-            };
-        });
-
-        let _ = tx.send(Event::default().id("result").event(hash));
+            }
+            EventName::End => {}
+        };
     });
 
-    let sse_stream = async_stream::stream! {
-        // 创建一个无缓冲的通道
-        while let Some(item) = rx.recv().await {
-            yield item
+    let mut all_upload = vec![];
+    // 等待所有异步任务完成
+    if let Ok(handles_guard) = handles.lock() {
+        for i in handles_guard.iter() {
+            let folder = payload.file_folder.clone();
+            let message = i.message.clone();
+            let h = upload_data(
+                i.data.clone().unwrap(),
+                folder,
+                String::from(message),
+            );
+            all_upload.push(h);
         }
-    };
-    let try_str = sse_stream.map(Ok::<_, Infallible>);
-    // 返回 SSE 响应
-    let sse_response =
-        Sse::new(try_str).keep_alive(axum::response::sse::KeepAlive::new());
-    sse_response.into_response()
+    }
+    join_all(all_upload).await;
+    Response::builder().body(Body::empty()).unwrap()
 }
 
 async fn upload_data(binary: Vec<u8>, folder: String, file_name: String) {

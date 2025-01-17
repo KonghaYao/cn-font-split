@@ -44,7 +44,6 @@ members = [
     "crates/unicode_range",
     "packages/ffi",
     "packages/grpc",
-    "packages/server",
     "packages/wasm-edge",
 ]
 
