@@ -1,20 +1,21 @@
-# 🔠 vite-plugin-font 2.0 ⚡
+# 🔠 vite-plugin-font 5.0 ⚡
 
-[中文](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README.md)
+[中文](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README_zh.md) | [English](./README.md)
 
-[中文网字计划](https://chinese-font.netlify.app) 开发支持的 vite 字体构建工具。 vite-plugin-font 可以将庞大的字体切割成 Webfonts，性能强大且简单。vite-plugin-font 由 [cn-font-split](https://www.npmjs.com/package/cn-font-split) 支持
+[中文网字计划](https://chinese-font.netlify.app) 开发支持的 vite 字体构建工具。 vite-plugin-font 可以将庞大的字体切割成 Webfonts，性能强大且简单。vite-plugin-font 由 [cn-font-split](https://www.npmjs.com/package/cn-font-split) 支持，Rust 原生级构建速度。
 
 我们提供了对于首屏优化的[极小量级优化](#极小量级优化)方案和针对于大文本站点优化的全量级优化，实现了中文字体在前端工具链中的极致优化。
 
 ## ⚡ Feature
 
-1. ⚙️ 自动 CJK (中日韩) 字体分割，按需加载速度极快
-2. 🚀 根据项目中使用的字符，自动优化首屏最佳
-3. 🔄 字体自动转换为 woff2 格式，无需担心大小问题
-4. 🌐 自动添加本地适配，减少内容位移累积，SSR 支持
-5. 📤 字体信息导出，支持树摇优化
-6. 🎨 纯 CSS，无运行时数据，多平台适配
-7. 📦 自动减少中文 CLS 偏移
+1. ⚡ 速度极快提升 50%, 无惧卡段
+2. ⚙️ 自动 CJK (中日韩) 字体分割，按需加载速度极快
+3. 🚀 根据项目中使用的字符，自动优化首屏最佳
+4. 🔄 字体自动转换为 woff2 格式，无需担心大小问题
+5. 🌐 自动添加本地适配，减少内容位移累积，SSR 支持
+6. 📤 字体信息导出，支持树摇优化
+7. 🎨 纯 CSS，无运行时数据，多平台适配
+8. 📦 自动减少中文 CLS 偏移
 
 | Type                          | [Vite、Astro、Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack、Rspack](#webpack) |
 | ----------------------------- | -------------------------- | ------------- | ------------- | --------------------------- |
@@ -22,7 +23,7 @@
 | [极小量级优化](#极小量级优化) | ✅                         | ✅            | ✅            | ✅                          |
 
 > 1. 全量级优化适合于博客、文档网站，需要大量不确定文本，可以实现全量级的字体渲染，并且配合 CDN 可以有非常好的缓存性能。
-> 2. [极小量级优化](#极小量级优化)适合于官网、大促网页等快速渲染需求大的场景，它收集你的代码中使用的字符，并只加载这些字符，拥有非常好的渲染性能。
+> 2. [极小量级优化](#极小量级优化)适合于官网、大促网页等快速渲染需求大的场景，它收集你的代码中使用的字符，并只加载这些字符，拥有非常好的渲染性能。所需字体大小大约为全量级优化的 10%。
 
 ## 📦 Install
 

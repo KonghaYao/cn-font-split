@@ -1,30 +1,29 @@
-# 🔠  vite-plugin-font 2.0 ⚡
+# 🔠 vite-plugin-font 5.0 ⚡
 
-![中文网字计划](https://cdn.jsdelivr.net/gh/KonghaYao/cn-font-split/assets/chinese-fonts.png)
+[中文](./README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README.md)
 
-[中文](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/ts/packages/vite/README.md)
+Developed and supported by the [Chinese WebFont Project](https://chinese-font.netlify.app), vite-plugin-font is a powerful and simple Vite font build tool that can split large fonts into Webfonts. It is powered by [cn-font-split](https://www.npmjs.com/package/cn-font-split) for Rust-native level build speed.
 
-[vite-plugin-font](https://www.npmjs.com/package/vite-plugin-font) is a font building tool for Webfonts that supports the [中文网字计划](https://chinese-font.netlify.app) and is optimized for performance and simplicity. It can split large fonts into Webfonts.
+We provide an [Extremely lightweight optimization](#extremely-lightweight-optimization) solution for first-screen optimization and a full-scale optimization for large text sites, achieving extreme optimization of Chinese fonts in the front-end toolchain.
 
-We provide both a [minimal optimization](#minimal-optimization) plan for first-screen optimization and a full optimization plan for large text sites, achieving the ultimate optimization of Chinese fonts in the front-end toolchain.
+## ⚡ Features
 
-## ⚡ Feature
+1. ⚡ 50% faster speed, no fear of lag
+2. ⚙️ Automatic CJK (Chinese, Japanese, Korean) font splitting, extremely fast on-demand loading
+3. 🚀 Automatically optimizes the first screen based on characters used in your project
+4. 🔄 Automatically converts fonts to woff2 format, no need to worry about size issues
+5. 🌐 Automatically adds local adaptation, reduces cumulative content shifts, SSR support
+6. 📤 Exports font information, supports tree shaking optimization
+7. 🎨 Pure CSS, no runtime data, multi-platform compatibility
+8. 📦 Automatically reduces Chinese CLS offset
 
-1. ⚙️ Automatic CJK (Chinese, Japanese, and Korean) font splitting, with extremely fast on-demand loading speed
-2. 🚀 Automatically optimize the first screen based on the characters used in the project
-3. 🔄 Automatically convert fonts to the woff2 format, so you don't have to worry about size issues
-4. 🌐 Automatically add local adaptation to reduce content displacement accumulation, with SSR support
-5. 📤 Export font information to support tree shaking optimization
-6. 🎨 Pure CSS, no runtime data, multi-platform adaptation
-7. 📦 Automatically reduce the layout offset of Chinese CLS
+| Type                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack, Rspack](#webpack) |
+| ----------------------------- | -------------------------- | ------------- | ------------- | --------------------------- |
+| Full-scale optimization       | ✅                         | ✅            | ✅            | ✅                          |
+| [Extremely lightweight optimization](#extremely-lightweight-optimization) | ✅             | ✅            | ✅            | ✅                          |
 
-| Type                                          | [Vite, Astro, Qwik](#vite) | [Nuxt](#nuxt) | [Next](#next) | [Webpack, Rspack](#webpack) |
-| --------------------------------------------- | -------------------------- | ------------- | ------------- | --------------------------- |
-| Full optimization                             | ✅                         | ✅            | ✅            | ✅                          |
-| [Minimal optimization](#minimal-optimization) | ✅                         | ✅            | ✅            | ✅                          |
-
-> 1. Full optimization is suitable for blogs and documentation websites that require a large amount of uncertain text. It can achieve full font rendering and has excellent caching performance when used with CDNs.
-> 2. [Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
+> 1. Full-scale optimization is suitable for blogs, documentation websites, which require a large amount of uncertain text. It can achieve full-scale font rendering and has excellent cache performance when combined with CDN.
+> 2. [Extremely lightweight optimization](#extremely-lightweight-optimization) is suitable for official websites, promotional web pages, etc., where quick rendering is required. It collects the characters used in your code and only loads these characters, providing excellent rendering performance. The required font size is approximately 10% of full-scale optimization.
 
 ## 📦 Install
 
@@ -59,7 +58,6 @@ export default defineConfig({
 import font from 'vite-plugin-font';
 export default defineNuxtConfig({
     devtools: { enabled: false },
-    // modules: ["module/nuxt"],
     vite: {
         plugins: [font.vite({})],
     },
@@ -96,9 +94,9 @@ module.exports = {
 ## 🚀 Usage
 
 ```jsx
-// Automatically inject CSS to import fonts and support tree shaking optimization of font information!
-import { css } from '../../demo/public/SmileySans-Oblique.ttf'; // Directly import font files
-console.log(css.family, css.weight); // You can get CSS-related data from here
+// Automatically injects CSS to import fonts and supports tree shaking optimization of font information!
+import { css } from '../../demo/public/SmileySans-Oblique.ttf'; // Directly import font file
+console.log(css.family, css.weight); // You can get CSS-related data here
 
 export const App = () => {
     return (
@@ -111,11 +109,11 @@ export const App = () => {
 };
 ```
 
-## Minimal Optimization
+## Extremely Lightweight Optimization
 
-[Minimal optimization](#minimal-optimization) is suitable for scenarios with high rendering requirements, such as official websites and large promotion pages. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
+[Extremely lightweight optimization](#extremely-lightweight-optimization) is suitable for official websites, promotional web pages, etc., where quick rendering is required. It collects the characters used in your code and only loads these characters, providing excellent rendering performance.
 
-> Add `scanFiles` . The approach of [Nuxt](#nuxt) and Webpack is slightly different, but both involve adding scan files to the options.
+> Add `scanFiles`, the way to add it for [Nuxt](#nuxt) and Webpack is slightly different, but both are adding scan files to the options.
 
 ```js
 // vite.config.js
@@ -124,19 +122,19 @@ import Font from 'vite-plugin-font';
 export default defineConfig({
     plugins: [
         Font.vite({
-            scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'], // add this
+            scanFiles: ['src/**/*.{vue,ts,tsx,js,jsx}'],
         }),
     ],
 });
 ```
 
-> Add `?subsets` to your links.
+> Add `?subsets` to your link
 
 ```diff
-// Automatically inject CSS to import fonts and support tree shaking optimization of font information!
+// Automatically injects CSS to import fonts and supports tree shaking optimization of font information!
 - import { css } from '../../demo/public/SmileySans-Oblique.ttf';
 + import { css } from '../../demo/public/SmileySans-Oblique.ttf?subsets';
-console.log(css.family, css.weight); // You can get CSS-related data from here
+console.log(css.family, css.weight); // You can get CSS-related data here
 
 export const App = () => {
     return (
@@ -149,9 +147,9 @@ export const App = () => {
 };
 ```
 
-#### Optimization for individual partitions
+#### Separate Partition Optimization
 
-Sometimes, we need to package fonts based on different page dimensions, so we can use keys to identify the scope of using scanFiles.
+Sometimes, we need to package fonts according to different page dimensions, so we can use a key to identify the range of scanFiles.
 
 ```js
 // This will match subset-1
@@ -174,9 +172,9 @@ export default defineConfig({
 });
 ```
 
-## Typescript support
+## TypeScript Support
 
-The source code includes the `src/font.d.ts` file, which you can add to your `tsconfig.json`.
+The source code includes the `src/font.d.ts` file, you can add it to tsconfig.json.
 
 ```json
 {
@@ -186,6 +184,6 @@ The source code includes the `src/font.d.ts` file, which you can add to your `ts
 }
 ```
 
-## Input parameters
+## Input Parameters
 
-See the [中文网字计划](https://www.npmjs.com/package/cn-font-split) documentation for input parameters. Most parameters are universal.
+For input parameters, please refer to the usage instructions of [cn-font-split](https://www.npmjs.com/package/cn-font-split). Most parameters are universal.
