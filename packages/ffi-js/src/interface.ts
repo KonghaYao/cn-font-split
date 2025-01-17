@@ -7,6 +7,8 @@ export type FontSplitProps = Omit<OriginInput, 'input' | 'subsets'> & {
     outputFile?: IOutputFile;
     input: string | Uint8Array;
     subsets?: number[][];
+    /** 减少汇报日志 */
+    silent?: boolean
 };
 /** 替换系统内部的文件输出方式 */
 export type IOutputFile = (
