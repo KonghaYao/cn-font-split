@@ -15,8 +15,8 @@ use cn_font_utils::output_file;
 use futures::future::join_all;
 use reqwest::Error;
 use serde::Deserialize;
+use tower_http::compression::CompressionLayer;
 use tower_http::services::ServeDir;
-
 #[shuttle_runtime::main]
 async fn main(
     #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
@@ -32,6 +32,7 @@ async fn main(
             }),
         )
         .nest_service("/assets", ServeDir::new("assets"))
+        .layer(CompressionLayer::new())
         .route(
             "/upload",
             post(split_font).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
