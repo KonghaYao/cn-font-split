@@ -5,7 +5,7 @@ const inputBuffer = new Uint8Array(
 );
 // for (let index = 0; index < 10; index++) {
 
-fontSplit({
+await fontSplit({
     input: inputBuffer,
     outDir: './dist/font',
     renameOutputFont: '[hash:6].[ext]',
@@ -14,7 +14,7 @@ fontSplit({
     autoSubset: false,
     fontFeature: false,
     reduceMins: false,
-    silent: true
+    silent: true,
 });
-// console.log(index);
+console.log('end');
 // }

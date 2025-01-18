@@ -35,6 +35,7 @@ export const createAPI = <
         if (!input.outDir) throw new Error('cn-font-split need outDir');
         const key = Math.random().toString().slice(2, 5);
         console.time('cn-font-split ' + key);
+        let handles: Promise<void>[] = [];
         return new Promise<void>((res) => {
             const buf = input.serialize();
             const appCallback = (data: Uint8Array): void => {
@@ -45,19 +46,25 @@ export const createAPI = <
                         break;
                     case api_interface.EventName.OUTPUT_DATA:
                         !config.silent && console.log(e.message);
-                        (config.outputFile || fs.outputFile)(
+                        let handle = (config.outputFile || fs.outputFile)(
                             path.join(input.outDir, e.message),
                             e.data,
                         );
+                        handles.push(handle);
                         break;
                     default:
                     // console.log(e.event);
                 }
             };
             font_split(buf as any, buf.length, createCallback(appCallback));
-        }).finally(() => {
-            console.timeEnd('cn-font-split ' + key);
-            finallyFn?.();
-        });
+        })
+            .then(async (res) => {
+                await Promise.all(handles);
+                return res;
+            })
+            .finally(() => {
+                console.timeEnd('cn-font-split ' + key);
+                finallyFn?.();
+            });
     };
 };
