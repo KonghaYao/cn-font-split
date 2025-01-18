@@ -431,7 +431,7 @@ dependencies = [
 
 [[package]]
 name = "cn-font-split"
-version = "7.2.0"
+version = "7.2.1"
 dependencies = [
  "chrono",
  "clap 4.5.26",
