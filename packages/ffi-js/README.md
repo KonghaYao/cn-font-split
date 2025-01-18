@@ -51,6 +51,42 @@ await fontSplit({
 console.timeEnd('node');
 ```
 
+### 控制生成产物
+
+```ts
+import { fontSplit } from 'cn-font-split';
+await fontSplit({
+    input: inputBuffer,
+    outDir: './dist/font',
+    previewImage: {
+        name: "preview", // 文件名称
+        text: "中文网字计划\nThe Chinese Web Font Project", // 需要渲染的字
+    },
+    testHtml: true,
+    reporter: true,   
+});
+```
+
+### 精细化分包控制
+
+```ts
+import { fontSplit } from 'cn-font-split';
+await fontSplit({
+    input: inputBuffer,
+    outDir: './dist/font',
+    subsets: [
+        [65,66,67], // 第一个分包
+        [102,103,104], // 第二个分包
+    ],
+    languageAreas: false, // 语言区域优化
+    autoSubset: false, // 超过指定大小是否自动包
+    fontFeature: false, // 是否支持字体特性
+    reduceMins: false,  // 是否减少碎片分包的出现
+    renameOutputFont: '[hash:6].[ext]', // 重命名输出字体
+    silent: true, // 不打印任何数据
+})
+```
+
 ## WASM 版本
 
 ## cn-font-split 性能爆表 Wasm 版本
