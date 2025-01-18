@@ -1,7 +1,4 @@
-use std::{
-    env,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use axum::{
     body::Body,
@@ -10,13 +7,15 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use cn_font_proto::api_interface::{EventMessage, EventName, InputTemplate};
+use cn_font_proto::api_interface::{
+    input_template::PreviewImage, EventMessage, EventName, InputTemplate,
+};
 use cn_font_split::font_split;
+use cn_font_utils::output_file;
 use futures::future::join_all;
-use reqwest;
-use reqwest::multipart;
 use reqwest::Error;
 use serde::Deserialize;
+use tower_http::services::ServeDir;
 
 #[shuttle_runtime::main]
 async fn main(
@@ -25,10 +24,18 @@ async fn main(
     secrets.into_iter().for_each(|(key, val)| {
         std::env::set_var(key, val);
     });
-    let app = Router::new().route("/", get(|| async { "Hello, Rust!" })).route(
-        "/upload",
-        post(upload).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
-    );
+    let app = Router::new()
+        .route(
+            "/",
+            get(|| async {
+                "Hello, I'm cn-font-split server for online building!"
+            }),
+        )
+        .nest_service("/assets", ServeDir::new("assets"))
+        .route(
+            "/upload",
+            post(split_font).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
+        );
     Ok(app.into())
 }
 
@@ -37,9 +44,16 @@ struct UploadPayload {
     file_folder: String,
     file_url: String,
 }
-async fn upload(Json(payload): Json<UploadPayload>) -> Response<Body> {
+async fn split_font(Json(payload): Json<UploadPayload>) -> Response<Body> {
     let file_vec = fetch_binary_file(&payload.file_url).await.unwrap();
-    let template = InputTemplate { input: file_vec, ..Default::default() };
+    let template = InputTemplate {
+        input: file_vec,
+        preview_image: Some(PreviewImage {
+            name: "preview".to_string(),
+            text: "中文网字计划\nThe Chinese Web Fonts Plan".to_string(),
+        }),
+        ..Default::default()
+    };
 
     let handles: Arc<Mutex<Vec<EventMessage>>> =
         Arc::new(Mutex::new(Vec::new())); // 创建一个可以在线程间共享的可变向量
@@ -72,43 +86,15 @@ async fn upload(Json(payload): Json<UploadPayload>) -> Response<Body> {
         }
     }
     join_all(all_upload).await;
-    Response::builder().body(Body::empty()).unwrap()
+    Response::builder().body(Body::from("success")).unwrap()
 }
 
+/// 网络 IO 实在是太慢了，需要直接存储到本地
 async fn upload_data(binary: Vec<u8>, folder: String, file_name: String) {
-    //
-    // 创建 multipart 表单
-    let form = multipart::Form::new()
-        .part(
-            "file",
-            multipart::Part::bytes(binary).file_name(file_name.clone()),
-        )
-        .text("fileName", file_name.clone())
-        .text("useUniqueFileName", "false")
-        .text("folder", folder)
-        .text("isPrivateFile", "false");
-    // 发送 POST 请求
-    let token = "Basic ".to_owned() + &env::var("IMAGEKIT_TOKEN").unwrap();
-    let client = reqwest::Client::new();
-    let response = client
-        .post("https://upload.imagekit.io/api/v1/files/upload")
-        .header("Accept", "application/json")
-        .header("authorization", token.clone())
-        .multipart(form)
-        .send()
-        .await
-        .unwrap();
-
-    // 检查响应状态
-    if response.status().is_success() {
-        println!("{} 上传成功", file_name.clone());
-    } else {
-        println!(
-            "Failed to upload file {} {}",
-            response.status().as_str(),
-            response.text().await.unwrap()
-        );
-    }
+    // 写入到本地服务器的指定路径
+    let file_path = format!("./assets{}/{}", folder, file_name);
+    output_file(&file_path, &binary).expect("写入文件失败");
+    println!("{} 上传成功", file_path.clone());
 }
 
 async fn fetch_binary_file(url: &str) -> Result<Vec<u8>, Error> {

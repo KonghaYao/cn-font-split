@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cn-font-split = { version = "7.2.0", default-features = false }
+cn-font-split = { version = "7.2.1", default-features = false }
 axum = { version = "0.8.1", features = [] }
 shuttle-axum = "0.51.0"
 shuttle-runtime = "0.51.0"
@@ -12,12 +12,11 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.68"
 tokio = { version = "1.0", features = ["full"] }
 futures = "0.3.31"
-tokio-stream = "0.1.16"
-async-stream = "0.3.6"
-futures-util = "0.3.31"
 cn-font-proto = { version = "0.1.2", default-features = false }
-md5 = "0.7.0"
 reqwest = { version = "0.12.12", features = ['multipart'] }
+tower = { version = "0.5.2", features = ["util"] }
+tower-http = { version = "0.6.1", features = ["fs", "trace"] }
+cn-font-utils = "0.1.2"
 
 [features]
 default = ["with_extra"]
