@@ -339,13 +339,35 @@ checksum = "4ea181bf566f71cb9a5d17a59e1871af638180a18fb0035c92ae62b705207123"
 dependencies = [
  "atty",
  "bitflags 1.3.2",
- "clap_derive",
- "clap_lex",
+ "clap_derive 3.2.25",
+ "clap_lex 0.2.4",
  "indexmap 1.9.3",
  "once_cell",
- "strsim",
+ "strsim 0.10.0",
  "termcolor",
  "textwrap",
+]
+
+[[package]]
+name = "clap"
+version = "4.5.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8eb5e908ef3a6efbe1ed62520fb7287959888c88485abe072543190ecc66783"
+dependencies = [
+ "clap_builder",
+ "clap_derive 4.5.24",
+]
+
+[[package]]
+name = "clap_builder"
+version = "4.5.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96b01801b5fc6a0a232407abc821660c9c6d25a1cafc0d4f85f29fb8d9afc121"
+dependencies = [
+ "anstream",
+ "anstyle",
+ "clap_lex 0.7.4",
+ "strsim 0.11.1",
 ]
 
 [[package]]
@@ -362,6 +384,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_derive"
+version = "4.5.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54b755194d6389280185988721fffba69495eed5ee9feeee9a599b53db80318c"
+dependencies = [
+ "heck 0.5.0",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.96",
+]
+
+[[package]]
 name = "clap_lex"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -369,6 +403,12 @@ checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
 dependencies = [
  "os_str_bytes",
 ]
+
+[[package]]
+name = "clap_lex"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f46ad14479a25103f283c0f10005961cf086d8dc42205bb44c46ac563475dca6"
 
 [[package]]
 name = "cmake"
@@ -394,6 +434,7 @@ name = "cn-font-split"
 version = "7.2.0"
 dependencies = [
  "chrono",
+ "clap 4.5.26",
  "cn-font-proto",
  "cn-font-utils",
  "cross",
@@ -463,7 +504,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cc6abfd6b5130d5d470548ef0d04c9201805c3825b6e992009774c37738a954a"
 dependencies = [
  "atty",
- "clap",
+ "clap 3.2.25",
  "color-eyre",
  "const-sha1",
  "ctrlc",
@@ -1045,9 +1086,9 @@ checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
 
 [[package]]
 name = "log"
-version = "0.4.22"
+version = "0.4.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
+checksum = "04cbf5b083de1c7e0222a7a51dbfdba1cbe1c6ab0b15e29fff3f6c077fd9cd9f"
 
 [[package]]
 name = "matchit"
@@ -1652,6 +1693,12 @@ name = "strsim"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
+
+[[package]]
+name = "strsim"
+version = "0.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "supports-color"
