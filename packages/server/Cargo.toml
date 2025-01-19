@@ -15,6 +15,7 @@ reqwest = { version = "0.12.12", features = ['multipart'] }
 tower = { version = "0.5.2", features = ["util"] }
 tower-http = { version = "0.6.1", features = ["full"] }
 cn-font-utils = "0.1.2"
+sha2 = "0.10.8"
 
 [features]
 default = ["with_extra"]

@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
-
+mod auth;
+use auth::auth_middleware;
 use axum::{
     body::Body,
     extract::DefaultBodyLimit,
@@ -31,7 +32,9 @@ async fn main() {
         .layer(CompressionLayer::new())
         .route(
             "/upload",
-            post(split_font).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
+            post(split_font)
+                .layer(DefaultBodyLimit::max(1024 * 1024 * 80))
+                .layer(axum::middleware::from_fn(auth_middleware)),
         );
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:9000").await.unwrap();
