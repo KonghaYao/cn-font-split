@@ -6,11 +6,9 @@ edition = "2021"
 [dependencies]
 cn-font-split = { version = "7.2.1", default-features = false }
 axum = { version = "0.8.1", features = [] }
-shuttle-axum = "0.51.0"
-shuttle-runtime = "0.51.0"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.68"
-tokio = { version = "1.0", features = ["full"] }
+serde_json = "1.0.136"
+tokio = { version = "1.0.136", features = ["full"] }
 futures = "0.3.31"
 cn-font-proto = { version = "0.1.2", default-features = false }
 reqwest = { version = "0.12.12", features = ['multipart'] }

@@ -17,13 +17,9 @@ use reqwest::Error;
 use serde::Deserialize;
 use tower_http::compression::CompressionLayer;
 use tower_http::services::ServeDir;
-#[shuttle_runtime::main]
-async fn main(
-    #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
-) -> shuttle_axum::ShuttleAxum {
-    secrets.into_iter().for_each(|(key, val)| {
-        std::env::set_var(key, val);
-    });
+
+#[tokio::main]
+async fn main() {
     let app = Router::new()
         .route(
             "/",
@@ -37,7 +33,9 @@ async fn main(
             "/upload",
             post(split_font).layer(DefaultBodyLimit::max(1024 * 1024 * 80)),
         );
-    Ok(app.into())
+    // run our app with hyper, listening globally on port 3000
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:9000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 
 #[derive(Deserialize)]
