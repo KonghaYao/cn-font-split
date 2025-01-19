@@ -6,20 +6,6 @@ RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list
 RUN apt update && apt install -y openssl build-essential pkg-config libssl-dev
 RUN update-ca-certificates
 
-
-ENV USER=konghayao
-ENV UID=10001
-
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    "${USER}"
-
-
 WORKDIR /app
 RUN mkdir /app/.cargo/
 RUN echo '[source.crates-io] \nreplace-with = "rsproxy-sparse" \n[source.rsproxy-sparse] \nregistry = "sparse+https://rsproxy.cn/index/" \n[net] \ngit-fetch-with-cli = true' > /app/.cargo/config.toml
