@@ -30,14 +30,18 @@ class UnionFontPlugin {
         this.prepared = new Promise<null>((res) => {
             resolve = res;
         });
-        if (this.config.emptyCacheDir)
+        if (this.config.emptyCacheDir === true) {
             await SubsetUtils.emptyCacheDir(this.config);
-        console.log(
-            'vite-plugin-font | empty cache dir | ' + this.config.cacheDir,
-        );
-        // 初始化 default
-        await this.getUsingPlugin('default');
-        console.log('vite-plugin-font | cache dir | ' + this.config.cacheDir);
+            console.log(
+                'vite-plugin-font | empty cache dir | ' + this.config.cacheDir,
+                '\nemptyCacheDir: false to cancel this behavior.',
+            );
+            // 初始化 default
+            await this.getUsingPlugin('default');
+            console.log(
+                'vite-plugin-font | cache dir | ' + this.config.cacheDir,
+            );
+        }
         resolve!(null);
     }
     createConfig(config: Options) {
@@ -63,7 +67,7 @@ class UnionFontPlugin {
             usingPlugin.key = key;
             this.pluginStore.set(key, usingPlugin);
         }
-        await usingPlugin.createSubsets();
+        await usingPlugin.createSubsetsHash();
         return usingPlugin;
     }
     /** 通过改动文件的 path 获取需要变更的 plugin */
@@ -116,7 +120,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
             const { isSubset, searchParams } = SubsetUtils.isSubsetLink(id);
             const key = searchParams.get('key') ?? 'default';
             const usingPlugin = await plugin.getUsingPlugin(key);
-            await usingPlugin.createBundle(id, isSubset ? 'subsets' : 'full');
+            await usingPlugin.prebuild(id, isSubset ? 'subsets' : 'full');
             usingPlugin.buildId = id;
             return usingPlugin.createSourceCode(id);
         },

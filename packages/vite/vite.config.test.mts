@@ -7,7 +7,7 @@ export default defineConfig({
                 default: ['./example/subsets.html'],
                 'page-1': ['./example/subsets-1.html'],
             },
-            exclude: [/node_modules/, ],
+            exclude: [/node_modules/],
         }),
     ],
     build: {
