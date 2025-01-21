@@ -252,8 +252,8 @@ importers:
         specifier: ^2.1.6
         version: 2.1.6(webpack-sources@3.2.3)
       cn-font-split:
-        specifier: ^7.2.1
-        version: 7.2.1
+        specifier: ^7.2.2
+        version: 7.2.2
       fontaine:
         specifier: ^0.5.0
         version: 0.5.0(webpack-sources@3.2.3)
@@ -1802,8 +1802,8 @@ packages:
     resolution: {integrity: sha512-fApOvUPDJgiKGUlYhf45neMRqg1zqZaaN7/D9++pVjeaEIoVvuP0uftNC7zhADh1omNElp0JV4yBsoH6Qpy8ZQ==}
     hasBin: true
 
-  cn-font-split@7.2.1:
-    resolution: {integrity: sha512-eW9vFpeQLna5dV5XjkwtdSRkg8y0GwN7PCC7gHEvytvPkHwzHlIG91Y2KjrvXzD3lp9Leazpsb1BlITG08l2BA==}
+  cn-font-split@7.2.2:
+    resolution: {integrity: sha512-o2uPPNjVB8XkWV3SBxg5zdLVtPwtAIATyNMbMAjx3mao6cB2/5NQhngd+lxwrPO0mPFSCBUfmchgLhQzy5MJkQ==}
     hasBin: true
 
   color-convert@2.0.1:
@@ -5023,7 +5023,7 @@ snapshots:
       koffi: 2.10.0
       proto-to-cli: 1.1.5
 
-  cn-font-split@7.2.1:
+  cn-font-split@7.2.2:
     dependencies:
       buffer: 6.0.3
       commander: 12.1.0
