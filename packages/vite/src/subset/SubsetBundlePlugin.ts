@@ -38,7 +38,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
 
     usedSubsets = new Set<number>();
     subsetCacheDir: string;
-    getResolvedPath(p: string) {
+    getCachedPath(p: string) {
         const { isSubset, idString } = this.isSubsetLink(p);
         return path.resolve(
             isSubset ? this.subsetCacheDir : this.config.cacheDir!,
@@ -46,7 +46,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
         );
     }
     isSubsetLink = SubsetUtils.isSubsetLink;
-    async createSubsets() {
+    async createSubsetsHash() {
         if (!this.subsetConfig.scanFiles) return;
         this.getWhiteListSubsets();
         await this.updateScanFiles();
@@ -74,7 +74,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
         }
         return minimatch(p, resolvePath(globStr));
     }
-    /** 获取配置中的 */
+    /** 获取配置中的 scanFiles 字段 */
     private getGlobArea() {
         if (
             typeof this.subsetConfig.scanFiles === 'object' &&

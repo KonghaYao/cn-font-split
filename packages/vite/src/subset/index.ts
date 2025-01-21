@@ -32,11 +32,13 @@ export class BundlePlugin {
         public key = 'default',
     ) {}
 
-    getResolvedPath(p: string) {
+    /** 获取正确的缓存文件夹的位置 */
+    getCachedPath(p: string) {
         return path.resolve(this.config.cacheDir!, getFileName(p));
     }
+    /** 创建 CSS 封装层源代码 */
     async createSourceCode(p: string) {
-        const resolvedPath = this.getResolvedPath(p);
+        const resolvedPath = this.getCachedPath(p);
         const reporter = decodeReporter(
             await fs.promises.readFile(resolvedPath + '/reporter.bin'),
         );
@@ -56,24 +58,26 @@ export class BundlePlugin {
             code
         );
     }
+    /** 检查整个系统的缓存 */
     async checkCache(resolvedPath: string) {
         const isFullCached = await Promise.all([
             fs.exists(resolvedPath),
             fs.exists(path.resolve(resolvedPath, 'result.css')),
             fs.exists(path.resolve(resolvedPath, 'metrics.css')),
             fs.exists(path.resolve(resolvedPath, 'metrics.json')),
-            fs.exists(path.resolve(resolvedPath, 'reporter.json')),
+            fs.exists(path.resolve(resolvedPath, 'reporter.bin')),
         ]);
         return isFullCached.every((i) => i);
     }
-    async createBundle(p: string, mode: 'full' | 'subsets' = 'full') {
-        const resolvedPath = this.getResolvedPath(p);
-        const stat = await this.checkCache(p);
-        if (!stat && this.config.server !== false) {
+    /** 重新进行预构建字体 */
+    async prebuild(filePath: string, mode: 'full' | 'subsets' = 'full') {
+        const resolvedPath = this.getCachedPath(filePath);
+        const isCached = await this.checkCache(resolvedPath);
+        if (!isCached && this.config.server !== false) {
             console.log(
-                'vite-plugin-font | font pre-building |' + resolvedPath,
+                'vite-plugin-font | font pre-building | ' + resolvedPath,
             );
-            const FontPath = p.split('?')[0];
+            const FontPath = filePath.split('?')[0];
             const onlySubset = mode !== 'full';
             await fontSplit({
                 ...this.config,
@@ -90,12 +94,13 @@ export class BundlePlugin {
             }).catch((e) => {
                 console.error(e);
             });
-            await this.createFallback(FontPath, resolvedPath);
+            await this.createCSSFontFallback(FontPath, resolvedPath);
         } else {
             console.log('vite-plugin-font | using cache | ' + resolvedPath);
         }
     }
-    async createFallback(FontPath: string, resolvedPath: string) {
+    /** 写入 CSS 字体的 fallback 选项，减少布局抖动  */
+    async createCSSFontFallback(FontPath: string, resolvedPath: string) {
         const hash = crypto.createHash('md5').update(FontPath).digest('hex');
         const { fontFamilyString, css } =
             await createChineseCrossPlatformFallbackCss(

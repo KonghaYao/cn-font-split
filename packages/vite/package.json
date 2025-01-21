@@ -1,5 +1,5 @@
 {
-    "version": "5.0.0",
+    "version": "5.1.0",
     "name": "vite-plugin-font",
     "description": "An automatic Web Font optimization plugin that supports many platforms such as Vite, Next, Nuxt, and more.",
     "main": "./dist/unplugin.js",
@@ -55,7 +55,7 @@
     },
     "dependencies": {
         "cn-font-metrics": "^2.1.6",
-        "cn-font-split": "^7.2.1",
+        "cn-font-split": "^7.2.2",
         "fontaine": "^0.5.0",
         "fs-extra": "^11.2.0",
         "glob": "^11.0.1",
