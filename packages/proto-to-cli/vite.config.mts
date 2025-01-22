@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
             nodeExternals({
                 builtinsPrefix: 'ignore',
                 include: ['bun:ffi'],
-                exclude: ['memfs-browser', '@tybys/wasm-util'],
+                exclude: ['memfs-browser', '@tybys/wasm-util', 'change-case'],
             }),
             dts({
                 include: ['src/**/*', '../ffi/gen/index.ts'],
