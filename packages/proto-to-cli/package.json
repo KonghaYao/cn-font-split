@@ -13,7 +13,7 @@
     },
     "scripts": {
         "test:ts": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ./dist/gen/proto.ts",
-        "test:rust": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ./dist/gen/proto.rs -t clap",
+        "test:rust": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ../cli/src/proto.rs -t clap",
         "prepublish": "pnpm vite build"
     },
     "keywords": [
@@ -24,6 +24,7 @@
     "author": "",
     "license": "KonghaYao <3446798488@qq.com>",
     "dependencies": {
+        "change-case": "^5.4.4",
         "commander": "^12.1.0",
         "fs-extra": "^11.2.0",
         "protobufjs": "^7.4.0"

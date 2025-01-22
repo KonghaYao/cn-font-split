@@ -1,6 +1,7 @@
 import protobuf from 'protobufjs';
 import fs from 'fs';
 import { Adapter } from '../cli.js';
+import { snakeCase } from 'change-case';
 
 /**
  * @zh 生成 clap 参数定义
@@ -85,7 +86,7 @@ pub struct ${messageName} {
                     .map((i) => '\n        ' + i)
                     .join(',')}
     )]
-    pub ${capitalizeAfterDot(longName)}: ${
+    pub ${snakeCase(capitalizeAfterDot(longName))}: ${
         isOption ? `Option<${placeholder}>` : placeholder
     },\n`,
             ];

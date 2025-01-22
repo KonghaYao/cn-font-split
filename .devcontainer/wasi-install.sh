@@ -4,7 +4,7 @@ WASI_OS=linux
 WASI_ARCH=x86_64
 WASI_VERSION=24
 WASI_VERSION_FULL=${WASI_VERSION}.0
-wget https://github.moeyy.xyz/https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_VERSION}/wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}.tar.gz
+wget https://ghproxy.cn/github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_VERSION}/wasi-sdk-${WASI_VERSION_FULL}-${WASI_ARCH}-${WASI_OS}.tar.gz
 if [ ! -d "/opt/wasi-sdk" ]; then
   mkdir /opt/wasi-sdk
 fi
