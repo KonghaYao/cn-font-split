@@ -1,0 +1,10 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.26", features = ["derive"] }
+cn-font-proto = { version = "0.1.2", path = "../../crates/proto" }
+cn-font-split = { version = "7.2.1", path = "../.." }
+cn-font-utils = { version = "0.1.2", path = "../../crates/cn_font_utils" }

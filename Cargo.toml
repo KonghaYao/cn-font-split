@@ -43,6 +43,7 @@ members = [
     "crates/lang_unicodes",
     "crates/proto",
     "crates/unicode_range",
+    "packages/wasmer",
     "packages/ffi",
     "packages/grpc",
     "packages/wasm-edge",
