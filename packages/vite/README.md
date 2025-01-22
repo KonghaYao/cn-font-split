@@ -1,6 +1,6 @@
 # 🔠 vite-plugin-font 5.0 ⚡
 
-[中文](./README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README.md)
+[中文](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README.md)
 
 Developed and supported by the [Chinese WebFont Project](https://chinese-font.netlify.app), vite-plugin-font is a powerful and simple Vite font build tool that can split large fonts into Webfonts. It is powered by [cn-font-split](https://www.npmjs.com/package/cn-font-split) for Rust-native level build speed.
 
