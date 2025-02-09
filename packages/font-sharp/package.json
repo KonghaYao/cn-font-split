@@ -4,6 +4,9 @@
     "description": "font to SVG Render.",
     "main": "dist/font-sharp/src/index.js",
     "type": "module",
+    "files": [
+        "dist"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/font-sharp"

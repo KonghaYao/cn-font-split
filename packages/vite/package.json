@@ -14,8 +14,7 @@
         "access": "public"
     },
     "files": [
-        "dist",
-        "src"
+        "dist"
     ],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",

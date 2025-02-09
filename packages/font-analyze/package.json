@@ -4,6 +4,9 @@
     "description": "a font analyze tool for Chinese Charset Check",
     "main": "dist/index.js",
     "type": "module",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "build": "tsc",
         "prepublish": "pnpm build && node script/build.mjs",
