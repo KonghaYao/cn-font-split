@@ -2,8 +2,8 @@ import { api_interface } from '../gen/index';
 import { IFs, Volume, createFsFromVolume } from 'memfs-browser';
 import { WASI } from '@tybys/wasm-util';
 import { FontSplitProps } from '../interface';
-
-export { api_interface as proto, api_interface };
+export * from '../interface.js';
+export * from '../createAPI.js';
 
 export class APIInterface {
     constructor(

@@ -12,19 +12,14 @@ export default defineConfig(({ mode }) => {
     return {
         base: '',
         plugins: [
-            mode === 'production' &&
-                nodeExternals({
-                    builtinsPrefix: 'ignore',
-                    include: ['bun:ffi'],
-                    exclude: [
-                        'memfs-browser',
-                        '@xan105/ffi/koffi',
-                        '@tybys/wasm-util',
-                    ],
-                }),
-            dts({
-                include: ['src/**/*', '../ffi/gen/index.ts'],
-                exclude: ['src/*.test.ts'],
+            nodeExternals({
+                builtinsPrefix: 'ignore',
+                include: ['bun:ffi'],
+                exclude: [
+                    'memfs-browser',
+                    '@xan105/ffi/koffi',
+                    '@tybys/wasm-util',
+                ],
             }),
             {
                 name: 'add deps',
@@ -40,29 +35,14 @@ export default defineConfig(({ mode }) => {
                     }
                 },
             },
-            viteStaticCopy({
-                targets: [
-                    {
-                        src: '../ffi/scripts/init.ps1',
-                        dest: '',
-                    },
-                    {
-                        src: '../ffi/scripts/init.sh',
-                        dest: '',
-                    },
-                ],
-            }),
         ],
         build: {
+            emptyOutDir: false,
             target: 'esnext',
+            outDir: 'dist/wasm',
             lib: {
-                entry: [
-                    './src/node/index.ts',
-                    './src/bun/index.ts',
-                    './src/deno/index.ts',
-                    './src/cli.ts',
-                ],
-                formats: ['es', 'cjs'],
+                entry: ['./src/wasm/index.ts'],
+                formats: ['es'],
             },
             minify: false, // 禁用代码混淆
             sourcemap: false,
@@ -72,8 +52,6 @@ export default defineConfig(({ mode }) => {
                 output: {
                     assetFileNames: `[name]-[hash].[ext]`,
                     exports: 'named',
-                    preserveModules: true,
-                    preserveModulesRoot: './src',
                 },
             },
         },

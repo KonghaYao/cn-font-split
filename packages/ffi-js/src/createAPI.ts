@@ -1,12 +1,9 @@
 import { api_interface } from './gen/index';
 import { FontSplitProps, OriginInput } from './interface';
+export * from './decodeReporter';
 import fs from 'fs-extra';
 import path from 'path';
 export { api_interface as proto };
-export const decodeReporter = (reporterBin: Uint8Array) => {
-    return api_interface.OutputReport.deserialize(reporterBin);
-};
-
 /** 转换 JS 接口数据为 proto 接口数据 */
 const transType = async (props: FontSplitProps): Promise<OriginInput> => {
     const data: Partial<OriginInput> = {};
