@@ -8,7 +8,7 @@ export type FontSplitProps = Omit<OriginInput, 'input' | 'subsets'> & {
     input: string | Uint8Array;
     subsets?: number[][];
     /** 减少汇报日志 */
-    silent?: boolean
+    silent?: boolean;
 };
 /** 替换系统内部的文件输出方式 */
 export type IOutputFile = (
@@ -16,3 +16,5 @@ export type IOutputFile = (
     data: Uint8Array | string,
     options?: WriteFileOptions | undefined,
 ) => Promise<void>;
+
+export type FontReporter = ReturnType<api_interface.OutputReport['toObject']>;
