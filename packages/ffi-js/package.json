@@ -44,7 +44,7 @@
         "fs-extra": "^11.2.0",
         "google-protobuf": "^3.21.4",
         "koffi": "^2.10.0",
-        "proto-to-cli": "1.1.5"
+        "proto-to-cli": "1.2.0"
     },
     "devDependencies": {
         "@grpc/grpc-js": "^1.12.2",
