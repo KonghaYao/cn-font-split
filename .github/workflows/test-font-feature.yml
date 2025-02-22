@@ -5,6 +5,11 @@ on:
         tags:
             - '*'
     workflow_dispatch:
+        inputs:
+            version:
+                description: '不填为最新版本'
+                required: true
+                default: ''
 jobs:
     test:
         runs-on: macOS-latest
@@ -26,6 +31,7 @@ jobs:
               run: |
                   npm i -g playwright
                   npx playwright install --with-deps
+
             - name: Cache fonts
               id: cache-fonts
               uses: actions/cache@v3
@@ -46,6 +52,12 @@ jobs:
                   pnpm uninstall cn-font-split
                   pnpm i cn-font-split
                   pnpm cn-font-split ls
+
+            - name: Install cn-font-split
+              if: inputs.version != ''
+              working-directory: packages/test
+              run: |
+                  pnpm cn-font-split i default@${{inputs.version}}
 
             - name: Build Font
               working-directory: packages/test
