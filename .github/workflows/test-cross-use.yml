@@ -302,7 +302,7 @@ jobs:
                       case "${{ matrix.platform.distro }}" in
                         ubuntu*|jessie|stretch|buster|bullseye)
                           apt-get update -q -y
-                          apt-get install -q -y nodejs npm
+                          apt-get install -q -y nodejs npm curl  python3 python3-pip
                           ;;
                         fedora*)
                           dnf -y update
@@ -316,8 +316,6 @@ jobs:
 
                   # Produce a binary artifact and place it in the mounted volume
                   run: |
-                      apt update -y -q
-                      apt install curl python3 python3-pip -y -q
                       pip3 install cn-font-split ${{ matrix.platform.break_python }}
                       cn-font-split-py i ${{ matrix.platform.target }}@${{inputs.version}}
                       cn-font-split-py -i ./SmileySans-Oblique.otf -o ./dist/
