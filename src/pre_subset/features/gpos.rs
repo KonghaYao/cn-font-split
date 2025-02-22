@@ -7,7 +7,7 @@ use crate::pre_subset::features::gsub::collect_glyph_id_from_format_1_and_2;
 
 pub fn analyze_gpos(
     font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
+    font_file: &mut Cursor<&[u8]>,
 ) -> Vec<Vec<u16>> {
     // GPOS table
     let data: Option<GlyphPositioning> =
@@ -119,7 +119,7 @@ fn test_gpos() {
     let font_file =
         read_binary_file("./packages/demo/public/WorkSans-VariableFont_wght.ttf")
             .unwrap();
-    let mut font_file = Cursor::new(&font_file);
+    let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
     let result = analyze_gpos(&font, &mut font_file);
     // println!("{:?}", result);

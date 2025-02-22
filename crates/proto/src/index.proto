@@ -3,7 +3,7 @@ syntax = "proto3";
 package api_interface;
 
 message InputTemplate {
-    bytes input = 1; // ttf 文件的 buffer
+    bytes input = 1; // ttf/woff2 文件的 buffer
     optional string out_dir = 2; // 切割后放置文件的文件夹
 
     // ====== 构建产物配置 ======

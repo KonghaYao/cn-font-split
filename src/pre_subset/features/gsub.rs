@@ -6,7 +6,7 @@ use opentype::Font;
 use std::io::Cursor;
 pub fn analyze_gsub(
     font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
+    font_file: &mut Cursor<&[u8]>,
 ) -> Vec<Vec<u16>> {
     // 丑陋的多层 unwrap 处理
     let temp: Result<Option<GlyphSubstitution>, std::io::Error> =
@@ -256,7 +256,7 @@ fn test_gsub() {
         "./packages/demo/public/WorkSans-VariableFont_wght.ttf",
     )
     .unwrap();
-    let mut font_file = Cursor::new(&font_file);
+    let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
     let result = analyze_gsub(&font, &mut font_file);
     // println!("{:?}", result);

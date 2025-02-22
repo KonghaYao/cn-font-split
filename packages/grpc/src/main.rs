@@ -72,16 +72,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn test_font_split() {
-    use cn_font_proto::font_services::font_api_client::FontApiClient;
-    use cn_font_utils::read_binary_file;
-    let path = "../../../demo/public/SmileySans-Oblique.ttf";
-    let font_file = read_binary_file(&path).expect("Failed to read file");
-    let data = InputTemplate { input: font_file, ..Default::default() };
+    async fn test_on(path: &str) {
+        use cn_font_proto::font_services::font_api_client::FontApiClient;
+        use cn_font_utils::read_binary_file;
+        let font_file = read_binary_file(&path).expect("Failed to read file");
+        let data = InputTemplate { input: font_file, ..Default::default() };
 
-    let mut client =
-        FontApiClient::connect("http://0.0.0.0:50051").await.unwrap();
-    let mut stream = client.font_split(data).await.unwrap().into_inner();
-    while let Ok(Some(next_message)) = stream.message().await {
-        println!("{:?}", next_message.message);
+        let mut client =
+            FontApiClient::connect("http://0.0.0.0:50051").await.unwrap();
+        let mut stream = client.font_split(data).await.unwrap().into_inner();
+        while let Ok(Some(next_message)) = stream.message().await {
+            println!("{:?}", next_message.message);
+        }
     }
+
+    test_on("../../../demo/public/SmileySans-Oblique.ttf");
+    test_on("../../../demo/public/SmileySans-Oblique.ttf.woff2");
 }
