@@ -14,7 +14,6 @@ fn main_test() {
         use cn_font_proto::api_interface::input_template::CssProperties;
         use cn_font_proto::api_interface::input_template::PreviewImage;
         use cn_font_proto::api_interface::InputTemplate;
-        use cn_font_utils::u32_array_to_u8_array;
         use cn_font_utils::{output_file, read_binary_file};
         use log::info;
 

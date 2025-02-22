@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use indexmap::IndexSet;
 
 use log::info;
 
@@ -7,8 +7,8 @@ use crate::run_subset::build_single_subset;
 use super::PreSubsetContext;
 
 pub fn plugin_auto_subset(
-    subsets: &mut Vec<BTreeSet<u32>>,
-    _remaining_chars_set: &mut BTreeSet<u32>,
+    subsets: &mut Vec<IndexSet<u32>>,
+    _remaining_chars_set: &mut IndexSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let size = ctx.all_unicodes.len();
@@ -30,22 +30,22 @@ pub fn plugin_auto_subset(
 
 /// 将集合中的每个子集进一步分割成大小不超过 `max_chunk_size` 的更小子集。
 pub fn chunk_iterable_and_flat(
-    subsets: &mut Vec<BTreeSet<u32>>,
+    subsets: &mut Vec<IndexSet<u32>>,
     max_chunk_size: u32,
-) -> Vec<BTreeSet<u32>> {
+) -> Vec<IndexSet<u32>> {
     let max_chunk_size = max_chunk_size - 1;
     subsets
         .iter()
         .flat_map(|subset| {
             let mut count = 0;
-            let mut result: Vec<BTreeSet<u32>> = vec![];
-            let mut new_subset: BTreeSet<u32> = BTreeSet::new();
+            let mut result: Vec<IndexSet<u32>> = vec![];
+            let mut new_subset: IndexSet<u32> = IndexSet::new();
             subset.iter().for_each(|c| {
                 new_subset.insert(c.clone());
                 if count >= max_chunk_size {
                     count = 0;
                     result.push(new_subset.clone());
-                    new_subset = BTreeSet::new();
+                    new_subset = IndexSet::new();
                 } else {
                     count += 1;
                 }
@@ -55,30 +55,30 @@ pub fn chunk_iterable_and_flat(
             };
             result
         })
-        .collect::<Vec<BTreeSet<u32>>>()
+        .collect::<Vec<IndexSet<u32>>>()
 }
 
 #[test]
 fn for_chunk_iterable_and_flat() {
     let mut subsets = vec![
-        BTreeSet::from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-        BTreeSet::from([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]),
+        IndexSet::from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+        IndexSet::from([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]),
     ];
     let result = chunk_iterable_and_flat(&mut subsets, 5);
     assert_eq!(
         result,
         vec![
-            BTreeSet::from([1, 2, 3, 4, 5]),
-            BTreeSet::from([6, 7, 8, 9, 10]),
-            BTreeSet::from([11, 12, 13, 14, 15]),
-            BTreeSet::from([16, 17, 18, 19, 20]),
-            BTreeSet::from([21]),
+            IndexSet::from([1, 2, 3, 4, 5]),
+            IndexSet::from([6, 7, 8, 9, 10]),
+            IndexSet::from([11, 12, 13, 14, 15]),
+            IndexSet::from([16, 17, 18, 19, 20]),
+            IndexSet::from([21]),
         ]
     );
 }
 
 /// 每隔 n 个元素抽取一个元素
-fn extract_every_nth<T: Clone>(set: &BTreeSet<T>, n: usize) -> Vec<T> {
+fn extract_every_nth<T: Clone>(set: &IndexSet<T>, n: usize) -> Vec<T> {
     // 检查 n 是否有效
     let n = if n == 0 { 1_usize } else { n };
 
@@ -95,7 +95,7 @@ fn extract_every_nth<T: Clone>(set: &BTreeSet<T>, n: usize) -> Vec<T> {
 }
 #[test]
 fn main() {
-    let mut set = BTreeSet::new();
+    let mut set = IndexSet::new();
     set.insert(1);
     set.insert(2);
     set.insert(3);

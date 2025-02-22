@@ -8,11 +8,11 @@ use cn_font_proto::api_interface::EventMessage;
 use cn_font_utils::u8_size_in_kb;
 use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
+use indexmap::IndexSet;
 use log::{info, warn};
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
-use std::collections::BTreeSet;
 use std::time::Instant;
 use woff::version2::compress;
 
@@ -37,7 +37,7 @@ struct ThreadResult {
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) {
     let origin_bytes: u32 = (&ctx.input.input).len() as u32;
-    let all_chars = BTreeSet::from_iter(
+    let all_chars: IndexSet<u32> = IndexSet::from_iter(
         ctx.face.collect_unicodes().iter().map(|x| x.clone()),
     );
     let origin_size: u32 = all_chars.len().try_into().unwrap();
@@ -89,7 +89,7 @@ pub fn run_subset(ctx: &mut Context) {
         .collect::<Vec<ThreadResult>>();
     let mut bundled_bytes: u32 = 0;
 
-    let mut bundle_chars = BTreeSet::new();
+    let mut bundle_chars = IndexSet::new();
     bundle_chars.insert(0);
     for res in thread_result {
         (ctx.callback)(res.message);

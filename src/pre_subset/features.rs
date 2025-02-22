@@ -1,15 +1,16 @@
 use cmap::analyze_cmap;
 use gpos::analyze_gpos;
 use gsub::analyze_gsub;
-use std::collections::{BTreeSet, HashMap};
+use indexmap::IndexSet;
+use std::collections::HashMap;
 
 use super::PreSubsetContext;
 pub mod cmap;
 pub mod gpos;
 pub mod gsub;
 pub fn features_plugin(
-    subsets: &mut Vec<BTreeSet<u32>>,
-    _remaining_chars_set: &mut BTreeSet<u32>,
+    subsets: &mut Vec<IndexSet<u32>>,
+    _remaining_chars_set: &mut IndexSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let cmap = analyze_cmap(ctx.font, ctx.font_file);
@@ -24,8 +25,8 @@ pub fn features_plugin(
 }
 
 fn move_feature_set_to_front(
-    feature_map: &Vec<BTreeSet<u32>>,
-    subsets: &mut Vec<BTreeSet<u32>>,
+    feature_map: &Vec<IndexSet<u32>>,
+    subsets: &mut Vec<IndexSet<u32>>,
 ) {
     for feature_set in feature_map {
         let mut have_coverage = false;
@@ -43,7 +44,7 @@ fn move_feature_set_to_front(
 }
 
 /// 判断两个集合是否有交集
-fn has_intersection(a: &BTreeSet<u32>, b: &BTreeSet<u32>) -> bool {
+fn has_intersection(a: &IndexSet<u32>, b: &IndexSet<u32>) -> bool {
     for i in a {
         if b.contains(i) {
             return true;
@@ -54,11 +55,11 @@ fn has_intersection(a: &BTreeSet<u32>, b: &BTreeSet<u32>) -> bool {
 
 #[test]
 fn test_move_feature_set_to_front() {
-    let mut feature_map = vec![BTreeSet::from([1, 2]), BTreeSet::from([3, 4])];
+    let mut feature_map = vec![IndexSet::from([1, 2]), IndexSet::from([3, 4])];
     let mut subsets = vec![
-        BTreeSet::from([2, 3]),
-        BTreeSet::from([4, 5]),
-        BTreeSet::from([1]),
+        IndexSet::from([2, 3]),
+        IndexSet::from([4, 5]),
+        IndexSet::from([1]),
     ];
 
     move_feature_set_to_front(&mut feature_map, &mut subsets);
@@ -75,13 +76,13 @@ fn test_move_feature_set_to_front() {
 pub fn turn_indics_to_unicode_set(
     all_maybe_relative_glyph: Vec<Vec<u16>>,
     cmap: &HashMap<u16, u32>,
-) -> Vec<BTreeSet<u32>> {
+) -> Vec<IndexSet<u32>> {
     all_maybe_relative_glyph
         .iter()
         .map(|r| {
-            BTreeSet::from_iter(
+            IndexSet::from_iter(
                 r.iter().map(|gid| cmap.get(gid).unwrap_or(&0_u32).clone()),
             )
         })
-        .collect::<Vec<BTreeSet<u32>>>()
+        .collect::<Vec<IndexSet<u32>>>()
 }

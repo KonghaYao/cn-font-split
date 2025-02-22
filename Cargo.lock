@@ -452,6 +452,7 @@ dependencies = [
  "current_platform",
  "env_logger",
  "harfbuzz_rs_now",
+ "indexmap 2.7.1",
  "lang-unicodes",
  "log",
  "md5",
@@ -1054,8 +1055,9 @@ dependencies = [
 
 [[package]]
 name = "lang-unicodes"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
+ "indexmap 2.7.1",
  "lazy_static",
  "opencc-rs",
 ]

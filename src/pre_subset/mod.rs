@@ -11,11 +11,11 @@ use cn_font_utils::u8_array_to_u32_array;
 use features::features_plugin;
 use gen_svg::gen_svg_from_ctx;
 use harfbuzz_rs_now::{Face, Owned};
+use indexmap::IndexSet;
 use plugin::{
     add_remain_chars_plugin, language_area_plugin, reduce_min_plugin,
 };
 use plugin_auto_subset::plugin_auto_subset;
-use std::collections::BTreeSet;
 use std::io::Cursor;
 
 pub struct PreSubsetContext<'a, 'b, 'c>
@@ -23,7 +23,7 @@ where
     'b: 'a,
     'c: 'a,
 {
-    all_unicodes: BTreeSet<u32>,
+    all_unicodes: IndexSet<u32>,
     face: &'a mut Owned<Face<'b>>,
     predict_bytes_pre_subset: u32,
     font: &'a opentype::Font,
@@ -33,8 +33,8 @@ where
 
 pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &*ctx.binary;
-    let mut all_unicodes: BTreeSet<u32> =
-        BTreeSet::from_iter(ctx.face.collect_unicodes());
+    let mut all_unicodes: IndexSet<u32> =
+        IndexSet::from_iter(ctx.face.collect_unicodes());
 
     let mut font_file = Cursor::new(file_binary);
     let font = opentype::Font::read(&mut font_file)
@@ -42,7 +42,7 @@ pub fn pre_subset(ctx: &mut Context) {
 
     gen_svg_from_ctx(ctx);
 
-    let mut subsets: Vec<BTreeSet<u32>> = vec![];
+    let mut subsets: Vec<IndexSet<u32>> = vec![];
     let user_subsets: Vec<Vec<u32>> =
         ctx.input.subsets.iter().map(|x| u8_array_to_u32_array(x)).collect();
     let mut context = PreSubsetContext {
@@ -58,8 +58,8 @@ pub fn pre_subset(ctx: &mut Context) {
 
     let mut process: Vec<
         fn(
-            &mut Vec<BTreeSet<u32>>,
-            &mut BTreeSet<u32>,
+            &mut Vec<IndexSet<u32>>,
+            &mut IndexSet<u32>,
             &mut PreSubsetContext<'_, '_, '_>,
         ),
     > = vec![];

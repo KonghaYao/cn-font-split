@@ -1,17 +1,17 @@
 use super::PreSubsetContext;
-use std::collections::BTreeSet;
+use indexmap::IndexSet;
 
 // 添加用户的 subsets 到第一位
 pub fn plugin_add_user_subset(
-    subsets: &mut Vec<BTreeSet<u32>>,
-    _remaining_chars_set: &mut BTreeSet<u32>,
+    subsets: &mut Vec<IndexSet<u32>>,
+    _remaining_chars_set: &mut IndexSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     ctx.subsets.iter().for_each(|u32_arr: &Vec<u32>| {
-        let mut subset: BTreeSet<u32> = BTreeSet::new();
+        let mut subset: IndexSet<u32> = IndexSet::new();
         u32_arr.iter().for_each(|x| {
             subset.insert(x.clone());
-            _remaining_chars_set.remove(x);
+            _remaining_chars_set.shift_remove(x);
         });
         subsets.push(subset);
     });
