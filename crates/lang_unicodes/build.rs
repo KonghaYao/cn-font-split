@@ -2,7 +2,6 @@
 use lazy_static::lazy_static;
 #[cfg(feature = "with_extra")]
 use opencc_rs::{Config, OpenCC};
-use std::collections::HashSet;
 use std::fs;
 use std::fs::{create_dir, exists, read_to_string};
 
@@ -68,6 +67,8 @@ fn opencc_convert(s: String) -> String {
 
 #[cfg(feature = "with_extra")]
 fn process_chinese_chars() {
+    use indexmap::IndexSet;
+
     let sc: Vec<char> =
         CN_SYMBOL.chars().chain(HAN_ZI_PIN_LV.chars()).clone().collect();
     let tc: Vec<u16> = sc
@@ -76,10 +77,10 @@ fn process_chinese_chars() {
         .map(|i| encode_utf16(&i))
         .collect();
     let sc: Vec<u16> = sc.iter().map(encode_utf16).collect();
-    let hashset_tc: HashSet<&u16> = HashSet::from_iter(tc.iter());
+    let hashset_tc: IndexSet<&u16> = IndexSet::from_iter(tc.iter());
     let common: Vec<u16> =
         sc.iter().filter(|i| hashset_tc.contains(i)).copied().collect();
-    let hashset_common: HashSet<&u16> = HashSet::from_iter(common.iter());
+    let hashset_common: IndexSet<&u16> = IndexSet::from_iter(common.iter());
     let sc_set: Vec<u16> =
         sc.iter().filter(|i| !hashset_common.contains(i)).copied().collect();
     let tc_set: Vec<u16> =

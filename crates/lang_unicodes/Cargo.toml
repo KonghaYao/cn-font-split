@@ -1,6 +1,6 @@
 [package]
 name = "lang-unicodes"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Effortlessly convert and validate text across various Unicode ranges, supporting multiple languages for seamless internationalization in your applications."
 authors = ["KonghaYao<3446798488@qq.com>"]
@@ -18,6 +18,7 @@ path = "src/lib.rs"
 [build-dependencies]
 lazy_static = { version = "1.5.0", optional = true }
 opencc-rs = { version = "0.4.7", optional = true }
+indexmap = "2.7.1"
 
 [features]
 default = ["with_extra"]

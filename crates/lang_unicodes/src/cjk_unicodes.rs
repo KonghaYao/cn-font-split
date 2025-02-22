@@ -60,7 +60,8 @@ lazy_static! {
     pub static ref ZH_COMMON: Vec<u32> = get_part_from_cn_pkg(0).unwrap();
     pub static ref ZH_SC: Vec<u32> = get_part_from_cn_pkg(1).unwrap();
     pub static ref ZH_TC: Vec<u32> = get_part_from_cn_pkg(2).unwrap();
-    pub static ref HANGUL_SYL: Vec<u32> = u8_to_u16(HANGUL_SYL_SOURCE).into_iter().map(|x| x as u32).collect();
+    pub static ref HANGUL_SYL: Vec<u32> =
+        u8_to_u16(HANGUL_SYL_SOURCE).into_iter().map(|x| x as u32).collect();
     pub static ref HIRAGANA_AND_KATAKANA: Vec<u32> =
         expand_ranges(&[(0x3040, 0x309F), (0x30A0, 0x30FF)]);
     pub static ref HANGUL_JAMO: Vec<u32> = expand_ranges(&[(0x1100, 0x11FF)]);
@@ -76,5 +77,12 @@ mod tests {
         assert_eq!(ZH_SC.len(), 2313);
         assert_eq!(ZH_TC.len(), 2308);
         assert_eq!(HANGUL_SYL.len(), 2026);
+        println!(
+            "{}",
+            ZH_COMMON
+                .iter()
+                .map(|i| { std::char::from_u32(i.clone()).unwrap() })
+                .collect::<String>()
+        )
     }
 }
