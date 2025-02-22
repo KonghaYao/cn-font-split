@@ -86,6 +86,6 @@ async fn test_font_split() {
         }
     }
 
-    test_on("../../../demo/public/SmileySans-Oblique.ttf");
-    test_on("../../../demo/public/SmileySans-Oblique.ttf.woff2");
+    test_on("../../../demo/public/SmileySans-Oblique.ttf").await;
+    test_on("../../../demo/public/SmileySans-Oblique.ttf.woff2").await;
 }

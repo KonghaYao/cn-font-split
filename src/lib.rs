@@ -3,14 +3,14 @@ pub mod pre_subset;
 pub mod run_subset;
 pub mod runner;
 pub use runner::font_split;
-mod message;
 mod loader;
+mod message;
 
 #[test]
 fn main_test() {
     env_logger::init();
 
-    fn test_on(path: &str) {
+    fn test_on(path: &str, dist_dir: &str) {
         use cn_font_proto::api_interface::input_template::CssProperties;
         use cn_font_proto::api_interface::input_template::PreviewImage;
         use cn_font_proto::api_interface::InputTemplate;
@@ -57,8 +57,11 @@ fn main_test() {
             // 打开一个文件以供写入，如果文件不存在，则创建它
             match m.data {
                 Some(data) => {
-                    output_file(&format!("dist/{}", m.message), &data)
-                        .expect("write file error");
+                    output_file(
+                        &format!("dist/{}/{}", dist_dir, m.message),
+                        &data,
+                    )
+                    .expect("write file error");
                 }
                 _ => (),
             }
@@ -68,6 +71,6 @@ fn main_test() {
         println!("Time: {:?}", duration);
     }
 
-    test_on("./packages/demo/public/SmileySans-Oblique.ttf");
-    test_on("./packages/demo/public/SmileySans-Oblique.ttf.woff2");
+    test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
+    test_on("./packages/demo/public/SmileySans-Oblique.ttf.woff2", "woff2");
 }
