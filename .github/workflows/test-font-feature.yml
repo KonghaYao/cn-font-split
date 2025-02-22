@@ -64,6 +64,7 @@ jobs:
             - name: Build Font
               working-directory: packages/test
               run: |
+                  pnpm exec playwright install  
                   pnpm build
 
             - name: Start development server
