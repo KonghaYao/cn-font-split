@@ -300,7 +300,7 @@ jobs:
 
                   install: |
                       case "${{ matrix.platform.distro }}" in
-                        ubuntu*|jessie|stretch|buster|bullseye)
+                        ubuntu*|jessie|stretch|buster|bullseye|bookworm)
                           apt-get update -q -y
                           apt-get install -q -y nodejs npm curl  python3 python3-pip
                           ;;
