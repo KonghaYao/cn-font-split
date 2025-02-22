@@ -79,8 +79,8 @@ importers:
         specifier: ^2.10.0
         version: 2.10.0
       proto-to-cli:
-        specifier: 1.1.5
-        version: 1.1.5
+        specifier: 1.2.0
+        version: 1.2.0
     devDependencies:
       '@grpc/grpc-js':
         specifier: ^1.12.2
@@ -150,8 +150,8 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1
       cn-font-split:
-        specifier: 7.2.0
-        version: 7.2.0
+        specifier: 7.2.2
+        version: 7.2.2
       solid-js:
         specifier: ^1.7.8
         version: 1.8.17
@@ -1174,10 +1174,6 @@ packages:
   cn-font-metrics@2.1.6:
     resolution: {integrity: sha512-FwUzUb2SKm3QO6Jnb25kr0S8MqmfoZ43EJxDro8lV9KFlSPXvGihrM4TyMFaqMgi0HCRMcGdPzI1NANHlxDoug==}
 
-  cn-font-split@7.2.0:
-    resolution: {integrity: sha512-fApOvUPDJgiKGUlYhf45neMRqg1zqZaaN7/D9++pVjeaEIoVvuP0uftNC7zhADh1omNElp0JV4yBsoH6Qpy8ZQ==}
-    hasBin: true
-
   cn-font-split@7.2.2:
     resolution: {integrity: sha512-o2uPPNjVB8XkWV3SBxg5zdLVtPwtAIATyNMbMAjx3mao6cB2/5NQhngd+lxwrPO0mPFSCBUfmchgLhQzy5MJkQ==}
     hasBin: true
@@ -1662,6 +1658,10 @@ packages:
 
   proto-to-cli@1.1.5:
     resolution: {integrity: sha512-ivcbpgCa2yTJYTTdQTXkz6XqeHhsdzXKxI4jRnjOWyQkWwjilI3tQ0hzLCHSGPjO4LwYK5x1P8a+wINF9AzvFQ==}
+    hasBin: true
+
+  proto-to-cli@1.2.0:
+    resolution: {integrity: sha512-RvTJOj3dhfl1zcAW0KZCXkzV0Tz2+Ji9mH5umt0uopDjnaNR0IU2uzeeKv3uigmnjbtyUALuixcFZ8AuQjQ1sA==}
     hasBin: true
 
   protobufjs@7.4.0:
@@ -3062,20 +3062,11 @@ snapshots:
       - encoding
       - webpack-sources
 
-  cn-font-split@7.2.0:
-    dependencies:
-      buffer: 6.0.3
-      commander: 12.1.0
-      fs-extra: 11.3.0
-      google-protobuf: 3.21.4
-      koffi: 2.10.0
-      proto-to-cli: 1.1.5
-
   cn-font-split@7.2.2:
     dependencies:
       buffer: 6.0.3
       commander: 12.1.0
-      fs-extra: 11.2.0
+      fs-extra: 11.3.0
       google-protobuf: 3.21.4
       koffi: 2.10.0
       proto-to-cli: 1.1.5
@@ -3530,7 +3521,14 @@ snapshots:
   proto-to-cli@1.1.5:
     dependencies:
       commander: 12.1.0
-      fs-extra: 11.2.0
+      fs-extra: 11.3.0
+      protobufjs: 7.4.0
+
+  proto-to-cli@1.2.0:
+    dependencies:
+      change-case: 5.4.4
+      commander: 13.1.0
+      fs-extra: 11.3.0
       protobufjs: 7.4.0
 
   protobufjs@7.4.0:
