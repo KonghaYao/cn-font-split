@@ -31,6 +31,7 @@ jobs:
               run: |
                   npm i -g playwright
                   npx playwright install --with-deps
+                  pnpm exec playwright install
 
             - name: Cache fonts
               id: cache-fonts
