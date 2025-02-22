@@ -256,7 +256,7 @@ fn test_gsub() {
         "./packages/demo/public/WorkSans-VariableFont_wght.ttf",
     )
     .unwrap();
-    let mut font_file = Cursor::new(&font_file);
+    let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
     let result = analyze_gsub(&font, &mut font_file);
     // println!("{:?}", result);
