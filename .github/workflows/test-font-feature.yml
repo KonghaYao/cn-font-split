@@ -73,7 +73,7 @@ jobs:
 
             - name: Run Playwright tests
               working-directory: packages/test
-              run: pnpm test
+              run: npm run test
 
             - name: Upload test results
               if: ${{ !cancelled() }}
