@@ -27,12 +27,12 @@ where
     face: &'a mut Owned<Face<'b>>,
     predict_bytes_pre_subset: u32,
     font: &'a opentype::Font,
-    font_file: &'a mut Cursor<&'c Vec<u8>>,
+    font_file: &'a mut Cursor<&'c [u8]>,
     subsets: &'c Vec<Vec<u32>>,
 }
 
 pub fn pre_subset(ctx: &mut Context) {
-    let file_binary = &ctx.input.input;
+    let file_binary = &*ctx.binary;
     let mut all_unicodes: BTreeSet<u32> =
         BTreeSet::from_iter(ctx.face.collect_unicodes());
 

@@ -39,7 +39,7 @@ impl NameTableSets {
 /// 解析 name table 可以得知关于整个字体的头部信息
 pub fn analyze_name_table(
     font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
+    font_file: &mut Cursor<&[u8]>,
 ) -> NameTableSets {
     let data: Names = font.take(font_file).unwrap().unwrap();
     let mut table = NameTableSets { table: vec![] };
@@ -114,7 +114,7 @@ fn test_name_table() {
     use cn_font_utils::read_binary_file;
     let path = "./packages/demo/public/SmileySans-Oblique.ttf";
     let file_binary = read_binary_file(&path).expect("Failed to read file");
-    let mut font_file = Cursor::new(&file_binary);
+    let mut font_file = Cursor::new(&*file_binary);
     let font = Font::read(&mut font_file).expect("TODO: panic message");
     let data = analyze_name_table(&font, &mut font_file);
 

@@ -6,7 +6,7 @@ use opentype::Font;
 use std::io::Cursor;
 pub fn analyze_gsub(
     font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
+    font_file: &mut Cursor<&[u8]>,
 ) -> Vec<Vec<u16>> {
     // 丑陋的多层 unwrap 处理
     let temp: Result<Option<GlyphSubstitution>, std::io::Error> =

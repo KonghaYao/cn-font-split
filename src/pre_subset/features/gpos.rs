@@ -7,7 +7,7 @@ use crate::pre_subset::features::gsub::collect_glyph_id_from_format_1_and_2;
 
 pub fn analyze_gpos(
     font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
+    font_file: &mut Cursor<&[u8]>,
 ) -> Vec<Vec<u16>> {
     // GPOS table
     let data: Option<GlyphPositioning> =

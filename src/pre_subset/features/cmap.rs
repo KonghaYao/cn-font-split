@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::io::Cursor;
 pub fn analyze_cmap(
     font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
+    font_file: &mut Cursor<&[u8]>,
 ) -> HashMap<u16, u32> {
     // GSUB
     let data: CharacterMapping = font.take(font_file).unwrap().unwrap();

@@ -1,4 +1,5 @@
 use crate::link_subset::link_subset;
+use crate::loader::smart_load_woff2;
 use crate::message::EventFactory;
 use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
@@ -15,6 +16,7 @@ where
     'c: 'a,
 {
     pub input: &'c InputTemplate,
+    pub binary: &'c [u8],
     pub pre_subset_result: Vec<Vec<u32>>,
     pub run_subset_result: Vec<RunSubsetResult>,
     pub name_table: NameTableSets,
@@ -26,10 +28,11 @@ where
 
 pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     let mut reporter = OutputReport::default();
-    let binary = &config.input;
+    let binary = smart_load_woff2(&config.input);
     let mut face = Face::from_bytes(&binary, 0);
     let mut ctx = Context {
         input: &config,
+        binary: &binary,
         pre_subset_result: vec![],
         run_subset_result: vec![],
         name_table: NameTableSets { table: vec![] },
