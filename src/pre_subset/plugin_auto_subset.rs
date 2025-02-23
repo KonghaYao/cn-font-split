@@ -20,7 +20,10 @@ pub fn plugin_auto_subset(
     let chars_per_subset =
         ctx.predict_bytes_pre_subset / (bytes_per_char as u32);
 
-    info!("{}, {}", bytes_per_char, chars_per_subset);
+    info!(
+        "predict subset: {}/subset, {} bytes/char, {}(chunk_size)",
+        bytes_per_char, chars_per_subset, ctx.predict_bytes_pre_subset
+    );
     let new_subsets = chunk_iterable_and_flat(subsets, chars_per_subset);
     subsets.clear();
     for i in new_subsets {

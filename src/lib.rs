@@ -8,6 +8,8 @@ mod message;
 
 #[test]
 fn main_test() {
+    use std::env;
+    env::set_var("RUST_LOG", "info");
     env_logger::init();
 
     fn test_on(path: &str, dist_dir: &str) {
@@ -50,7 +52,6 @@ fn main_test() {
         };
 
         let start = std::time::Instant::now();
-        info!("this is a debug {}", "message");
         font_split(input, |m| {
             // println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
             // 打开一个文件以供写入，如果文件不存在，则创建它
