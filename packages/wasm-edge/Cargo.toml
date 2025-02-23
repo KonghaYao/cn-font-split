@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 cn-font-proto = { version = "0.1.0", path = "../../crates/proto", default-features = false }
 cn-font-split = { version = "7.0.0", path = "../..", default-features = false }
-cn-font-utils = { version = "0.1.0", path = "../../crates/cn_font_utils" }
+cn-font-utils = { version = "0.2.0", path = "../../crates/cn_font_utils" }
 env_logger = "0.11.5"
 prost = "0.13.4"
 

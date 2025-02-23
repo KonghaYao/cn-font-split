@@ -442,7 +442,7 @@ dependencies = [
 
 [[package]]
 name = "cn-font-split"
-version = "7.3.0"
+version = "7.3.3"
 dependencies = [
  "chrono",
  "clap 4.5.30",
@@ -467,7 +467,7 @@ dependencies = [
 
 [[package]]
 name = "cn-font-utils"
-version = "0.1.2"
+version = "0.2.0"
 
 [[package]]
 name = "color-eyre"
@@ -1055,8 +1055,9 @@ dependencies = [
 
 [[package]]
 name = "lang-unicodes"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
+ "cn-font-utils",
  "indexmap 2.7.1",
  "lazy_static",
  "opencc-rs",
