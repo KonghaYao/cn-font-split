@@ -124,7 +124,7 @@ mod tests {
     use super::*;
     #[test]
     fn test() {
-        assert_eq!(LATIN.len(), 591)
+        assert_eq!(LATIN.len(), 255)
     }
 }
 

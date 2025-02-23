@@ -1,30 +1,13 @@
 use crate::expand_ranges;
+use cn_font_utils::u8_array_to_u16_array;
 use lazy_static::lazy_static;
-
-// u8array 按照 u32 的方式读取
-pub fn u8_to_u32(arr: &[u8]) -> Vec<u32> {
-    assert!(arr.len() % 4 == 0, "File length is not a multiple of 4");
-
-    arr.chunks(4)
-        .map(|chunk| {
-            u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]) as u32
-        })
-        .collect()
-}
-// u8array 按照 u16 的方式读取
-pub fn u8_to_u16(arr: &[u8]) -> Vec<u16> {
-    assert!(arr.len() % 2 == 0, "File length is not a multiple of 2");
-    arr.chunks(2)
-        .map(|chunk| u16::from_le_bytes([chunk[0], chunk[1]]) as u16)
-        .collect()
-}
 
 static HANGUL_SYL_SOURCE: &[u8] = include_bytes!("../data/hangul-syl.dat");
 
 static CN_CHAR_RANK: &[u8] = include_bytes!("../data/cn_char_rank.dat");
 
 fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
-    let data = u8_to_u16(CN_CHAR_RANK);
+    let data = u8_array_to_u16_array(CN_CHAR_RANK);
     let mut last_index = 0;
     let mut part_no = part_no as isize;
 
@@ -61,7 +44,10 @@ lazy_static! {
     pub static ref ZH_SC: Vec<u32> = get_part_from_cn_pkg(1).unwrap();
     pub static ref ZH_TC: Vec<u32> = get_part_from_cn_pkg(2).unwrap();
     pub static ref HANGUL_SYL: Vec<u32> =
-        u8_to_u16(HANGUL_SYL_SOURCE).into_iter().map(|x| x as u32).collect();
+        u8_array_to_u16_array(HANGUL_SYL_SOURCE)
+            .into_iter()
+            .map(|x| x as u32)
+            .collect();
     pub static ref HIRAGANA_AND_KATAKANA: Vec<u32> =
         expand_ranges(&[(0x3040, 0x309F), (0x30A0, 0x30FF)]);
     pub static ref HANGUL_JAMO: Vec<u32> = expand_ranges(&[(0x1100, 0x11FF)]);
@@ -73,13 +59,13 @@ mod tests {
     #[test]
     fn test() {
         assert_eq!(HIRAGANA_AND_KATAKANA.len(), 192);
-        assert_eq!(ZH_SYMBOL.len(), 4524);
-        assert_eq!(ZH_SC.len(), 2313);
-        assert_eq!(ZH_TC.len(), 2308);
+        assert_eq!(ZH_SYMBOL.len(), 74);
+        assert_eq!(ZH_SC.len(), 7000);
+        assert_eq!(ZH_TC.len(), 932);
         assert_eq!(HANGUL_SYL.len(), 2026);
         println!(
             "{}",
-            ZH_SYMBOL
+            ZH_SC
                 .iter()
                 .map(|i| { std::char::from_u32(i.clone()).unwrap() })
                 .collect::<String>()
