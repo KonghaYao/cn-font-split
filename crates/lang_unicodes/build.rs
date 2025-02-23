@@ -1,3 +1,4 @@
+use cn_font_utils::output_file;
 #[cfg(feature = "with_extra")]
 use lazy_static::lazy_static;
 #[cfg(feature = "with_extra")]
@@ -68,6 +69,7 @@ fn process_chinese_chars() {
     use std::collections::HashSet;
 
     use cn_font_utils::{read_binary_file, u8_array_to_u16_array};
+    let _ = build_sc_rank();
     let data = read_binary_file("./data/sc.bin").unwrap();
     let symbol: Vec<char> = CN_SYMBOL.chars().clone().collect();
     let sc = u8_array_to_u16_array(&data);
@@ -105,6 +107,98 @@ fn process_chinese_chars() {
         data.iter().flat_map(|&x| x.to_le_bytes()).collect::<Vec<u8>>(),
     )
     .unwrap();
+}
+
+fn build_sc_rank() -> Result<(), Box<dyn std::error::Error>> {
+    let css = read_to_string("./scripts/noto-sans-sc.css").unwrap();
+    let data = get_subsets_from_css(&css);
+
+    let flatten_data: Vec<Vec<u32>> = data
+        .into_iter()
+        .map(|i| i.into_iter().flat_map(flatten_subset).collect())
+        .collect();
+
+    let final_data: Vec<u32> = flatten_data
+        .into_iter()
+        .map(|i| {
+            i.into_iter()
+                .filter(|&ii| ii >= 0x4e00 && ii <= 0x9fff)
+                .collect::<Vec<u32>>()
+        })
+        .rev()
+        .flatten()
+        .take(7000)
+        .collect();
+
+    if final_data.iter().any(|&i| i > 65535) {
+        eprintln!("注入危险");
+    }
+
+    let buffer: Vec<u16> = final_data.iter().map(|&i| i as u16).collect();
+    output_file("./data/sc.bin", &u16_vec_to_u8_vec(buffer));
+
+    println!(
+        "{}",
+        final_data
+            .iter()
+            .map(|&i| char::from_u32(i).unwrap())
+            .collect::<String>()
+    );
+    Ok(())
+}
+fn u16_vec_to_u8_vec(vec: Vec<u16>) -> Vec<u8> {
+    vec.into_iter()
+        .flat_map(|n| {
+            // 将每个u16转换为两个u8，此处使用小端序
+            vec![(n & 0xFF) as u8, (n >> 8) as u8]
+        })
+        .collect()
+}
+fn flatten_subset(subset: Vec<u32>) -> Vec<u32> {
+    if subset.len() == 2 {
+        (subset[0]..=subset[1]).collect()
+    } else {
+        subset
+    }
+}
+
+fn get_subsets_from_css(css: &str) -> Vec<Vec<Vec<u32>>> {
+    let list = regex::Regex::new(r"@font-face[\s\S]+?\}")
+        .unwrap()
+        .find_iter(css)
+        .map(|m| m.as_str())
+        .collect::<Vec<&str>>();
+
+    list.iter()
+        .filter_map(|face| {
+            let unicode_list =
+                regex::Regex::new(r"unicode-range:[\s\S]*(?:[,;])")
+                    .unwrap()
+                    .captures(face)
+                    .and_then(|cap| cap.get(0));
+
+            unicode_list.map(|range| {
+                range
+                    .as_str()
+                    .split(|c| c == ',' || c == ';')
+                    .filter_map(|i| {
+                        let i = i.trim().replace("U+", "");
+                        if i.contains('-') {
+                            Some(
+                                i.split('-')
+                                    .filter_map(|i| {
+                                        u32::from_str_radix(i, 16).ok()
+                                    })
+                                    .collect(),
+                            )
+                        } else {
+                            u32::from_str_radix(&i, 16).ok().map(|n| vec![n])
+                        }
+                    })
+                    .collect()
+            })
+        })
+        .collect()
 }
 
 // 处理韩文字符频率分布

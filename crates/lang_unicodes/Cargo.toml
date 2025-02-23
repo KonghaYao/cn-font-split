@@ -1,6 +1,6 @@
 [package]
 name = "lang-unicodes"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "Effortlessly convert and validate text across various Unicode ranges, supporting multiple languages for seamless internationalization in your applications."
 authors = ["KonghaYao<3446798488@qq.com>"]
@@ -13,6 +13,7 @@ include = ["data", "src"]
 lazy_static = "1.5.0"
 cn-font-utils = { version = "0.2.0", path = "../cn_font_utils" }
 
+
 [lib]
 path = "src/lib.rs"
 
@@ -20,7 +21,7 @@ path = "src/lib.rs"
 cn-font-utils = { version = "0.2.0", path = "../cn_font_utils" }
 lazy_static = { version = "1.5.0", optional = true }
 opencc-rs = { version = "0.4.7", optional = true }
-indexmap = "2.7.1"
+regex = "1.11.1"
 
 [features]
 default = ["with_extra"]
