@@ -1,5 +1,5 @@
 use cjk_unicodes::{
-    HANGUL_JAMO, HANGUL_SYL, HIRAGANA_AND_KATAKANA, ZH_COMMON, ZH_SC, ZH_TC,
+    HANGUL_JAMO, HANGUL_SYL, HIRAGANA_AND_KATAKANA, ZH_SC, ZH_SYMBOL, ZH_TC,
 };
 use lazy_static::lazy_static;
 pub mod cjk_unicodes;
@@ -15,7 +15,12 @@ lazy_static! {
      * @link https://npmmirror.com/package/@fontsource/noto-sans/files/400.css?version=5.0.22#L61
      * 0 不归入此，一般 0 是用于占位的
      */
-    pub static ref LATIN: Vec<u32> = expand_ranges(&[(0x0001, 0x024F)]);
+    pub static ref LATIN: Vec<u32> = expand_ranges(&[(0x0001, 0x00FF)]);
+    pub static ref LATIN_EXT_A: Vec<u32> = expand_ranges(&[(0x0100, 0x017F)]);
+    pub static ref LATIN_EXT_B: Vec<u32> = expand_ranges(&[(0x0180, 0x024F)]);
+
+
+
     pub static ref GREEK: Vec<u32> = expand_ranges(&[(0x0370, 0x03FF), (0x1F00, 0x1FFF)]);
 
     /// 西里尔文范围
@@ -123,13 +128,15 @@ mod tests {
     }
 }
 
-pub fn create_default_unicode_area() -> [Vec<u32>; 27] {
+pub fn create_default_unicode_area() -> [Vec<u32>; 29] {
     [
         LATIN.to_vec(),
+        LATIN_EXT_A.to_vec(),
+        LATIN_EXT_B.to_vec(),
         GREEK.to_vec(),
         CYRILLIC.to_vec(),
         // 中文处理
-        ZH_COMMON.to_vec(),
+        ZH_SYMBOL.to_vec(),
         ZH_SC.to_vec(),
         ZH_TC.to_vec(),
         // 日文处理

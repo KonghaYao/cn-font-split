@@ -57,7 +57,7 @@ fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
 }
 
 lazy_static! {
-    pub static ref ZH_COMMON: Vec<u32> = get_part_from_cn_pkg(0).unwrap();
+    pub static ref ZH_SYMBOL: Vec<u32> = get_part_from_cn_pkg(0).unwrap();
     pub static ref ZH_SC: Vec<u32> = get_part_from_cn_pkg(1).unwrap();
     pub static ref ZH_TC: Vec<u32> = get_part_from_cn_pkg(2).unwrap();
     pub static ref HANGUL_SYL: Vec<u32> =
@@ -73,13 +73,13 @@ mod tests {
     #[test]
     fn test() {
         assert_eq!(HIRAGANA_AND_KATAKANA.len(), 192);
-        assert_eq!(ZH_COMMON.len(), 4524);
+        assert_eq!(ZH_SYMBOL.len(), 4524);
         assert_eq!(ZH_SC.len(), 2313);
         assert_eq!(ZH_TC.len(), 2308);
         assert_eq!(HANGUL_SYL.len(), 2026);
         println!(
             "{}",
-            ZH_COMMON
+            ZH_SYMBOL
                 .iter()
                 .map(|i| { std::char::from_u32(i.clone()).unwrap() })
                 .collect::<String>()

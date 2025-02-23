@@ -69,33 +69,31 @@ fn opencc_convert(s: String) -> String {
 fn process_chinese_chars() {
     use indexmap::IndexSet;
 
-    let sc: Vec<char> =
-        CN_SYMBOL.chars().chain(HAN_ZI_PIN_LV.chars()).clone().collect();
+    let symbol: Vec<char> = CN_SYMBOL.chars().clone().collect();
+    let sc: Vec<char> = HAN_ZI_PIN_LV.chars().clone().collect();
     let tc: Vec<u16> = sc
         .iter()
         .map(|i| opencc_convert(i.to_string()).chars().next().unwrap())
         .map(|i| encode_utf16(&i))
         .collect();
     let sc: Vec<u16> = sc.iter().map(encode_utf16).collect();
-    let hashset_tc: IndexSet<&u16> = IndexSet::from_iter(tc.iter());
-    let common: Vec<u16> =
-        sc.iter().filter(|i| hashset_tc.contains(i)).copied().collect();
-    let hashset_common: IndexSet<&u16> = IndexSet::from_iter(common.iter());
-    let sc_set: Vec<u16> =
-        sc.iter().filter(|i| !hashset_common.contains(i)).copied().collect();
+    let symbol: Vec<u16> = symbol.iter().map(encode_utf16).collect();
+
+    let hashset_sc: IndexSet<&u16> = IndexSet::from_iter(sc.iter());
+
     let tc_set: Vec<u16> =
-        tc.iter().filter(|i| !hashset_common.contains(i)).copied().collect();
+        tc.iter().filter(|i| !hashset_sc.contains(i)).copied().collect();
 
     println!(
         "common: {}\tsc_set: {}\ttc_set: {}\t使用 uint16存储",
-        common.len(),
-        sc_set.len(),
+        symbol.len(),
+        sc.len(),
         tc_set.len()
     );
-    let data: Vec<u16> = common
+    let data: Vec<u16> = symbol
         .iter()
         .chain([0].iter())
-        .chain(sc_set.iter())
+        .chain(sc.iter())
         .chain([0].iter())
         .chain(tc_set.iter())
         .copied()
