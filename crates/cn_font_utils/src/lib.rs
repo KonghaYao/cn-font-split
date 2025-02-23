@@ -44,6 +44,13 @@ pub fn u8_array_to_u32_array(arr: &[u8]) -> Vec<u32> {
         })
         .collect()
 }
+// 将 Vec<u8> 转换为 Vec<u16>
+pub fn u8_array_to_u16_array(arr: &[u8]) -> Vec<u16> {
+    assert!(arr.len() % 2 == 0, "Array length is not a multiple of 2");
+    arr.chunks(2)
+        .map(|chunk| u16::from_be_bytes([chunk[1], chunk[0]]))
+        .collect()
+}
 /// 输出一个文件，会自动创建文件夹
 pub fn output_file(file_path: &str, buffer: &Vec<u8>) -> std::io::Result<()> {
     use std::fs::File;
