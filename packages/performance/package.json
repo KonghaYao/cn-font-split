@@ -1,18 +1,18 @@
 {
-  "name": "performance",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@japont/unicode-range": "^1.0.0",
-    "cn-font-split": "7.2.2",
-    "byte-size": "^8.1.1",
-    "solid-js": "^1.7.8"
-  }
+    "name": "performance",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@japont/unicode-range": "^1.0.0",
+        "cn-font-split": "7.2.4",
+        "byte-size": "^8.1.1",
+        "solid-js": "^1.7.8"
+    }
 }

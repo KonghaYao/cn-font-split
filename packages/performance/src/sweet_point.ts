@@ -13,14 +13,15 @@ export async function main(build = false) {
     const input = '../demo/public/NotoSerifSC-Regular.ttf';
     const sample = generateNumbers(10, 100, 5);
     // 生成字体
-    build &&
-        sample.forEach((size) => {
-            fontSplit({
+    if (build) {
+        for (let size of sample) {
+            await fontSplit({
                 input,
                 outDir: './build/' + size,
                 chunkSize: size * 1024,
             });
-        });
+        }
+    }
     // 拿到 unicode -> subset 的报告
     const sampleReporter: Mapper[] = [];
     for (const element of sample) {
@@ -109,7 +110,7 @@ export async function main(build = false) {
     });
 }
 
-main();
+main(true);
 
 type Mapper = Map<number, proto.OutputReport['subsetDetail'][number]>;
 
