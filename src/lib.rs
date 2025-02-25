@@ -35,12 +35,12 @@ fn main_test() {
                 // polyfill: vec![],
                 // comment_base: Some(true),
                 // comment_name_table: Some(true),
-                // comment_unicodes: Some(true),
+                comment_unicodes: Some(true),
                 // compress: Some(true),
                 // file_name: Some("input.css".to_string()),
                 ..Default::default()
             }),
-            chunk_size: Some(20 * 1024),
+            // chunk_size: Some(40 * 1024),
             // 精确控制
             // subsets: vec![[65]].iter().map(|x| u32_array_to_u8_array(x)).collect(),
             // language_areas: Some(false),

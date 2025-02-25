@@ -13,7 +13,6 @@ use log::{debug, warn};
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
-use std::collections::btree_set::Difference;
 use std::time::Instant;
 use woff::version2::compress;
 

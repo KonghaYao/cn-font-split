@@ -76,7 +76,7 @@ pub fn pre_subset(ctx: &mut Context) {
     if ctx.input.font_feature.unwrap_or(true) {
         process.push(features_plugin);
     }
-    if ctx.input.reduce_mins.unwrap_or(true) {
+    if ctx.input.reduce_mins.unwrap_or(false) {
         process.push(reduce_min_plugin);
     }
     for p in process {
