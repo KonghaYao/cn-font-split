@@ -99,8 +99,8 @@ export class SubsetBundlePlugin extends BundlePlugin {
                     const stream = fs.createReadStream(i, {
                         encoding: 'utf8',
                     });
-                    stream.on('data', (i: string) => {
-                        [...i].forEach((char) =>
+                    stream.on('data', (i) => {
+                        [...(i as string)].forEach((char) =>
                             this.usedSubsets.add(char.codePointAt(0)!),
                         );
                     });

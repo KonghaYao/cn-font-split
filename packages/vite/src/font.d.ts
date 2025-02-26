@@ -1,7 +1,6 @@
 declare module '@konghayao/_font_' {
-    import { fontSplit } from 'cn-font-split';
-    type Reporter = Awaited<ReturnType<typeof fontSplit>>;
-    export const css: Reporter['css'];
+    import { type FontReporter } from 'cn-font-split/dist/interface';
+    export const css: NonNullable<FontReporter['css']>;
 }
 
 declare module '*.ttf' {

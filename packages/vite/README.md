@@ -94,6 +94,27 @@ module.exports = {
 };
 ```
 
+### Rsbuild
+
+Thanks to @SamuNatsu for the addition.
+
+[TS Type Configuration](#typescript-support)
+
+```js
+export default defineConfig({
+  // ...
+  tools: {
+    bundlerChain(chain, { CHAIN_ID }) {
+      chain.module.rule(CHAIN_ID.RULE.FONT).exclude.add(/\.(ttf|otf)$/);  // Require RsBuild not to process .ttf files
+    },
+    rspack: {
+      plugins: [pluginFont.rspack()],  // Register plugin in RsPack
+    },
+  },
+  // ...
+});
+```
+
 ## 🚀 Usage
 
 ```jsx

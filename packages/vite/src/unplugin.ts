@@ -6,7 +6,6 @@ import {
     SubsetUtils,
 } from './subset/SubsetBundlePlugin.js';
 import { normalizePath } from './utils/normalizePath.js';
-
 export interface Options extends Partial<SubsetBundlePluginConfig> {
     /**
      * 默认为 [/\.otf/, /\.ttf/]

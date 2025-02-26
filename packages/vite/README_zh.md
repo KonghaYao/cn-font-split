@@ -94,6 +94,27 @@ module.exports = {
 };
 ```
 
+### Rsbuild
+
+感谢 @SamuNatsu 补充
+
+[TS 类型配置](#typescript-支持)
+
+```js
+export default defineConfig({
+  // ...
+  tools: {
+    bundlerChain(chain, { CHAIN_ID }) {
+      chain.module.rule(CHAIN_ID.RULE.FONT).exclude.add(/\.(ttf|otf)$/);  // 要求 RsBuild 不处理 .ttf 文件
+    },
+    rspack: {
+      plugins: [pluginFont.rspack()],  // 在 RsPack 中注册插件
+    },
+  },
+  // ...
+});
+```
+
 ## 🚀 Usage
 
 ```jsx
