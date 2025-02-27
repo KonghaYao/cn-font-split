@@ -7,7 +7,7 @@
     "types": "./dist/unplugin.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/vite"
+        "url": "https://github.com/KonghaYao/cn-font-split/tree/release/packages/vite"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
