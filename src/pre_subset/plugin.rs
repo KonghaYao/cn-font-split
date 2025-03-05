@@ -43,10 +43,26 @@ pub fn add_remain_chars_plugin(
     _ctx: &mut PreSubsetContext,
 ) {
     info!("{} 个剩余字符被处理", remaining_chars_set.len());
-    subsets.push(remaining_chars_set.iter().cloned().collect());
+    let mut v: Vec<u32> = remaining_chars_set.iter().cloned().collect();
+    v.sort();
+
+    for i in split_into_chunks(v, 70) {
+        subsets.push(i.iter().cloned().collect());
+    }
+
     remaining_chars_set.clear();
 }
 
+fn split_into_chunks(v: Vec<u32>, chunk_size: usize) -> Vec<Vec<u32>> {
+    let mut result = Vec::new();
+    let mut current_chunk;
+    for chunk in v.chunks(chunk_size) {
+        current_chunk = Vec::with_capacity(chunk_size);
+        current_chunk.extend_from_slice(chunk);
+        result.push(current_chunk);
+    }
+    result
+}
 /// 把数量低于某个值的包，重新规划，缩减碎片分包数
 pub fn reduce_min_plugin(
     subsets: &mut Vec<IndexSet<u32>>,

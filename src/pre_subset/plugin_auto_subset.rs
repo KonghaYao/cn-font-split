@@ -24,7 +24,7 @@ pub fn plugin_auto_subset(
 
     info!(
         "predict subset: {}/subset, {} bytes/char, {}(chunk_size)",
-        bytes_per_char, chars_per_subset, ctx.predict_bytes_pre_subset
+        chars_per_subset, bytes_per_char, ctx.predict_bytes_pre_subset
     );
     let mut count: usize = 0;
     let mut new_used_languages = HashMap::new();
@@ -54,9 +54,10 @@ pub fn plugin_auto_subset(
 
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
 fn length_for_index(x: usize, max_count: u32) -> usize {
-    let y: f32 = (max_count as f32) / (x as f32).cbrt(); // 计算立方根并求解y
+    let y: f32 = (max_count as f32) / (x as f32).sqrt(); // 计算立方根并求解y
     let y_ceil = y.ceil(); // 将结果向上取整
-    y_ceil as usize
+                           // 不能比 max_count 的 1/5 小
+    std::cmp::max(y_ceil as usize, (max_count / 5) as usize)
 }
 fn split_vector(vec: &IndexSet<u32>, max_count: u32) -> Vec<IndexSet<u32>> {
     let mut result: Vec<IndexSet<u32>> = Vec::new();

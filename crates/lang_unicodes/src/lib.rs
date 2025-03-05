@@ -1,5 +1,5 @@
 use cjk_unicodes::{
-    HANGUL_JAMO, HANGUL_SYL, HIRAGANA_AND_KATAKANA, ZH_SC, ZH_SYMBOL, ZH_TC,
+    HANGUL_JAMO, HANGUL_SYL, HIRAGANA_AND_KATAKANA, ZH_SC, ZH_TC,
 };
 use lazy_static::lazy_static;
 pub mod cjk_unicodes;
@@ -19,6 +19,12 @@ lazy_static! {
     pub static ref LATIN_EXT_A: Vec<u32> = expand_ranges(&[(0x0100, 0x017F)]);
     pub static ref LATIN_EXT_B: Vec<u32> = expand_ranges(&[(0x0180, 0x024F)]);
 
+
+    pub static ref HALFWIDTH_FULLWIDTH: Vec<u32> = expand_ranges(&[(0xFF00, 0xFFEF)]);
+
+    pub static ref IPA_SYMBOLS: Vec<u32> = expand_ranges(&[(0x0250, 0x02FF)]);
+
+    pub static ref ZH_SYMBOL: Vec<u32> = expand_ranges(&[(0x0300,0x036f),(0xFE10, 0xFE4F)]);
 
 
     pub static ref GREEK: Vec<u32> = expand_ranges(&[(0x0370, 0x03FF), (0x1F00, 0x1FFF)]);
@@ -128,11 +134,13 @@ mod tests {
     }
 }
 
-pub fn create_default_unicode_area() -> [Vec<u32>; 29] {
+pub fn create_default_unicode_area() -> [Vec<u32>; 31] {
     [
         LATIN.to_vec(),
         LATIN_EXT_A.to_vec(),
         LATIN_EXT_B.to_vec(),
+        IPA_SYMBOLS.to_vec(),
+        HALFWIDTH_FULLWIDTH.to_vec(),
         GREEK.to_vec(),
         CYRILLIC.to_vec(),
         // 中文处理
@@ -164,11 +172,13 @@ pub fn create_default_unicode_area() -> [Vec<u32>; 29] {
         NAXI_DONGBA.to_vec(),
     ]
 }
-pub fn create_default_unicode_area_tag() -> [&'static str; 29] {
+pub fn create_default_unicode_area_tag() -> [&'static str; 31] {
     [
         "LATIN",
         "LATIN_EXT_A",
         "LATIN_EXT_B",
+        "IPA_SYMBOLS",
+        "HALFWIDTH_FULLWIDTH",
         "GREEK",
         "CYRILLIC",
         // 中文处理
