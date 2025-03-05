@@ -2,7 +2,7 @@ use cmap::analyze_cmap;
 use gpos::analyze_gpos;
 use gsub::analyze_gsub;
 use indexmap::IndexSet;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use super::PreSubsetContext;
 pub mod cmap;
@@ -10,7 +10,7 @@ pub mod gpos;
 pub mod gsub;
 pub fn features_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut IndexSet<u32>,
+    _remaining_chars_set: &mut HashSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let cmap = analyze_cmap(ctx.font, ctx.font_file);

@@ -164,3 +164,39 @@ pub fn create_default_unicode_area() -> [Vec<u32>; 29] {
         NAXI_DONGBA.to_vec(),
     ]
 }
+pub fn create_default_unicode_area_tag() -> [&'static str; 29] {
+    [
+        "LATIN",
+        "LATIN_EXT_A",
+        "LATIN_EXT_B",
+        "GREEK",
+        "CYRILLIC",
+        // 中文处理
+        "ZH_SYMBOL",
+        "ZH_SC",
+        "ZH_TC",
+        // 日文处理
+        "HIRAGANA_AND_KATAKANA",
+        // 韩文处理
+        "HANGUL_JAMO",
+        "HANGUL_SYL",
+        "BENGALI",
+        "ARABIC",
+        "DEVANAGARI",
+        "THAI",
+        "KHMER",
+        "TIBETAN",
+        "MONGOLIAN",
+        "TAI_LUE",
+        "YI",
+        "PHAGS_PA",
+        "LISU",
+        "BUHID",
+        "MIAO",
+        "HANI",
+        "LAHU",
+        "VA",
+        "ZHUANG",
+        "NAXI_DONGBA",
+    ]
+}

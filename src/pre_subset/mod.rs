@@ -16,25 +16,29 @@ use plugin::{
     add_remain_chars_plugin, language_area_plugin, reduce_min_plugin,
 };
 use plugin_auto_subset::plugin_auto_subset;
-use std::io::Cursor;
+use std::{
+    collections::{HashMap, HashSet},
+    io::Cursor,
+};
 
 pub struct PreSubsetContext<'a, 'b, 'c>
 where
     'b: 'a,
     'c: 'a,
 {
-    all_unicodes: IndexSet<u32>,
+    all_unicodes: HashSet<u32>,
     face: &'a mut Owned<Face<'b>>,
     predict_bytes_pre_subset: u32,
     font: &'a opentype::Font,
     font_file: &'a mut Cursor<&'c [u8]>,
     subsets: &'c Vec<Vec<u32>>,
+    used_languages: HashMap<usize, String>,
 }
 
 pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &*ctx.binary;
-    let mut all_unicodes: IndexSet<u32> =
-        IndexSet::from_iter(ctx.face.collect_unicodes());
+    let mut all_unicodes: HashSet<u32> =
+        HashSet::from_iter(ctx.face.collect_unicodes());
 
     let mut font_file = Cursor::new(file_binary);
     let font = opentype::Font::read(&mut font_file)
@@ -54,12 +58,13 @@ pub fn pre_subset(ctx: &mut Context) {
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
+        used_languages: HashMap::new(),
     };
 
     let mut process: Vec<
         fn(
             &mut Vec<IndexSet<u32>>,
-            &mut IndexSet<u32>,
+            &mut HashSet<u32>,
             &mut PreSubsetContext<'_, '_, '_>,
         ),
     > = vec![];
@@ -82,8 +87,6 @@ pub fn pre_subset(ctx: &mut Context) {
     for p in process {
         p(&mut subsets, &mut all_unicodes, &mut context);
     }
-
-    // let set = analyze_gsub(&font, &mut font_file);
     ctx.pre_subset_result = subsets
         .iter()
         .filter(|v| v.len() > 0)

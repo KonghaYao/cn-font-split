@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 use indexmap::IndexSet;
 
 use log::{debug, info};
@@ -8,7 +10,7 @@ use super::PreSubsetContext;
 
 pub fn plugin_auto_subset(
     subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut IndexSet<u32>,
+    _remaining_chars_set: &mut HashSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let size = ctx.all_unicodes.len();
@@ -24,22 +26,30 @@ pub fn plugin_auto_subset(
         "predict subset: {}/subset, {} bytes/char, {}(chunk_size)",
         bytes_per_char, chars_per_subset, ctx.predict_bytes_pre_subset
     );
-    let new_subsets = chunk_iterable_and_flat(subsets, chars_per_subset);
+    let mut count: usize = 0;
+    let mut new_used_languages = HashMap::new();
+    let new_subsets = subsets
+        .iter()
+        .enumerate()
+        .flat_map(|(index, subset)| {
+            let res = split_vector(subset, chars_per_subset);
+            if let Some(language) = ctx.used_languages.get(&index) {
+                for _ in 0..res.len() {
+                    new_used_languages.insert(count, language.clone());
+                    count += 1;
+                }
+            }
+            res
+        })
+        .collect::<Vec<IndexSet<u32>>>();
     subsets.clear();
     for i in new_subsets {
         subsets.push(i);
     }
-}
-
-/// 将集合中的每个子集进一步分割成大小不超过 `max_chunk_size` 的更小子集。
-pub fn chunk_iterable_and_flat(
-    subsets: &mut Vec<IndexSet<u32>>,
-    max_chunk_size: u32,
-) -> Vec<IndexSet<u32>> {
-    subsets
-        .iter()
-        .flat_map(|subset| split_vector(subset, max_chunk_size))
-        .collect::<Vec<IndexSet<u32>>>()
+    // new_used_languages.iter().for_each(|(index, name)| {
+    //     info!("subset: {} {} {}", index, name, subsets[*index].len());
+    // });
+    ctx.used_languages = new_used_languages;
 }
 
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
@@ -104,28 +114,9 @@ mod tests {
         assert_eq!(result.len(), 4);
     }
 }
-#[test]
-fn for_chunk_iterable_and_flat() {
-    let mut subsets = vec![
-        IndexSet::from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-        IndexSet::from([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]),
-    ];
-    let result = chunk_iterable_and_flat(&mut subsets, 5);
-    assert_eq!(
-        result,
-        vec![
-            IndexSet::from([1, 2, 3, 4]),
-            IndexSet::from([5, 6, 7, 8]),
-            IndexSet::from([9, 10]),
-            IndexSet::from([11, 12, 13, 14]),
-            IndexSet::from([15, 16, 17, 18]),
-            IndexSet::from([19, 20, 21]),
-        ]
-    );
-}
 
 /// 每隔 n 个元素抽取一个元素
-fn extract_every_nth<T: Clone>(set: &IndexSet<T>, n: usize) -> Vec<T> {
+fn extract_every_nth<T: Clone>(set: &HashSet<T>, n: usize) -> Vec<T> {
     // 检查 n 是否有效
     let n = if n == 0 { 1_usize } else { n };
 
@@ -142,7 +133,7 @@ fn extract_every_nth<T: Clone>(set: &IndexSet<T>, n: usize) -> Vec<T> {
 }
 #[test]
 fn main() {
-    let mut set = IndexSet::new();
+    let mut set = HashSet::new();
     set.insert(1);
     set.insert(2);
     set.insert(3);
