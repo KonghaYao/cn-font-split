@@ -37,6 +37,8 @@ export CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github
 pnpm i cn-font-split
 ```
 
+### Nodejs 版本
+
 ```js
 import fs from 'fs';
 import { fontSplit } from 'cn-font-split';
@@ -49,6 +51,20 @@ await fontSplit({
     outDir: './dist/font',
 });
 console.timeEnd('node');
+```
+
+### Bun 版本
+
+```js
+import { fontSplit } from 'cn-font-split/dist/bun/index.js';
+const inputBuffer = Bun.file('../demo/public/SmileySans-Oblique.ttf').bytes(),
+
+console.time('bun');
+await fontSplit({
+    input: inputBuffer,
+    outDir: './dist/font',
+});
+console.timeEnd('bun');
 ```
 
 ### 控制生成产物
