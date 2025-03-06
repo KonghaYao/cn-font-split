@@ -90,7 +90,7 @@ pub fn plugin_auto_subset(
 fn length_for_index(x: usize, max_count: u32, level: OptLevel) -> usize {
     let min_count = (max_count / 5) as u32;
     let y: f32 = match level {
-        OptLevel::NO => (min_count as f32) * (x as f32),
+        OptLevel::NO => (min_count as f32) * (5 as f32),
         OptLevel::LOW => (min_count as f32) * (x as f32).sqrt(),
         OptLevel::MID => (min_count as f32) * (x as f32).cbrt(),
         OptLevel::HIGH => (min_count as f32) * (x as f32).cbrt(),
