@@ -40,14 +40,14 @@ fn main_test() {
                 // file_name: Some("input.css".to_string()),
                 ..Default::default()
             }),
-            chunk_size: Some(50 * 1024),
+            // chunk_size: Some(70 * 1024),
             // 精确控制
             // subsets: vec![[65]].iter().map(|x| u32_array_to_u8_array(x)).collect(),
             // language_areas: Some(false),
             // auto_subset: Some(false),
             // subset_remain_chars: Some(false),
-            font_feature: Some(false),
-            // reduce_mins: Some(false),
+            // font_feature: Some(false),
+            // reduce_mins: Some(true),
             // rename_output_font: Some("font_[hash:6].[ext]".to_string()),
             ..Default::default()
         };
@@ -72,6 +72,7 @@ fn main_test() {
         println!("Time: {:?}", duration);
     }
 
+    // test_on("./LXGWWenKai-Regular.ttf", "ttf");
     test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
     // test_on("./packages/demo/public/SmileySans-Oblique.ttf.woff2", "woff2");
 }

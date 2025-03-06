@@ -45,23 +45,8 @@ pub fn add_remain_chars_plugin(
     info!("{} 个剩余字符被处理", remaining_chars_set.len());
     let mut v: Vec<u32> = remaining_chars_set.iter().cloned().collect();
     v.sort();
-
-    for i in split_into_chunks(v, 70) {
-        subsets.push(i.iter().cloned().collect());
-    }
-
+    subsets.push(v.iter().cloned().collect());
     remaining_chars_set.clear();
-}
-
-fn split_into_chunks(v: Vec<u32>, chunk_size: usize) -> Vec<Vec<u32>> {
-    let mut result = Vec::new();
-    let mut current_chunk;
-    for chunk in v.chunks(chunk_size) {
-        current_chunk = Vec::with_capacity(chunk_size);
-        current_chunk.extend_from_slice(chunk);
-        result.push(current_chunk);
-    }
-    result
 }
 /// 把数量低于某个值的包，重新规划，缩减碎片分包数
 pub fn reduce_min_plugin(
@@ -69,8 +54,7 @@ pub fn reduce_min_plugin(
     _remaining_chars_set: &mut HashSet<u32>,
     _ctx: &mut PreSubsetContext,
 ) {
-    // TODO 抽取为定义
-    let min = 10;
+    let min = 20;
     let max = 100;
     let mut cache: Vec<u32> = Vec::new();
     subsets.retain(|x| {

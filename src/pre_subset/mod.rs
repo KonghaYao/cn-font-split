@@ -72,15 +72,16 @@ pub fn pre_subset(ctx: &mut Context) {
     if ctx.input.language_areas.unwrap_or(true) {
         process.push(language_area_plugin);
     }
-    if ctx.input.auto_subset.unwrap_or(true) {
-        process.push(plugin_auto_subset);
-    }
     if ctx.input.subset_remain_chars.unwrap_or(true) {
         process.push(add_remain_chars_plugin);
+    }
+    if ctx.input.auto_subset.unwrap_or(true) {
+        process.push(plugin_auto_subset);
     }
     if ctx.input.font_feature.unwrap_or(true) {
         process.push(features_plugin);
     }
+    // 尚未调试好这个算法，所以不启用
     if ctx.input.reduce_mins.unwrap_or(false) {
         process.push(reduce_min_plugin);
     }
