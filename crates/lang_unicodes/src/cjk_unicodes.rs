@@ -60,8 +60,8 @@ mod tests {
     fn test() {
         assert_eq!(HIRAGANA_AND_KATAKANA.len(), 192);
         assert_eq!(ZH_SYMBOL.len(), 74);
-        assert_eq!(ZH_SC.len(), 7000);
-        assert_eq!(ZH_TC.len(), 932);
+        assert_eq!(ZH_SC.len(), 6763);
+        assert_eq!(ZH_TC.len(), 2308);
         assert_eq!(HANGUL_SYL.len(), 2026);
         println!(
             "{}",

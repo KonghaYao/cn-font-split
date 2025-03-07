@@ -50,14 +50,11 @@ pub fn plugin_auto_subset(
             let lang = ctx.used_languages.get(&index);
             let res = match lang {
                 // 繁体中文一般比简体中文要大一倍复杂度，故进行特殊处理
-                Some(ref i) if *i == "ZH_TC" => {
-                    // 特殊处理ZH_CN的情况
-                    split_vector(
-                        subset,
-                        ((chars_per_subset as f32) * 0.5_f32) as u32,
-                        opt_level,
-                    ) // 假设对ZH_CN有不一样的处理逻辑
-                }
+                Some(ref i) if *i == "ZH_TC" => split_vector(
+                    subset,
+                    ((chars_per_subset as f32) * 0.5_f32) as u32,
+                    opt_level,
+                ),
                 None => {
                     return split_vector(
                         subset,
@@ -91,7 +88,7 @@ fn length_for_index(x: usize, max_count: u32, level: OptLevel) -> usize {
     let min_count = (max_count / 5) as u32;
     let y: f32 = match level {
         OptLevel::NO => (min_count as f32) * (5 as f32),
-        OptLevel::LOW => (min_count as f32) * (x as f32).sqrt(),
+        OptLevel::LOW => (min_count as f32) * (x as f32).cbrt(),
         OptLevel::MID => (min_count as f32) * (x as f32).cbrt(),
         OptLevel::HIGH => (min_count as f32) * (x as f32).cbrt(),
     }; // 计算立方根并求解y
