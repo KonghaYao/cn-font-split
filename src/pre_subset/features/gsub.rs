@@ -31,7 +31,7 @@ pub fn analyze_gsub(
     //     .iter()
     //     .map(|h| h.tag.as_str().expect("Invalid tag"))
     //     .collect();
-    // let unique_feature_tags: HashSet<&str> = feature_tags.drain(..).collect();
+    // let unique_feature_tags: BTreeSet<&str> = feature_tags.drain(..).collect();
 
     // println!("{:?}", unique_feature_tags);
     // println!("{:?}", data.features.get(Tag::from_str("fwid").expect("222")));

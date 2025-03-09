@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::BTreeSet;
 
 use super::PreSubsetContext;
 use indexmap::IndexSet;
@@ -6,7 +6,7 @@ use indexmap::IndexSet;
 // 添加用户的 subsets 到第一位
 pub fn plugin_add_user_subset(
     subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut HashSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     ctx.subsets.iter().for_each(|u32_arr: &Vec<u32>| {

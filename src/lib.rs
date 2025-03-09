@@ -46,7 +46,7 @@ fn main_test() {
             // language_areas: Some(false),
             // auto_subset: Some(false),
             // subset_remain_chars: Some(false),
-            font_feature: Some(false),
+            // font_feature: Some(false),
             reduce_mins: Some(false),
             // rename_output_font: Some("font_[hash:6].[ext]".to_string()),
             ..Default::default()

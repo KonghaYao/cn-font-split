@@ -17,7 +17,7 @@ use plugin::{
 };
 use plugin_auto_subset::plugin_auto_subset;
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{HashMap, BTreeSet},
     io::Cursor,
 };
 
@@ -26,7 +26,7 @@ where
     'b: 'a,
     'c: 'a,
 {
-    all_unicodes: HashSet<u32>,
+    all_unicodes: BTreeSet<u32>,
     face: &'a mut Owned<Face<'b>>,
     predict_bytes_pre_subset: u32,
     font: &'a opentype::Font,
@@ -37,8 +37,8 @@ where
 
 pub fn pre_subset(ctx: &mut Context) {
     let file_binary = &*ctx.binary;
-    let mut all_unicodes: HashSet<u32> =
-        HashSet::from_iter(ctx.face.collect_unicodes());
+    let mut all_unicodes: BTreeSet<u32> =
+        BTreeSet::from_iter(ctx.face.collect_unicodes());
 
     let mut font_file = Cursor::new(file_binary);
     let font = opentype::Font::read(&mut font_file)
@@ -64,7 +64,7 @@ pub fn pre_subset(ctx: &mut Context) {
     let mut process: Vec<
         fn(
             &mut Vec<IndexSet<u32>>,
-            &mut HashSet<u32>,
+            &mut BTreeSet<u32>,
             &mut PreSubsetContext<'_, '_, '_>,
         ),
     > = vec![];

@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap};
 
 use indexmap::IndexSet;
 
@@ -18,7 +18,7 @@ pub enum OptLevel {
 
 pub fn plugin_auto_subset(
     subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut HashSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let size = ctx.all_unicodes.len();
@@ -158,7 +158,7 @@ mod tests {
 }
 
 /// 每隔 n 个元素抽取一个元素
-fn extract_every_nth<T: Clone>(set: &HashSet<T>, n: usize) -> Vec<T> {
+fn extract_every_nth<T: Clone>(set: &BTreeSet<T>, n: usize) -> Vec<T> {
     // 检查 n 是否有效
     let n = if n == 0 { 1_usize } else { n };
 
@@ -175,7 +175,7 @@ fn extract_every_nth<T: Clone>(set: &HashSet<T>, n: usize) -> Vec<T> {
 }
 #[test]
 fn main() {
-    let mut set = HashSet::new();
+    let mut set = BTreeSet::new();
     set.insert(1);
     set.insert(2);
     set.insert(3);

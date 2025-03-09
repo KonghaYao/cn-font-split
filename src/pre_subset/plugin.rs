@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::BTreeSet;
 
 use indexmap::IndexSet;
 
@@ -11,7 +11,7 @@ use super::PreSubsetContext;
 
 pub fn language_area_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
-    remaining_chars_set: &mut HashSet<u32>,
+    remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
 ) {
     let language_area = create_default_unicode_area();
@@ -39,7 +39,7 @@ pub fn language_area_plugin(
 
 pub fn add_remain_chars_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
-    remaining_chars_set: &mut HashSet<u32>,
+    remaining_chars_set: &mut BTreeSet<u32>,
     _ctx: &mut PreSubsetContext,
 ) {
     info!("{} 个剩余字符被处理", remaining_chars_set.len());
@@ -51,7 +51,7 @@ pub fn add_remain_chars_plugin(
 /// 把数量低于某个值的包，重新规划，缩减碎片分包数
 pub fn reduce_min_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut HashSet<u32>,
+    _remaining_chars_set: &mut BTreeSet<u32>,
     _ctx: &mut PreSubsetContext,
 ) {
     let min = 20;
