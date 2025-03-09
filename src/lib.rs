@@ -46,8 +46,8 @@ fn main_test() {
             // language_areas: Some(false),
             // auto_subset: Some(false),
             // subset_remain_chars: Some(false),
-            // font_feature: Some(false),
-            // reduce_mins: Some(true),
+            font_feature: Some(false),
+            reduce_mins: Some(false),
             // rename_output_font: Some("font_[hash:6].[ext]".to_string()),
             ..Default::default()
         };
@@ -72,7 +72,7 @@ fn main_test() {
         println!("Time: {:?}", duration);
     }
 
-    test_on("./LXGWWenKai-Regular.ttf", "ttf");
-    // test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
+    // test_on("./LXGWWenKai-Regular.ttf", "ttf");
+    test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
     // test_on("./packages/demo/public/SmileySans-Oblique.ttf.woff2", "woff2");
 }

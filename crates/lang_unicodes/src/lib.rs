@@ -12,20 +12,47 @@ pub fn expand_ranges(ranges: &[(u32, u32)]) -> Vec<u32> {
 lazy_static! {
     /**
      * Latin 范围替换
-     * @link https://npmmirror.com/package/@fontsource/noto-sans/files/400.css?version=5.0.22#L61
      * 0 不归入此，一般 0 是用于占位的
      */
-    pub static ref LATIN: Vec<u32> = expand_ranges(&[(0x0001, 0x00FF)]);
+    pub static ref LATIN: Vec<u32> = expand_ranges(&[(0x0001, 0x007F)]);
+    pub static ref LATIN_1: Vec<u32> = expand_ranges(&[(0x0080, 0x00FF)]);
     pub static ref LATIN_EXT_A: Vec<u32> = expand_ranges(&[(0x0100, 0x017F)]);
     pub static ref LATIN_EXT_B: Vec<u32> = expand_ranges(&[(0x0180, 0x024F)]);
 
 
-    pub static ref HALFWIDTH_FULLWIDTH: Vec<u32> = expand_ranges(&[(0xFF00, 0xFFEF)]);
 
     pub static ref IPA_SYMBOLS: Vec<u32> = expand_ranges(&[(0x0250, 0x02FF)]);
 
-    pub static ref ZH_SYMBOL: Vec<u32> = expand_ranges(&[(0x0300,0x036f),(0xFE10, 0xFE4F)]);
+    // 定义 ZH_SYMBOL 静态引用，包含特化处理的中文常用符号的 Unicode 码点
+    pub static ref ZH_SYMBOL: Vec<u32> = expand_ranges(&[
+        // …
+        (0x2026, 0x2026),
+        // 句号（、。）
+        (0x3001, 0x3002),
+        //《》
+        (0x300a, 0x300b),
+        // 逗号（，－）
+        (0xFF0C, 0xFF0D),
+        // 问号（？）
+        (0xFF1F, 0xFF1F),
+        // ｜
+        (0xFF5C, 0xFF5C),
+        // 感叹号（！）
+        (0xFF01, 0xFF01),
+        // 分号（；）
+        (0xFF1B, 0xFF1B),
+        // 括号（（））
+        (0xFF08, 0xFF09),
+        // 冒号（：）
+        (0xFF1A, 0xFF1A),
+        // 引号（“” ‘’）
+        (0x201C, 0x201D), // “”
+        (0x2018, 0x2019), // ‘’
+        // 破折号（——）
+        (0x2014, 0x2014),
+    ]);
 
+    pub static ref HALFWIDTH_FULLWIDTH: Vec<u32> = expand_ranges(&[(0xFF00, 0xFFEF)]);
 
     pub static ref GREEK: Vec<u32> = expand_ranges(&[(0x0370, 0x03FF), (0x1F00, 0x1FFF)]);
 
@@ -130,17 +157,17 @@ mod tests {
     use super::*;
     #[test]
     fn test() {
-        assert_eq!(LATIN.len(), 255)
+        assert_eq!(LATIN.len(), 127)
     }
 }
 
-pub fn create_default_unicode_area() -> [Vec<u32>; 31] {
+pub fn create_default_unicode_area() -> [Vec<u32>; 32] {
     [
         LATIN.to_vec(),
+        LATIN_1.to_vec(),
         LATIN_EXT_A.to_vec(),
         LATIN_EXT_B.to_vec(),
         IPA_SYMBOLS.to_vec(),
-        HALFWIDTH_FULLWIDTH.to_vec(),
         GREEK.to_vec(),
         CYRILLIC.to_vec(),
         // 中文处理
@@ -170,6 +197,7 @@ pub fn create_default_unicode_area() -> [Vec<u32>; 31] {
         VA.to_vec(),
         ZHUANG.to_vec(),
         NAXI_DONGBA.to_vec(),
+        HALFWIDTH_FULLWIDTH.to_vec(),
     ]
 }
 pub fn create_default_unicode_area_tag() -> [&'static str; 31] {
