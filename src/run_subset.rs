@@ -9,7 +9,7 @@ use cn_font_utils::u8_size_in_kb;
 use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
-use log::{debug, warn};
+use log::{info, warn};
 use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
@@ -42,7 +42,7 @@ pub fn run_subset(ctx: &mut Context) {
     );
     let origin_size: u32 = all_chars.len().try_into().unwrap();
     let file_name_template = ctx.input.rename_output_font.clone();
-    debug!("font subset result log");
+    info!("font subset result log");
     let thread_result: Vec<ThreadResult> = ctx
         .pre_subset_result
         .par_iter()
@@ -56,7 +56,7 @@ pub fn run_subset(ctx: &mut Context) {
             // println!("{:?}", hash);
             let hash_string = format!("{:x}", digest);
             let duration = start_time.elapsed();
-            debug!(
+            info!(
                 "{}\t{}ms/{}/{}kb\t{}",
                 index,
                 duration.as_millis(),
@@ -90,6 +90,7 @@ pub fn run_subset(ctx: &mut Context) {
     let mut bundled_bytes: u32 = 0;
 
     let mut bundle_chars = IndexSet::new();
+    bundle_chars.insert(0);
     for res in thread_result {
         (ctx.callback)(res.message);
 
@@ -102,16 +103,12 @@ pub fn run_subset(ctx: &mut Context) {
     }
 
     // 汇报构建前后的 unicode 差异
-    let diff: Vec<u32> = bundle_chars
-        .difference(&all_chars)
-        .map(|x| x.clone())
-        .filter(|x| *x != 0)
-        .collect();
+    let diff: Vec<u32> =
+        bundle_chars.difference(&all_chars).map(|x| x.clone()).collect();
 
     if diff.len() > 0 {
         warn!(
-            "subsets result diff: {} \n {}",
-            diff.len(),
+            "subsets result diff: {}",
             diff.iter()
                 .filter(|x| **x != 0)
                 .map(|x| x.to_string())
