@@ -200,13 +200,13 @@ pub fn create_default_unicode_area() -> [Vec<u32>; 32] {
         HALFWIDTH_FULLWIDTH.to_vec(),
     ]
 }
-pub fn create_default_unicode_area_tag() -> [&'static str; 31] {
+pub fn create_default_unicode_area_tag() -> [&'static str; 32] {
     [
         "LATIN",
+        "LATIN_1",
         "LATIN_EXT_A",
         "LATIN_EXT_B",
         "IPA_SYMBOLS",
-        "HALFWIDTH_FULLWIDTH",
         "GREEK",
         "CYRILLIC",
         // 中文处理
@@ -236,5 +236,6 @@ pub fn create_default_unicode_area_tag() -> [&'static str; 31] {
         "VA",
         "ZHUANG",
         "NAXI_DONGBA",
+        "HALFWIDTH_FULLWIDTH",
     ]
 }
