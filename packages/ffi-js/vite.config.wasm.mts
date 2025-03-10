@@ -27,6 +27,11 @@ export default defineConfig(({ mode }) => {
                     if (mode === 'production' && id.includes('memfs')) {
                         return 'import { Buffer } from "buffer";\n' + code;
                     }
+                    if (code.includes('fs.')) {
+                        return code
+                            .replace(/.*fs-extra.*/g, '')
+                            .replace(/fs\./g, 'globalThis.fs.');
+                    }
                     if (id.includes('wasm-util.esm')) {
                         return code.replaceAll(
                             'process.env',
@@ -44,8 +49,8 @@ export default defineConfig(({ mode }) => {
                 entry: ['./src/wasm/index.ts'],
                 formats: ['es'],
             },
-            minify: false, // 禁用代码混淆
-            sourcemap: false,
+            minify: true,
+            sourcemap: true,
             assetsDir: '',
             assetsInlineLimit: 0,
             rollupOptions: {

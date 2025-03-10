@@ -1,4 +1,4 @@
-import { WriteFileOptions } from 'fs-extra';
+import type { WriteFileOptions } from 'fs-extra';
 import { api_interface } from './gen/index.js';
 export type OriginInput = Parameters<
     (typeof api_interface.InputTemplate)['fromObject']

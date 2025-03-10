@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import { execSync } from 'child_process';
 import path from 'path';
 export const isMusl = () => {

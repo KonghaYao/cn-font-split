@@ -64,8 +64,8 @@ export default defineConfig(({ mode }) => {
                 ],
                 formats: ['es', 'cjs'],
             },
-            minify: false, // 禁用代码混淆
-            sourcemap: false,
+            minify: true, // 禁用代码混淆
+            sourcemap: true,
             assetsDir: '',
             assetsInlineLimit: 0,
             rollupOptions: {
