@@ -27,7 +27,8 @@ export default defineConfig(({ mode }) => {
                     if (mode === 'production' && id.includes('memfs')) {
                         return 'import { Buffer } from "buffer";\n' + code;
                     }
-                    if (code.includes('fs.')) {
+                    if (id.includes('createAPI')) {
+                        console.log(id);
                         return code
                             .replace(/.*fs-extra.*/g, '')
                             .replace(/fs\./g, 'globalThis.fs.');
