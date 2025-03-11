@@ -9,32 +9,35 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
     let name_table = &ctx.name_table;
 
     // fontData.preferredFamily  不使用这个，因为这个容易引起歧义
-    let font_family: String = css.font_family.clone().unwrap_or(
+    let font_family = css.font_family.clone().unwrap_or_else(|| {
         name_table
             .get_name_first("FontFamilyName")
-            .unwrap_or("default_font_family".to_string()),
-    );
+            .unwrap_or("default_font_family".to_string())
+    });
 
     // 优先使用preferredSubFamily，如果没有，则使用fontSubFamily或fontSubfamily。
+    // 提取字体样式
     let preferred_sub_family =
-        name_table.get_name_first("FontSubfamilyName").unwrap_or(
-            name_table.get_name_first("FullFontName").unwrap_or("".to_string()),
-        );
-    let font_style =
-        css.font_style.clone().unwrap_or(if is_italic(&preferred_sub_family) {
+        name_table.get_name_first("FontSubfamilyName").unwrap_or_else(|| {
+            name_table.get_name_first("FullFontName").unwrap_or("".to_string())
+        });
+    let font_style = css.font_style.clone().unwrap_or_else(|| {
+        if is_italic(&preferred_sub_family) {
             "italic".to_string()
         } else {
             "normal".to_string()
-        });
+        }
+    });
 
-    let font_weight = css.font_weight.clone().unwrap_or(
+    // 提取字体权重
+    let font_weight = css.font_weight.clone().unwrap_or_else(|| {
         ctx.fvar_table
             .clone()
             .map(|x| x.vf_weight)
-            .unwrap_or(get_weight(&preferred_sub_family).to_string()),
-    );
+            .unwrap_or(get_weight(&preferred_sub_family).to_string())
+    });
 
-    // 创建本地字体声明字符串。
+    // 生成本地字体声明
     let locals = if css.local_family.len() == 0 {
         vec![font_family.clone()]
     } else {
@@ -42,37 +45,32 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
     };
     let locals = locals
         .iter()
-        .map(|x| format!("local(\"{x}\")").clone())
+        .map(|x| format!("local(\"{x}\")"))
         .collect::<Vec<String>>();
 
+    // 生成 polyfill 字符串
     let polyfill_str = css
         .polyfill
         .iter()
-        .map(|p| {
-            format!(
-                "url(\"{}\") {}",
-                p.name,
-                format!("format(\"{}\")", p.format)
-            )
-        })
+        .map(|p| format!(r#"url("{}") format("{}")"#, p.name, p.format))
         .collect::<Vec<String>>()
         .join(",");
 
     let display = css.font_display.clone().unwrap_or("swap".to_string());
-    let codes: Vec<String> = ctx
+    // 生成 @font-face 规则
+    let codes = ctx
         .run_subset_result
         .iter()
         .rev()
         .map(|res| {
-            let src_str: String = [
+            let src_str = [
                 locals.join(","),
-                format!(r#"url("./{}")format("woff2")"#, res.file_name.clone()),
+                format!(r#"url("./{}")format("woff2")"#, res.file_name),
             ]
             .join(",")
-                + polyfill_str.as_str();
-            let unicode_range = &UnicodeRange::stringify(&res.unicodes);
-            let space =
-                if css.compress.unwrap_or(true) == true { "" } else { "    " };
+                + &polyfill_str;
+            let unicode_range = UnicodeRange::stringify(&res.unicodes);
+            let space = if css.compress.unwrap_or(true) { "" } else { "    " };
             let face_code = format!(
                 r#"@font-face{{
 {space}font-family:"{font_family}";
@@ -83,16 +81,11 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
 {space}unicode-range:{unicode_range};
 }}"#
             );
-            // css 这个句尾不需要分号😭
-            // 根据注释设置生成Unicode范围的注释。
             let comment = if css.comment_unicodes.unwrap_or(false) {
-                let code_string = vec_u32_to_string(&res.unicodes);
-                format!("/* {} */\n", code_string)
+                format!("/* {} */\n", vec_u32_to_string(&res.unicodes))
             } else {
                 "".to_string()
             };
-            // 根据压缩选项返回压缩或未压缩的样式字符串。
-
             let compressed = if css.compress.unwrap_or(true) {
                 face_code.replace("\n", "")
             } else {
@@ -100,7 +93,8 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
             };
             comment + &compressed
         })
-        .collect();
+        .collect::<Vec<String>>();
+
     ctx.reporter.css = Some(output_report::Css {
         family: font_family.clone(),
         style: font_style.clone(),
@@ -110,26 +104,24 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
 
     let header_comment = create_header_comment(ctx, css);
 
-    header_comment + &codes.join("\n")
+    header_comment + &codes.join("")
 }
 
 fn create_header_comment(
     ctx: &mut Context<'_, '_, '_>,
     css: &CssProperties,
 ) -> String {
-    // ctx.input.css.and_then(|x|x.comment_base)
-    let mut comment = String::from("");
+    let mut comment = String::new();
 
     if css.comment_base.unwrap_or(true) {
-        let utc: DateTime<Utc> = Utc::now();
-        let base_comment = format!("Generated By cn-font-split@{} https://www.npmjs.com/package/cn-font-split\nCreateTime: {};",
+        let utc = Utc::now();
+        comment.push_str(&format!(
+            "Generated By cn-font-split@{} https://www.npmjs.com/package/cn-font-split\nCreateTime: {};\n",
             ctx.reporter.version,
-           utc.to_string()
-        );
-        comment.push_str(&base_comment);
+            utc.to_rfc3339()
+        ));
     }
 
-    // name table 的转换
     if css.comment_name_table.unwrap_or(true) {
         let name_table_comment = ctx
             .name_table
@@ -140,15 +132,20 @@ fn create_header_comment(
             })
             .collect::<Vec<String>>()
             .join("\n");
-
-        comment.push_str("\n");
         comment.push_str(&name_table_comment);
     }
 
-    if comment.len() == 0 {
-        return String::from("");
+    if comment.is_empty() {
+        return String::new();
     }
-    "/* ".to_owned() + &comment + "\n */\n\n"
+    format!("/* {}\n */\n\n", comment.trim())
+}
+
+pub fn get_weight(sub_family: &str) -> u32 {
+    let sub_family = sub_family.to_ascii_lowercase();
+    FONT_WEIGHT_NAME
+        .binary_search_by_key(&sub_family.as_str(), |&(name, _)| name)
+        .map_or(600, |idx| FONT_WEIGHT_NAME[idx].1)
 }
 
 /** 判断是否为斜体 */
@@ -173,13 +170,3 @@ const FONT_WEIGHT_NAME: [(&str, u32); 15] = [
     ("heavy", 900),
     ("black", 900),
 ];
-
-pub fn get_weight(sub_family: &str) -> u32 {
-    let sub_family = sub_family.to_ascii_lowercase();
-    for (name, weight) in FONT_WEIGHT_NAME {
-        if sub_family.contains(name) {
-            return weight;
-        }
-    }
-    600
-}

@@ -36,11 +36,10 @@ struct ThreadResult {
 }
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) {
-    let origin_bytes: u32 = (&ctx.input.input).len() as u32;
-    let all_chars: IndexSet<u32> = IndexSet::from_iter(
-        ctx.face.collect_unicodes().iter().map(|x| x.clone()),
-    );
-    let origin_size: u32 = all_chars.len().try_into().unwrap();
+    let origin_bytes = ctx.input.input.len() as u32;
+    let all_chars: IndexSet<u32> =
+        ctx.face.collect_unicodes().iter().cloned().collect();
+    let origin_size = all_chars.len() as u32;
     let file_name_template = ctx.input.rename_output_font.clone();
     debug!("font subset result log");
     let thread_result: Vec<ThreadResult> = ctx
@@ -52,9 +51,7 @@ pub fn run_subset(ctx: &mut Context) {
 
             let result = build_single_subset(&ctx.face, r);
             let result_bytes = u8_size_in_kb(&result);
-            let digest = md5::compute(result.as_slice());
-            // println!("{:?}", hash);
-            let hash_string = format!("{:x}", digest);
+            let hash_string = format!("{:x}", md5::compute(result.as_slice()));
             let duration = start_time.elapsed();
             debug!(
                 "{}\t{}ms/{}/{}kb\t{}",
@@ -62,23 +59,22 @@ pub fn run_subset(ctx: &mut Context) {
                 duration.as_millis(),
                 r.len(),
                 result_bytes,
-                hash_string.to_string()
+                hash_string
             );
-            let file_name = if let Some(name) = &file_name_template {
-                name_template(&name, &hash_string, "woff2", &index)
-            } else {
-                hash_string.to_string() + ".woff2"
-            };
+            let file_name = file_name_template
+                .as_ref()
+                .map(|name| name_template(name, &hash_string, "woff2", &index))
+                .unwrap_or_else(|| format!("{}.woff2", hash_string));
             ThreadResult {
                 subset_result: RunSubsetResult {
-                    hash: hash_string.to_string(),
+                    hash: hash_string.clone(),
                     unicodes: r.clone(),
                     file_name: file_name.clone(),
                 },
                 log: SubsetDetail {
-                    id: (index as u32) + 1_u32,
+                    id: index as u32 + 1,
                     file_name: file_name.clone(),
-                    hash: hash_string.to_string(),
+                    hash: hash_string.clone(),
                     chars: r.clone(),
                     bytes: result.len() as u32,
                     duration: duration.as_millis() as u32,
@@ -86,34 +82,31 @@ pub fn run_subset(ctx: &mut Context) {
                 message: EventMessage::output_data(&file_name, result),
             }
         })
-        .collect::<Vec<ThreadResult>>();
-    let mut bundled_bytes: u32 = 0;
+        .collect();
+    let (bundled_bytes, bundle_chars): (u32, IndexSet<u32>) = thread_result
+        .iter()
+        .fold((0, IndexSet::new()), |(mut bytes, mut chars), res| {
+            (ctx.callback)(res.message.clone());
 
-    let mut bundle_chars = IndexSet::new();
-    for res in thread_result {
-        (ctx.callback)(res.message);
-
-        bundled_bytes += res.log.bytes;
-        res.log.chars.iter().for_each(|x| {
-            bundle_chars.insert(x.clone());
+            bytes += res.log.bytes;
+            chars.extend(res.log.chars.iter().cloned());
+            ctx.run_subset_result.push(res.subset_result.clone());
+            ctx.reporter.subset_detail.push(res.log.clone());
+            (bytes, chars)
         });
-        ctx.run_subset_result.push(res.subset_result);
-        ctx.reporter.subset_detail.push(res.log);
-    }
 
     // 汇报构建前后的 unicode 差异
     let diff: Vec<u32> = bundle_chars
         .difference(&all_chars)
-        .map(|x| x.clone())
-        .filter(|x| *x != 0)
+        .cloned()
+        .filter(|&x| x != 0)
         .collect();
 
-    if diff.len() > 0 {
+    if !diff.is_empty() {
         warn!(
             "subsets result diff: {} \n {}",
             diff.len(),
             diff.iter()
-                .filter(|x| **x != 0)
                 .map(|x| x.to_string())
                 .collect::<Vec<String>>()
                 .join(" ")

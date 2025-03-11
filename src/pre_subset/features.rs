@@ -2,7 +2,7 @@ use cmap::analyze_cmap;
 use gpos::analyze_gpos;
 use gsub::analyze_gsub;
 use indexmap::IndexSet;
-use std::collections::{HashMap, BTreeSet};
+use std::collections::{BTreeSet, HashMap};
 
 use super::PreSubsetContext;
 pub mod cmap;

@@ -36,12 +36,10 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
         pre_subset_result: vec![],
         run_subset_result: vec![],
         name_table: NameTableSets { table: vec![] },
-        callback: &(|data| {
-            callback(data);
-        }),
+        callback: &callback,
         face: &mut face,
         reporter: &mut reporter,
-        fvar_table: None,
+        fvar_table: None, // 防止后文拿到default数据，所以填 None
     };
 
     ctx.reporter.version = env!("CARGO_PKG_VERSION").to_string();
