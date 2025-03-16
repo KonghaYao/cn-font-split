@@ -79,8 +79,8 @@ importers:
         specifier: ^2.10.0
         version: 2.10.0
       proto-to-cli:
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 1.2.1
+        version: 1.2.1
     devDependencies:
       '@grpc/grpc-js':
         specifier: ^1.12.2
@@ -1660,8 +1660,8 @@ packages:
     resolution: {integrity: sha512-ivcbpgCa2yTJYTTdQTXkz6XqeHhsdzXKxI4jRnjOWyQkWwjilI3tQ0hzLCHSGPjO4LwYK5x1P8a+wINF9AzvFQ==}
     hasBin: true
 
-  proto-to-cli@1.2.0:
-    resolution: {integrity: sha512-RvTJOj3dhfl1zcAW0KZCXkzV0Tz2+Ji9mH5umt0uopDjnaNR0IU2uzeeKv3uigmnjbtyUALuixcFZ8AuQjQ1sA==}
+  proto-to-cli@1.2.1:
+    resolution: {integrity: sha512-Wga68qpLWHad9ZmC+gORp+ZxyzFb6I+nfwFoZyJw8rSGlEHr9XhH4mzDQ0fWqCbECKZBBVneaLR8ZUI5TLBPSA==}
     hasBin: true
 
   protobufjs@7.4.0:
@@ -3511,7 +3511,7 @@ snapshots:
       fs-extra: 11.3.0
       protobufjs: 7.4.0
 
-  proto-to-cli@1.2.0:
+  proto-to-cli@1.2.1:
     dependencies:
       change-case: 5.4.4
       commander: 13.1.0

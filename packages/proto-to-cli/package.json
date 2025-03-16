@@ -1,6 +1,6 @@
 {
     "name": "proto-to-cli",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "main": "./dist/cli.js",
     "module": "./dist/cli.mjs",
     "description": "A tool to convert Protocol Buffers files to command line interfaces.",
@@ -13,7 +13,7 @@
     },
     "scripts": {
         "test:ts": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ./dist/gen/proto.ts",
-        "test:rust": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ../cli/src/proto.rs -t clap",
+        "test:rust": "pnpm ./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ../cli/src/proto.rs -t clap",
         "prepublish": "pnpm vite build"
     },
     "keywords": [

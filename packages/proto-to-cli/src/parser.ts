@@ -19,6 +19,18 @@ export const toFloat: CommonParser<number> = (value, dummyPrevious) => {
 export const toFile: CommonParser<Uint8Array> = (value, dummyPrevious) => {
     return new Uint8Array(fs.readFileSync(value).buffer);
 };
+export const toBoolean: CommonParser<boolean> = (value, dummyPrevious) => {
+    if (typeof value === 'string') {
+        if (value.toLocaleLowerCase() === 'true') {
+            return true;
+        }
+        if (value.toLocaleLowerCase() === 'false') {
+            return false;
+        }
+        return true;
+    }
+    return value;
+};
 
 export const HandleRepeated =
     <T>(fn: CommonParser<T>): CommonParser<T[]> =>
