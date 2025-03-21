@@ -73,6 +73,7 @@ fn main_test() {
     }
 
     // test_on("./LXGWWenKai-Regular.ttf", "ttf");
-    test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
+    // test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
+    test_on("./packages/demo/public/豆豆字体.ttf", "ttf");
     // test_on("./packages/demo/public/SmileySans-Oblique.ttf.woff2", "woff2");
 }

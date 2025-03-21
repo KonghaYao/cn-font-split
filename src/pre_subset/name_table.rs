@@ -1,3 +1,4 @@
+use log::warn;
 use opentype::truetype::tables::names::{NameID, PlatformID};
 use opentype::truetype::tables::Names;
 use opentype::Font;
@@ -41,8 +42,20 @@ pub fn analyze_name_table(
     font: &Font,
     font_file: &mut Cursor<&[u8]>,
 ) -> NameTableSets {
-    let data: Names = font.take(font_file).unwrap().unwrap();
     let mut table = NameTableSets { table: vec![] };
+
+    let data: Names = match font.take(font_file) {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            warn!("名称表为空");
+            return table;
+        }
+        Err(e) => {
+            warn!("读取名称表失败: {:?}", e);
+            return table;
+        }
+    };
+
     data.iter().for_each(|((platform, _, language, name), value)| {
         let key = name_id_to_string(name);
         let void_language_tag_decode: [Option<&str>; 1] = [None];

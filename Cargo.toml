@@ -20,15 +20,15 @@ prost = "0.13.5"
 cn-font-proto = { version = "0.1.1", path = "crates/proto", default-features = false }
 rayon = "1.10.0"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
-woff = "0.3.4"
+woff = "0.6.1"
 current_platform = "0.2.0"
-clap = { version = "4.5.30", features = ["derive"] }
+clap = { version = "4.5.32", features = ["derive"] }
 chrono = "0.4.38"
 regex = "1.11.1"
-indexmap = "2.7.1"
+indexmap = "2.8.0"
 
 [dev-dependencies]
-env_logger = "0.11.6"
+env_logger = "0.11.7"
 
 [build-dependencies]
 cross = "0.2.5"
