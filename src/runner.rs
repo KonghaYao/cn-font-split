@@ -33,7 +33,7 @@ pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
     reporter: &'a mut OutputReport,
     callback: &'a F,
 ) -> Context<'a, 'b, 'c> {
-    Context {
+    let mut ctx = Context {
         input: config,
         binary,
         pre_subset_result: vec![],
@@ -43,7 +43,15 @@ pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
         face,
         reporter,
         fvar_table: None, // 防止后文拿到default数据，所以填 None
-    }
+    };
+    ctx.reporter.version = env!("CARGO_PKG_VERSION").to_string();
+    ctx.reporter.platform = current_platform::CURRENT_PLATFORM.to_string();
+
+    info!(
+        "version {}; platform {}",
+        ctx.reporter.version, ctx.reporter.platform
+    );
+    ctx
 }
 
 pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
@@ -52,14 +60,6 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     let mut face = Face::from_bytes(&binary, 0);
     let mut ctx =
         create_context(&config, &binary, &mut face, &mut reporter, &callback);
-
-    ctx.reporter.version = env!("CARGO_PKG_VERSION").to_string();
-    ctx.reporter.platform = current_platform::CURRENT_PLATFORM.to_string();
-
-    info!(
-        "version {}; platform {}",
-        ctx.reporter.version, ctx.reporter.platform
-    );
 
     for process in [pre_subset, run_subset, link_subset] {
         process(&mut ctx)
@@ -78,4 +78,34 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     // 发送一个结束信息
     callback(EventMessage::create_end_message());
     ()
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::message;
+
+    use super::*;
+    use std::sync::{Arc, Mutex};
+
+    #[test]
+    fn test_create_context() {
+        let input = InputTemplate { ..Default::default() };
+        let binary = vec![0u8; 100];
+        let mut face = Face::from_bytes(&binary, 0);
+        let mut reporter = OutputReport::default();
+        let callback = |_msg: EventMessage| {};
+
+        let ctx = create_context(
+            &input,
+            &binary,
+            &mut face,
+            &mut reporter,
+            &callback,
+        );
+
+        assert!(ctx.pre_subset_result.is_empty());
+        assert!(ctx.run_subset_result.is_empty());
+        assert!(ctx.name_table.table.is_empty());
+        assert!(ctx.fvar_table.is_none());
+    }
 }
