@@ -1,81 +1,82 @@
+use crate::pre_subset::name_table::NameTableSets;
+use crate::run_subset::RunSubsetResult;
 use crate::runner::Context;
-use chrono::{DateTime, Utc};
 use cn_font_proto::api_interface::input_template::CssProperties;
-use cn_font_proto::api_interface::output_report;
+use cn_font_proto::api_interface::output_report::{self};
 use cn_font_utils::vec_u32_to_string;
 use unicode_range::UnicodeRange;
 
-use super::css::font_weight::get_weight;
+use super::css::font_weight::extract_font_weight;
 use super::css::header_comment::create_header_comment;
 
-pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
-    let name_table = &ctx.name_table;
-
-    // fontData.preferredFamily  不使用这个，因为这个容易引起歧义
-    let font_family = css.font_family.clone().unwrap_or_else(|| {
+fn extract_font_family(
+    css: &CssProperties,
+    name_table: &NameTableSets,
+) -> String {
+    css.font_family.clone().unwrap_or_else(|| {
         name_table
             .get_name_first("FontFamilyName")
             .unwrap_or("default_font_family".to_string())
-    });
+    })
+}
 
-    // 优先使用preferredSubFamily，如果没有，则使用fontSubFamily或fontSubfamily。
-    // 提取字体样式
+fn extract_font_style(
+    css: &CssProperties,
+    name_table: &NameTableSets,
+) -> String {
     let preferred_sub_family =
         name_table.get_name_first("FontSubfamilyName").unwrap_or_else(|| {
             name_table.get_name_first("FullFontName").unwrap_or("".to_string())
         });
-    let font_style = css.font_style.clone().unwrap_or_else(|| {
+    css.font_style.clone().unwrap_or_else(|| {
         if is_italic(&preferred_sub_family) {
             "italic".to_string()
         } else {
             "normal".to_string()
         }
-    });
+    })
+}
 
-    // 提取字体权重
-    let font_weight = css.font_weight.clone().unwrap_or_else(|| {
-        ctx.fvar_table
-            .clone()
-            .map(|x| x.vf_weight)
-            .unwrap_or(get_weight(&preferred_sub_family).to_string())
-    });
-
-    // 生成本地字体声明
-    let locals = if css.local_family.len() == 0 {
-        vec![font_family.clone()]
+fn generate_local_sources(
+    css: &CssProperties,
+    font_family: &str,
+) -> Vec<String> {
+    let locals = if css.local_family.is_empty() {
+        vec![font_family.to_string()]
     } else {
         css.local_family.clone()
     };
-    let locals = locals
-        .iter()
-        .map(|x| format!("local(\"{x}\")"))
-        .collect::<Vec<String>>();
+    locals.iter().map(|x| format!("local(\"{x}\")")).collect()
+}
 
-    // 生成 polyfill 字符串
-    let polyfill_str = css
-        .polyfill
+fn generate_polyfill_string(css: &CssProperties) -> String {
+    css.polyfill
         .iter()
         .map(|p| format!(r#"url("{}") format("{}")"#, p.name, p.format))
         .collect::<Vec<String>>()
-        .join(",");
+        .join(",")
+}
 
-    let display = css.font_display.clone().unwrap_or("swap".to_string());
-    // 生成 @font-face 规则
-    let codes = ctx
-        .run_subset_result
-        .iter()
-        .rev()
-        .map(|res| {
-            let src_str = [
-                locals.join(","),
-                format!(r#"url("./{}")format("woff2")"#, res.file_name),
-            ]
-            .join(",")
-                + &polyfill_str;
-            let unicode_range = UnicodeRange::stringify(&res.unicodes);
-            let space = if css.compress.unwrap_or(true) { "" } else { "    " };
-            let face_code = format!(
-                r#"@font-face{{
+fn generate_font_face_code(
+    res: &RunSubsetResult,
+    font_family: &str,
+    font_style: &str,
+    font_weight: &str,
+    display: &str,
+    locals: &[String],
+    polyfill_str: &str,
+    css: &CssProperties,
+) -> String {
+    let src_str = [
+        locals.join(","),
+        format!(r#"url("./{}")format("woff2")"#, res.file_name),
+    ]
+    .join(",")
+        + polyfill_str;
+    let unicode_range = UnicodeRange::stringify(&res.unicodes);
+    let space = if css.compress.unwrap_or(true) { "" } else { "    " };
+    let face_code = format!(
+        r#"@font-face{{
 {space}font-family:"{font_family}";
 {space}src:{src_str};
 {space}font-style:{font_style};
@@ -83,18 +84,45 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
 {space}font-weight:{font_weight};
 {space}unicode-range:{unicode_range};
 }}"#
-            );
-            let comment = if css.comment_unicodes.unwrap_or(false) {
-                format!("/* {} */\n", vec_u32_to_string(&res.unicodes))
-            } else {
-                "".to_string()
-            };
-            let compressed = if css.compress.unwrap_or(true) {
-                face_code.replace("\n", "")
-            } else {
-                face_code
-            };
-            comment + &compressed
+    );
+    let comment = if css.comment_unicodes.unwrap_or(false) {
+        format!("/* {} */\n", vec_u32_to_string(&res.unicodes))
+    } else {
+        "".to_string()
+    };
+    let compressed = if css.compress.unwrap_or(true) {
+        face_code.replace("\n", "")
+    } else {
+        face_code
+    };
+    comment + &compressed
+}
+
+pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
+    let name_table = &ctx.name_table;
+    let font_family = extract_font_family(css, name_table);
+    let font_style = extract_font_style(css, name_table);
+    let font_weight = extract_font_weight(css, ctx, name_table);
+    let display = css.font_display.clone().unwrap_or("swap".to_string());
+
+    let locals = generate_local_sources(css, &font_family);
+    let polyfill_str = generate_polyfill_string(css);
+
+    let codes = ctx
+        .run_subset_result
+        .iter()
+        .rev()
+        .map(|res| {
+            generate_font_face_code(
+                res,
+                &font_family,
+                &font_style,
+                &font_weight,
+                &display,
+                &locals,
+                &polyfill_str,
+                css,
+            )
         })
         .collect::<Vec<String>>();
 
@@ -106,7 +134,6 @@ pub fn output_css(ctx: &mut Context, css: &CssProperties) -> String {
     });
 
     let header_comment = create_header_comment(ctx, css);
-
     header_comment + &codes.join("")
 }
 
@@ -205,7 +232,7 @@ mod tests {
             ..Default::default()
         };
         let output = output_css(&mut ctx, &css);
-
+        print!("{}", output);
         assert!(output.contains("url(\"test.ttf\") format(\"truetype\")"));
     }
 

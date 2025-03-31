@@ -1,5 +1,9 @@
 //! 字体权重相关的工具函数
 
+use cn_font_proto::api_interface::input_template::CssProperties;
+
+use crate::{pre_subset::name_table::NameTableSets, runner::Context};
+
 // 按照字符串长度降序排序的权重映射
 const FONT_WEIGHT_NAME: [(&str, u32); 15] = [
     ("extra light", 200),
@@ -35,6 +39,25 @@ pub fn get_weight(sub_family: &str) -> u32 {
     }
 
     weight
+}
+pub fn extract_font_weight(
+    css: &CssProperties,
+    ctx: &Context,
+    name_table: &NameTableSets,
+) -> String {
+    css.font_weight.clone().unwrap_or_else(|| {
+        let preferred_sub_family = name_table
+            .get_name_first("FontSubfamilyName")
+            .unwrap_or_else(|| {
+                name_table
+                    .get_name_first("FullFontName")
+                    .unwrap_or("".to_string())
+            });
+        ctx.fvar_table
+            .clone()
+            .map(|x| x.vf_weight)
+            .unwrap_or(get_weight(&preferred_sub_family).to_string())
+    })
 }
 
 #[cfg(test)]
