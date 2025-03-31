@@ -279,9 +279,9 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "cc"
-version = "1.2.16"
+version = "1.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be714c154be609ec7f5dad223a33bf1482fff90472de28f7362806e6d4832b8c"
+checksum = "1fcb57c740ae1daf453ae85f16e37396f672b039e00d9d866e07ddb24e328e3a"
 dependencies = [
  "shlex",
 ]
@@ -811,9 +811,9 @@ dependencies = [
 
 [[package]]
 name = "harfbuzz_rs_now"
-version = "2.2.6"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1904bcd4f90e6c647d8a732ee3fe2113a6ac002f12a4a781c863894841323328"
+checksum = "604764083099269c149ba9895173de9aa2c3466fb5d4142dfcbbbef6b03684a7"
 dependencies = [
  "bitflags 2.9.0",
  "cc",

@@ -54,6 +54,7 @@
 2. Rust [opentype](https://crates.io/crates/opentype) 项目提供了无与伦比的字体信息抽取能力，为字体特性和分包算法提供了强健的基础。
 3. Rust [Cross](https://crates.io/crates/cross) 项目提供了强大的 Rust 跨平台产物构建能力。
 4. 特别感谢 —— [通义千问](https://tongyi.aliyun.com/qianwen/) 和 GPT-4o 为 Rust 重构过程提供的诸多信息提示和代码帮助, 主项目能够在 20 天内完成 Rust 化，离不开大模型的辅助。
+5. 特别感谢 —— Claude3.5 为我们完善了大部分的测试用例。
 
 ### 旧版本曾经使用过的项目
 
