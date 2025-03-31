@@ -121,7 +121,7 @@ pub fn run_subset(ctx: &mut Context) {
     })
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct RunSubsetResult {
     pub hash: String,
     pub unicodes: Vec<u32>,

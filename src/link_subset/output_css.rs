@@ -141,32 +141,226 @@ fn create_header_comment(
     format!("/* {}\n */\n\n", comment.trim())
 }
 
-pub fn get_weight(sub_family: &str) -> u32 {
-    let sub_family = sub_family.to_ascii_lowercase();
-    FONT_WEIGHT_NAME
-        .binary_search_by_key(&sub_family.as_str(), |&(name, _)| name)
-        .map_or(600, |idx| FONT_WEIGHT_NAME[idx].1)
-}
-
 /** 判断是否为斜体 */
 fn is_italic(str: &str) -> bool {
     str.to_lowercase().contains("italic")
 }
-
+// 按照字符串长度降序排序的权重映射
 const FONT_WEIGHT_NAME: [(&str, u32); 15] = [
-    ("thin", 100),
-    ("hairline", 100),
     ("extra light", 200),
     ("ultra light", 200),
     ("extra bold", 800),
     ("ultra bold", 800),
     ("semi bold", 600),
     ("demi bold", 600),
-    ("light", 300),
-    ("normal", 400),
+    ("hairline", 100),
     ("regular", 400),
     ("medium", 500),
-    ("bold", 700),
-    ("heavy", 900),
+    ("normal", 400),
+    ("light", 300),
     ("black", 900),
+    ("heavy", 900),
+    ("bold", 700),
+    ("thin", 100),
 ];
+
+pub fn get_weight(sub_family: &str) -> u32 {
+    let sub_family = sub_family.to_ascii_lowercase();
+
+    // 遍历数组找到最长匹配的权重
+    let mut max_len = 0;
+    let mut weight = 400; // 默认权重
+
+    for &(name, value) in FONT_WEIGHT_NAME.iter() {
+        if sub_family.contains(name) && name.len() > max_len {
+            max_len = name.len();
+            weight = value;
+        }
+    }
+
+    weight
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{run_subset::RunSubsetResult, runner::create_context};
+    use cn_font_proto::api_interface::{
+        input_template::{CssProperties, PolyfillType},
+        InputTemplate, OutputReport,
+    };
+    use harfbuzz_rs_now::Face;
+
+    #[test]
+    fn test_basic_output_css() {
+        let mut reporter = OutputReport::default();
+        let binary = vec![];
+        let config = InputTemplate::default();
+        let mut face = Face::from_bytes(&binary, 0);
+
+        let mut ctx =
+            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
+
+        ctx.run_subset_result = vec![RunSubsetResult {
+            hash: "test_hash".to_string(),
+            unicodes: vec![0x4E00, 0x4E01], // 一丁
+            file_name: "test_subset.woff2".to_string(),
+        }];
+        let css = CssProperties {
+            comment_unicodes: Some(true),
+            comment_base: Some(true),
+            comment_name_table: Some(true),
+            ..Default::default()
+        };
+        let output = output_css(&mut ctx, &css);
+        assert!(output.contains("@font-face"));
+        assert!(output.contains("font-family:\"default_font_family\""));
+        assert!(output.contains("font-style:normal"));
+        assert!(output.contains("font-weight:400"));
+        assert!(output.contains("font-display:swap"));
+    }
+    #[test]
+    fn test_custom_properties() {
+        let mut reporter = OutputReport::default();
+        let binary = vec![];
+        let config = InputTemplate::default();
+        let mut face = Face::from_bytes(&binary, 0);
+
+        let mut ctx =
+            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
+
+        ctx.run_subset_result = vec![RunSubsetResult {
+            hash: "test_hash".to_string(),
+            unicodes: vec![0x4E00, 0x4E01], // 一丁
+            file_name: "test_subset.woff2".to_string(),
+        }];
+        let css = CssProperties {
+            font_family: Some("CustomFont".to_string()),
+            font_style: Some("italic".to_string()),
+            font_weight: Some("700".to_string()),
+            font_display: Some("block".to_string()),
+            ..Default::default()
+        };
+        let output = output_css(&mut ctx, &css);
+
+        assert!(output.contains("font-family:\"CustomFont\""));
+        assert!(output.contains("font-style:italic"));
+        assert!(output.contains("font-weight:700"));
+        assert!(output.contains("font-display:block"));
+    }
+
+    #[test]
+    fn test_polyfill_generation() {
+        let mut reporter = OutputReport::default();
+        let binary = vec![];
+        let config = InputTemplate::default();
+        let mut face = Face::from_bytes(&binary, 0);
+
+        let mut ctx =
+            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
+
+        ctx.run_subset_result = vec![RunSubsetResult {
+            hash: "test_hash".to_string(),
+            unicodes: vec![0x4E00, 0x4E01], // 一丁
+            file_name: "test_subset.woff2".to_string(),
+        }];
+        let css = CssProperties {
+            polyfill: vec![PolyfillType {
+                name: "test.ttf".to_string(),
+                format: "truetype".to_string(),
+            }],
+            ..Default::default()
+        };
+        let output = output_css(&mut ctx, &css);
+
+        assert!(output.contains("url(\"test.ttf\") format(\"truetype\")"));
+    }
+
+    #[test]
+    fn test_compression_modes() {
+        let mut reporter = OutputReport::default();
+        let binary = vec![];
+        let config = InputTemplate::default();
+        let mut face = Face::from_bytes(&binary, 0);
+
+        let mut ctx =
+            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
+
+        ctx.run_subset_result = vec![RunSubsetResult {
+            hash: "test_hash".to_string(),
+            unicodes: vec![0x4E00], // 一
+            file_name: "test_subset.woff2".to_string(),
+        }];
+
+        // 测试压缩模式（默认）
+        let css = CssProperties { compress: Some(true), ..Default::default() };
+        let compressed_output = output_css(&mut ctx, &css);
+        // assert!(!compressed_output.contains("\n")); // 不应包含换行符
+        assert!(!compressed_output.contains("    ")); // 不应包含缩进空格
+
+        // 测试非压缩模式
+        let css = CssProperties { compress: Some(false), ..Default::default() };
+        let uncompressed_output = output_css(&mut ctx, &css);
+        assert!(uncompressed_output.contains("\n")); // 应包含换行符
+        assert!(uncompressed_output.contains("    ")); // 应包含缩进空格
+        assert!(uncompressed_output.contains("font-family")); // 验证基本属性存在
+    }
+
+    #[test]
+    fn test_comment_generation() {
+        let mut reporter = OutputReport::default();
+        let binary = vec![];
+        let config = InputTemplate::default();
+        let mut face = Face::from_bytes(&binary, 0);
+
+        let mut ctx =
+            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
+
+        ctx.run_subset_result = vec![RunSubsetResult {
+            hash: "test_hash".to_string(),
+            unicodes: vec![0x4E00, 0x4E01], // 一丁
+            file_name: "test_subset.woff2".to_string(),
+        }];
+        let css = CssProperties {
+            comment_unicodes: Some(true),
+            comment_base: Some(true),
+            comment_name_table: Some(true),
+            ..Default::default()
+        };
+        let output = output_css(&mut ctx, &css);
+        assert!(output.contains("Generated By cn-font-split"));
+        assert!(output.contains("一丁"));
+        assert!(output.contains("U+4E00-4E01"));
+    }
+
+    #[test]
+    fn test_weight_detection() {
+        // 基本权重测试
+        assert_eq!(get_weight("thin"), 100);
+        assert_eq!(get_weight("bold"), 700);
+        assert_eq!(get_weight("regular"), 400);
+        assert_eq!(get_weight("unknown"), 400); // 默认值
+
+        // 组合权重测试
+        assert_eq!(get_weight("extra bold italic"), 800);
+        assert_eq!(get_weight("ultra light regular"), 200);
+        assert_eq!(get_weight("semi bold thin"), 600);
+
+        // 大小写测试
+        assert_eq!(get_weight("BOLD"), 700);
+        assert_eq!(get_weight("Light"), 300);
+        assert_eq!(get_weight("ExTrA BoLd"), 800);
+
+        // 边界情况测试
+        assert_eq!(get_weight(""), 400);
+        assert_eq!(get_weight("not a weight"), 400);
+        assert_eq!(get_weight("bold light"), 300); // 应该匹配最先的
+    }
+
+    #[test]
+    fn test_italic_detection() {
+        assert!(is_italic("Italic"));
+        assert!(is_italic("Bold Italic"));
+        assert!(!is_italic("Regular"));
+        assert!(!is_italic("Bold"));
+    }
+}

@@ -26,21 +26,32 @@ where
     pub fvar_table: Option<FvarTable>,
 }
 
+pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
+    config: &'c InputTemplate,
+    binary: &'c [u8],
+    face: &'a mut Owned<Face<'b>>,
+    reporter: &'a mut OutputReport,
+    callback: &'a F,
+) -> Context<'a, 'b, 'c> {
+    Context {
+        input: config,
+        binary,
+        pre_subset_result: vec![],
+        run_subset_result: vec![],
+        name_table: NameTableSets { table: vec![] },
+        callback,
+        face,
+        reporter,
+        fvar_table: None, // 防止后文拿到default数据，所以填 None
+    }
+}
+
 pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
     let mut reporter = OutputReport::default();
     let binary = smart_load_woff2(&config.input);
     let mut face = Face::from_bytes(&binary, 0);
-    let mut ctx = Context {
-        input: &config,
-        binary: &binary,
-        pre_subset_result: vec![],
-        run_subset_result: vec![],
-        name_table: NameTableSets { table: vec![] },
-        callback: &callback,
-        face: &mut face,
-        reporter: &mut reporter,
-        fvar_table: None, // 防止后文拿到default数据，所以填 None
-    };
+    let mut ctx =
+        create_context(&config, &binary, &mut face, &mut reporter, &callback);
 
     ctx.reporter.version = env!("CARGO_PKG_VERSION").to_string();
     ctx.reporter.platform = current_platform::CURRENT_PLATFORM.to_string();
