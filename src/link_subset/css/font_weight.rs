@@ -5,12 +5,19 @@ use cn_font_proto::api_interface::input_template::CssProperties;
 use crate::{pre_subset::name_table::NameTableSets, runner::Context};
 
 // 按照字符串长度降序排序的权重映射
-const FONT_WEIGHT_NAME: [(&str, u32); 15] = [
+const FONT_WEIGHT_NAME: [(&str, u32); 21] = [
+    // 带空格版本
     ("extra light", 200),
+    ("extralight", 200),
+    ("ultralight", 200),
     ("ultra light", 200),
+    ("extrabold", 800),
     ("extra bold", 800),
+    ("ultrabold", 800),
     ("ultra bold", 800),
+    ("semibold", 600),
     ("semi bold", 600),
+    ("demibold", 600),
     ("demi bold", 600),
     ("hairline", 100),
     ("regular", 400),
@@ -46,6 +53,7 @@ pub fn extract_font_weight(
     name_table: &NameTableSets,
 ) -> String {
     css.font_weight.clone().unwrap_or_else(|| {
+        print!("{:#?}", name_table);
         let preferred_sub_family = name_table
             .get_name_first("TypographicSubfamilyName")
             .unwrap_or_else(|| {
@@ -77,6 +85,7 @@ mod tests {
         assert_eq!(get_weight("unknown"), 400); // 默认值
 
         // 组合权重测试
+        assert_eq!(get_weight("ExtraLight"), 200);
         assert_eq!(get_weight("extra bold italic"), 800);
         assert_eq!(get_weight("ultra light regular"), 200);
         assert_eq!(get_weight("semi bold thin"), 600);
