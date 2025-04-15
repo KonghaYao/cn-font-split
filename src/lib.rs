@@ -26,20 +26,20 @@ fn main_test() {
                 name: "preview".to_string(),
                 text: "中文网字计划\nThe Chinese Web Font Project".to_string(),
             }),
-            css: Some(CssProperties {
-                // font_family: Some("New".to_string()),
-                // font_weight: Some("200".to_string()),
-                // font_style: Some("italic".to_string()),
-                // font_display: Some("auto".to_string()),
-                // local_family: vec!["New2".to_string()],
-                // polyfill: vec![],
-                // comment_base: Some(true),
-                // comment_name_table: Some(true),
-                // comment_unicodes: Some(true),
-                // compress: Some(true),
-                // file_name: Some("input.css".to_string()),
-                ..Default::default()
-            }),
+            // css: Some(CssProperties {
+            //     // font_family: Some("New".to_string()),
+            //     // font_weight: Some("200".to_string()),
+            //     // font_style: Some("italic".to_string()),
+            //     // font_display: Some("auto".to_string()),
+            //     // local_family: vec!["New2".to_string()],
+            //     // polyfill: vec![],
+            //     // comment_base: Some(true),
+            //     // comment_name_table: Some(true),
+            //     // comment_unicodes: Some(true),
+            //     // compress: Some(true),
+            //     // file_name: Some("input.css".to_string()),
+            //     ..Default::default()
+            // }),
             chunk_size: Some(70 * 1024),
             // 精确控制
             // subsets: vec![[65]].iter().map(|x| u32_array_to_u8_array(x)).collect(),
@@ -73,7 +73,7 @@ fn main_test() {
     }
 
     // test_on("./LXGWWenKai-Regular.ttf", "ttf");
-    test_on("./packages/demo/public/SmileySans-Oblique.ttf", "ttf");
+    // test_on("./packages/demo/public/JudouSansHans-Light.ttf", "ttf");
     // test_on("./packages/demo/public/豆豆字体.ttf", "ttf");
-    // test_on("./packages/demo/public/SmileySans-Oblique.ttf.woff2", "woff2");
+    test_on("./packages/demo/public/SourceHanSansCN-VF-2.otf", "woff2");
 }

@@ -9,9 +9,11 @@ use crate::runner::Context;
 mod plugin_add_user_subset;
 use cn_font_utils::u8_array_to_u32_array;
 use features::features_plugin;
+use fvar::analyze_fvar_table;
 use gen_svg::gen_svg_from_ctx;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
+use opentype::tables::FontVariations;
 use plugin::{
     add_remain_chars_plugin, language_area_plugin, reduce_min_plugin,
 };
@@ -50,6 +52,9 @@ pub fn pre_subset(ctx: &mut Context) {
 
     // 生成SVG图像
     gen_svg_from_ctx(ctx);
+    let vars: Option<FontVariations> =
+        font.take(&mut font_file).unwrap_or(None);
+    ctx.fvar_table = analyze_fvar_table(vars);
 
     let user_subsets: Vec<Vec<u32>> =
         ctx.input.subsets.iter().map(|x| u8_array_to_u32_array(x)).collect();

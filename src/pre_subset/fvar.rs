@@ -3,17 +3,13 @@ use opentype::truetype::q32;
 use opentype::Font;
 use std::io::Cursor;
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct FvarTable {
     pub vf_weight: String,
     pub vf_default_weight: String,
 }
 /// 解析 fvar table 可以得知可变字体的信息
-pub fn analyze_fvar_table(
-    font: &Font,
-    font_file: &mut Cursor<&Vec<u8>>,
-) -> Option<FvarTable> {
-    let data: Option<FontVariations> = font.take(font_file).unwrap();
+pub fn analyze_fvar_table(data: Option<FontVariations>) -> Option<FvarTable> {
     if data.is_none() {
         return None;
     }
@@ -42,7 +38,9 @@ fn test_fvar_table() {
     let file_binary = read_binary_file(&path).expect("Failed to read file");
     let mut font_file = Cursor::new(&file_binary);
     let font = Font::read(&mut font_file).expect("TODO: panic message");
-    let data = analyze_fvar_table(&font, &mut font_file).unwrap();
+
+    let vars: Option<FontVariations> = font.take(&mut font_file).unwrap();
+    let data = analyze_fvar_table(vars).unwrap();
 
     assert_eq!(data.vf_default_weight, "400");
     assert_eq!(data.vf_weight, "100 900")

@@ -47,11 +47,15 @@ pub fn extract_font_weight(
 ) -> String {
     css.font_weight.clone().unwrap_or_else(|| {
         let preferred_sub_family = name_table
-            .get_name_first("FontSubfamilyName")
+            .get_name_first("TypographicSubfamilyName")
             .unwrap_or_else(|| {
-                name_table
-                    .get_name_first("FullFontName")
-                    .unwrap_or("".to_string())
+                name_table.get_name_first("FontSubfamilyName").unwrap_or_else(
+                    || {
+                        name_table
+                            .get_name_first("FullFontName")
+                            .unwrap_or("".to_string())
+                    },
+                )
             });
         ctx.fvar_table
             .clone()
