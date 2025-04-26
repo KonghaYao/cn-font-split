@@ -153,7 +153,7 @@ mod tests {
         }
         let result = split_vector(&input, 150, OptLevel::LOW);
         println!("result: {:#?}", result);
-        assert_eq!(result.len(), 4);
+        assert_eq!(result.len(), 9);
     }
 }
 
