@@ -6,7 +6,7 @@ use std::io::Cursor;
 
 use cn_font_proto::api_interface::output_report::NameTable;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct NameTableSets {
     pub table: Vec<NameTable>,
 }
