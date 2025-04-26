@@ -10,7 +10,7 @@ cn-font-proto = { version = "0.1.0", path = "../../crates/proto", default-featur
 cn-font-split = { version = "7.0.0", path = "../..", default-features = false }
 cn-font-utils = { version = "0.2.0", path = "../../crates/cn_font_utils" }
 prost = "0.13.3"
-tokio = { version = "1.19.2", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.44.2", features = ["macros", "rt-multi-thread"] }
 tokio-stream = "0.1.16"
 tonic = { version = "0.12.3", features = ["gzip"] }
 tracing = "0.1.41"
