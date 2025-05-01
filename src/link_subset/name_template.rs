@@ -45,7 +45,7 @@ pub fn name_template(
     let re = Regex::new(r"\[(\\\w+\\|\w+(?::\w+)?)\]").unwrap();
 
     re.replace_all(template, |caps: &regex::Captures| {
-        let text = caps.get(0).map_or("", |m| m.as_str());
+        // let text = caps.get(0).map_or("", |m| m.as_str());
         let inner_tag = caps.get(1).map_or("", |m| m.as_str());
 
         // 检查是否是转义的占位符

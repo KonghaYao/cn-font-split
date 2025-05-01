@@ -11,9 +11,9 @@ exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode"]
 
 [dependencies]
 cn-font-utils = { version = "0.2.0", path = "crates/cn_font_utils" }
-harfbuzz_rs_now = "2.3.0"
+harfbuzz_rs_now = "2.3.2"
 lang-unicodes = { version = "0.2.0", path = "crates/lang_unicodes", default-features = false }
-log = "0.4.26"
+log = "0.4.27"
 md5 = "0.7.0"
 opentype = "0.38.1"
 prost = "0.13.5"
@@ -22,17 +22,17 @@ rayon = "1.10.0"
 unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
 woff = "0.3.4"
 current_platform = "0.2.0"
-clap = { version = "4.5.32", features = ["derive"] }
+clap = { version = "4.5.37", features = ["derive"] }
 chrono = "0.4.38"
 regex = "1.11.1"
-indexmap = "2.8.0"
+indexmap = "2.9.0"
 
 [dev-dependencies]
-env_logger = "0.11.7"
+env_logger = "0.11.8"
 
 [build-dependencies]
 cross = "0.2.5"
-tonic-build = "0.12.3"
+tonic-build = "0.13.0"
 
 [features]
 default = ["with_extra"]

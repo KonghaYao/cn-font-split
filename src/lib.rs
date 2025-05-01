@@ -75,5 +75,5 @@ fn main_test() {
     // test_on("./LXGWWenKai-Regular.ttf", "ttf");
     // test_on("./packages/demo/public/JudouSansHans-Light.ttf", "ttf");
     // test_on("./packages/demo/public/豆豆字体.ttf", "ttf");
-    test_on("./packages/demo/public/SourceHanSansCN-VF-2.otf", "woff2");
+    test_on("./packages/demo/public/NotoSerifSC-Regular.ttf", "ttf");
 }

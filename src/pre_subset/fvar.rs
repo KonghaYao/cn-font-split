@@ -1,7 +1,5 @@
 use opentype::tables::FontVariations;
 use opentype::truetype::q32;
-use opentype::Font;
-use std::io::Cursor;
 
 #[derive(Default, Clone, Debug)]
 pub struct FvarTable {
@@ -34,6 +32,8 @@ pub fn q32_to_int_truncate(input: q32) -> i32 {
 #[test]
 fn test_fvar_table() {
     use cn_font_utils::read_binary_file;
+    use opentype::Font;
+    use std::io::Cursor;
     let path = "./packages/demo/public/WorkSans-VariableFont_wght.ttf";
     let file_binary = read_binary_file(&path).expect("Failed to read file");
     let mut font_file = Cursor::new(&file_binary);

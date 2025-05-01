@@ -33,7 +33,7 @@ pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
     reporter: &'a mut OutputReport,
     callback: &'a F,
 ) -> Context<'a, 'b, 'c> {
-    let mut ctx = Context {
+    let ctx = Context {
         input: config,
         binary,
         pre_subset_result: vec![],

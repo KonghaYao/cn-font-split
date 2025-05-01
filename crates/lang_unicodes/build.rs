@@ -1,4 +1,3 @@
-use cn_font_utils::output_file;
 #[cfg(feature = "with_extra")]
 use lazy_static::lazy_static;
 #[cfg(feature = "with_extra")]
