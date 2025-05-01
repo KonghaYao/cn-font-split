@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import { getCliParams } from './gen/proto.js';
 import { runInitScript } from './init.js';
-
+import set from 'set-value';
 getCliParams(process.argv, (program, run) => {
     run.action(async (data) => {
         let fontSplit;
@@ -11,7 +11,11 @@ getCliParams(process.argv, (program, run) => {
         } else {
             fontSplit = (await import('./node/index.js')).fontSplit;
         }
-        await fontSplit(data);
+        const newData = { ...data };
+        Object.entries(newData).forEach(([key, value]) => {
+            set(newData, key, value);
+        });
+        await fontSplit(newData);
     });
     program
         .usage(
