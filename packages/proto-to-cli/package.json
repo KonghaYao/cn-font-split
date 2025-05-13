@@ -8,6 +8,7 @@
         "proto-to-cli": "dist/cli.js"
     },
     "files": [
+        "!**/*.map",
         "dist"
     ],
     "publishConfig": {
