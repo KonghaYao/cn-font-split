@@ -20,9 +20,10 @@ function chunk(arr?: number[], size = 500) {
     }
 }
 
-export type BundlePluginConfig = Partial<proto.InputTemplate> & {
+export type BundlePluginConfig = Omit<Partial<proto.InputTemplate>, 'input' | 'subsets'> & {
     cacheDir?: string;
     server?: boolean;
+    subsetChunkSize?: number
 };
 
 export class BundlePlugin {
@@ -89,7 +90,7 @@ export class BundlePlugin {
                 fontFeature: true,
                 reduceMins: !onlySubset,
                 subsetRemainChars: !onlySubset,
-                subsets: onlySubset ? chunk(this.subsets?.flat()) : undefined,
+                subsets: onlySubset ? chunk(this.subsets?.flat(), this.config.subsetChunkSize) : undefined,
                 silent: true,
             }).catch((e) => {
                 console.error(e);
