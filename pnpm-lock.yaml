@@ -144,8 +144,8 @@ importers:
   packages/metrics:
     dependencies:
       fontaine:
-        specifier: ^0.5.0
-        version: 0.5.0(webpack-sources@3.2.3)
+        specifier: ^0.6.0
+        version: 0.6.0
 
   packages/performance:
     dependencies:
@@ -156,8 +156,8 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1
       cn-font-split:
-        specifier: 7.2.8
-        version: 7.2.8
+        specifier: 7.2.9
+        version: 7.2.9
       solid-js:
         specifier: ^1.9.4
         version: 1.9.4
@@ -238,8 +238,8 @@ importers:
         specifier: ^7.2.4
         version: 7.2.4
       fontaine:
-        specifier: ^0.5.0
-        version: 0.5.0(webpack-sources@3.2.3)
+        specifier: ^0.6.0
+        version: 0.6.0
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
@@ -398,8 +398,14 @@ packages:
   '@capsizecss/metrics@2.2.0':
     resolution: {integrity: sha512-DkFIser1KbGxWyG2hhQQeCit72TnOQDx5pr9bkA7+XlIy7qv+4lYtslH3bidVxm2qkY2guAgypSIPYuQQuk70A==}
 
+  '@capsizecss/metrics@3.5.0':
+    resolution: {integrity: sha512-Ju2I/Qn3c1OaU8FgeW4Tc22D4C9NwyVfKzNmzst59bvxBjPoLYNZMqFYn+HvCtn4MpXwiaDtCE8fNuQLpdi9yA==}
+
   '@capsizecss/unpack@2.3.0':
     resolution: {integrity: sha512-qkf9IoFIVTOkkpr8oZtCNSmubyWFCuPU4EOWO6J/rFPP5Ks2b1k1EHDSQRLwfokh6nCd7mJgBT2lhcuDCE6w4w==}
+
+  '@capsizecss/unpack@2.4.0':
+    resolution: {integrity: sha512-GrSU71meACqcmIUxPYOJvGKF0yryjN/L1aCuE9DViCTJI7bfkjgYDPD1zbNDcINJwSSP6UaBZY9GAbYDO7re0Q==}
 
   '@cn-ui/reactive@2.3.0':
     resolution: {integrity: sha512-62q7U2afLDp9T/x7XlF2dLOtxURr7JEqVct6bHwOGlZA0cdIjsD03XyXQKATLwtVrSXU2fuDHUPzI98kI9pUDg==}
@@ -1321,8 +1327,8 @@ packages:
     resolution: {integrity: sha512-3rLeiGCSjJJPmk4rtPOXTYFim2ZnrTmkwkOMCmLBrzKcqTZUFrB1u9rSi2NwgZI+2N4J7iNY/mjwemW6s6Y9sA==}
     hasBin: true
 
-  cn-font-split@7.2.8:
-    resolution: {integrity: sha512-YaNAmiJDrhQDhnOQPTS2Psfe/h+SrHhzyJnNu0NqgyoxURqLu+lqqVgiWnR+bIlAtXGAM4+WC/Y+66V2VqKeKA==}
+  cn-font-split@7.2.9:
+    resolution: {integrity: sha512-5WsWWhn2mKEm25W4v9tLnkd9KMGLI8u7GN35uzG4jZEAAAKDd6Hmc5pgILtSH7IE1brQuEBAkfsvk6YXcn0vMQ==}
     hasBin: true
 
   color-convert@2.0.1:
@@ -1367,6 +1373,10 @@ packages:
   cross-spawn@7.0.5:
     resolution: {integrity: sha512-ZVJrKKYunU38/76t0RMOulHOnUcbU9GbpWKAOZ0mhjr7CX6FVrH+4FrAapSOekrgFQ3f/8gwMEuIft0aKq6Hug==}
     engines: {node: '>= 8'}
+
+  css-tree@3.1.0:
+    resolution: {integrity: sha512-0eW44TGN5SQXU1mWSkKwFstI/22X2bG1nYzZTYMAWjylYURhse752YgbE4Cx46AC+bAvI+/dYTPRk1LqSUnu6w==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
@@ -1462,6 +1472,9 @@ packages:
 
   fontaine@0.5.0:
     resolution: {integrity: sha512-vPDSWKhVAfTx4hRKT777+N6Szh2pAosAuzLpbppZ6O3UdD/1m6OlHjNcC3vIbgkRTIcLjzySLHXzPeLO2rE8cA==}
+
+  fontaine@0.6.0:
+    resolution: {integrity: sha512-cfKqzB62GmztJhwJ0YXtzNsmpqKAcFzTqsakJ//5COTzbou90LU7So18U+4D8z+lDXr4uztaAUZBonSoPDcj1w==}
 
   fontkit@2.0.4:
     resolution: {integrity: sha512-syetQadaUEDNdxdugga9CpEYVaQIxOwk7GlwZWWZ19//qW4zE5bknOKeMBDYAASwnpaSHKJITRLMF9m1fp3s6g==}
@@ -1686,6 +1699,9 @@ packages:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
 
+  magic-regexp@0.10.0:
+    resolution: {integrity: sha512-Uly1Bu4lO1hwHUW0CQeSWuRtzCMNO00CmXtS8N6fyvB3B979GOEEeAkiTUDsmbYLAbvpUS/Kt5c4ibosAzVyVg==}
+
   magic-regexp@0.8.0:
     resolution: {integrity: sha512-lOSLWdE156csDYwCTIGiAymOLN7Epu/TU5e/oAnISZfU6qP+pgjkE+xbVjVn3yLPKN8n1G2yIAYTAM5KRk6/ow==}
 
@@ -1694,6 +1710,9 @@ packages:
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
+
+  mdn-data@2.12.2:
+    resolution: {integrity: sha512-IEn+pegP1aManZuckezWCO+XZQDplx1366JoVhTpMpBB1sPey/SbveZQUosKiKiGYjg1wH4pMlNgXbCiYgihQA==}
 
   memfs-browser@3.5.10302:
     resolution: {integrity: sha512-JJTc/nh3ig05O0gBBGZjTCPOyydaTxNF0uHYBrcc1gHNnO+KIHIvo0Y1FKCJsaei6FCl8C6xfQomXqu+cuzkIw==}
@@ -2150,6 +2169,10 @@ packages:
     resolution: {integrity: sha512-Q3LU0e4zxKfRko1wMV2HmP8lB9KWislY7hxXpxd+lGx0PRInE4vhMBVEZwpdVYHvtqzhSrzuIfErsob6bQfCzw==}
     engines: {node: '>=18.12.0'}
 
+  unplugin@2.3.5:
+    resolution: {integrity: sha512-RyWSb5AHmGtjjNQ6gIlA67sHOsWpsbWpwDokLwTcejVdOjEkJZh7QKu14J00gDDVSh8kGH4KYC/TNBceXFZhtw==}
+    engines: {node: '>=18.12.0'}
+
   update-browserslist-db@1.1.3:
     resolution: {integrity: sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==}
     hasBin: true
@@ -2524,7 +2547,17 @@ snapshots:
 
   '@capsizecss/metrics@2.2.0': {}
 
+  '@capsizecss/metrics@3.5.0': {}
+
   '@capsizecss/unpack@2.3.0':
+    dependencies:
+      blob-to-buffer: 1.2.9
+      cross-fetch: 3.1.8
+      fontkit: 2.0.4
+    transitivePeerDependencies:
+      - encoding
+
+  '@capsizecss/unpack@2.4.0':
     dependencies:
       blob-to-buffer: 1.2.9
       cross-fetch: 3.1.8
@@ -3334,7 +3367,7 @@ snapshots:
       koffi: 2.10.0
       proto-to-cli: 1.1.5
 
-  cn-font-split@7.2.8:
+  cn-font-split@7.2.9:
     dependencies:
       buffer: 6.0.3
       commander: 12.1.0
@@ -3342,6 +3375,7 @@ snapshots:
       google-protobuf: 3.21.4
       koffi: 2.11.0
       proto-to-cli: 1.2.1
+      set-value: 4.1.0
 
   color-convert@2.0.1:
     dependencies:
@@ -3378,6 +3412,11 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  css-tree@3.1.0:
+    dependencies:
+      mdn-data: 2.12.2
+      source-map-js: 1.2.1
 
   csstype@3.1.3: {}
 
@@ -3481,6 +3520,19 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - webpack-sources
+
+  fontaine@0.6.0:
+    dependencies:
+      '@capsizecss/metrics': 3.5.0
+      '@capsizecss/unpack': 2.4.0
+      css-tree: 3.1.0
+      magic-regexp: 0.10.0
+      magic-string: 0.30.17
+      pathe: 2.0.3
+      ufo: 1.6.1
+      unplugin: 2.3.5
+    transitivePeerDependencies:
+      - encoding
 
   fontkit@2.0.4:
     dependencies:
@@ -3683,6 +3735,16 @@ snapshots:
     dependencies:
       yallist: 4.0.0
 
+  magic-regexp@0.10.0:
+    dependencies:
+      estree-walker: 3.0.3
+      magic-string: 0.30.17
+      mlly: 1.7.4
+      regexp-tree: 0.1.27
+      type-level-regexp: 0.1.17
+      ufo: 1.6.1
+      unplugin: 2.3.5
+
   magic-regexp@0.8.0(webpack-sources@3.2.3):
     dependencies:
       estree-walker: 3.0.3
@@ -3702,6 +3764,8 @@ snapshots:
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  mdn-data@2.12.2: {}
 
   memfs-browser@3.5.10302:
     dependencies:
@@ -4150,6 +4214,12 @@ snapshots:
   unplugin@2.1.2:
     dependencies:
       acorn: 8.14.0
+      webpack-virtual-modules: 0.6.2
+
+  unplugin@2.3.5:
+    dependencies:
+      acorn: 8.14.1
+      picomatch: 4.0.2
       webpack-virtual-modules: 0.6.2
 
   update-browserslist-db@1.1.3(browserslist@4.24.4):

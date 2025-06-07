@@ -3,4 +3,5 @@ packages:
   - crates/**
 onlyBuiltDependencies:
   - cn-font-split
+  - esbuild
   - koffi
