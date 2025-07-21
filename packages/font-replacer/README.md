@@ -21,7 +21,7 @@ import { FontReplacer, getChineseFontsMap } from 'cn-font-replacer';
 // 获取中文网字计划的 字图 CDN 的相应数据
 const CNFontMap = await getChineseFontsMap();
 
-console.log(CDFontMap);
+console.log(CNFontMap);
 
 // 注入到 FontReplacer 实例
 const fontReplacer = new FontReplacer(CNFontMap);
