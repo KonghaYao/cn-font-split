@@ -26,6 +26,7 @@ lazy_static! {
     // 定义 ZH_SYMBOL 静态引用，包含特化处理的中文常用符号的 Unicode 码点
     // 参考 https://www.w3.org/International/clreq/#tables_of_chinese_punctuation_marks
     // 以及 https://zh.wikipedia.org/wiki/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7
+    // 。．，、：；！‼？⁇⸺——…⋯～-–·・‧/／「」『』“”‘’（）《》〈〉【】〖〗〔〕［］｛｝＿﹏●•－｜﹁﹂﹃﹄〘〙
     pub static ref ZH_SYMBOL: Vec<u32> = expand_ranges(&[
         // 句号
         (0x3002, 0x3002), // 。
