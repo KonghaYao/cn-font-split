@@ -76,7 +76,6 @@ lazy_static! {
         (0x3010, 0x3011), // 【】
         (0x3016, 0x3017), // 〖〗
         (0x3014, 0x3015), // 〔〕
-        (0x3018, 0x3019), // 〘〙
         (0xFF3B, 0xFF3B), // ［
         (0xFF3D, 0xFF3D), // ］
         (0xFF5B, 0xFF5B), // ｛
@@ -91,6 +90,7 @@ lazy_static! {
         (0xFF5C, 0xFF5C), // ｜（全角竖线）
         (0xFE41, 0xFE42), // ﹁﹂
         (0xFE43, 0xFE44), // ﹃﹄
+        (0x3018, 0x3019), // 〘〙
     ]);
 
     pub static ref HALFWIDTH_FULLWIDTH: Vec<u32> = expand_ranges(&[(0xFF00, 0xFFEF)]);
