@@ -81,7 +81,7 @@ jobs:
         container: ${{ matrix.platform.container }}
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
             - name: Setup Windows Environment
               if: ${{ runner.os == 'Windows' }}
               shell: pwsh
