@@ -113,10 +113,10 @@ jobs:
                   sudo apt install -y nodejs llvm clang pkg-config libssl-dev
                   ${{ matrix.platform.setup }}
             - name: Setup Amazon Linux Environment
-              if: ${{ runner.os == 'Linux' && matrix.platform.container == 'amazonlinux:2023.2.20231011.0' }}
+              if: ${{ runner.os == 'Linux' && matrix.platform.container }}
               run: |
                   yum update -y
-                  yum install -y nodejs npm llvm clang pkg-config openssl-devel gcc gcc-c++ make cmake
+                  yum install -y nodejs npm llvm clang pkg-config openssl-devel unzip gcc gcc-c++ make cmake
                   ${{ matrix.platform.setup }}
             - name: Set up Homebrew
               id: set-up-homebrew
