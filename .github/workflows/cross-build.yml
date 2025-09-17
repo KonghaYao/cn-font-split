@@ -31,12 +31,12 @@ jobs:
                     - os-name: aarch64-unknown-linux-gnu
                       runs-on: ubuntu-22.04
                       target: aarch64-unknown-linux-gnu
-                      container: amazonlinux:2023.2.20231011.0
+                      container: rocm/dev-ubuntu-20.04
 
                     - os-name: x86_64-unknown-linux-gnu
                       runs-on: ubuntu-22.04
                       target: x86_64-unknown-linux-gnu
-                      container: amazonlinux:2023.2.20231011.0
+                      container: rocm/dev-ubuntu-20.04
 
                     # - os-name: Linux-x86_64-musl
                     #   runs-on: ubuntu-22.04
