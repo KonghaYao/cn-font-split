@@ -31,7 +31,6 @@ jobs:
                     - os-name: aarch64-unknown-linux-gnu
                       runs-on: ubuntu-22.04
                       target: aarch64-unknown-linux-gnu
-                      container: rocm/dev-ubuntu-20.04
 
                     - os-name: x86_64-unknown-linux-gnu
                       runs-on: ubuntu-22.04
@@ -157,10 +156,6 @@ jobs:
               env:
                   HARFBUZZ_SYS_NO_PKG_CONFIG: 'True'
 
-            - name: Install ARM64 cross-compiler
-              if: ${{ matrix.platform.target == 'aarch64-unknown-linux-gnu' }}
-              run: |
-                  sudo apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
             - name: Build binary (cargo)
               if: ${{ matrix.platform.container }}
               run: cargo build --locked --release -p ffi --no-default-features --target ${{ matrix.platform.target }}
