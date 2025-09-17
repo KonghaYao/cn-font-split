@@ -31,10 +31,12 @@ jobs:
                     - os-name: aarch64-unknown-linux-gnu
                       runs-on: ubuntu-22.04
                       target: aarch64-unknown-linux-gnu
+                      container: amazonlinux:2023.2.20231011.0
 
                     - os-name: x86_64-unknown-linux-gnu
                       runs-on: ubuntu-22.04
                       target: x86_64-unknown-linux-gnu
+                      container: amazonlinux:2023.2.20231011.0
 
                     # - os-name: Linux-x86_64-musl
                     #   runs-on: ubuntu-22.04
@@ -76,6 +78,7 @@ jobs:
         env:
             TZ: Asia/Shanghai
         runs-on: ${{ matrix.platform.runs-on }}
+        container: ${{ matrix.platform.container }}
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -104,10 +107,16 @@ jobs:
               run: |
                   sed -i '' 's/^version = \"[^\"]*\"/version = "${{inputs.version}}"/' Cargo.toml
             - name: Setup Linux Environment
-              if: ${{ runner.os == 'Linux' }}
+              if: ${{ runner.os == 'Linux' && !matrix.platform.container }}
               run: |
                   sudo apt update
                   sudo apt install -y nodejs llvm clang pkg-config libssl-dev
+                  ${{ matrix.platform.setup }}
+            - name: Setup Amazon Linux Environment
+              if: ${{ runner.os == 'Linux' && matrix.platform.container == 'amazonlinux:2023.2.20231011.0' }}
+              run: |
+                  yum update -y
+                  yum install -y nodejs npm llvm clang pkg-config openssl-devel gcc gcc-c++ make cmake
                   ${{ matrix.platform.setup }}
             - name: Set up Homebrew
               id: set-up-homebrew
