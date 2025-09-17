@@ -147,6 +147,7 @@ jobs:
 
             - name: Build binary
               uses: houseabsolute/actions-rust-cross@v1
+              if: ${{ runner.os == 'Linux' && !matrix.platform.container }}
               with:
                   command: build
                   target: ${{ matrix.platform.target }}
@@ -154,7 +155,12 @@ jobs:
                   strip: false
               env:
                   HARFBUZZ_SYS_NO_PKG_CONFIG: 'True'
-
+            - name: Build binary (cargo)
+              if: ${{ runner.os == 'Linux' && matrix.platform.container }}
+              run: |
+                  cargo build --locked --release -p ffi --no-default-features --target ${{ matrix.platform.target }}
+              env:
+                  HARFBUZZ_SYS_NO_PKG_CONFIG: 'True'
             - name: Rename Package On Mac
               if: ${{ runner.os == 'macOS'}}
               working-directory: ./target/${{ matrix.platform.target }}/release
