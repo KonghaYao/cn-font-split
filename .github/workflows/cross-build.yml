@@ -115,8 +115,8 @@ jobs:
             - name: Setup Amazon Linux Environment
               if: ${{ runner.os == 'Linux' && matrix.platform.container }}
               run: |
-                  yum update -y
-                  yum install -y nodejs npm llvm clang pkg-config openssl-devel unzip gcc gcc-c++ make cmake
+                  apt update -y
+                  apt install -y nodejs npm llvm clang pkg-config openssl-devel unzip gcc gcc-c++ make cmake sudo
                   ${{ matrix.platform.setup }}
             - name: Set up Homebrew
               id: set-up-homebrew
