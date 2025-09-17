@@ -116,7 +116,7 @@ jobs:
               if: ${{ runner.os == 'Linux' && matrix.platform.container }}
               run: |
                   apt update -y
-                  apt install -y nodejs npm llvm clang pkg-config openssl-devel unzip gcc gcc-c++ make cmake sudo
+                  apt install -y nodejs npm llvm clang pkg-config  unzip gcc make cmake sudo
                   ${{ matrix.platform.setup }}
             - name: Set up Homebrew
               id: set-up-homebrew
