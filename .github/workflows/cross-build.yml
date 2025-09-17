@@ -158,6 +158,7 @@ jobs:
             - name: Build binary (cargo)
               if: ${{ runner.os == 'Linux' && matrix.platform.container }}
               run: |
+                  rustup target add ${{ matrix.platform.target }}
                   cargo build --locked --release -p ffi --no-default-features --target ${{ matrix.platform.target }}
               env:
                   HARFBUZZ_SYS_NO_PKG_CONFIG: 'True'
