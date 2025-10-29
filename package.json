@@ -31,7 +31,13 @@
     },
     "pnpm": {
         "overrides": {
-            "cross-spawn": "7.0.5"
+            "cross-spawn": "7.0.5",
+            "brace-expansion@>=1.0.0 <=1.1.11": ">=1.1.12",
+            "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2",
+            "vite-plugin-static-copy@>=0.4.3 <=2.3.1": ">=2.3.2",
+            "vite@>=6.0.0 <=6.3.5": ">=6.3.6",
+            "vite@>=6.0.0 <=6.4.0": ">=6.4.1",
+            "playwright@<1.55.1": ">=1.55.1"
         }
     }
 }
