@@ -10,7 +10,7 @@
         "preinstall": "pnpm fix_dep && npx only-allow pnpm"
     },
     "dependencies": {
-        "fs-extra": "^11.3.0"
+        "fs-extra": "^11.3.2"
     },
     "devDependencies": {
         "@babel/core": "^7.26.10",
