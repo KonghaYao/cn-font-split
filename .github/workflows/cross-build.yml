@@ -225,7 +225,6 @@ jobs:
         run: |
           export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-28.0-x86_64-linux/share/wasi-sysroot/"
           export PATH=$PATH:/opt/binaryen/binaryen-version_124/bin
-          export WASI_SDK_PATH="/opt/wasi-sdk/wasi-sdk-28.0-x86_64-linux/"
           cargo build --target ${{ matrix.wasm-target }} --release
           wasm-opt -Oz --output ../../target/${{ matrix.wasm-target }}/release/wasm_edge.Oz.wasm ../../target/${{ matrix.wasm-target }}/release/wasm_edge.wasm
 
