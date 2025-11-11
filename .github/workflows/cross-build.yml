@@ -62,7 +62,7 @@ jobs:
             target: aarch64-pc-windows-msvc
 
           - os-name: Windows-x86_64-gnu
-            runs-on: windows-latest
+            runs-on: windows-2022
             target: x86_64-pc-windows-gnu
 
           - os-name: macOS-x86_64
