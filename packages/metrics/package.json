@@ -21,6 +21,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "fontaine": "^0.6.0"
+        "fontaine": "^0.7.0"
     }
 }
