@@ -6,10 +6,10 @@
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
 ![NPM License](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![updateTime](https://img.shields.io/badge/更新时间-2025/01/17-green)
+![updateTime](https://img.shields.io/badge/更新时间-2025/12/20-green)
 
 | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/zh-cn/online-split/) |
-| ------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------- |
+| ------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
 
 ## 简介
 
@@ -17,12 +17,12 @@
 
 `cn-font-split` 不仅支持中文，针对于中韩日文字、少数民族文字、阿拉伯文等皆有优化，可以根据实际字体包内字符进行智能地分包。
 
-- 🚀 `WebAssembly` 或者 `Rust FFI` 实现， 原生运行分包，进入秒级构建；
-- 💻 坚持 Web 平台为基底，兼容性极强。浏览器、WASI、Linux、MacOS、Windows，统统可以运行。Rust、JS、Python 多语言复用。
-- 📦 跨平台产物一致，无论哪个平台，运行 cn-font-split 得到的结果都是一致的。
-- 🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形，支持可变字体！
-- ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
-- 🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
+-   🚀 `WebAssembly` 或者 `Rust FFI` 实现， 原生运行分包，进入秒级构建；
+-   💻 坚持 Web 平台为基底，兼容性极强。浏览器、WASI、Linux、MacOS、Windows，统统可以运行。Rust、JS、Python 多语言复用。
+-   📦 跨平台产物一致，无论哪个平台，运行 cn-font-split 得到的结果都是一致的。
+-   🔧 功能齐全完备，支持生成文字图片预览，支持完整全字符，支持复杂字形，支持可变字体！
+-   ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
+-   🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
 > 7.0 版本更改了一些使用方式，请阅读文档进行修改。
 >
@@ -37,34 +37,52 @@ export CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github
 pnpm i cn-font-split
 ```
 
-### Nodejs 版本
+### 推荐：自动检测环境（Auto）
+
+**推荐使用默认导入方式**，`cn-font-split` 会自动检测运行环境（Node.js、Bun、Deno）并选择最优的实现方式：
 
 ```js
-import fs from 'fs';
 import { fontSplit } from 'cn-font-split';
+// 或者
+import fontSplit from 'cn-font-split';
+
+// Node.js 示例
+import fs from 'fs';
 const inputBuffer = new Uint8Array(
     fs.readFileSync('../demo/public/SmileySans-Oblique.ttf').buffer,
 );
-console.time('node');
+
+// Bun 示例
+// const inputBuffer = await Bun.file('../demo/public/SmileySans-Oblique.ttf').arrayBuffer();
+
+console.time('font-split');
 await fontSplit({
     input: inputBuffer,
     outDir: './dist/font',
 });
-console.timeEnd('node');
+console.timeEnd('font-split');
 ```
 
-### Bun 版本
+### 直接使用特定实现（高级用法）
+
+如果需要直接使用特定环境的实现，可以使用以下方式：
+
+**Node.js 版本：**
 
 ```js
-import { fontSplit } from 'cn-font-split/dist/bun/index.js';
-const inputBuffer = Bun.file('../demo/public/SmileySans-Oblique.ttf').bytes(),
+import { fontSplit } from 'cn-font-split/dist/node/index';
+```
 
-console.time('bun');
-await fontSplit({
-    input: inputBuffer,
-    outDir: './dist/font',
-});
-console.timeEnd('bun');
+**Bun 版本：**
+
+```js
+import { fontSplit } from 'cn-font-split/dist/bun/index';
+```
+
+**Deno 版本：**
+
+```js
+import { fontSplit } from 'cn-font-split/dist/deno/index';
 ```
 
 ### 控制生成产物
@@ -75,11 +93,11 @@ await fontSplit({
     input: inputBuffer,
     outDir: './dist/font',
     previewImage: {
-        name: "preview", // 文件名称
-        text: "中文网字计划\nThe Chinese Web Font Project", // 需要渲染的字
+        name: 'preview', // 文件名称
+        text: '中文网字计划\nThe Chinese Web Font Project', // 需要渲染的字
     },
     testHtml: true,
-    reporter: true,   
+    reporter: true,
 });
 ```
 
@@ -90,9 +108,9 @@ await fontSplit({
 ```ts
 import { fontSplit } from 'cn-font-split';
 await fontSplit({
-    input: inputBuffer,         // 输入的字体缓冲区
-    outDir: './dist/font',      // 输出目录
-    
+    input: inputBuffer, // 输入的字体缓冲区
+    outDir: './dist/font', // 输出目录
+
     // subsets: [                // 手动分包范围，一般而言不需要手动配置
     //   [65,66,67],             // 第一个分包，对照: 65(A)、66(B)、67(C)
     //   [102,103,104],          // 第二个分包，对照: 102(f)、103(g)、104(h)
@@ -121,15 +139,15 @@ await fontSplit({
     // chunkSize: 70 * 1024,           // 单个分片目标大小
     // chunkSizeTolerance: 1 * 1024,   // 分片容差，一般不需要修改
     // maxAllowSubsetsCount: 10,       // 最大允许分包数量，可能会和 chunkSize 冲突
-    
-    testHtml: true,             // 是否生成测试 HTML 文件
-    reporter: true,             // 是否生成 reporter.bin 文件
+
+    testHtml: true, // 是否生成测试 HTML 文件
+    reporter: true, // 是否生成 reporter.bin 文件
 
     // 自定义分包输出的文件名为 6 位短哈希，或者使用自增索引: '[index].[ext]'
-    renameOutputFont: '[hash:6].[ext]', 
+    renameOutputFont: '[hash:6].[ext]',
     // 不在控制台打印多余的日志信息
     silent: true,
-})
+});
 ```
 
 ## WASM 版本
@@ -158,7 +176,7 @@ const wasm = new StaticWasm(wasmBuffer);
 const data = await fontSplit(
     {
         input: new Uint8Array(input),
-        outDir: "./dist"
+        outDir: './dist',
     },
     wasm.WasiHandle,
     {
@@ -198,10 +216,10 @@ console.log(data);
 ## v6 迁移指南
 
 1. 部分函数入参改变，具体参照 Typescript 类型提示修正即可
-   1. 比如 css 中的 comment 表示方法均被拍平了
-   2. 部分分包的细节控制入参失效
+    1. 比如 css 中的 comment 表示方法均被拍平了
+    2. 部分分包的细节控制入参失效
 2. 性能原因，不支持直接输入 woff2 文件进行分包
-   1. 但是可以使用 wawoff2 等工具，将 woff2 转为 ttf Uint8Array，再进行分包
+    1. 但是可以使用 wawoff2 等工具，将 woff2 转为 ttf Uint8Array，再进行分包
 3. log 暂无输出方式，不影响主功能流程
 
 ## 开源许可证

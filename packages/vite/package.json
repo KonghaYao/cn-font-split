@@ -55,7 +55,7 @@
     },
     "dependencies": {
         "cn-font-metrics": "^2.1.6",
-        "cn-font-split": "^7.2.4",
+        "cn-font-split": "workspace:^*",
         "fontaine": "^0.6.0",
         "fs-extra": "^11.2.0",
         "glob": "^11.0.1",

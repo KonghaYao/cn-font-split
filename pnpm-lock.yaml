@@ -241,8 +241,8 @@ importers:
         specifier: ^2.1.6
         version: 2.1.6(webpack-sources@3.2.3)
       cn-font-split:
-        specifier: ^7.2.4
-        version: 7.2.4
+        specifier: workspace:^*
+        version: link:../ffi-js
       fontaine:
         specifier: ^0.6.0
         version: 0.6.0
@@ -1309,10 +1309,6 @@ packages:
   cn-font-metrics@2.1.6:
     resolution: {integrity: sha512-FwUzUb2SKm3QO6Jnb25kr0S8MqmfoZ43EJxDro8lV9KFlSPXvGihrM4TyMFaqMgi0HCRMcGdPzI1NANHlxDoug==}
 
-  cn-font-split@7.2.4:
-    resolution: {integrity: sha512-3rLeiGCSjJJPmk4rtPOXTYFim2ZnrTmkwkOMCmLBrzKcqTZUFrB1u9rSi2NwgZI+2N4J7iNY/mjwemW6s6Y9sA==}
-    hasBin: true
-
   cn-font-split@7.2.9:
     resolution: {integrity: sha512-5WsWWhn2mKEm25W4v9tLnkd9KMGLI8u7GN35uzG4jZEAAAKDd6Hmc5pgILtSH7IE1brQuEBAkfsvk6YXcn0vMQ==}
     hasBin: true
@@ -1859,10 +1855,6 @@ packages:
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
-
-  proto-to-cli@1.1.5:
-    resolution: {integrity: sha512-ivcbpgCa2yTJYTTdQTXkz6XqeHhsdzXKxI4jRnjOWyQkWwjilI3tQ0hzLCHSGPjO4LwYK5x1P8a+wINF9AzvFQ==}
-    hasBin: true
 
   proto-to-cli@1.2.1:
     resolution: {integrity: sha512-Wga68qpLWHad9ZmC+gORp+ZxyzFb6I+nfwFoZyJw8rSGlEHr9XhH4mzDQ0fWqCbECKZBBVneaLR8ZUI5TLBPSA==}
@@ -3334,15 +3326,6 @@ snapshots:
       - encoding
       - webpack-sources
 
-  cn-font-split@7.2.4:
-    dependencies:
-      buffer: 6.0.3
-      commander: 12.1.0
-      fs-extra: 11.3.0
-      google-protobuf: 3.21.4
-      koffi: 2.10.0
-      proto-to-cli: 1.1.5
-
   cn-font-split@7.2.9:
     dependencies:
       buffer: 6.0.3
@@ -3869,12 +3852,6 @@ snapshots:
   prettier@3.0.3: {}
 
   process-nextick-args@2.0.1: {}
-
-  proto-to-cli@1.1.5:
-    dependencies:
-      commander: 12.1.0
-      fs-extra: 11.3.2
-      protobufjs: 7.4.0
 
   proto-to-cli@1.2.1:
     dependencies:

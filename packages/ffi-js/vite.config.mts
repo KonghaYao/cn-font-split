@@ -61,6 +61,7 @@ export default defineConfig(({ mode }) => {
                     './src/bun/index.ts',
                     './src/deno/index.ts',
                     './src/cli.ts',
+                    './src/auto.ts',
                 ],
                 formats: ['es', 'cjs'],
             },
