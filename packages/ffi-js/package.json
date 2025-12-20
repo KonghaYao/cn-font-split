@@ -1,13 +1,16 @@
 {
     "name": "cn-font-split",
-    "version": "7.4.0",
+    "version": "7.4.1",
     "description": "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size.",
     "main": "./dist/auto.js",
     "module": "./dist/auto.mjs",
     "browser": "./dist/wasm/index.mjs",
     "bin": {
-        "cn-font-split": "./dist/cli.js"
+        "cn-font-split": "dist/cli.js"
     },
+    "files": [
+        "dist"
+    ],
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
         "access": "public"
@@ -20,7 +23,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/subsets"
+        "url": "git+https://github.com/KonghaYao/cn-font-split.git#ts"
     },
     "homepage": "https://chinese-font.netlify.app/",
     "keywords": [
