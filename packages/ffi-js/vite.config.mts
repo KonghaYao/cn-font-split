@@ -70,6 +70,7 @@ export default defineConfig(({ mode }) => {
             assetsDir: '',
             assetsInlineLimit: 0,
             rollupOptions: {
+                platform: 'node',
                 output: {
                     assetFileNames: `[name]-[hash].[ext]`,
                     exports: 'named',
