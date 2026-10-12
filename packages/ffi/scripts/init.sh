@@ -80,6 +80,13 @@ function getLatestVersion() {
     # 使用 grep 和 sed 解析出 "tag" 的值
     version=$(echo "$response" | grep -o '"tag":"[^"]*"' | sed 's/"tag":"\([^"]*\)"/\1/')
 
+    # ungh.cc 不可用时，改用 GitHub API
+    # When ungh.cc is unavailable, fall back to the GitHub API.
+    if [ -z "$version" ]; then
+        response=$(curl -sL https://api.github.com/repos/KonghaYao/cn-font-split/releases/latest)
+        version=$(echo "$response" | grep -o '"tag_name": *"[^"]*"' | sed 's/"tag_name": *"\([^"]*\)"/\1/')
+    fi
+
     # 输出版本号
     echo "$version"
 }
@@ -120,9 +127,17 @@ function cn_i() {
     if [ "$p" = "default" ]; then
         p="$rust_target"
     fi
-    # 自动拿版本
+    # 自动拿版本：CN_FONT_SPLIT_VERSION 环境变量优先，否则取最新版本
+    # Version: CN_FONT_SPLIT_VERSION if set, otherwise the latest release.
+    if [ -z "$version" ]; then
+        version="$CN_FONT_SPLIT_VERSION"
+    fi
     if [ -z "$version" ]; then
         version=$(getLatestVersion)
+    fi
+    if [ -z "$version" ]; then
+        colorEcho RED "[Error] 无法获取最新版本号 / Could not determine the latest release. Pass a version (cn-font-split i default@<version>) or set CN_FONT_SPLIT_VERSION."
+        exit 1
     fi
     echo "$p@$version"
 
@@ -136,7 +151,15 @@ function cn_i() {
     local download_url="$GH_HOST/KonghaYao/cn-font-split/releases/download/$version/libffi-$p.$ext"
     echo $download_url
 
-    curl -fsSL -o "$SCRIPT_DIR/libffi-$p.$ext" "$download_url"
+    # 先下载到临时文件，失败时不覆盖已有的库，也不更新 version 文件
+    # Download to a temporary file, so a failed download keeps any existing library
+    # and doesn't update the version file.
+    if ! curl -fsSL -o "$SCRIPT_DIR/libffi-$p.$ext.download" "$download_url"; then
+        rm -f "$SCRIPT_DIR/libffi-$p.$ext.download"
+        colorEcho RED "[Error] 下载失败 / Download failed: $download_url"
+        exit 1
+    fi
+    mv "$SCRIPT_DIR/libffi-$p.$ext.download" "$SCRIPT_DIR/libffi-$p.$ext"
 
     # 检查 version 文件是否存在
     if [ -f "$VERSION_FILE" ]; then
