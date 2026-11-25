@@ -17,9 +17,8 @@ fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
             if part_no < 0 {
                 return Some(
                     data[last_index..i]
-                        .to_vec()
-                        .into_iter()
-                        .map(|i| i as u32)
+                        .iter()
+                        .map(|i| *i as u32)
                         .collect::<Vec<u32>>(),
                 );
             }
@@ -29,11 +28,7 @@ fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
 
     if part_no == 0 {
         return Some(
-            data[last_index..]
-                .to_vec()
-                .into_iter()
-                .map(|i| i as u32)
-                .collect::<Vec<u32>>(),
+            data[last_index..].iter().map(|i| *i as u32).collect::<Vec<u32>>(),
         );
     }
     None
@@ -73,7 +68,7 @@ mod tests {
             "{}",
             ZH_SC
                 .iter()
-                .map(|i| { std::char::from_u32(i.clone()).unwrap() })
+                .map(|i| { std::char::from_u32(*i).unwrap() })
                 .collect::<String>()
         )
     }

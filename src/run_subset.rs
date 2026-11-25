@@ -20,13 +20,13 @@ use woff::version2::compress;
 /// 构建单个分包为字体文件
 pub fn build_single_subset(
     face: &Owned<Face>,
-    subset: &Vec<u32>,
+    subset: &[u32],
 ) -> Result<Vec<u8>> {
     let subset_runner = Subset::new();
     subset_runner.clear_drop_table();
     subset_runner.adjust_layout();
     subset_runner.add_chars(subset);
-    let new_face = subset_runner.run_subset(&face).face_data();
+    let new_face = subset_runner.run_subset(face).face_data();
     let ttf_binary = new_face.get_data();
     // woff 0.4.0 的 compress 以 Option 表示失败（上游 woff2 编码失败）。
     compress(ttf_binary, String::from(""), 1, true).ok_or_else(|| {
@@ -57,7 +57,7 @@ pub fn run_subset(ctx: &mut Context) -> Result<()> {
         .map(|(index, r)| {
             let start_time = Instant::now();
 
-            let result = build_single_subset(&ctx.face, r)?;
+            let result = build_single_subset(ctx.face, r)?;
             let result_bytes = u8_size_in_kb(&result);
             let hash_string =
                 blake3::hash(result.as_slice()).to_hex().to_string();

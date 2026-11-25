@@ -107,7 +107,7 @@ mod tests {
     use super::*;
     use crate::pre_subset::fvar::FvarTable;
     use crate::pre_subset::name_table::NameTableSets;
-    use crate::runner::{Context, create_context};
+    use crate::runner::create_context;
     use cn_font_proto::api_interface::input_template::CssProperties;
     use cn_font_proto::api_interface::output_report::NameTable;
     use cn_font_proto::api_interface::{InputTemplate, OutputReport};
@@ -141,8 +141,10 @@ mod tests {
     #[test]
     fn test_extract_font_weight() {
         // 测试 CSS 属性中直接指定权重的情况
-        let mut css = CssProperties::default();
-        css.font_weight = Some("700".to_string());
+        let css = CssProperties {
+            font_weight: Some("700".to_string()),
+            ..Default::default()
+        };
         let mut reporter = OutputReport::default();
         let binary = vec![];
         let config = InputTemplate::default();

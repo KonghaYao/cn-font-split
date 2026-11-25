@@ -163,8 +163,7 @@ mod tests {
     /// 测试索引占位符功能
     #[test]
     fn test_index_placeholder() {
-        let mut fixture = TestFixture::default();
-        fixture.index = 42;
+        let fixture = TestFixture { index: 42, ..Default::default() };
         let template = "item_[index]";
         let result = name_template(
             template,

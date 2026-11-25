@@ -14,7 +14,7 @@ pub fn analyze_fvar_table(data: Option<FontVariations>) -> Option<FvarTable> {
     let mut vf = FvarTable::default();
     data.axis_records.iter().for_each(|x| {
         let tag = x.tag.as_str().unwrap_or("");
-        if tag == "wght".to_string() {
+        if tag == "wght" {
             let max = q32_to_int_truncate(x.max_value);
             let min = q32_to_int_truncate(x.min_value);
             let font_weight = format!("{} {}", min, max).clone();
@@ -34,7 +34,7 @@ fn test_fvar_table() {
     use opentype::Font;
     use std::io::Cursor;
     let path = "./packages/demo/public/WorkSans-VariableFont_wght.ttf";
-    let file_binary = read_binary_file(&path).expect("Failed to read file");
+    let file_binary = read_binary_file(path).expect("Failed to read file");
     let mut font_file = Cursor::new(&file_binary);
     let font = Font::read(&mut font_file).expect("TODO: panic message");
 

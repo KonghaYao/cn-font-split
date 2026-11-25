@@ -60,7 +60,7 @@ fn decode_user_subsets(subsets: &[Vec<u8>]) -> Result<Vec<Vec<u32>>> {
 // 主要的预处理函数，用于执行字体的预处理和子集化操作
 pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     // 初始化二进制文件数据和所有Unicode字符的集合
-    let file_binary = &*ctx.binary;
+    let file_binary = ctx.binary;
     let mut all_unicodes: BTreeSet<u32> =
         BTreeSet::from_iter(ctx.face.collect_unicodes());
 
@@ -82,7 +82,7 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     let mut subsets: Vec<IndexSet<u32>> = vec![];
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
-        face: &mut ctx.face,
+        face: ctx.face,
         // 每个包的大小
         predict_bytes_pre_subset: ctx.input.chunk_size.unwrap_or(1024 * 70)
             as u32,
@@ -93,6 +93,8 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     };
 
     // 初始化处理流程，根据输入配置决定是否启用各个插件功能
+    // 插件函数指针签名固定，抽类型别名收益有限。
+    #[allow(clippy::type_complexity)]
     let mut process: Vec<
         fn(
             &mut Vec<IndexSet<u32>>,

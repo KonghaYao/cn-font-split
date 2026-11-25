@@ -29,7 +29,7 @@ pub fn analyze_cmap(
         cmap: &mut HashMap<u16, u32>,
     ) {
         map.iter().for_each(|(k, v)| {
-            cmap.insert(v.clone(), k.clone() as u32);
+            cmap.insert(*v, *k);
         })
     }
     data.encodings.iter().for_each(|e| {

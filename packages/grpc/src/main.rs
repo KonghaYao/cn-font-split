@@ -3,7 +3,7 @@ use cn_font_proto::{
     font_services::font_api_server::{FontApi, FontApiServer},
 };
 use cn_font_split::font_split;
-use std::{pin::Pin, time::Duration, usize};
+use std::{pin::Pin, time::Duration};
 use tokio::sync::mpsc;
 use tokio_stream::Stream;
 use tokio_stream::wrappers::UnboundedReceiverStream;
@@ -24,7 +24,7 @@ impl FontApi for FontApiPort {
     ) -> Result<Response<Self::FontSplitStream>, Status> {
         let input = request.into_inner();
 
-        let (tx, mut rx) = mpsc::unbounded_channel::<Result<EventMessage, _>>();
+        let (tx, rx) = mpsc::unbounded_channel::<Result<EventMessage, _>>();
         println!("{}", input.input.len());
         tokio::spawn(async move {
             let _ = font_split(input, |e| {
@@ -75,7 +75,7 @@ async fn test_font_split() {
     async fn test_on(path: &str) {
         use cn_font_proto::font_services::font_api_client::FontApiClient;
         use cn_font_utils::read_binary_file;
-        let font_file = read_binary_file(&path).expect("Failed to read file");
+        let font_file = read_binary_file(path).expect("Failed to read file");
         let data = InputTemplate { input: font_file, ..Default::default() };
 
         let mut client =

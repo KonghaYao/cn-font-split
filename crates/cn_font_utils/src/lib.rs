@@ -1,16 +1,14 @@
 /// 计算给定的 `Vec<u8>` 在千字节（KB）中的大小。
-pub fn u8_size_in_kb(vec: &Vec<u8>) -> f64 {
+pub fn u8_size_in_kb(vec: &[u8]) -> f64 {
     let size_in_bytes = vec.len();
-    let size_in_kb = size_in_bytes as f64 / 1024.0;
-    size_in_kb
+
+    size_in_bytes as f64 / 1024.0
 }
 
 /// 将 `Vec<u32>` 转换为 `String`，每个 `u32` 值被视为一个 Unicode 代码点。
-pub fn vec_u32_to_string(vec: &Vec<u32>) -> String {
-    let chars: Vec<char> = vec
-        .iter()
-        .map(|u| std::char::from_u32(u.clone()).unwrap_or(' '))
-        .collect();
+pub fn vec_u32_to_string(vec: &[u32]) -> String {
+    let chars: Vec<char> =
+        vec.iter().map(|u| std::char::from_u32(*u).unwrap_or(' ')).collect();
     chars.into_iter().collect()
 }
 
@@ -52,7 +50,7 @@ pub fn u8_array_to_u16_array(arr: &[u8]) -> Vec<u16> {
         .collect()
 }
 /// 输出一个文件，会自动创建文件夹
-pub fn output_file(file_path: &str, buffer: &Vec<u8>) -> std::io::Result<()> {
+pub fn output_file(file_path: &str, buffer: &[u8]) -> std::io::Result<()> {
     use std::fs::File;
     use std::io::Write;
     use std::path::Path;

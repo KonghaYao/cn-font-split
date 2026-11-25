@@ -174,10 +174,7 @@ pub static YI: LazyLock<Vec<u32>> =
 pub static PHAGS_PA: LazyLock<Vec<u32>> =
     LazyLock::new(|| expand_ranges(&[(0xA840, 0xA87F)]));
 
-/**
- * 朝鲜文
- * 采用韩文的解析方式
- */
+// 朝鲜文采用韩文的解析方式（此处旧条目已移除，保留说明）。
 
 /** 傈僳文 */
 pub static LISU: LazyLock<Vec<u32>> =
@@ -210,15 +207,6 @@ pub static ZHUANG: LazyLock<Vec<u32>> =
 /** 纳西文 */
 pub static NAXI_DONGBA: LazyLock<Vec<u32>> =
     LazyLock::new(|| expand_ranges(&[(0x10FB0, 0x10FDF)]));
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test() {
-        assert_eq!(LATIN.len(), 127)
-    }
-}
 
 pub fn create_default_unicode_area() -> [Vec<u32>; 32] {
     [
@@ -297,4 +285,13 @@ pub fn create_default_unicode_area_tag() -> [&'static str; 32] {
         "NAXI_DONGBA",
         "HALFWIDTH_FULLWIDTH",
     ]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test() {
+        assert_eq!(LATIN.len(), 127)
+    }
 }

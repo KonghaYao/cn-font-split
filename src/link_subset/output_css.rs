@@ -57,6 +57,9 @@ fn generate_polyfill_string(css: &CssProperties) -> String {
         .join(",")
 }
 
+// 该函数是 CSS 模板的唯一拼装入口，参数虽多但都是无状态输入；
+// 为保持现有调用形态与产物逐字节不变，不强行合并为结构体。
+#[allow(clippy::too_many_arguments)]
 fn generate_font_face_code(
     res: &RunSubsetResult,
     font_family: &str,

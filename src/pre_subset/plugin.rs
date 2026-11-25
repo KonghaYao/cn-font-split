@@ -27,9 +27,9 @@ pub fn language_area_plugin(
                         remaining_chars_set.remove(*c);
                         is_in_remain
                     })
-                    .map(|c| c.clone()),
+                    .copied(),
             );
-            if set.len() > 0 {
+            if !set.is_empty() {
                 ctx.used_languages.insert(index, tag.to_string());
                 // println!("{tag} {}", set.len());
                 subsets.push(set);
@@ -65,7 +65,7 @@ pub fn reduce_min_plugin(
             cache.extend(x.clone());
             return false;
         }
-        return true;
+        true
     });
     let new_cache: Vec<IndexSet<u32>> = cache
         .chunks(max)

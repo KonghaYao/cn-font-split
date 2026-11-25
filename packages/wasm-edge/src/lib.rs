@@ -1,7 +1,6 @@
 use cn_font_proto::api_interface::{EventName, InputTemplate};
 use cn_font_split::font_split;
 use cn_font_utils::read_binary_file;
-use env_logger;
 use prost::Message;
 
 #[unsafe(no_mangle)]
@@ -15,7 +14,7 @@ pub fn main() {
     let _ = font_split(config, |x| {
         if EventName::try_from(x.event) == Ok(EventName::OutputData) {
             let path = "/tmp/".to_owned() + &args[0] + "/" + &x.message;
-            let _ = std::fs::write(path, x.data.unwrap()).unwrap();
+            std::fs::write(path, x.data.unwrap()).unwrap();
         }
     });
 }

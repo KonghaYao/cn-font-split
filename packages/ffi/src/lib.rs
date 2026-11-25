@@ -26,6 +26,10 @@ fn panic_message(payload: &(dyn std::any::Any + Send)) -> String {
 }
 
 /// ABI 固定为 `void`：错误只通过 `EventName::ERROR` 事件上报，进程不再 abort。
+///
+/// 指针由 C/JS 侧保证有效：改为 `unsafe fn` 会破坏既有的 extern "C" ABI 约定，
+/// 因此这里显式允许该 lint。
+#[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[unsafe(no_mangle)]
 pub extern "C" fn font_split(
     input: *const u8,

@@ -36,18 +36,16 @@ impl UnicodeRange {
                         result.push(code_point);
                     }
                 }
-            } else {
-                if let Ok(code_point) =
-                    u32::from_str_radix(range.trim_start_matches("U+"), 16)
-                {
-                    result.push(code_point);
-                }
+            } else if let Ok(code_point) =
+                u32::from_str_radix(range.trim_start_matches("U+"), 16)
+            {
+                result.push(code_point);
             }
         }
 
         result
     }
-    pub fn stringify(arr: &Vec<u32>) -> String {
+    pub fn stringify(arr: &[u32]) -> String {
         fn range_string(start: u32, end: Option<u32>) -> String {
             match end {
                 None => format!("U+{:X}", start),
@@ -60,7 +58,7 @@ impl UnicodeRange {
                 }
             }
         }
-        let mut sorted: Vec<u32> = arr.iter().cloned().collect();
+        let mut sorted: Vec<u32> = arr.to_vec();
         sorted.sort_unstable();
         sorted.dedup();
 
@@ -104,15 +102,14 @@ mod tests {
 
     #[test]
     fn parse() {
-        let test_cases =
-            vec!["U+ff65", "U+0-7F", "U+007F-00FF", "U+4??"].join(",");
+        let test_cases = ["U+ff65", "U+0-7F", "U+007F-00FF", "U+4??"].join(",");
 
         let mut data = UnicodeRange::parse(&test_cases);
         let mut target: Vec<u32> = vec![0xff65];
 
-        (0x0..=0x7f).into_iter().for_each(|x| target.push(x));
-        (0x7f..=0xff).into_iter().for_each(|x| target.push(x));
-        (0x400..=0x4ff).into_iter().for_each(|x| target.push(x));
+        (0x0..=0x7f).for_each(|x| target.push(x));
+        (0x7f..=0xff).for_each(|x| target.push(x));
+        (0x400..=0x4ff).for_each(|x| target.push(x));
 
         target.sort(); // 确保排序一致
         data.sort(); // 确保排序一致
@@ -125,9 +122,9 @@ mod tests {
     fn stringify() {
         let mut target: Vec<u32> = vec![0xff65];
 
-        (0x0..=0x7f).into_iter().for_each(|x| target.push(x));
-        (0x7f..=0xff).into_iter().for_each(|x| target.push(x));
-        (0x400..=0x4ff).into_iter().for_each(|x| target.push(x));
+        (0x0..=0x7f).for_each(|x| target.push(x));
+        (0x7f..=0xff).for_each(|x| target.push(x));
+        (0x400..=0x4ff).for_each(|x| target.push(x));
         let res = UnicodeRange::stringify(&target);
         assert_eq!(res, "U+0-FF,U+400-4FF,U+FF65")
     }

@@ -24,10 +24,9 @@ struct Args {
     // /// 目标类型
     // #[clap(long)]
     // target_type: Option<String>,
-    /// 子集
+    // 子集
     // #[clap(long, short)]
     // subsets: Option<PathBuf>,
-
     /// 语言区域
     #[clap(long)]
     language_areas: Option<bool>,
@@ -108,10 +107,9 @@ struct CssProperties {
 
     // #[clap(flatten)]
     // comment: Option<CommentProperties>,
-    /// 压缩
+    // 压缩
     // #[clap(long)]
     // compress: Option<bool>,
-
     /// 文件名
     #[clap(long)]
     file_name: Option<String>,

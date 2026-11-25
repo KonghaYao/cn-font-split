@@ -9,6 +9,8 @@ use crate::error::Result;
 pub mod cmap;
 pub mod gpos;
 pub mod gsub;
+// 插件入口必须保持 `&mut Vec<..>`：与 `pre_subset` 中的统一函数指针签名一致。
+#[allow(clippy::ptr_arg)]
 pub fn features_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
     _remaining_chars_set: &mut BTreeSet<u32>,
@@ -26,17 +28,17 @@ pub fn features_plugin(
 }
 
 fn move_feature_set_to_front(
-    feature_map: &Vec<IndexSet<u32>>,
-    subsets: &mut Vec<IndexSet<u32>>,
+    feature_map: &[IndexSet<u32>],
+    subsets: &mut [IndexSet<u32>],
 ) {
     for feature_set in feature_map {
         let mut have_coverage = false;
-        for subset in subsets.into_iter() {
+        for subset in subsets.iter_mut() {
             if have_coverage {
                 subset.retain(|x| !feature_set.contains(x));
             } else if has_intersection(feature_set, subset) {
                 for x in feature_set.iter() {
-                    subset.insert(x.clone());
+                    subset.insert(*x);
                 }
                 have_coverage = true;
             }
@@ -51,19 +53,19 @@ fn has_intersection(a: &IndexSet<u32>, b: &IndexSet<u32>) -> bool {
             return true;
         }
     }
-    return false;
+    false
 }
 
 #[test]
 fn test_move_feature_set_to_front() {
-    let mut feature_map = vec![IndexSet::from([1, 2]), IndexSet::from([3, 4])];
+    let feature_map = vec![IndexSet::from([1, 2]), IndexSet::from([3, 4])];
     let mut subsets = vec![
         IndexSet::from([2, 3]),
         IndexSet::from([4, 5]),
         IndexSet::from([1]),
     ];
 
-    move_feature_set_to_front(&mut feature_map, &mut subsets);
+    move_feature_set_to_front(&feature_map, &mut subsets);
 
     // println!("{:?}", subsets);
     assert!(subsets[0].contains(&1));
@@ -82,7 +84,7 @@ pub fn turn_indics_to_unicode_set(
         .iter()
         .map(|r| {
             IndexSet::from_iter(
-                r.iter().map(|gid| cmap.get(gid).unwrap_or(&0_u32).clone()),
+                r.iter().map(|gid| *cmap.get(gid).unwrap_or(&0_u32)),
             )
         })
         .collect::<Vec<IndexSet<u32>>>()

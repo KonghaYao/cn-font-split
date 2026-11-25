@@ -142,10 +142,8 @@ fn font_split_inner<F: Fn(EventMessage)>(
 
 #[cfg(test)]
 mod tests {
-    use crate::message;
 
     use super::*;
-    use std::sync::{Arc, Mutex};
 
     #[test]
     fn test_create_context() {

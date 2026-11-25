@@ -11,10 +11,10 @@ use crate::error::Result;
 
 #[derive(Copy, Clone, Debug)]
 pub enum OptLevel {
-    NO = 0,
-    LOW = 1,
-    MID = 2,
-    HIGH = 3,
+    No = 0,
+    Low = 1,
+    Mid = 2,
+    High = 3,
 }
 
 /// 估算阶段的最大采样字符数：估算最多只 subset + 压缩 1000 个字符。
@@ -146,14 +146,14 @@ pub fn plugin_auto_subset(
     let large_bytes;
     if sample.len() == size {
         // 字体字符数不超过采样上限：一次性压缩全量字符，结果与修复前一致。
-        large_bytes = build_single_subset(&ctx.face, &sample)?.len();
+        large_bytes = build_single_subset(ctx.face, &sample)?.len();
     } else {
         // 两点采样：小样本（约 100 字符）与大样本（≤1000 字符），共 2 次压缩。
         let small_step = (sample.len() / SAMPLE_MIN_CHARS).max(1);
         let small =
             sample.iter().step_by(small_step).copied().collect::<Vec<u32>>();
-        let small_bytes = build_single_subset(&ctx.face, &small)?.len();
-        large_bytes = build_single_subset(&ctx.face, &sample)?.len();
+        let small_bytes = build_single_subset(ctx.face, &small)?.len();
+        large_bytes = build_single_subset(ctx.face, &sample)?.len();
         model =
             SizeModel::fit(small.len(), small_bytes, sample.len(), large_bytes);
     }
@@ -181,10 +181,10 @@ pub fn plugin_auto_subset(
     let mut new_used_languages = HashMap::new();
     // 后期用于区分算法，现在暂时无用
     let opt_level = match size {
-        0..1000 => OptLevel::NO,
-        1000..=10000 => OptLevel::LOW,
-        10001..=30000 => OptLevel::MID,
-        _ => OptLevel::HIGH,
+        0..1000 => OptLevel::No,
+        1000..=10000 => OptLevel::Low,
+        10001..=30000 => OptLevel::Mid,
+        _ => OptLevel::High,
     };
     let new_subsets = subsets
         .iter()
@@ -193,7 +193,7 @@ pub fn plugin_auto_subset(
             let lang = ctx.used_languages.get(&index);
             let res = match lang {
                 // 繁体中文一般比简体中文要大一倍复杂度，故进行特殊处理
-                Some(ref i) if *i == "ZH_TC" => split_vector(
+                Some(i) if i == "ZH_TC" => split_vector(
                     subset,
                     ((chars_per_subset as f32) * 0.5_f32) as u32,
                     opt_level,
@@ -229,12 +229,12 @@ pub fn plugin_auto_subset(
 
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
 fn length_for_index(x: usize, max_count: u32, level: OptLevel) -> usize {
-    let min_count = (max_count / 5) as u32;
+    let min_count = max_count / 5;
     let y: f32 = match level {
-        OptLevel::NO => (min_count as f32) * (5 as f32),
-        OptLevel::LOW => (min_count as f32) * (x as f32).cbrt(),
-        OptLevel::MID => (min_count as f32) * (x as f32).cbrt(),
-        OptLevel::HIGH => (min_count as f32) * (x as f32).cbrt(),
+        OptLevel::No => (min_count as f32) * 5_f32,
+        OptLevel::Low => (min_count as f32) * (x as f32).cbrt(),
+        OptLevel::Mid => (min_count as f32) * (x as f32).cbrt(),
+        OptLevel::High => (min_count as f32) * (x as f32).cbrt(),
     }; // 计算立方根并求解y
     let y_ceil = y.ceil(); // 将结果向上取整
     // 不能比 max_count 的 1/5 小
@@ -257,7 +257,7 @@ fn split_vector(
             debug!("fold {} -> {} | max {}", size, i - 1, max_count);
             break;
         }
-        let len = length_for_index(i, max_count, level.clone()).max(1);
+        let len = length_for_index(i, max_count, level).max(1);
         // println!("{}", len);
         let to_take = std::cmp::min(len, size - current_start);
         let new_sub_vec = IndexSet::from_iter(
@@ -276,7 +276,7 @@ mod tests {
     #[test]
     fn split_vector_empty_input_empty_result() {
         let input = IndexSet::new();
-        let result = split_vector(&input, 150, OptLevel::LOW);
+        let result = split_vector(&input, 150, OptLevel::Low);
         assert!(result.is_empty());
     }
 
@@ -286,7 +286,7 @@ mod tests {
         for x in 1..10 {
             input.insert(x);
         }
-        let result = split_vector(&input, 150, OptLevel::LOW);
+        let result = split_vector(&input, 150, OptLevel::Low);
         assert_eq!(result.len(), 1);
         assert_eq!(result[0], input);
         // println!("result: {:?}", result)
@@ -298,7 +298,7 @@ mod tests {
         for x in 1..400 {
             input.insert(x);
         }
-        let result = split_vector(&input, 150, OptLevel::LOW);
+        let result = split_vector(&input, 150, OptLevel::Low);
         println!("result: {:#?}", result);
         assert_eq!(result.len(), 9);
     }

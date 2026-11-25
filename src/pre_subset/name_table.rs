@@ -22,15 +22,15 @@ impl NameTableSets {
         language: Option<&str>,
     ) -> Vec<&NameTable> {
         let platform = platform.unwrap_or("Windows");
-        let table = self.get_language(language.unwrap_or(&"en"));
+        let table = self.get_language(language.unwrap_or("en"));
         table
             .iter()
             .filter(|x| x.name == str && x.platform == platform)
-            .map(|x| *x)
+            .copied()
             .collect()
     }
     pub fn get_name_first(&self, str: &str) -> Option<String> {
-        match self.get_name(str, None, None).get(0) {
+        match self.get_name(str, None, None).first() {
             Some(val) => Option::from(val.value.clone()),
             _ => None,
         }
@@ -59,19 +59,16 @@ pub fn analyze_name_table(
     data.iter().for_each(|((platform, _, language, name), value)| {
         let key = name_id_to_string(name);
         let void_language_tag_decode: [Option<&str>; 1] = [None];
-        match value {
-            Some(value) => {
-                table.table.push(NameTable {
-                    language: language
-                        .tag(&void_language_tag_decode)
-                        .unwrap_or("en")
-                        .to_string(),
-                    platform: platform_to_string(platform),
-                    name: key,
-                    value,
-                });
-            }
-            None => {}
+        if let Some(value) = value {
+            table.table.push(NameTable {
+                language: language
+                    .tag(&void_language_tag_decode)
+                    .unwrap_or("en")
+                    .to_string(),
+                platform: platform_to_string(platform),
+                name: key,
+                value,
+            });
         };
     });
     table
@@ -126,7 +123,7 @@ pub fn name_id_to_string(name_id: NameID) -> String {
 fn test_name_table() {
     use cn_font_utils::read_binary_file;
     let path = "./packages/demo/public/SmileySans-Oblique.ttf";
-    let file_binary = read_binary_file(&path).expect("Failed to read file");
+    let file_binary = read_binary_file(path).expect("Failed to read file");
     let mut font_file = Cursor::new(&*file_binary);
     let font = Font::read(&mut font_file).expect("TODO: panic message");
     let data = analyze_name_table(&font, &mut font_file);

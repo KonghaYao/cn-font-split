@@ -13,7 +13,7 @@ pub fn plugin_add_user_subset(
     ctx.subsets.iter().for_each(|u32_arr: &Vec<u32>| {
         let mut subset: IndexSet<u32> = IndexSet::new();
         u32_arr.iter().for_each(|x| {
-            subset.insert(x.clone());
+            subset.insert(*x);
             _remaining_chars_set.remove(x);
         });
         subsets.push(subset);
