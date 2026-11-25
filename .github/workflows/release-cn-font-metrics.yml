@@ -30,7 +30,7 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
-            - run: pnpm -C packages/metrics build
+            - run: pnpm build
 
             - name: npm publish --dry-run（默认路径）
               if: ${{ !inputs.publish }}

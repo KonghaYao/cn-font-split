@@ -15,8 +15,19 @@
 ```sh
 pnpm install
 cargo build --release
-pnpm -C packages/ffi-js build
+pnpm build
 ```
+
+根 `pnpm build` 按 workspace 依赖顺序构建所有发布包
+（`proto-to-cli` → `ffi-js` → `metrics` → `vite` 等）。
+单独构建某个包也会先构建它的前置包，例如
+`pnpm -C packages/vite build` 会先跑 `pnpm -C ../metrics build`，
+`pnpm -C packages/ffi-js build` 会先跑 `pnpm -C ../proto-to-cli build`
+（`packages/ffi-js/src/gen/proto.ts` 在构建期需要 `proto-to-cli/dist/parser.js`）。
+
+> 历史包 `packages/font-sharp`（引用已删除的 `packages/subsets`）与
+> `packages/font-analyze`（缺 Node 类型声明）当前无法独立构建，
+> 因此未纳入根构建与 CI。
 
 ## 质量门禁
 

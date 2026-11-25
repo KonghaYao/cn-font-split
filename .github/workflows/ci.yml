@@ -72,14 +72,9 @@ jobs:
             - name: Build native FFI
               run: cargo build --release -p ffi --locked
 
-            - name: Build ffi-js
-              run: pnpm -C packages/ffi-js build
-
-            - name: Build vite-plugin-font
-              # 依赖 cn-font-metrics 的 dist 类型产物，先构建。
-              run: |
-                  pnpm -C packages/metrics build
-                  pnpm -C packages/vite build
+            - name: Build workspace packages
+              # 根 build 按 workspace 依赖顺序执行：proto-to-cli → ffi-js → metrics → vite。
+              run: pnpm build
 
             - name: Node smoke（合法字体 → 生成文件）
               run: node packages/ffi-js/scripts/smoke-node.mjs
@@ -118,8 +113,8 @@ jobs:
             - name: Build native FFI
               run: cargo build --release -p ffi --locked
 
-            - name: Build ffi-js
-              run: pnpm -C packages/ffi-js build
+            - name: Build workspace packages
+              run: pnpm build
 
             - name: Visual regression
               run: node packages/test/visual/run.mjs
@@ -165,8 +160,8 @@ jobs:
             - name: Build native FFI
               run: cargo build --release -p ffi --locked
 
-            - name: Build ffi-js
-              run: pnpm -C packages/ffi-js build
+            - name: Build workspace packages
+              run: pnpm build
 
             # 跨平台字体渲染存在系统性差异，Linux 只验证渲染和加载，
             # 像素基线仍由 macOS/WebKit 承担。

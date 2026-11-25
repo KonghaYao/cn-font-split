@@ -43,8 +43,8 @@ jobs:
             - name: Build native FFI
               run: cargo build --release -p ffi --locked
 
-            - name: Build ffi-js
-              run: pnpm -C packages/ffi-js build
+            - name: Build workspace packages
+              run: pnpm build
 
             # 本地字体渲染冒烟：检查字体加载、截图非空、无 console error。
             - name: Local font feature smoke

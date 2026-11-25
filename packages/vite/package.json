@@ -23,10 +23,10 @@
         "node": ">=22"
     },
     "scripts": {
-        "build": "vite build && node ./scripts/fix_cjs.mjs && tsc",
+        "build": "pnpm -C ../metrics build && vite build && node ./scripts/fix_cjs.mjs && tsc",
         "test": "node test/build.test.mjs",
         "dev": "vite -c vite.config.test.mts",
-        "prepublish": "pnpm build"
+        "prepack": "pnpm build"
     },
     "keywords": [
         "vite",
@@ -53,6 +53,7 @@
         "cjk"
     ],
     "devDependencies": {
+        "@types/fs-extra": "^11.0.4",
         "typescript": "^5.9.3",
         "vite": "^6.3.4"
     },
