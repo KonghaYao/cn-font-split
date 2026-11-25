@@ -25,3 +25,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# visual baseline generated output
+visual/out
+visual/temp

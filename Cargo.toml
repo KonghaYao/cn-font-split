@@ -7,7 +7,7 @@ authors = ["KonghaYao<3446798488@qq.com>"]
 homepage = "https://chinese-font.netlify.app/"
 repository = "https://github.com/konghaYao/cn-font-split"
 license = "Apache-2.0"
-exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode"]
+exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode", "examples"]
 
 [dependencies]
 cn-font-utils = { version = "0.2.0", path = "crates/cn_font_utils" }

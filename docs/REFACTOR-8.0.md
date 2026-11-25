@@ -1,0 +1,274 @@
+# cn-font-split 8.0 维护翻新与重构计划
+
+> 状态：已确认，待执行
+> 基线：`release` 分支 HEAD（`1650af1`，2026-06-12）
+> 目标版本：`8.0.0`
+> 记录时间：2026-11-25
+
+## 1. 背景
+
+项目核心（Rust 约 3.3k 行、TS 约 2.4k 行）功能完整，但工程化层面积累了大量维护债：
+
+- 版本真相不一致：`Cargo.toml` 为 `7.4.0`、`packages/ffi-js/package.json` 为 `7.4.3`、根 `package.json` 为 `3.4.2`、tag 最高为 `7.6.8`。
+- 分支分叉：`7.6.8` tag 位于与 `release` HEAD 分叉的提交线上。其 Rust 侧差异仅为 `src/loader.rs` 的 lifetime 语法；主要差异是 CI/WASM 构建链与 Windows gnu 修复，因此回补以重写 CI 为主，不需要合并历史提交。
+- 本地构建门槛高：`cargo check` 需要 `cmake`（`opencc-rs`，见 `crates/lang_unicodes/build.rs`）与 `protoc`（`crates/proto/build.rs`），与 `Developer.md` 描述不符；build.rs 还会把生成代码写入源码树 `crates/proto/src/lib`。
+- 没有质量门禁：所有 GitHub Actions 均为 `workflow_dispatch` 手动触发，无 PR/push 的 build + test。
+- 分发链路脆弱：npm 包 `postinstall` 从 GitHub Releases 下载二进制；依赖已弃用的 `google-protobuf`、`set-value`，以及锁死的 `koffi 2.10.0`。
+- 依赖偏旧：`woff 0.3.4`、`md5 0.7`、`opentype 0.38`、自维护 fork `harfbuzz_rs_now 2.3.2`；CI 仍使用已归档的 `actions-rs/toolchain`、`actions/create-release@v1`。
+- 代码可维护性：核心路径大量 `unwrap/expect`，`Context` 为大结构体，插件函数签名重复，配置在 proto / CLI / TS 三处手工重复。
+
+## 2. 已锁定决策
+
+| 维度 | 决策 |
+| --- | --- |
+| 范围 | 工程化翻新优先，随后重构；允许大版本 breaking |
+| 基线 | 以当前 `release@HEAD` 为准；回补 7.6.8 的 CI/WASM 构建链与 Windows gnu 修复 |
+| 版本 | 核心及所有对外包统一 `8.0.0`；`test` 私有包保持 `0.0.0` |
+| 平台 | Node/Bun/浏览器为主线；Deno/Python/WASI/gRPC/server 为 best-effort（编译通过与 smoke，不阻塞发布） |
+| 依赖 | 全面升到最新；`harfbuzz_rs_now 2.3.2` 冻结 |
+| 构建 | 预生成数据入库 + 平台包 `@cn-font-split/<platform>` 走 `optionalDependencies`，移除 postinstall 下载 |
+| 工具链 | Rust Edition 2024 / MSRV 1.85 / Node >= 22 |
+| 产物契约 | 指纹换 blake3，`[hash:6]` 模板语法保留，CSS 允许重写 |
+| 协议 | proto 保留为内部 IR，对外只暴露类型化 TS API |
+| 回归基线 | 视觉回归为唯一回归基线；Mac/WebKit 验收 + Linux Chromium smoke；小集合截图入库、全量进 artifact |
+| 仓库 | `packages/demo/public` 下 18MB 字体保留不动 |
+| 节奏 | 单分支 `refactor/8.0`，分阶段 commit，最后合并为一个 PR |
+| 发布 | 改 CI 与发布脚本，只跑 dry-run，不实际发布 |
+| 完成标准 | 合并到 `release` 且 8.0 可发布 |
+
+## 3. 终态目标
+
+- 单一版本源：`Cargo.toml` 为唯一版本真源，所有对外包同步 `8.0.0`，CI 不再用 `sed` 注入版本。
+- 干净 clone 可构建：不需要 `cmake` 与 `protoc`；生成数据与生成代码入库，并有显式重生成命令。
+- 平台二进制由包管理器解析：主包通过 `optionalDependencies` 获取 `@cn-font-split/<platform>`，不再在安装期联网下载。
+- 质量门禁：PR/push 自动执行 fmt、clippy、测试、构建、Node smoke、Linux 视觉 smoke；多平台交叉编译与 WASI 由手动 workflow 执行 dry-run。
+- 错误可恢复：核心路径 panic 清零，FFI/CLI 返回结构化错误。
+- 性能可量化：benchmark 报告可复跑，8.0 与 v7 基线可对比。
+- 视觉一致：Mac/WebKit 视觉回归 100% 对齐。
+
+## 4. Phase 0：基线与安全网（已完成）
+
+目标：在任何改动前建立可复跑的对照证据。
+
+- [x] 0.1 记录基线 commit，并在本地打 `v7-baseline` tag（不推送）。
+- [x] 0.2 新建 `examples/bench.rs`：固定 4 个 demo 字体与 3 组配置，输出构建时间、总字节、分包数、单包大小分布（JSON + Markdown）。
+- [x] 0.3 视觉验收 runner：`packages/test/visual/`，使用仓库内本地字体 + WebKit，支持 `--update` 与 `--case`；基线小集合入库。
+- [x] 0.4 失败用例 fixture：`tests/failure_paths.rs`（空 buffer、非字体、损坏 woff2、非法 subsets、`chunkSize=0` 挂起）。
+- [x] 0.5 归档 v7 视觉基线图与 benchmark 报告。
+
+验收：`node packages/test/visual/run.mjs` 在 HEAD 通过（三组均 0.000% diff）；`bench-results/v7-baseline/` 已产出。
+
+> 现有 `packages/performance` 依赖 Bun 与浏览器，不满足可复跑要求，由新 harness 取代；旧包保留但标记为实验。
+
+## 5. Phase 1：工程化翻新（5–8 天，不改行为）
+
+### 5.1 单一版本源
+
+- [ ] `Cargo.toml`、所有 `package.json` 统一 `8.0.0`。
+- [ ] 删除 CI 中的 `sed` 版本注入。
+- [ ] 内部 path 依赖统一写法，去掉写死的 `7.0.0` / `7.2.1` / `7.4.0`。
+- [ ] 修复全新 clone 的安装链路：`preinstall` 不要在依赖安装前 `import fs-extra`；修正 `packages/vite` 的 `workspace:^*`；把 `package.json#pnpm.overrides` 迁移到 `pnpm-workspace.yaml`（pnpm 12 已忽略旧位置）。
+
+### 5.2 构建可复现
+
+- [ ] `lang-unicodes`：一次性脚本生成 `data/*.dat` 并入库，`build.rs` 去掉 `opencc-rs`，消除 cmake 依赖；保留 `pnpm gen:unicodes` 重生成脚本。
+- [ ] `proto`：生成代码进 `OUT_DIR` 并入库，`build.rs` 不再写源码树；TS 生成代码同样入库；使用方不再需要 protoc。
+- [ ] 新增 `rust-toolchain.toml`、`rust-version = "1.85"`、`engines.node >= 22`、`packageManager`。
+
+### 5.3 依赖升级（harfbuzz 除外，每类单独 commit）
+
+- [ ] Rust：`prost/tonic`、`opentype`、`woff`、`rayon`、`indexmap`、`regex`、`clap`、`chrono`、`log/env_logger` 升到最新可用版本。
+- [ ] Rust 替换：`md5 → blake3`；`lazy_static → std::sync::LazyLock`；移除无用依赖。
+- [ ] Node：`vite 8`、`typescript`、`koffi`（解禁并重验 ABI）、`commander`、`fs-extra` 升到最新。
+- [ ] Node 移除：`google-protobuf`（迁 `@bufbuild/protobuf`，失败则退回 `protobufjs` 并记 TODO）；`set-value`。
+- [ ] CI：`actions-rs/toolchain` → `dtolnay/rust-toolchain`；`actions/create-release@v1` → `softprops/action-gh-release`；`checkout@v5`、`setup-node@v4`。
+- [ ] 每类升级后运行 benchmark 与视觉回归并记录变化。
+
+### 5.4 CI 门禁
+
+- [ ] PR/push：`cargo fmt --check`、`cargo clippy -D warnings`、`cargo test`、`pnpm build`、Node smoke、Linux Chromium 视觉 smoke。
+- [ ] 手动：全平台 cross-build dry-run + `wasm32-wasip1` / `wasm32-wasip2`。
+
+### 5.5 测试整理
+
+- [ ] 移除 `src/lib.rs` 中会写 `dist/` 的裸测试；字体依赖测试迁到 `tests/` 并使用显式 fixture。
+- [ ] 失败用例先以 `#[ignore]` 记录现状，Phase 2 转正。
+
+### 5.6 文档与发布
+
+- [ ] 更新 README（版本、Node 要求、安装方式）；`Developer.md` 删除 cmake/protoc 要求；新增 `MIGRATION-8.0.md`。
+- [ ] 平台包：`@cn-font-split/{darwin-arm64, darwin-x64, win32-x64-msvc, win32-arm64-msvc, linux-x64-gnu, linux-arm64-gnu, wasm32-wasip1, wasm32-wasip2}`。
+- [ ] 主包使用 `optionalDependencies` + `os/cpu` 解析，保留 `CN_FONT_SPLIT_BIN` 覆盖。
+- [ ] dry-run 产出 artifacts，成功但不发布。
+
+### 5.7 仓库整理
+
+- [ ] `packages/server` 的独立 workspace/Cargo.lock 收编或显式排除。
+- [ ] 各包 license 统一为 Apache-2.0（`cn-font-replacer` 的 MIT 需确认后改）。
+- [ ] 修正 `.gitignore` 与实际生成目录不一致的问题。
+
+验收：全新 clone → `pnpm install` → `cargo test` → `pnpm build` 在 Node 22/24、macOS/Linux 通过；产出 benchmark 对比报告。
+
+## 6. Phase 2：核心重构（8–12 天）
+
+### 6.1 错误模型（优先）
+
+- [ ] 引入 `thiserror` 错误枚举，`font_split` 返回 `Result`；事件流增加 Error 事件（proto 内部 IR 调整）。
+- [ ] FFI 边界 `catch_unwind` + 错误事件；CLI 返回非零退出码。
+- [ ] 核心路径 panic 清零（测试除外），补齐输入校验。
+
+### 6.2 配置与 API 单一来源
+
+- [ ] Rust `Config` builder，默认值集中；proto 仅作序列化层。
+- [ ] TS 暴露稳定手写类型；CLI 参数从 `Config` 派生，消除三处手工重复。
+- [ ] `subsets` 改为 `repeated uint32`；`chunk_size` 改为 `u32`；统一 camelCase/snake_case 映射。
+
+### 6.3 模块拆分
+
+- [ ] `Context` 拆为阶段化输出（`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`）。
+- [ ] 插件改为 trait + 显式顺序表；`used_languages` 并入 `SubsetMeta`。
+- [ ] CSS 生成结构化（`FontFace` → 序列化）；`name_template` 自研小型 parser，去掉 `regex`。
+
+### 6.4 产物质量
+
+- [ ] 分包按实际压缩体积迭代，替换当前 `bytes/char + cbrt` 估算。
+- [ ] 字符遗漏从 `warn` 改为可配置 error。
+- [ ] 可变字体字重与 OpenType 特性纳入视觉基线。
+- [ ] blake3 指纹落地。
+
+### 6.5 性能
+
+- [ ] benchmark 驱动：先 profile 再改，重点关注重复 `collect_unicodes`、woff2 压缩并行、中间拷贝与分配。
+- [ ] 修复 `plugin_auto_subset` 的采样 bug：`space = (size / 100).min(1)` 实际恒为 `1`（等于全量采样），应改为 `max(1)`；用 benchmark 验证耗时与分包分布变化。
+- [ ] 初拟目标（以 Phase 0 数据最终校准）：构建时间 −25%、总产物体积 −10%、分包数不增。
+
+### 6.6 多端收敛
+
+- [ ] Node/Bun/浏览器主链路全绿。
+- [ ] Deno/Python/WASI/gRPC/server 仅要求编译通过 + smoke。
+
+验收：benchmark 达标；Mac/WebKit 视觉 100% 对齐；Linux smoke 通过；8.0 dry-run 发布成功；迁移指南可执行。
+
+## 7. 依赖升级清单
+
+| 层 | 升级 | 风险 |
+| --- | --- | --- |
+| Rust 核心 | `opentype`、`woff`、`prost/tonic`、`rayon`、`indexmap`、`regex`、`clap`、`chrono` | 中 |
+| Rust 替换 | `md5 → blake3`、`lazy_static → LazyLock` | 低（指纹变化已允许） |
+| Rust 冻结 | `harfbuzz_rs_now 2.3.2` | 无 |
+| Node | `vite 8`、`typescript`、`koffi`、`commander`、`fs-extra` | 中（koffi ABI） |
+| Node 移除 | `google-protobuf`、`set-value` | 中（proto TS 运行时迁移） |
+| CI | 已归档 action 全部替换 | 低 |
+| 工具链 | Edition 2024 / MSRV 1.85 / Node >= 22 | 低 |
+
+具体目标版本在实施时通过 `cargo update` / `pnpm up` 解析，以当时最新稳定版为准。
+
+## 8. 风险与对策
+
+| 风险 | 对策 |
+| --- | --- |
+| 一次性大 PR 审查成本 | 单分支分阶段 commit，每阶段可独立回退；阶段验收后再进入下一阶段 |
+| `google-protobuf` 迁移工作量 | 先做 spike；迁不动就保留并记 TODO，不阻塞主线 |
+| `koffi` 升级 ABI 断裂 | 平台包 smoke + Node/Bun 双端验证 |
+| blake3 指纹破坏下游缓存 | 迁移指南 + 可选 md5 兼容开关（默认 blake3） |
+| 视觉环境漂移 | 锁定 Playwright/浏览器版本、固定字体、设定像素容差 |
+| benchmark 波动 | 固定输入与配置，多轮取中位数 |
+| 平台包发布命名/权限 | dry-run 验证全部 artifact，不实际 publish |
+
+## 9. 明确不做
+
+- 不升级 harfbuzz（核心与绑定）。
+- 不把字体二进制移出仓库。
+- 不实际发布 8.0。
+- 不加新功能（只做性能、产物质量、错误处理、使用体验）。
+- 不删除 best-effort 平台包。
+
+## 10. 交付物
+
+1. `refactor/8.0` 分支 + 分阶段 commit + 单个 PR。
+2. benchmark 报告（v7 vs v8）。
+3. 视觉验收报告 + 基线小集合。
+4. `MIGRATION-8.0.md`。
+5. CI dry-run artifacts（含两个 WASI target）。
+6. 发布 SOP。
+
+## 11. Phase 0 执行记录（进行中）
+
+### 11.1 环境
+
+- 基线 commit：`1650af1`；本地 tag：`v7-baseline`（未推送）。
+- macOS 26.5.1 / Apple Silicon；Node 24.21.0；pnpm 12.6.0；Rust 1.98.1。
+- 临时安装：`cmake 4.5.1`、`libprotoc 36.2`（Homebrew，已使用 USTC/TUNA 镜像）。
+- `cargo build --release --example bench` 通过；`cargo test --test failure_paths` 通过。
+
+### 11.2 Benchmark 基线
+
+报告：`bench-results/v7-baseline/bench.md`（JSON 同目录）。
+
+| 字体 | 配置 | 中位耗时 | woff2 总量 | 分包数 | 单包 min/median/max |
+| --- | --- | ---: | ---: | ---: | --- |
+| NotoSerifSC | default | 274.5ms | 8,703,824 | 223 | 1,440 / 41,900 / 87,080 |
+| NotoSerifSC | chunk-48k | 464.8ms | 8,831,632 | 301 | 788 / 31,224 / 72,200 |
+| NotoSerifSC | chunk-120k | 602.9ms | 8,522,124 | 149 | 2,824 / 61,344 / 122,540 |
+| SmileySans TTF | default | 83.8ms | 1,343,376 | 46 | 848 / 32,388 / 62,156 |
+| SmileySans WOFF2 | default | 144.0ms | 1,655,948 | 59 | 876 / 29,416 / 60,664 |
+| WorkSans VF | default | 28.4ms | 211,524 | 9 | 1,780 / 4,544 / 157,996 |
+
+关键观察：
+
+- `chunk-120k` 相比 default 分包数 −33%、总体积 −2.1%，但耗时 +120%；默认 70KB 是当前速度/体积的折中点。
+- WorkSans VF 出现 158KB 的单包，远超 70KB 目标，说明分包估算对小字符集/可变字体不准确。
+- 同一字体重复运行波动较大（如 SmileySans min 54ms / max 94ms），后续 benchmark 需要更多轮次与中位数。
+
+### 11.3 失败路径基线
+
+`tests/failure_paths.rs` 已记录当前行为：
+
+- 空输入、随机字节：`opentype::Font::read` panic。
+- 截断的 `wOF2`：`decompress` panic（`illegal woff2 file`）。
+- `subsets` 字节长度非 4 的倍数：`assert!` panic。
+- `chunk_size = 0`：`split_vector` 死循环（用例保持 `#[ignore]`）。
+
+### 11.4 Phase 0 新发现（已并入上方清单）
+
+1. 全新 clone 的 `pnpm install` 必然失败：根 `preinstall` 在依赖安装前 `import fs-extra`。
+2. `packages/vite/package.json` 的 `workspace:^*` 是非法 spec，pnpm 12 直接拒绝解析。
+3. pnpm 12 不再读取 `package.json#pnpm.overrides`，现有的安全 override 实际全部失效，需要迁移到 `pnpm-workspace.yaml`。
+4. `plugin_auto_subset` 的 `space = (size / 100).min(1)` 恒等于 1，导致每次都用全量字符做压缩采样；应改为 `max(1)`，这是当前最大的性能疑点。
+5. `chunk_size = 0` 会死循环；`max_allow_subsets_count`、`chunk_size_tolerance`、`build_mode`、`multi_threads` 在核心实现中未被使用。
+6. `packages/test` 的字体下载依赖 `cors-cdn.deno.dev` 代理，且 VF 用例需要 30MB 远程字体，不适合作为稳定基线。
+7. 视觉基线改为 `packages/test/visual/`：使用仓库内本地字体（CJK、可变字重、第二中文字体）+ WebKit + 元素截图，离线可复跑；基线小集合提交入库。
+
+### 11.5 视觉基线
+
+位置：`packages/test/visual/`
+
+- 用例：`cjk`（NotoSerifSC）、`vf`（WorkSans VF，300/500/800 三档字重）、`smiley`（SmileySans）。
+- 基线：`baseline/cjk.png`（231KB）、`baseline/vf.png`（72KB）、`baseline/smiley.png`（100KB）。
+- 校验：`node packages/test/visual/run.mjs` 连续通过，三组均 `0.000% diff`。
+- 更新：`node packages/test/visual/run.mjs --update`。
+- 运行前提：`cargo build --release -p ffi`、`packages/ffi-js/dist` 已构建、Playwright WebKit 已安装；脚本会自动使用 `target/release/libffi.{dylib,so,dll}`。
+- 产物目录 `visual/out` 与 `visual/temp` 已加入 `packages/test/.gitignore`。
+
+注意：`examples/bench.rs` 是纯内存计算（不写磁盘）；同一次 CJK 分包在 Node 端到端（含 223 个文件写盘）为 713ms，而 benchmark 为 274ms。Phase 2 需要补一个端到端 benchmark，避免只用计算耗时做性能结论。
+
+## 附录 A：现状证据索引
+
+| 问题 | 位置 |
+| --- | --- |
+| 版本不一致 | `Cargo.toml`、`package.json`、`packages/ffi-js/package.json` |
+| 分支分叉 | tag `7.6.8` 与 `release@HEAD` 无祖先关系 |
+| build.rs 写源码树 | `crates/proto/build.rs` |
+| build 依赖 cmake | `crates/lang_unicodes/build.rs` + `opencc-rs` |
+| 裸测试写盘 | `src/lib.rs` |
+| 核心路径 panic | `src/pre_subset/mod.rs`、`src/run_subset.rs`、`src/loader.rs` |
+| postinstall 下载 | `packages/ffi-js/package.json` → `dist/cli.js i default` |
+| CI 手动触发 | `.github/workflows/*.yml` |
+| CI 版本注入 | `.github/workflows/cross-build.yml` |
+| 已归档 action | `actions-rs/toolchain`、`actions/create-release@v1` |
+
+## 附录 B：环境记录
+
+- 本机：macOS 26.5.1 / Node 24.21.0 / pnpm 12.6.0 / Rust 1.98.1 / Homebrew 7.0.13 / Docker 可用。
+- 当前 `cargo check` 失败原因：缺 `cmake` 与 `protoc`；已确认通过 Homebrew 临时安装。
+- npm 上实际 latest 版本未核实（网络检索工具不可用），以仓库内版本与实施时 registry 查询为准。

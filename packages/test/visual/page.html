@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>cn-font-split visual baseline</title>
+        <link rel="stylesheet" id="font-css" href="" />
+        <style>
+            html,
+            body {
+                margin: 0;
+                background: #fff;
+                color: #111;
+            }
+            .board {
+                width: 900px;
+                padding: 32px;
+                font-size: 40px;
+                line-height: 1.6;
+                box-sizing: border-box;
+            }
+            h1 {
+                font-size: 56px;
+                line-height: 1.3;
+                margin: 0 0 24px;
+            }
+            p {
+                margin: 0 0 16px;
+            }
+            .w300 {
+                font-weight: 300;
+            }
+            .w500 {
+                font-weight: 500;
+            }
+            .w800 {
+                font-weight: 800;
+            }
+        </style>
+    </head>
+    <body>
+        <main id="board" class="board"></main>
+        <script>
+            const params = new URLSearchParams(location.search);
+            const name = params.get('case') || 'cjk';
+            const cases = {
+                cjk: `
+                    <h1>中文网字计划</h1>
+                    <p>永和九年，岁在癸丑，暮春之初，会于会稽山阴之兰亭。</p>
+                    <p>群贤毕至，少长咸集。此地有崇山峻岭，茂林修竹。</p>
+                    <p>ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789</p>
+                    <p>，。！？；：、“”‘’（）【】《》</p>
+                `,
+                vf: `
+                    <p class="w300">Variable Font Weight 300</p>
+                    <p class="w500">Variable Font Weight 500</p>
+                    <p class="w800">Variable Font Weight 800</p>
+                `,
+                smiley: `
+                    <h1>得意黑 Smiley Sans</h1>
+                    <p>中文网字计划 0123456789</p>
+                    <p>永和九年，岁在癸丑，暮春之初。</p>
+                `,
+            };
+            document.getElementById('board').innerHTML = cases[name];
+            document.getElementById('font-css').href =
+                './out/' + name + '/result.css';
+            document.body.style.fontFamily = name + '-demo';
+
+            const ready = () =>
+                new Promise((resolve) => {
+                    document.fonts.ready.then(() => {
+                        requestAnimationFrame(() =>
+                            requestAnimationFrame(resolve),
+                        );
+                    });
+                });
+            ready().then(() => {
+                window.__fontsLoaded = [...document.fonts].filter(
+                    (f) => f.status === 'loaded',
+                ).length;
+                window.__ready = true;
+            });
+        </script>
+    </body>
+</html>
