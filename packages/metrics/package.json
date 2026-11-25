@@ -1,10 +1,13 @@
 {
     "name": "cn-font-metrics",
-    "version": "2.1.6",
+    "version": "8.0.0",
     "description": "",
     "main": "dist/cn-font-metrics.js",
     "module": "dist/cn-font-metrics.mjs",
     "types": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=22"
+    },
     "files": [
         "dist"
     ],

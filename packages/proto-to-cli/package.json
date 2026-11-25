@@ -1,9 +1,12 @@
 {
     "name": "proto-to-cli",
-    "version": "1.2.1",
+    "version": "8.0.0",
     "main": "./dist/cli.js",
     "module": "./dist/cli.mjs",
     "description": "A tool to convert Protocol Buffers files to command line interfaces.",
+    "engines": {
+        "node": ">=22"
+    },
     "bin": {
         "proto-to-cli": "dist/cli.js"
     },

@@ -1,12 +1,13 @@
 [package]
 name = "cn-font-utils"
-version = "0.2.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 description = "utils of cn-font-split"
-authors = ["KonghaYao<3446798488@qq.com>"]
-homepage = "https://chinese-font.netlify.app/"
-repository = "https://github.com/konghaYao/cn-font-split"
-license = "Apache-2.0"
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
 include = ["src/**/*"]
 
 [dependencies]

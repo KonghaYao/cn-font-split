@@ -1,13 +1,19 @@
 {
     "name": "root",
     "private": true,
-    "version": "3.4.2",
+    "version": "8.0.0",
     "type": "module",
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
+    "engines": {
+        "node": ">=22"
+    },
+    "packageManager": "pnpm@12.6.0",
     "scripts": {
         "fix_dep": "node ./script/fix_vite_lib_assets.mjs ",
-        "preinstall": "pnpm fix_dep && npx only-allow pnpm"
+        "preinstall": "pnpm fix_dep && npx only-allow pnpm",
+        "sync-version": "node ./script/sync-version.mjs",
+        "sync-version:check": "node ./script/sync-version.mjs --check"
     },
     "dependencies": {
         "fs-extra": "^11.3.2"

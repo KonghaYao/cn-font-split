@@ -1,6 +1,6 @@
 {
     "name": "cn-font-split",
-    "version": "7.4.3",
+    "version": "8.0.0",
     "description": "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size.",
     "main": "./dist/auto.js",
     "module": "./dist/auto.mjs",
@@ -41,13 +41,16 @@
     ],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
+    "engines": {
+        "node": ">=22"
+    },
     "dependencies": {
         "buffer": "^6.0.3",
         "commander": "^12.1.0",
         "fs-extra": "^11.2.0",
         "google-protobuf": "^3.21.4",
         "koffi": "2.10.0",
-        "proto-to-cli": "1.2.1",
+        "proto-to-cli": "workspace:^",
         "set-value": "^4.1.0"
     },
     "devDependencies": {

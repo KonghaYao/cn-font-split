@@ -1,15 +1,20 @@
 [package]
 name = "wasm-edge"
-version = "0.1.1"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-cn-font-proto = { version = "0.1.0", path = "../../crates/proto", default-features = false }
-cn-font-split = { version = "7.0.0", path = "../..", default-features = false }
-cn-font-utils = { version = "0.2.0", path = "../../crates/cn_font_utils" }
+cn-font-proto.workspace = true
+cn-font-split.workspace = true
+cn-font-utils.workspace = true
 env_logger = "0.11.5"
 prost = "0.13.4"
 
