@@ -29,6 +29,11 @@ pnpm build
 > `font-sharp` 运行时依赖的 `@konghayao/harfbuzzjs@9.0.5` 尚未提供 `hbjs.js` 的
 > ESM 导出，相关限制见 `docs/REFACTOR-8.0.md` §12。
 
+> **Linux + GCC 13+**：`woff 0.4.0` 内置的 woff2 C++ 源码没有 `#include <cstdint>`，
+> 新 GCC 不再通过其它头文件传递引入 `<stdint.h>`，会报 `uint8_t does not name a type`。
+> 用 GCC 构建时先导出 `CXXFLAGS=-include cstdint`（CI 已设置）。升级到 `woff 0.5+`
+> 会引入解码失败时的 `debug_assert`，破坏截断 woff2 的优雅报错，因此保持 0.4.0。
+
 ## 质量门禁
 
 与 CI 的 `rust` job 一致：

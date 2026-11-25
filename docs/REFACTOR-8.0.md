@@ -316,7 +316,7 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 | `name_template` 解析器化 | 延后 | 仍使用 `regex` 解析模板，未改为手写解析器 |
 | 按实测体积迭代的分包算法 | 延后 | 仍是「采样 + 两点校准」估算；WorkSans VF 单包 157,996B（≈158KB）仍然存在，未按实测体积收敛 |
 | `google-protobuf` 迁移 | 延后 | `packages/ffi-js` 与 `packages/test` 仍依赖 `google-protobuf`；未迁到 `@bufbuild/protobuf` |
-| `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.6.x 会触发 `debug_assert`，未升级 |
+| `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.5+ 在解码失败时执行 `debug_assert`，会破坏 `truncated_woff2` 的错误返回。0.4.0 的 woff2 C++ 源码缺 `#include <cstdint>`，GCC 13+ 需用 `CXXFLAGS=-include cstdint` 编译（CI 已设置） |
 | `prost` / `tonic 0.14` | 延后 | 仍为 `prost 0.13.5`；0.14 的 MSRV 为 1.88，高于本项目 1.85 |
 | Bun / Deno 平台包解析 | 延后 | 两者仍只读 `CN_FONT_SPLIT_BIN`，没有 `optionalDependencies` 解析 |
 | wasm 平台包 | 未实测 | `wasm32-wasip1/p2` 有构建 workflow 与加载入口，但本轮未做发布验收 |

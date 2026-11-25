@@ -14,6 +14,11 @@ concurrency:
 env:
     CARGO_TERM_COLOR: always
     TZ: Asia/Shanghai
+    # woff 0.4.0 内置的 woff2 C++ 源码未 include <cstdint>，而 GCC 13+ 不再传递引入
+    # <stdint.h>，Linux 上会报 uint8_t does not name a type。woff 0.5+ 已修复该 include，
+    # 但同时在 decode 失败时执行 debug_assert，破坏 truncated_woff2 的优雅报错路径，
+    # 因此固定在 0.4.0 并用编译参数补齐头文件。
+    CXXFLAGS: -include cstdint
 
 jobs:
     rust:
@@ -52,8 +57,6 @@ jobs:
             - uses: actions/checkout@v5
 
             - uses: pnpm/action-setup@v4
-              with:
-                  version: 12
 
             - uses: actions/setup-node@v4
               with:
@@ -89,8 +92,6 @@ jobs:
             - uses: actions/checkout@v5
 
             - uses: pnpm/action-setup@v4
-              with:
-                  version: 12
 
             - uses: actions/setup-node@v4
               with:
@@ -137,8 +138,6 @@ jobs:
             - uses: actions/checkout@v5
 
             - uses: pnpm/action-setup@v4
-              with:
-                  version: 12
 
             - uses: actions/setup-node@v4
               with:
