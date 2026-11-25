@@ -1,6 +1,6 @@
-import { hbjs } from '../../subsets/src/hb.js';
-import { Font2SVGOptions, makeImage } from './makeImage.js';
+import hbjs from '@konghayao/harfbuzzjs/hbjs.js';
 import wrapper from '@konghayao/harfbuzzjs/hb.js';
+import { Font2SVGOptions, makeImage } from './makeImage.js';
 
 export const font2svg = async (
     ttfFile: Uint8Array,

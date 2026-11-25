@@ -22,6 +22,7 @@
         "@konghayao/opentype.js": "^2023.11.20"
     },
     "devDependencies": {
+        "@types/node": "^22.0.0",
         "@types/opentype.js": "^1.3.4",
         "fs-extra": "^10.1.0"
     }

@@ -329,6 +329,12 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
   仍未参与核心分包计算（仅做入口校验）。
 - 许可证未统一：`packages/font-replacer` 仍为 MIT，`metrics` / `font-analyze` /
   `performance` 仍为 ISC。
+- `performance` 为实验包，已标记 `private: true`，不参与发布。
+- `font-sharp` / `font-analyze` 已修复构建并纳入根构建。`font-sharp` 的运行时仍受上游
+  `@konghayao/harfbuzzjs@9.0.5` 影响：`hbjs.js` 只有 `module.exports`，而包声明了
+  `"type": "module"`，没有 ESM 导出，Node 下 `import` 会抛
+  `does not provide an export named 'default'`；需上游补 `export default hbjs` 后
+  `font2svg` 才能真正运行。
 - 视觉基线仍只覆盖 macOS/WebKit；Linux 仅做 Chromium 渲染冒烟。
 
 ## 附录 A：现状证据索引

@@ -25,9 +25,9 @@ pnpm build
 `pnpm -C packages/ffi-js build` 会先跑 `pnpm -C ../proto-to-cli build`
 （`packages/ffi-js/src/gen/proto.ts` 在构建期需要 `proto-to-cli/dist/parser.js`）。
 
-> 历史包 `packages/font-sharp`（引用已删除的 `packages/subsets`）与
-> `packages/font-analyze`（缺 Node 类型声明）当前无法独立构建，
-> 因此未纳入根构建与 CI。
+> `packages/font-sharp` 与 `packages/font-analyze` 已修复独立构建并纳入根构建。
+> `font-sharp` 运行时依赖的 `@konghayao/harfbuzzjs@9.0.5` 尚未提供 `hbjs.js` 的
+> ESM 导出，相关限制见 `docs/REFACTOR-8.0.md` §12。
 
 ## 质量门禁
 

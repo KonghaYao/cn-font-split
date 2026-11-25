@@ -10,7 +10,7 @@
     },
     "packageManager": "pnpm@12.6.0",
     "scripts": {
-        "build": "pnpm -r --filter '!./packages/test' --filter '!./packages/font-sharp' --filter '!./packages/font-analyze' build",
+        "build": "pnpm -r --filter '!./packages/test' build",
         "fix_dep": "node ./script/fix_vite_lib_assets.mjs ",
         "preinstall": "node ./script/fix_vite_lib_assets.mjs && node ./script/check-pnpm.mjs",
         "sync-version": "node ./script/sync-version.mjs",
