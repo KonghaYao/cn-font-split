@@ -312,6 +312,8 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 | `Context` 拆分与阶段产物类型 | 延后 | 仍是单个 `Context`，`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput` 未引入 |
 | plugin trait 与显式顺序表 | 延后 | 仍是 `pre_subset` 内的 `Vec<fn(...)>` 顺序表 |
 | CSS 结构化 / AST | 延后 | 仍是 `format!` 拼字符串；`name_template` 仍用 `regex` |
+| Rust Config builder / 单一配置源 | 延后 | proto 仍是配置事实来源，CLI 参数直接构造 `InputTemplate`，未引入 Config builder 与派生 |
+| `name_template` 解析器化 | 延后 | 仍使用 `regex` 解析模板，未改为手写解析器 |
 | 按实测体积迭代的分包算法 | 延后 | 仍是「采样 + 两点校准」估算；WorkSans VF 单包 157,996B（≈158KB）仍然存在，未按实测体积收敛 |
 | `google-protobuf` 迁移 | 延后 | `packages/ffi-js` 与 `packages/test` 仍依赖 `google-protobuf`；未迁到 `@bufbuild/protobuf` |
 | `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.6.x 会触发 `debug_assert`，未升级 |
@@ -330,11 +332,15 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 - 许可证未统一：`packages/font-replacer` 仍为 MIT，`metrics` / `font-analyze` /
   `performance` 仍为 ISC。
 - `performance` 为实验包，已标记 `private: true`，不参与发布。
-- `font-sharp` / `font-analyze` 已修复构建并纳入根构建。`font-sharp` 的运行时仍受上游
-  `@konghayao/harfbuzzjs@9.0.5` 影响：`hbjs.js` 只有 `module.exports`，而包声明了
-  `"type": "module"`，没有 ESM 导出，Node 下 `import` 会抛
-  `does not provide an export named 'default'`；需上游补 `export default hbjs` 后
-  `font2svg` 才能真正运行。
+- `font-sharp` / `font-analyze` 已修复构建并纳入根构建。`font-sharp` 现已可用：
+  `main` / `types` / `exports` 指向真实产物 `dist/index.js` 与 `dist/index.d.ts`；
+  运行时用 `createRequire(import.meta.url)` 定位 `@konghayao/harfbuzzjs/hbjs.js`，
+  再按 CJS 语义同步求值取出工厂函数，`hb.js` 的 wasm wrapper 仍按 ESM `import` 加载。
+  原因：上游 `@konghayao/harfbuzzjs@9.0.5` 的 `hbjs.js` 只有 `module.exports`，包却声明
+  `"type": "module"`，静态 `import` 会抛 `does not provide an export named 'default'`，
+  而直接 `require` 只会得到空命名空间（赋值被包内 `try/catch` 吞掉）。`font2svg` 冒烟
+  （`SmileySans-Oblique.ttf`，文本 `AB`）返回非空 SVG 字符串；若上游补
+  `export default hbjs`，可去掉这段加载垫片。
 - 视觉基线仍只覆盖 macOS/WebKit；Linux 仅做 Chromium 渲染冒烟。
 
 ## 附录 A：现状证据索引

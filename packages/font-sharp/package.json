@@ -2,7 +2,14 @@
     "name": "font-sharp",
     "version": "8.0.0",
     "description": "font to SVG Render.",
-    "main": "dist/font-sharp/src/index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
     "type": "module",
     "engines": {
         "node": ">=22"
