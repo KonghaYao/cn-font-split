@@ -21,7 +21,7 @@ prost = "0.13.5"
 cn-font-proto.workspace = true
 rayon = "1.10.0"
 unicode-range.workspace = true
-woff = "0.3.4"
+woff = "0.6.4"
 current_platform = "0.2.0"
 clap = { version = "4.5.37", features = ["derive"] }
 chrono = "0.4.38"
