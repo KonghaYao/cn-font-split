@@ -31,7 +31,7 @@
         "change-case": "^5.4.4",
         "commander": "^13.1.0",
         "fs-extra": "^11.2.0",
-        "protobufjs": "^7.6.2"
+        "protobufjs": "^7.6.5"
     },
     "devDependencies": {
         "@types/node": "^22.0.0"

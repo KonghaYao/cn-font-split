@@ -12,6 +12,7 @@ overrides:
   cross-spawn: 7.0.5
   brace-expansion@>=1.0.0 <=1.1.11: ">=1.1.12"
   brace-expansion@>=2.0.0 <=2.0.1: ">=2.0.2"
+  brace-expansion@>=4.0.0 <5.0.12: ">=5.0.12"
   vite-plugin-static-copy@>=0.4.3 <=2.3.1: ">=2.3.2"
   vite@>=6.0.0 <=6.3.5: ">=6.3.6"
   vite@>=6.0.0 <=6.4.0: ">=6.4.1"
@@ -20,6 +21,9 @@ overrides:
   playwright: "1.65.1"
   playwright-core: "1.65.1"
   minimatch@<3.1.4: ">=3.1.4"
+  seroval@<1.6.8: ">=1.6.8"
+  protobufjs@<7.6.5: ">=7.6.5"
+  source-map-js@<1.2.2: ">=1.2.2"
   picomatch@<2.3.2: ">=2.3.2"
   picomatch@>=4.0.0 <4.0.4: ">=4.0.4"
   serialize-javascript@<7.0.5: ">=7.0.5"
