@@ -51,7 +51,7 @@ pub fn run_subset(ctx: &mut Context) {
 
             let result = build_single_subset(&ctx.face, r);
             let result_bytes = u8_size_in_kb(&result);
-            let hash_string = format!("{:x}", md5::compute(result.as_slice()));
+            let hash_string = blake3::hash(result.as_slice()).to_hex().to_string();
             let duration = start_time.elapsed();
             debug!(
                 "{}\t{}ms/{}/{}kb\t{}",

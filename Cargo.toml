@@ -15,7 +15,7 @@ cn-font-utils.workspace = true
 harfbuzz_rs_now = "2.3.2"
 lang-unicodes.workspace = true
 log = "0.4.35"
-md5 = "0.7.0"
+blake3 = "1.8.7"
 # 注意：opentype 0.39 依赖 truetype 0.48，其中 0.48.3 使用了
 # `slice::as_chunks`（Rust 1.88+ 才稳定），在 MSRV 1.85 上无法编译，
 # 因此 Cargo.lock 中固定 truetype = 0.48.2。

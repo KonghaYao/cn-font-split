@@ -31,9 +31,16 @@ pub fn name_template(
         .insert("index".to_string(), create_replacer(index.to_string()));
     replacements.insert("ext".to_string(), create_replacer(ext));
 
-    // 添加哈希占位符的替换函数，这里同时使用'md5'作为别名。
+    // 添加哈希占位符的替换函数。
+    // 8.0 起指纹算法为 blake3，输出 64 位小写十六进制；
+    // `[hash]` 为主名，`[blake3]` 为同义名；`[md5]` 仅为向后兼容保留的历史别名，
+    // 三者指向同一份哈希值（不再计算 md5）。
     replacements.insert(
         "hash".to_string(),
+        create_length_replacer(create_replacer(hash)),
+    );
+    replacements.insert(
+        "blake3".to_string(),
         create_length_replacer(create_replacer(hash)),
     );
     replacements.insert(
@@ -87,7 +94,8 @@ mod tests {
     impl Default for TestFixture {
         fn default() -> Self {
             Self {
-                hash: "d41d8cd98f00b204e9800998ecf8427e".to_string(),
+                hash: "4f5e8f2d9c1b7a6301d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4"
+                    .to_string(),
                 ext: "txt".to_string(),
                 index: 1,
             }
@@ -191,5 +199,20 @@ mod tests {
             &fixture.index,
         );
         assert_eq!(result, format!("!@#$%^&*()_+{}", fixture.hash));
+    }
+
+    /// `[hash]`、`[blake3]`、`[md5]`（历史别名）必须展开为同一个哈希值
+    #[test]
+    fn test_hash_alias_equivalence() {
+        let fixture = TestFixture::default();
+        let expected =
+            format!("{0}_{0}_{0}", &fixture.hash[..6]);
+        let result = name_template(
+            "[hash:6]_[blake3:6]_[md5:6]",
+            &fixture.hash,
+            &fixture.ext,
+            &fixture.index,
+        );
+        assert_eq!(result, expected);
     }
 }
