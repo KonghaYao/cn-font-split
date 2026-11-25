@@ -5,7 +5,7 @@ use prost::Message;
 use std::slice;
 type Callback = extern "C" fn(*const u8, size_t);
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn font_split(
     input: *const u8,
     input_len: size_t,

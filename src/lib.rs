@@ -9,7 +9,8 @@ mod message;
 #[test]
 fn main_test() {
     use std::env;
-    env::set_var("RUST_LOG", "info");
+    // TODO: Audit that the environment access only happens in single-threaded code.
+    unsafe { env::set_var("RUST_LOG", "info") };
     env_logger::init();
 
     fn test_on(path: &str, dist_dir: &str) {

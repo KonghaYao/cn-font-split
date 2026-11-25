@@ -4,7 +4,7 @@ use cn_font_utils::read_binary_file;
 use env_logger;
 use prost::Message;
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn main() {
     env_logger::init();
     let args: Vec<String> = std::env::args().collect();
@@ -20,7 +20,7 @@ pub fn main() {
     });
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn _start() {
     main()
 }

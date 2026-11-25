@@ -31,10 +31,6 @@ indexmap = "2.9.0"
 [dev-dependencies]
 env_logger = "0.11.8"
 
-[build-dependencies]
-cross = "0.2.5"
-tonic-build = "0.13.0"
-
 [features]
 default = ["with_extra"]
 with_extra = ["lang-unicodes/with_extra", "cn-font-proto/with_extra"]
@@ -53,7 +49,7 @@ members = [
 
 [workspace.package]
 version = "8.0.0"
-edition = "2021"
+edition = "2024"
 rust-version = "1.85"
 license = "Apache-2.0"
 authors = ["KonghaYao<3446798488@qq.com>"]

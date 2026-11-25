@@ -81,7 +81,10 @@ async fn test_font_split() {
         let mut client =
             FontApiClient::connect("http://0.0.0.0:50051").await.unwrap();
         let mut stream = client.font_split(data).await.unwrap().into_inner();
-        while let Ok(Some(next_message)) = stream.message().await {
+        loop {
+            let Ok(Some(next_message)) = stream.message().await else {
+                break;
+            };
             println!("{:?}", next_message.message);
         }
     }
