@@ -1,6 +1,6 @@
 # cn-font-split 8.0 维护翻新与重构计划
 
-> 状态：已确认，待执行
+> 状态：已执行（8.0 交付，遗留项见 §12）
 > 基线：`release` 分支 HEAD（`1650af1`，2026-06-12）
 > 目标版本：`8.0.0`
 > 记录时间：2026-11-25
@@ -64,48 +64,48 @@
 
 ### 5.1 单一版本源
 
-- [ ] `Cargo.toml`、所有 `package.json` 统一 `8.0.0`。
-- [ ] 删除 CI 中的 `sed` 版本注入。
-- [ ] 内部 path 依赖统一写法，去掉写死的 `7.0.0` / `7.2.1` / `7.4.0`。
-- [ ] 修复全新 clone 的安装链路：`preinstall` 不要在依赖安装前 `import fs-extra`；修正 `packages/vite` 的 `workspace:^*`；把 `package.json#pnpm.overrides` 迁移到 `pnpm-workspace.yaml`（pnpm 12 已忽略旧位置）。
+- [x] `Cargo.toml`、所有 `package.json` 统一 `8.0.0`。
+- [x] 删除 CI 中的 `sed` 版本注入。
+- [x] 内部 path 依赖统一写法，去掉写死的 `7.0.0` / `7.2.1` / `7.4.0`。
+- [x] 修复全新 clone 的安装链路：`preinstall` 不要在依赖安装前 `import fs-extra`；修正 `packages/vite` 的 `workspace:^*`；把 `package.json#pnpm.overrides` 迁移到 `pnpm-workspace.yaml`（pnpm 12 已忽略旧位置）。
 
 ### 5.2 构建可复现
 
-- [ ] `lang-unicodes`：一次性脚本生成 `data/*.dat` 并入库，`build.rs` 去掉 `opencc-rs`，消除 cmake 依赖；保留 `pnpm gen:unicodes` 重生成脚本。
-- [ ] `proto`：生成代码进 `OUT_DIR` 并入库，`build.rs` 不再写源码树；TS 生成代码同样入库；使用方不再需要 protoc。
-- [ ] 新增 `rust-toolchain.toml`、`rust-version = "1.85"`、`engines.node >= 22`、`packageManager`。
+- [x] `lang-unicodes`：一次性脚本生成 `data/*.dat` 并入库，`build.rs` 去掉 `opencc-rs`，消除 cmake 依赖；保留 `pnpm gen:unicodes` 重生成脚本。
+- [x] `proto`：生成代码进 `OUT_DIR` 并入库，`build.rs` 不再写源码树；TS 生成代码同样入库；使用方不再需要 protoc。
+- [x] 新增 `rust-toolchain.toml`、`rust-version = "1.85"`、`engines.node >= 22`、`packageManager`。
 
 ### 5.3 依赖升级（harfbuzz 除外，每类单独 commit）
 
 - [ ] Rust：`prost/tonic`、`opentype`、`woff`、`rayon`、`indexmap`、`regex`、`clap`、`chrono`、`log/env_logger` 升到最新可用版本。
-- [ ] Rust 替换：`md5 → blake3`；`lazy_static → std::sync::LazyLock`；移除无用依赖。
-- [ ] Node：`vite 8`、`typescript`、`koffi`（解禁并重验 ABI）、`commander`、`fs-extra` 升到最新。
+- [x] Rust 替换：`md5 → blake3`；`lazy_static → std::sync::LazyLock`；移除无用依赖。
+- [x] Node：`vite 8`、`typescript`、`koffi`（解禁并重验 ABI）、`commander`、`fs-extra` 升到最新。
 - [ ] Node 移除：`google-protobuf`（迁 `@bufbuild/protobuf`，失败则退回 `protobufjs` 并记 TODO）；`set-value`。
-- [ ] CI：`actions-rs/toolchain` → `dtolnay/rust-toolchain`；`actions/create-release@v1` → `softprops/action-gh-release`；`checkout@v5`、`setup-node@v4`。
+- [x] CI：`actions-rs/toolchain` → `dtolnay/rust-toolchain`；`actions/create-release@v1` → `softprops/action-gh-release`；`checkout@v5`、`setup-node@v4`。
 - [ ] 每类升级后运行 benchmark 与视觉回归并记录变化。
 
 ### 5.4 CI 门禁
 
-- [ ] PR/push：`cargo fmt --check`、`cargo clippy -D warnings`、`cargo test`、`pnpm build`、Node smoke、Linux Chromium 视觉 smoke。
+- [x] PR/push：`cargo fmt --check`、`cargo clippy -D warnings`、`cargo test`、`pnpm build`、Node smoke、Linux Chromium 视觉 smoke。
 - [ ] 手动：全平台 cross-build dry-run + `wasm32-wasip1` / `wasm32-wasip2`。
 
 ### 5.5 测试整理
 
-- [ ] 移除 `src/lib.rs` 中会写 `dist/` 的裸测试；字体依赖测试迁到 `tests/` 并使用显式 fixture。
-- [ ] 失败用例先以 `#[ignore]` 记录现状，Phase 2 转正。
+- [x] 移除 `src/lib.rs` 中会写 `dist/` 的裸测试；字体依赖测试迁到 `tests/` 并使用显式 fixture。
+- [x] 失败用例先以 `#[ignore]` 记录现状，Phase 2 转正。
 
 ### 5.6 文档与发布
 
-- [ ] 更新 README（版本、Node 要求、安装方式）；`Developer.md` 删除 cmake/protoc 要求；新增 `MIGRATION-8.0.md`。
-- [ ] 平台包：`@cn-font-split/{darwin-arm64, darwin-x64, win32-x64-msvc, win32-arm64-msvc, linux-x64-gnu, linux-arm64-gnu, wasm32-wasip1, wasm32-wasip2}`。
-- [ ] 主包使用 `optionalDependencies` + `os/cpu` 解析，保留 `CN_FONT_SPLIT_BIN` 覆盖。
+- [x] 更新 README（版本、Node 要求、安装方式）；`Developer.md` 删除 cmake/protoc 要求；新增 `MIGRATION-8.0.md`。
+- [x] 平台包：`@cn-font-split/{darwin-arm64, darwin-x64, win32-x64-msvc, win32-arm64-msvc, linux-x64-gnu, linux-arm64-gnu, wasm32-wasip1, wasm32-wasip2}`。
+- [x] 主包使用 `optionalDependencies` + `os/cpu` 解析，保留 `CN_FONT_SPLIT_BIN` 覆盖。
 - [ ] dry-run 产出 artifacts，成功但不发布。
 
 ### 5.7 仓库整理
 
 - [ ] `packages/server` 的独立 workspace/Cargo.lock 收编或显式排除。
 - [ ] 各包 license 统一为 Apache-2.0（`cn-font-replacer` 的 MIT 需确认后改）。
-- [ ] 修正 `.gitignore` 与实际生成目录不一致的问题。
+- [x] 修正 `.gitignore` 与实际生成目录不一致的问题。
 
 验收：全新 clone → `pnpm install` → `cargo test` → `pnpm build` 在 Node 22/24、macOS/Linux 通过；产出 benchmark 对比报告。
 
@@ -113,8 +113,8 @@
 
 ### 6.1 错误模型（优先）
 
-- [ ] 引入 `thiserror` 错误枚举，`font_split` 返回 `Result`；事件流增加 Error 事件（proto 内部 IR 调整）。
-- [ ] FFI 边界 `catch_unwind` + 错误事件；CLI 返回非零退出码。
+- [x] 引入 `thiserror` 错误枚举，`font_split` 返回 `Result`；事件流增加 Error 事件（proto 内部 IR 调整）。
+- [x] FFI 边界 `catch_unwind` + 错误事件；CLI 返回非零退出码。
 - [ ] 核心路径 panic 清零（测试除外），补齐输入校验。
 
 ### 6.2 配置与 API 单一来源
@@ -134,7 +134,7 @@
 - [ ] 分包按实际压缩体积迭代，替换当前 `bytes/char + cbrt` 估算。
 - [ ] 字符遗漏从 `warn` 改为可配置 error。
 - [ ] 可变字体字重与 OpenType 特性纳入视觉基线。
-- [ ] blake3 指纹落地。
+- [x] blake3 指纹落地。
 
 ### 6.5 性能
 
@@ -300,6 +300,36 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 - 可选项「超 `chunk_size * (1+tolerance)` 的二分拆分后处理」未实现：它会让 Noto 分包与总字节回升，并把 WorkSans 9 包拆成 ≥10 包（+11%），与 ≤5% 分包约束冲突；且 `chunk_size_tolerance` 至今未在 Rust 侧接线。建议在 8.x 单独设计「按实测体积收敛」的分包算法，同时解决 WorkSans 158KB 单包。
 - 探测观察：对 NotoSerifSC 取 16000 个字符做单次 subset 会触发 harfbuzz `hb-serialize.hh:434` assert（全量 30928 字符与生产用的小分包均正常），属既有 harfbuzz 行为，与本改动无关，记为观察项。
 
+
+## 12. 8.0 交付状态与遗留
+
+8.0 主线已具备可复跑的本地门禁：`fmt` / `clippy -D warnings` / `test` /
+`failure_paths` / release build / Node 冒烟 / WebKit 视觉三组 `0.000%` 全部通过。
+以下项目本轮**未完成或明确延后**，不计入 8.0 验收：
+
+| 项目 | 状态 | 说明 |
+| --- | --- | --- |
+| `Context` 拆分与阶段产物类型 | 延后 | 仍是单个 `Context`，`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput` 未引入 |
+| plugin trait 与显式顺序表 | 延后 | 仍是 `pre_subset` 内的 `Vec<fn(...)>` 顺序表 |
+| CSS 结构化 / AST | 延后 | 仍是 `format!` 拼字符串；`name_template` 仍用 `regex` |
+| 按实测体积迭代的分包算法 | 延后 | 仍是「采样 + 两点校准」估算；WorkSans VF 单包 157,996B（≈158KB）仍然存在，未按实测体积收敛 |
+| `google-protobuf` 迁移 | 延后 | `packages/ffi-js` 与 `packages/test` 仍依赖 `google-protobuf`；未迁到 `@bufbuild/protobuf` |
+| `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.6.x 会触发 `debug_assert`，未升级 |
+| `prost` / `tonic 0.14` | 延后 | 仍为 `prost 0.13.5`；0.14 的 MSRV 为 1.88，高于本项目 1.85 |
+| Bun / Deno 平台包解析 | 延后 | 两者仍只读 `CN_FONT_SPLIT_BIN`，没有 `optionalDependencies` 解析 |
+| wasm 平台包 | 未实测 | `wasm32-wasip1/p2` 有构建 workflow 与加载入口，但本轮未做发布验收 |
+| `packages/server` 独立 workspace | 延后 | 仍带独立 `Cargo.toml` / `Cargo.lock`，未收编或显式排除 |
+| 端到端（含写盘）benchmark | 延后 | `examples/bench.rs` 仍是纯内存计算；Node 写盘耗时仅有一次手工记录 |
+| Feature 矩阵（远程字体） | 延后 | 旧 `FeatureConfig` 依赖远程 CDN 字体，已从 CI 移除；`test-font-feature` 改为本地字体 Chromium 冒烟 |
+| 全平台 cross-build dry-run artifacts | 未执行 | `cross-build.yml` 已重写并通过 YAML 解析，但未实际触发远端构建 |
+
+其他已知观察项保持原状：
+
+- `chunk_size_tolerance` / `max_allow_subsets_count` / `build_mode` / `multi_threads`
+  仍未参与核心分包计算（仅做入口校验）。
+- 许可证未统一：`packages/font-replacer` 仍为 MIT，`metrics` / `font-analyze` /
+  `performance` 仍为 ISC。
+- 视觉基线仍只覆盖 macOS/WebKit；Linux 仅做 Chromium 渲染冒烟。
 
 ## 附录 A：现状证据索引
 
