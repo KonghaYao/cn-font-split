@@ -244,6 +244,8 @@ pub enum EventName {
     OutputData = 1,
     /// "end"
     End = 2,
+    /// "error"，message 携带可读错误文本
+    Error = 3,
 }
 impl EventName {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -255,6 +257,7 @@ impl EventName {
             Self::Unspecified => "UNSPECIFIED",
             Self::OutputData => "OUTPUT_DATA",
             Self::End => "END",
+            Self::Error => "ERROR",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -263,6 +266,7 @@ impl EventName {
             "UNSPECIFIED" => Some(Self::Unspecified),
             "OUTPUT_DATA" => Some(Self::OutputData),
             "END" => Some(Self::End),
+            "ERROR" => Some(Self::Error),
             _ => None,
         }
     }

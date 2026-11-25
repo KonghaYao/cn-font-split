@@ -97,13 +97,27 @@ pub fn font_split<F: Fn(EventMessage)>(
     config: InputTemplate,
     callback: F,
 ) -> Result<()> {
-    validate_config(&config)?;
+    match font_split_inner(&config, &callback) {
+        Ok(()) => Ok(()),
+        Err(err) => {
+            // 先发 Error 事件（CLI/FFI/JS 统一从事件流拿结构化错误），再返回 Err。
+            callback(EventMessage::error(err.to_string()));
+            Err(err)
+        }
+    }
+}
+
+fn font_split_inner<F: Fn(EventMessage)>(
+    config: &InputTemplate,
+    callback: &F,
+) -> Result<()> {
+    validate_config(config)?;
 
     let mut reporter = OutputReport::default();
     let binary = smart_load_woff2(&config.input)?;
     let mut face = Face::from_bytes(&binary, 0);
     let mut ctx =
-        create_context(&config, &binary, &mut face, &mut reporter, &callback);
+        create_context(config, &binary, &mut face, &mut reporter, callback);
 
     pre_subset(&mut ctx)?;
     run_subset(&mut ctx)?;

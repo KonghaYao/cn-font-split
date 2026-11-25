@@ -15,7 +15,7 @@ struct Args {
     input: PathBuf,
 
     /// 切割后放置文件的文件夹
-    #[clap(long, default_value = "dist")]
+    #[clap(short, long, default_value = "dist")]
     out_dir: String,
 
     #[clap(flatten)]
@@ -192,6 +192,8 @@ fn run(args: Args) -> std::result::Result<(), String> {
                 }
             }
             EventName::End => {}
+            // 核心已把错误文本随 Err 返回，这里不重复打印，避免 stderr 出现两遍。
+            EventName::Error => {}
         }
     })
     .map_err(|err| err.to_string())?;

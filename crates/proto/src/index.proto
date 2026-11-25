@@ -66,6 +66,7 @@ enum EventName {
   UNSPECIFIED = 0; 
   OUTPUT_DATA = 1; // "output_data"
   END = 2;         // "end"
+  ERROR = 3;       // "error"，message 携带可读错误文本
 }
 
 message EventMessage {

@@ -95,7 +95,6 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     };
 
     // 初始化处理流程，根据输入配置决定是否启用各个插件功能
-    #[allow(clippy::type_complexity)]
     let mut process: Vec<
         fn(
             &mut Vec<IndexSet<u32>>,

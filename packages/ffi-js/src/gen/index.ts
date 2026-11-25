@@ -8,7 +8,8 @@ export namespace api_interface {
     export enum EventName {
         UNSPECIFIED = 0,
         OUTPUT_DATA = 1,
-        END = 2
+        END = 2,
+        ERROR = 3
     }
     export class InputTemplate extends pb_1.Message {
         #one_of_decls: number[][] = [[2], [5], [6], [9], [10], [11], [13], [14], [15], [18], [20], [8], [21], [22], [23], [24], [25]];
