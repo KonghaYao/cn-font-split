@@ -252,6 +252,8 @@
 
 注意：`examples/bench.rs` 是纯内存计算（不写磁盘）；同一次 CJK 分包在 Node 端到端（含 223 个文件写盘）为 713ms，而 benchmark 为 274ms。Phase 2 需要补一个端到端 benchmark，避免只用计算耗时做性能结论。
 
+2026-11-25 重新对齐：此前 1.55.x 时代的基线已因 Playwright/WebKit 环境漂移失效（Playwright 1.55.x → 1.65.1、WebKit 2104 → 2388，表现为 `cjk`/`smiley` 截图高度 +2px、`vf` 0.042%，与代码无关）。现已在 `pnpm-workspace.yaml` 的 overrides 中把 `playwright` 与 `playwright-core` 精确锁定为 `1.65.1`（`packages/test/package.json` 的 `@playwright/test` 同步固定），并用该版本 / WebKit 2388 重新生成三张基线（`cjk` 1800x1346、`vf` 1800x608、`smiley` 1800x642）；连续两次校验均为三组 `0.000% diff`。升级 Playwright 或切换 WebKit 版本时必须同步重跑 `node packages/test/visual/run.mjs --update`。
+
 ## 附录 A：现状证据索引
 
 | 问题 | 位置 |

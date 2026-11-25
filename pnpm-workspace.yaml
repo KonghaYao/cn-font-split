@@ -15,7 +15,10 @@ overrides:
   vite-plugin-static-copy@>=0.4.3 <=2.3.1: ">=2.3.2"
   vite@>=6.0.0 <=6.3.5: ">=6.3.6"
   vite@>=6.0.0 <=6.4.0: ">=6.4.1"
-  playwright@<1.55.1: ">=1.55.1"
+  # 视觉基线依赖固定浏览器版本：精确锁定，避免 WebKit 漂移导致基线失效。
+  # 原安全 pin（playwright@<1.55.1: ">=1.55.1"）已被精确锁定覆盖。
+  playwright: "1.65.1"
+  playwright-core: "1.65.1"
   minimatch@<3.1.4: ">=3.1.4"
   picomatch@<2.3.2: ">=2.3.2"
   picomatch@>=4.0.0 <4.0.4: ">=4.0.4"
