@@ -123,6 +123,30 @@ fn zero_max_allow_subsets_count_returns_invalid_config_error() {
 }
 
 #[test]
+fn error_event_is_emitted_before_returning_err() {
+    let events = std::cell::RefCell::new(Vec::new());
+    let err = font_split(
+        InputTemplate {
+            input: vec![],
+            ..Default::default()
+        },
+        |msg| events.borrow_mut().push(msg.event),
+    )
+    .expect_err("空输入必须返回 Err");
+
+    assert!(
+        matches!(err, FontSplitError::EmptyInput),
+        "期望 EmptyInput，实际为 {err:?}"
+    );
+    assert_eq!(
+        events.borrow().last().copied(),
+        Some(cn_font_proto::api_interface::EventName::Error as i32),
+        "返回 Err 之前必须发出 Error 事件，实际事件: {:?}",
+        events.borrow()
+    );
+}
+
+#[test]
 fn valid_font_succeeds() {
     let subsets = Cell::new(0);
     let ended = Cell::new(false);
