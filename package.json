@@ -11,7 +11,7 @@
     "packageManager": "pnpm@12.6.0",
     "scripts": {
         "fix_dep": "node ./script/fix_vite_lib_assets.mjs ",
-        "preinstall": "pnpm fix_dep && npx only-allow pnpm",
+        "preinstall": "node ./script/fix_vite_lib_assets.mjs && node ./script/check-pnpm.mjs",
         "sync-version": "node ./script/sync-version.mjs",
         "sync-version:check": "node ./script/sync-version.mjs --check"
     },
@@ -34,22 +34,5 @@
         "vite-plugin-solid": "^2.11.6",
         "vite-plugin-static-copy": "^2.3.1",
         "vitest": "^3.1.2"
-    },
-    "pnpm": {
-        "overrides": {
-            "cross-spawn": "7.0.5",
-            "brace-expansion@>=1.0.0 <=1.1.11": ">=1.1.12",
-            "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2",
-            "vite-plugin-static-copy@>=0.4.3 <=2.3.1": ">=2.3.2",
-            "vite@>=6.0.0 <=6.3.5": ">=6.3.6",
-            "vite@>=6.0.0 <=6.4.0": ">=6.4.1",
-            "playwright@<1.55.1": ">=1.55.1",
-            "minimatch@<3.1.4": ">=3.1.4",
-            "picomatch@<2.3.2": ">=2.3.2",
-            "picomatch@>=4.0.0 <4.0.4": ">=4.0.4",
-            "serialize-javascript@<7.0.5": ">=7.0.5",
-            "lodash@<=4.17.23": ">=4.18.0",
-            "ajv@>=7.0.0-alpha.0 <8.18.0": ">=8.18.0"
-        }
     }
 }
