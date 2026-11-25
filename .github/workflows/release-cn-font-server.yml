@@ -1,30 +1,40 @@
 name: Docker Image CI - cn-font-server
 
+# 默认只构建镜像（push=false）；显式 inputs.publish=true 才会推送到 GHCR。
 on:
     workflow_dispatch:
         inputs:
+            publish:
+                description: "推送镜像到 GHCR（默认 false，只构建）"
+                type: boolean
+                default: false
             version:
-                description: 'container'
+                description: "镜像 tag"
                 required: true
-                default: 'konghayao/cn-font-server:1.0.0'
+                default: "konghayao/cn-font-server:1.0.0"
+
+permissions:
+    contents: read
+    packages: write
+
 jobs:
     build:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v5
 
             - name: Log in to GHCR
-              uses: docker/login-action@v2
+              if: ${{ inputs.publish }}
+              uses: docker/login-action@v3
               with:
                   registry: ghcr.io
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Build the Docker image
-              working-directory: ./packages/server
-              run: docker build . --tag ghcr.io/${{inputs.version}}
-
-            - name: Push the Docker image
-              run: docker push ghcr.io/${{inputs.version}}
+            - name: Build (and optionally push) the Docker image
+              uses: docker/build-push-action@v6
+              with:
+                  context: ./packages/server
+                  push: ${{ inputs.publish }}
+                  tags: ghcr.io/${{ inputs.version }}
