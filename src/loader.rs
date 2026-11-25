@@ -1,3 +1,4 @@
+use crate::error::{FontSplitError, Result};
 use std::borrow::Cow;
 use woff::version2::decompress;
 
@@ -9,11 +10,17 @@ fn is_woff2(data: &[u8]) -> bool {
 }
 
 // 从字节数组中加载 WOFF2 字体，返回字节数组。若不是 WOFF2 格式，则返回原始字节数组。
-pub fn smart_load_woff2(data: &[u8]) -> Cow<'_, [u8]> {
+pub fn smart_load_woff2(data: &[u8]) -> Result<Cow<'_, [u8]>> {
     if is_woff2(data) {
-        Cow::Owned(decompress(data).expect("illegal woff2 file"))
+        // woff 0.4.0 的 decompress 以 Option 表示失败（损坏/截断的 WOFF2）。
+        decompress(data).map(Cow::Owned).ok_or_else(|| {
+            FontSplitError::InvalidWoff2(format!(
+                "WOFF2 解压失败（输入 {} 字节）",
+                data.len()
+            ))
+        })
     } else {
-        Cow::Borrowed(data)
+        Ok(Cow::Borrowed(data))
     }
 }
 
@@ -40,7 +47,7 @@ mod tests {
     fn test_smart_load_woff2() {
         // 测试非 WOFF2 数据
         let non_woff2_data = [0x01, 0x02, 0x03, 0x04];
-        let result = smart_load_woff2(&non_woff2_data);
+        let result = smart_load_woff2(&non_woff2_data).unwrap();
         assert!(matches!(result, Cow::Borrowed(_)));
         assert_eq!(result.as_ref(), non_woff2_data);
 

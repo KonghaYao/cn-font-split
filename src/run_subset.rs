@@ -1,3 +1,4 @@
+use crate::error::{FontSplitError, Result};
 use crate::link_subset::name_template::name_template;
 use crate::message::EventFactory;
 use crate::runner::Context;
@@ -17,16 +18,23 @@ use std::time::Instant;
 use woff::version2::compress;
 
 /// 构建单个分包为字体文件
-pub fn build_single_subset(face: &Owned<Face>, subset: &Vec<u32>) -> Vec<u8> {
+pub fn build_single_subset(
+    face: &Owned<Face>,
+    subset: &Vec<u32>,
+) -> Result<Vec<u8>> {
     let subset_runner = Subset::new();
     subset_runner.clear_drop_table();
     subset_runner.adjust_layout();
     subset_runner.add_chars(subset);
     let new_face = subset_runner.run_subset(&face).face_data();
     let ttf_binary = new_face.get_data();
-    let woff2_binary = compress(ttf_binary, String::from(""), 1, true)
-        .expect("Failed to compress subset");
-    woff2_binary
+    // woff 0.4.0 的 compress 以 Option 表示失败（上游 woff2 编码失败）。
+    compress(ttf_binary, String::from(""), 1, true).ok_or_else(|| {
+        FontSplitError::Internal(format!(
+            "WOFF2 压缩失败（{} 个字符）",
+            subset.len()
+        ))
+    })
 }
 
 struct ThreadResult {
@@ -35,7 +43,7 @@ struct ThreadResult {
     pub message: EventMessage,
 }
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
-pub fn run_subset(ctx: &mut Context) {
+pub fn run_subset(ctx: &mut Context) -> Result<()> {
     let origin_bytes = ctx.input.input.len() as u32;
     let all_chars: IndexSet<u32> =
         ctx.face.collect_unicodes().iter().cloned().collect();
@@ -49,7 +57,7 @@ pub fn run_subset(ctx: &mut Context) {
         .map(|(index, r)| {
             let start_time = Instant::now();
 
-            let result = build_single_subset(&ctx.face, r);
+            let result = build_single_subset(&ctx.face, r)?;
             let result_bytes = u8_size_in_kb(&result);
             let hash_string = blake3::hash(result.as_slice()).to_hex().to_string();
             let duration = start_time.elapsed();
@@ -65,7 +73,7 @@ pub fn run_subset(ctx: &mut Context) {
                 .as_ref()
                 .map(|name| name_template(name, &hash_string, "woff2", &index))
                 .unwrap_or_else(|| format!("{}.woff2", hash_string));
-            ThreadResult {
+            Ok(ThreadResult {
                 subset_result: RunSubsetResult {
                     hash: hash_string.clone(),
                     unicodes: r.clone(),
@@ -80,9 +88,9 @@ pub fn run_subset(ctx: &mut Context) {
                     duration: duration.as_millis() as u32,
                 },
                 message: EventMessage::output_data(&file_name, result),
-            }
+            })
         })
-        .collect();
+        .collect::<Result<Vec<ThreadResult>>>()?;
     let (bundled_bytes, bundle_chars): (u32, IndexSet<u32>) = thread_result
         .iter()
         .fold((0, IndexSet::new()), |(mut bytes, mut chars), res| {
@@ -118,7 +126,8 @@ pub fn run_subset(ctx: &mut Context) {
         bundled_size: bundle_chars.len() as u32,
         origin_bytes,
         bundled_bytes,
-    })
+    });
+    Ok(())
 }
 
 #[derive(Debug, Clone, Default)]

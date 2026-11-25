@@ -15,7 +15,8 @@ pub extern "C" fn font_split(
     let input_slice = unsafe { slice::from_raw_parts(input, input_len) };
     let config = InputTemplate::decode(input_slice)
         .expect("decode input_template error");
-    fp(config, |e| {
+    // ABI 保持 void；错误事件在 B 阶段接入，这里先忽略返回值。
+    let _ = fp(config, |e| {
         let mut output_data: Vec<u8> = vec![];
         e.encode(&mut output_data).expect("encode error");
         let size = output_data.len();

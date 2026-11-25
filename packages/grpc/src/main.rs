@@ -27,7 +27,7 @@ impl FontApi for FontApiPort {
         let (tx, mut rx) = mpsc::unbounded_channel::<Result<EventMessage, _>>();
         println!("{}", input.input.len());
         tokio::spawn(async move {
-            font_split(input, |e| {
+            let _ = font_split(input, |e| {
                 // println!("{} {}", &e.message, tx.is_closed());
                 let _ = tx.send(Ok(e));
             });

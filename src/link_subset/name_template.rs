@@ -48,7 +48,7 @@ pub fn name_template(
         create_length_replacer(create_replacer(hash)),
     );
 
-    // 编译正则表达式
+    // 该正则为字符串常量，语法在编译期固定，Regex::new 不会失败。
     let re = Regex::new(r"\[(\\\w+\\|\w+(?::\w+)?)\]").unwrap();
 
     re.replace_all(template, |caps: &regex::Captures| {
@@ -63,6 +63,8 @@ pub fn name_template(
         }
 
         // 处理非转义的占位符
+        // 同上：常量正则，不会失败。
+        // 同上：常量正则，不会失败。
         if let Some(captures) =
             Regex::new(r"^(\w+)(?::(\w+))?$").unwrap().captures(inner_tag)
         {

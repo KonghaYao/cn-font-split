@@ -5,6 +5,7 @@ use indexmap::IndexSet;
 use std::collections::{BTreeSet, HashMap};
 
 use super::PreSubsetContext;
+use crate::error::Result;
 pub mod cmap;
 pub mod gpos;
 pub mod gsub;
@@ -12,7 +13,7 @@ pub fn features_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
     _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
-) {
+) -> Result<()> {
     let cmap = analyze_cmap(ctx.font, ctx.font_file);
     let sub_map = analyze_gsub(ctx.font, ctx.font_file);
     let sub_map = turn_indics_to_unicode_set(sub_map, &cmap);
@@ -21,7 +22,7 @@ pub fn features_plugin(
     let pos_map = analyze_gpos(ctx.font, ctx.font_file);
     let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
     move_feature_set_to_front(&pos_map, subsets);
-    ()
+    Ok(())
 }
 
 fn move_feature_set_to_front(

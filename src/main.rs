@@ -1,8 +1,10 @@
 use clap::Parser;
 use cn_font_proto::api_interface::{EventName, InputTemplate};
 use cn_font_split::font_split;
-use cn_font_utils::{output_file, read_binary_file};
+use cn_font_utils::output_file;
 use std::path::PathBuf;
+use std::process::ExitCode;
+use std::sync::atomic::{AtomicBool, Ordering};
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -126,11 +128,25 @@ struct PreviewImage {
     preview_name: Option<String>,
 }
 
-fn main() {
+fn main() -> ExitCode {
     let args = Args::parse();
+    match run(args) {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(err) => {
+            eprintln!("cn-font-split: {err}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn run(args: Args) -> std::result::Result<(), String> {
+    let out_dir = args.out_dir.clone();
+    let input = std::fs::read(&args.input).map_err(|e| {
+        format!("读取输入字体 {} 失败: {e}", args.input.display())
+    })?;
 
     let config = InputTemplate {
-        input: read_binary_file(args.input.to_str().unwrap()).unwrap(),
+        input,
         css: if let Some(css) = args.css {
             Some(cn_font_proto::api_interface::input_template::CssProperties {
                 font_display: css.font_display,
@@ -158,20 +174,30 @@ fn main() {
         subset_remain_chars: args.subset_remain_chars,
         ..Default::default()
     };
+    let write_failed = AtomicBool::new(false);
     font_split(config, |x| {
-        let p = std::path::Path::new(&args.out_dir).join(x.message);
-        match EventName::try_from(x.event).unwrap() {
-            EventName::Unspecified => {
-                print!("Unspecified")
-            }
+        let p = std::path::Path::new(&out_dir).join(&x.message);
+        match EventName::try_from(x.event).unwrap_or(EventName::Unspecified) {
+            EventName::Unspecified => {}
             EventName::OutputData => {
-                print!("output {} \n", p.display());
-                let _ =
-                    output_file(p.to_str().unwrap(), x.data.unwrap().as_mut());
+                println!("output {} ", p.display());
+                let Some(data) = x.data else { return };
+                if let Err(e) = output_file(p.to_string_lossy().as_ref(), &data)
+                {
+                    eprintln!(
+                        "cn-font-split: 写出产物 {} 失败: {e}",
+                        p.display()
+                    );
+                    write_failed.store(true, Ordering::Relaxed);
+                }
             }
-            EventName::End => {
-                print!("end")
-            }
+            EventName::End => {}
         }
-    });
+    })
+    .map_err(|err| err.to_string())?;
+
+    if write_failed.load(Ordering::Relaxed) {
+        return Err("部分产物文件写出失败".to_string());
+    }
+    Ok(())
 }

@@ -69,7 +69,7 @@ fn main() {
     let args = proto::InputTemplate::parse();
     let config = InputTemplate::from(args);
     let out_dir = config.out_dir.clone().unwrap();
-    cn_font_split::font_split(config, |m| {
+    let _ = cn_font_split::font_split(config, |m| {
         // println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
         // 打开一个文件以供写入，如果文件不存在，则创建它
         match m.data {

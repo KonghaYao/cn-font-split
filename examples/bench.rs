@@ -124,7 +124,7 @@ fn main() {
                 };
                 let collected = RefCell::new(OutputStat::default());
                 let start = Instant::now();
-                font_split(config, |msg: EventMessage| {
+                if let Err(err) = font_split(config, |msg: EventMessage| {
                     if msg.event != EventName::OutputData as i32 {
                         return;
                     }
@@ -135,7 +135,10 @@ fn main() {
                         slot.woff2_bytes += data.len() as u64;
                         slot.subset_sizes.push(data.len() as u64);
                     }
-                });
+                }) {
+                    eprintln!("{} / {} 构建失败: {err}", font, case.name);
+                    std::process::exit(1);
+                }
                 let elapsed = start.elapsed().as_secs_f64() * 1000.0;
                 times_ms.push(elapsed);
                 if round + 1 == rounds {

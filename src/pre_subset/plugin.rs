@@ -8,12 +8,13 @@ use lang_unicodes::{
 use log::info;
 
 use super::PreSubsetContext;
+use crate::error::Result;
 
 pub fn language_area_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
     remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
-) {
+) -> Result<()> {
     let language_area = create_default_unicode_area();
     let language_area_tag = create_default_unicode_area_tag();
     language_area.iter().zip(language_area_tag.iter()).enumerate().for_each(
@@ -35,25 +36,27 @@ pub fn language_area_plugin(
             }
         },
     );
+    Ok(())
 }
 
 pub fn add_remain_chars_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
     remaining_chars_set: &mut BTreeSet<u32>,
     _ctx: &mut PreSubsetContext,
-) {
+) -> Result<()> {
     info!("{} 个剩余字符被处理", remaining_chars_set.len());
     let mut v: Vec<u32> = remaining_chars_set.iter().cloned().collect();
     v.sort();
     subsets.push(v.iter().cloned().collect());
     remaining_chars_set.clear();
+    Ok(())
 }
 /// 把数量低于某个值的包，重新规划，缩减碎片分包数
 pub fn reduce_min_plugin(
     subsets: &mut Vec<IndexSet<u32>>,
     _remaining_chars_set: &mut BTreeSet<u32>,
     _ctx: &mut PreSubsetContext,
-) {
+) -> Result<()> {
     let min = 20;
     let max = 100;
     let mut cache: Vec<u32> = Vec::new();
@@ -69,4 +72,5 @@ pub fn reduce_min_plugin(
         .map(|x| x.iter().cloned().collect::<IndexSet<u32>>())
         .collect();
     subsets.extend(new_cache);
+    Ok(())
 }

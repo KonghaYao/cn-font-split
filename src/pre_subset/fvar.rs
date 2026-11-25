@@ -8,12 +8,11 @@ pub struct FvarTable {
 }
 /// 解析 fvar table 可以得知可变字体的信息
 pub fn analyze_fvar_table(data: Option<FontVariations>) -> Option<FvarTable> {
-    if data.is_none() {
-        return None;
-    }
+    // 没有 fvar 表即为非可变字体。
+    let data = data?;
 
     let mut vf = FvarTable::default();
-    data.unwrap().axis_records.iter().for_each(|x| {
+    data.axis_records.iter().for_each(|x| {
         let tag = x.tag.as_str().unwrap_or("");
         if tag == "wght".to_string() {
             let max = q32_to_int_truncate(x.max_value);

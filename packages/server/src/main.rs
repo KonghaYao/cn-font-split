@@ -60,7 +60,7 @@ async fn split_font(Json(payload): Json<UploadPayload>) -> Response<Body> {
     let handles: Arc<Mutex<Vec<EventMessage>>> =
         Arc::new(Mutex::new(Vec::new())); // 创建一个可以在线程间共享的可变向量
 
-    font_split(template, |data: EventMessage| {
+    let _ = font_split(template, |data: EventMessage| {
         match EventName::try_from(data.event).unwrap() {
             EventName::Unspecified => {}
             EventName::OutputData => {

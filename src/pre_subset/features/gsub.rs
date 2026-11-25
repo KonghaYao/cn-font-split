@@ -11,15 +11,16 @@ pub fn analyze_gsub(
     let temp: Result<Option<GlyphSubstitution>, std::io::Error> =
         font.take(font_file);
     // 国标宋体，解析就报错，所以干脆先不解析
-    if let Err(e) = temp {
-        error!("{}", e);
-        return vec![vec![]];
-    }
-
-    // GSUB
-    let Some(data) = temp.unwrap() else {
-        error!("Font without GSUB table");
-        return vec![vec![]];
+    let data = match temp {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            error!("Font without GSUB table");
+            return vec![vec![]];
+        }
+        Err(e) => {
+            error!("{}", e);
+            return vec![vec![]];
+        }
     };
 
     // let mut feature_tags: Vec<&str> = data
@@ -168,10 +169,10 @@ pub fn analyze_gsub(
                                     ctx.records
                                         .iter()
                                         .flat_map(|r| {
-                                            if r.clone().is_none() {
+                                            let Some(record) = r.clone()
+                                            else {
                                                 return vec![];
-                                            }
-                                            let record = r.clone().unwrap();
+                                            };
                                             record
                                                 .records
                                                 .iter()

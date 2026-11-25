@@ -7,6 +7,7 @@ use log::{debug, info};
 use crate::run_subset::build_single_subset;
 
 use super::PreSubsetContext;
+use crate::error::Result;
 
 #[derive(Copy, Clone, Debug)]
 pub enum OptLevel {
@@ -20,13 +21,18 @@ pub fn plugin_auto_subset(
     subsets: &mut Vec<IndexSet<u32>>,
     _remaining_chars_set: &mut BTreeSet<u32>,
     ctx: &mut PreSubsetContext,
-) {
+) -> Result<()> {
     let size = ctx.all_unicodes.len();
     let space: usize = (size / 100).min(1);
     let sample = extract_every_nth(&ctx.all_unicodes, space);
-    let result = build_single_subset(&ctx.face, &sample);
+    if sample.is_empty() {
+        // 字体没有任何可映射字符时无法采样估算，直接跳过自动分包。
+        return Ok(());
+    }
+    let result = build_single_subset(&ctx.face, &sample)?;
     let byte_length = result.len();
-    let bytes_per_char = byte_length / sample.len();
+    // 极小字体压缩后可能小于采样字符数，保证至少 1 字节/字符，避免除零。
+    let bytes_per_char = (byte_length / sample.len()).max(1);
     let chars_per_subset =
         ctx.predict_bytes_pre_subset / (bytes_per_char as u32);
 
@@ -81,6 +87,7 @@ pub fn plugin_auto_subset(
     //     info!("subset: {} {} {}", index, name, subsets[*index].len());
     // });
     ctx.used_languages = new_used_languages;
+    Ok(())
 }
 
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
@@ -104,13 +111,16 @@ fn split_vector(
     let mut result: Vec<IndexSet<u32>> = Vec::new();
     let mut current_start = 0;
     let size = vec.len();
+    // max_count 为 0（极小 chunk_size）会让每轮取 0 个字符、current_start
+    // 永不前进而死循环；入口已拒绝 chunk_size <= 0，这里兜底每次至少取 1 个。
+    let max_count = max_count.max(1);
 
     for i in 1.. {
         if current_start >= size {
             debug!("fold {} -> {} | max {}", size, i - 1, max_count);
             break;
         }
-        let len = length_for_index(i, max_count, level.clone());
+        let len = length_for_index(i, max_count, level.clone()).max(1);
         // println!("{}", len);
         let to_take = std::cmp::min(len, size - current_start);
         let new_sub_vec = IndexSet::from_iter(

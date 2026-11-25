@@ -1,3 +1,4 @@
+use crate::error::{FontSplitError, Result};
 use crate::link_subset::link_subset;
 use crate::loader::smart_load_woff2;
 use crate::message::EventFactory;
@@ -54,22 +55,67 @@ pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
     ctx
 }
 
-pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
+/// 入口校验：在读取/解析字体之前把用户输入问题转成结构化错误。
+fn validate_config(config: &InputTemplate) -> Result<()> {
+    if config.input.is_empty() {
+        return Err(FontSplitError::EmptyInput);
+    }
+
+    for (index, subset) in config.subsets.iter().enumerate() {
+        if subset.len() % 4 != 0 {
+            return Err(FontSplitError::InvalidSubsets(format!(
+                "subsets[{index}] 的字节长度 {} 不是 4 的倍数",
+                subset.len()
+            )));
+        }
+    }
+
+    // chunk_size 会被转换为 u32 用作分包字节预算；
+    // 0 会让 `split_vector` 每次取 0 个字符而陷入死循环，负数则会被
+    // 当成巨大的 u32，因此必须在入口拒绝。
+    if let Some(chunk_size) = config.chunk_size {
+        if chunk_size <= 0 {
+            return Err(FontSplitError::InvalidConfig(format!(
+                "chunk_size 必须大于 0，当前为 {chunk_size}"
+            )));
+        }
+    }
+
+    // 该字段当前未参与分包计算，但非法值说明调用方配置有误，仍然拒绝。
+    if let Some(count) = config.max_allow_subsets_count {
+        if count <= 0 {
+            return Err(FontSplitError::InvalidConfig(format!(
+                "max_allow_subsets_count 必须大于 0，当前为 {count}"
+            )));
+        }
+    }
+
+    Ok(())
+}
+
+pub fn font_split<F: Fn(EventMessage)>(
+    config: InputTemplate,
+    callback: F,
+) -> Result<()> {
+    validate_config(&config)?;
+
     let mut reporter = OutputReport::default();
-    let binary = smart_load_woff2(&config.input);
+    let binary = smart_load_woff2(&config.input)?;
     let mut face = Face::from_bytes(&binary, 0);
     let mut ctx =
         create_context(&config, &binary, &mut face, &mut reporter, &callback);
 
-    for process in [pre_subset, run_subset, link_subset] {
-        process(&mut ctx)
-    }
+    pre_subset(&mut ctx)?;
+    run_subset(&mut ctx)?;
+    link_subset(&mut ctx)?;
 
     // name_table 转 proto
     ctx.reporter.name_table = ctx.name_table.table;
     // 日志转二进制输出
     let mut reporter_buffer = Vec::new();
-    ctx.reporter.encode(&mut reporter_buffer).unwrap();
+    ctx.reporter.encode(&mut reporter_buffer).map_err(|e| {
+        FontSplitError::Internal(format!("reporter 序列化失败: {e}"))
+    })?;
 
     if ctx.input.reporter.unwrap_or(true) {
         callback(EventMessage::output_data("reporter.bin", reporter_buffer));
@@ -77,7 +123,7 @@ pub fn font_split<F: Fn(EventMessage)>(config: InputTemplate, callback: F) {
 
     // 发送一个结束信息
     callback(EventMessage::create_end_message());
-    ()
+    Ok(())
 }
 
 #[cfg(test)]

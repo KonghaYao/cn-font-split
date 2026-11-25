@@ -12,7 +12,7 @@ pub fn main() {
     let input = read_binary_file(&target).expect("Failed to read input file");
     let config =
         InputTemplate::decode(&input[..]).expect("Failed to decode input");
-    font_split(config, |x| {
+    let _ = font_split(config, |x| {
         if EventName::try_from(x.event) == Ok(EventName::OutputData) {
             let path = "/tmp/".to_owned() + &args[0] + "/" + &x.message;
             let _ = std::fs::write(path, x.data.unwrap()).unwrap();

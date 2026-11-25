@@ -39,11 +39,12 @@ const FONT_WEIGHT_NAME: [(&str, u32); 21] = [
 /// * 对应的字体权重值（100-900），如果未找到匹配则返回默认值 400
 ///
 /// # 示例
-/// ```
+/// ```text
 /// assert_eq!(get_weight("bold"), 700);
 /// assert_eq!(get_weight("extra light"), 200);
 /// assert_eq!(get_weight("unknown"), 400); // 默认值
 /// ```
+/// （`css` 模块未对外导出，示例只作文档说明；等价断言见本文件 `tests`。）
 pub fn get_weight(sub_family: &str) -> u32 {
     let sub_family = sub_family.to_ascii_lowercase();
 

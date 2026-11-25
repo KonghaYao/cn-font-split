@@ -1,6 +1,7 @@
 mod css;
 pub(crate) mod name_template;
 mod output_css;
+use crate::error::Result;
 use crate::{message::EventFactory, runner::Context};
 use cn_font_proto::{api_interface::EventMessage, INDEX_PROTO};
 const HTML_TEMPLATE: &[u8] = include_bytes!("./index.html");
@@ -10,7 +11,7 @@ fn output_file(ctx: &mut Context, file_name: &str, content: Vec<u8>) {
     (ctx.callback)(EventMessage::output_data(file_name, content));
 }
 
-pub fn link_subset(ctx: &mut Context) {
+pub fn link_subset(ctx: &mut Context) -> Result<()> {
     let css = ctx.input.css.clone().unwrap_or_default();
 
     let css_code = output_css::output_css(ctx, &css);
@@ -25,4 +26,5 @@ pub fn link_subset(ctx: &mut Context) {
 
     // 输出 PROTO 文件
     output_file(ctx, "index.proto", INDEX_PROTO.to_vec());
+    Ok(())
 }

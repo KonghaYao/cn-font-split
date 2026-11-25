@@ -12,10 +12,10 @@ pub fn analyze_gpos(
     // GPOS table
     let data: Option<GlyphPositioning> =
         font.take(font_file).ok().and_then(|nested_option| nested_option);
-    if data.is_none() {
+    // 无 GPOS 表（或解析失败）时跳过字距特性分析。
+    let Some(data) = data else {
         return vec![];
-    }
-    let data: GlyphPositioning = data.unwrap();
+    };
 
     // let headers: Vec<Header> = data.features.headers;
     // let feature_tags: Vec<&str> =
