@@ -12,7 +12,7 @@ license.workspace = true
 cn-font-proto.workspace = true
 cn-font-split.workspace = true
 libc = "0.2.165"
-prost = "0.13.3"
+prost = "0.13.5"
 
 [features]
 default = ["with_extra"]

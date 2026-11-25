@@ -11,12 +11,12 @@ license.workspace = true
 include = ["src/**/*"]
 
 [dependencies]
-tonic = { version = "0.12.3", optional = true }
-prost = "0.13.3"
-prost-types = { version = "0.13.3", optional = true }
+tonic = { version = "0.13.1", optional = true }
+prost = "0.13.5"
+prost-types = { version = "0.13.5", optional = true }
 # 仅供 examples/gen_proto.rs 重新生成 src/lib 使用（运行时需要 protoc）。
 # 通过 `regen` feature 显式开启，默认构建与测试不会编译它。
-tonic-build = { version = "0.12.3", optional = true }
+tonic-build = { version = "0.13.1", optional = true }
 
 [features]
 default = ["with_extra"]
