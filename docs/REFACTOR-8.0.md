@@ -192,7 +192,7 @@
 5. CI dry-run artifacts（含两个 WASI target）。
 6. 发布 SOP。
 
-## 11. Phase 0 执行记录（进行中）
+## 11. Phase 0 执行记录（已完成）
 
 ### 11.1 环境
 
@@ -342,6 +342,29 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
   （`SmileySans-Oblique.ttf`，文本 `AB`）返回非空 SVG 字符串；若上游补
   `export default hbjs`，可去掉这段加载垫片。
 - 视觉基线仍只覆盖 macOS/WebKit；Linux 仅做 Chromium 渲染冒烟。
+
+## 13. 8.0 验收记录（2026-11-25）
+
+独立验收（非实现者）在**全新 clone** 上完成，11/11 PASS：
+
+- 环境：`refactor/8.0` @ `5f17a82`，rustc 1.85.0 / Node 24.21.0 / pnpm 12.6.0；
+  PATH 剥离 Homebrew，`cmake` 与 `protoc` 均不可用。
+- Rust：`cargo build --release --all-targets` 通过；`cargo test` 33 passed；
+  `failure_paths` 9 passed / 0 ignored；`lang-unicodes` 2 passed；
+  `cargo fmt --check` 通过；`clippy --workspace --all-targets -D warnings` 通过。
+- Node：`pnpm install --frozen-lockfile` + `pnpm build`（proto-to-cli / metrics /
+  ffi-js / vite / font-sharp / font-analyze）全部通过；删光 dist 后重跑仍通过。
+- 视觉：WebKit 三组 `cjk` / `vf` / `smiley` 均 `0.000% diff`，runner 退出码 0。
+- 发布包：`@cn-font-split/darwin-arm64` tarball + `cn-font-split` tarball 在 /tmp
+  空项目安装后真实构建，47 个 woff2、退出码 0；`font-sharp` tarball 消费端
+  `font2svg` 返回非空 SVG。
+- 版本：workspace 与 8 个对外包 8.0.0，`test` 0.0.0，`performance` private；
+  `harfbuzz_rs_now` 保持 2.3.2。
+- 性能（`v8-perf`，5 轮中位数 vs `v8-pre-perf`）：总耗时 −61.2%，woff2 总字节
+  −0.25%，分包数 −2.7%；CJK 三组 −68% ~ −70%。
+
+**未执行**：分支未 push、未合并 `release`、未发布任何包（发布工作流默认
+`publish=false`，走 dry-run）。延后项见 §12。
 
 ## 附录 A：现状证据索引
 
