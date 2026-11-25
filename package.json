@@ -13,7 +13,8 @@
         "fix_dep": "node ./script/fix_vite_lib_assets.mjs ",
         "preinstall": "node ./script/fix_vite_lib_assets.mjs && node ./script/check-pnpm.mjs",
         "sync-version": "node ./script/sync-version.mjs",
-        "sync-version:check": "node ./script/sync-version.mjs --check"
+        "sync-version:check": "node ./script/sync-version.mjs --check",
+        "gen:unicodes": "cargo run -p lang-unicodes --example gen_unicodes"
     },
     "dependencies": {
         "fs-extra": "^11.3.2"

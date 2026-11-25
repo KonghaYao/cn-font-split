@@ -889,9 +889,7 @@ name = "lang-unicodes"
 version = "8.0.0"
 dependencies = [
  "cn-font-utils",
- "lazy_static",
  "opencc-rs",
- "regex",
 ]
 
 [[package]]
