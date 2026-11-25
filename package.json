@@ -14,8 +14,8 @@
         "preinstall": "node ./script/fix_vite_lib_assets.mjs && node ./script/check-pnpm.mjs",
         "sync-version": "node ./script/sync-version.mjs",
         "sync-version:check": "node ./script/sync-version.mjs --check",
-        "gen:unicodes": "cargo run -p lang-unicodes --example gen_unicodes",
-        "gen:proto": "cargo run -p cn-font-proto --example gen_proto"
+        "gen:unicodes": "cargo run -p lang-unicodes --example gen_unicodes --features gen",
+        "gen:proto": "cargo run -p cn-font-proto --example gen_proto --features regen"
     },
     "dependencies": {
         "fs-extra": "^11.3.2"

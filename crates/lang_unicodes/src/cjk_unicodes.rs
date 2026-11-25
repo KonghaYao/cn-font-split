@@ -62,9 +62,12 @@ mod tests {
     #[test]
     fn test() {
         assert_eq!(HIRAGANA_AND_KATAKANA.len(), 192);
-        assert_eq!(ZH_SYMBOL.len(), 74);
-        assert_eq!(ZH_SC.len(), 6763);
-        assert_eq!(ZH_TC.len(), 2308);
+        // 三段数据来自 examples/gen_unicodes.rs 生成的 data/cn_char_rank.dat，
+        // 以 u16 0 分隔，实测分段长度依次为 75 / 6767 / 2306。
+        // 75 个符号中 17 个全角/私用区标点在源列表里重复出现（去重后 58）。
+        assert_eq!(ZH_SYMBOL.len(), 75);
+        assert_eq!(ZH_SC.len(), 6767);
+        assert_eq!(ZH_TC.len(), 2306);
         assert_eq!(HANGUL_SYL.len(), 2026);
         println!(
             "{}",
