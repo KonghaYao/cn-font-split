@@ -14,7 +14,7 @@ exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode", "example
 cn-font-utils.workspace = true
 harfbuzz_rs_now = "2.3.2"
 lang-unicodes.workspace = true
-log = "0.4.27"
+log = "0.4.35"
 md5 = "0.7.0"
 # 注意：opentype 0.39 依赖 truetype 0.48，其中 0.48.3 使用了
 # `slice::as_chunks`（Rust 1.88+ 才稳定），在 MSRV 1.85 上无法编译，
@@ -26,13 +26,13 @@ rayon = "1.12.0"
 unicode-range.workspace = true
 woff = "0.6.4"
 current_platform = "0.2.0"
-clap = { version = "4.5.37", features = ["derive"] }
-chrono = "0.4.38"
+clap = { version = "4.6.10", features = ["derive"] }
+chrono = "0.4.45"
 regex = "1.13.2"
 indexmap = "2.14.2"
 
 [dev-dependencies]
-env_logger = "0.11.8"
+env_logger = "0.11.12"
 
 [features]
 default = ["with_extra"]

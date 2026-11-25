@@ -9,7 +9,7 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-clap = { version = "4.5.26", features = ["derive"] }
+clap = { version = "4.6.10", features = ["derive"] }
 cn-font-proto = { workspace = true, features = ["default"] }
 cn-font-split = { workspace = true, features = ["default"] }
 cn-font-utils.workspace = true
