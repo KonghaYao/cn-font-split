@@ -2,6 +2,7 @@ node_modules
 fonts
 build
 dist
+dist-platforms
 otf
 **/temp
 .rollup.cache

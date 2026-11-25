@@ -86,8 +86,5 @@ try {
 fs.rmSync(outDir, { recursive: true, force: true });
 console.log(`PASS: ${message}`);
 
-// koffi 2.10.0 在 Node 24 的自然退出阶段会因自身 NAPI finalizer（RG::InstanceData
-// 析构 -> napi_release_threadsafe_function）触发 SIGABRT。该问题与本次调用无关，
-// 纯 koffi 注册一个回调即可复现（基线 dylib 同样复现），需要升级 koffi 才能根治。
-// 断言已全部完成，这里显式以 0 退出，避免把上游 teardown 崩溃算到本次冒烟上。
-process.exit(0);
+// 不显式 process.exit：这里要验证 koffi 在 Node 24 上的自然退出码。
+// koffi 2.16.4 修复了 2.10.0 在 NAPI finalizer 阶段触发 SIGABRT 的问题。

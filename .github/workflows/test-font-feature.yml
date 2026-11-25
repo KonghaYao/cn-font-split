@@ -53,13 +53,12 @@ jobs:
               run: |
                   pnpm uninstall cn-font-split
                   pnpm i cn-font-split
-                  pnpm cn-font-split ls
 
             - name: Install cn-font-split
               if: inputs.version != ''
               working-directory: packages/test
               run: |
-                  pnpm cn-font-split i default@${{inputs.version}}
+                  pnpm i cn-font-split@${{inputs.version}}
 
             - name: Build Font
               working-directory: packages/test

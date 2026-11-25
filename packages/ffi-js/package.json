@@ -16,7 +16,6 @@
         "access": "public"
     },
     "scripts": {
-        "postinstall": "node ./dist/cli.js i default || node -v",
         "update-proto": "pnpm gen:proto",
         "gen:proto": "sh ./scripts/build_proto_ts.sh && proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts && sh scripts/build_proto_ts.sh",
         "build": "vite build && vite build -c vite.config.wasm.mts",
@@ -48,22 +47,30 @@
     },
     "dependencies": {
         "buffer": "^6.0.3",
-        "commander": "^12.1.0",
-        "fs-extra": "^11.2.0",
+        "commander": "^14.0.3",
+        "fs-extra": "^11.4.1",
         "google-protobuf": "^3.21.4",
-        "koffi": "2.10.0",
-        "proto-to-cli": "workspace:^",
-        "set-value": "^4.1.0"
+        "koffi": "2.16.4"
+    },
+    "optionalDependencies": {
+        "@cn-font-split/darwin-arm64": "8.0.0",
+        "@cn-font-split/darwin-x64": "8.0.0",
+        "@cn-font-split/win32-x64-msvc": "8.0.0",
+        "@cn-font-split/win32-arm64-msvc": "8.0.0",
+        "@cn-font-split/linux-x64-gnu": "8.0.0",
+        "@cn-font-split/linux-arm64-gnu": "8.0.0",
+        "@cn-font-split/wasm32-wasip1": "8.0.0",
+        "@cn-font-split/wasm32-wasip2": "8.0.0"
     },
     "devDependencies": {
         "@grpc/grpc-js": "^1.12.2",
         "@tybys/wasm-util": "^0.9.0",
         "@types/google-protobuf": "^3.15.12",
-        "@types/set-value": "^4.0.3",
         "@xan105/ffi": "^1.3.1",
         "base64-js": "^1.5.1",
         "ieee754": "^1.2.1",
         "memfs-browser": "^3.5.10302",
+        "proto-to-cli": "workspace:^",
         "protobufjs": "^7.6.2",
         "protoc-gen-ts": "^0.8.7"
     }

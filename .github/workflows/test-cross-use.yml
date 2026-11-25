@@ -87,7 +87,6 @@ jobs:
                   npm init -y
                   npm i pnpm -g
                   npm i unzipper cn-font-split
-                  pnpm cn-font-split ls
                   node index.mjs
 
             - name: build
@@ -98,15 +97,16 @@ jobs:
             - name: wasm build
               if: ${{ matrix.platform.target ==  'wasm32-wasip1' }}
               run: |
-                  pnpm cn-font-split i wasm32-wasip1
                   cat > test.mjs <<EOL
                   import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.mjs';
                   import fs from 'fs';
+                  import { createRequire } from 'node:module';
 
+                  const require = createRequire(import.meta.url);
                   const input = fs.readFileSync('./SmileySans-Oblique.otf');
                   const wasm = new StaticWasm(
                       fs.readFileSync(
-                          './node_modules/cn-font-split/dist/libffi-wasm32-wasip1.wasm',
+                          require.resolve('@cn-font-split/wasm32-wasip1'),
                       ),
                   );
 
@@ -211,7 +211,6 @@ jobs:
                   run: |
                       apt install curl -q -y
                       npm i cn-font-split -g
-                      cn-font-split ls
                       cn-font-split -i ./SmileySans-Oblique.otf -o ./dist/
 
             - name: Upload artifact
