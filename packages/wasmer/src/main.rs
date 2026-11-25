@@ -3,9 +3,8 @@ use std::path::{Path, PathBuf};
 use clap::Parser;
 mod proto;
 use cn_font_proto::api_interface::{
-    self,
+    self, InputTemplate,
     input_template::{CssProperties, PreviewImage},
-    InputTemplate,
 };
 use cn_font_utils::{output_file, read_binary_file};
 

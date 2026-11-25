@@ -3,7 +3,7 @@ pub(crate) mod name_template;
 mod output_css;
 use crate::error::Result;
 use crate::{message::EventFactory, runner::Context};
-use cn_font_proto::{api_interface::EventMessage, INDEX_PROTO};
+use cn_font_proto::{INDEX_PROTO, api_interface::EventMessage};
 const HTML_TEMPLATE: &[u8] = include_bytes!("./index.html");
 
 // 公共的文件输出逻辑

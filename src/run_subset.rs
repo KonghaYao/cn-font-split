@@ -2,10 +2,10 @@ use crate::error::{FontSplitError, Result};
 use crate::link_subset::name_template::name_template;
 use crate::message::EventFactory;
 use crate::runner::Context;
+use cn_font_proto::api_interface::EventMessage;
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
 };
-use cn_font_proto::api_interface::EventMessage;
 use cn_font_utils::u8_size_in_kb;
 use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
@@ -59,7 +59,8 @@ pub fn run_subset(ctx: &mut Context) -> Result<()> {
 
             let result = build_single_subset(&ctx.face, r)?;
             let result_bytes = u8_size_in_kb(&result);
-            let hash_string = blake3::hash(result.as_slice()).to_hex().to_string();
+            let hash_string =
+                blake3::hash(result.as_slice()).to_hex().to_string();
             let duration = start_time.elapsed();
             debug!(
                 "{}\t{}ms/{}/{}kb\t{}",

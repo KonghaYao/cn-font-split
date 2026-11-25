@@ -5,7 +5,7 @@ use crate::message::EventFactory;
 use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
-use crate::run_subset::{run_subset, RunSubsetResult};
+use crate::run_subset::{RunSubsetResult, run_subset};
 use cn_font_proto::api_interface::{EventMessage, InputTemplate, OutputReport};
 use harfbuzz_rs_now::{Face, Owned};
 use log::info;

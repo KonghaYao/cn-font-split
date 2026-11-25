@@ -12,7 +12,7 @@
 //! 说明：本基准只统计内存中的数据回调，不写磁盘，避免文件系统噪声。
 //! 输入字体在计时前读取，`InputTemplate` 的克隆在计时前完成。
 
-use cn_font_proto::api_interface::{EventName, EventMessage, InputTemplate};
+use cn_font_proto::api_interface::{EventMessage, EventName, InputTemplate};
 use cn_font_split::font_split;
 use std::cell::RefCell;
 use std::fs;
@@ -33,18 +33,9 @@ struct Case {
 }
 
 const CASES: &[Case] = &[
-    Case {
-        name: "default",
-        chunk_size: None,
-    },
-    Case {
-        name: "chunk-48k",
-        chunk_size: Some(48 * 1024),
-    },
-    Case {
-        name: "chunk-120k",
-        chunk_size: Some(120 * 1024),
-    },
+    Case { name: "default", chunk_size: None },
+    Case { name: "chunk-48k", chunk_size: Some(48 * 1024) },
+    Case { name: "chunk-120k", chunk_size: Some(120 * 1024) },
 ];
 
 #[derive(Default, Clone)]
@@ -77,14 +68,13 @@ fn main() {
             }
             "--out" => {
                 i += 1;
-                out_dir = PathBuf::from(args.get(i).cloned().unwrap_or_default());
+                out_dir =
+                    PathBuf::from(args.get(i).cloned().unwrap_or_default());
             }
             "--rounds" => {
                 i += 1;
-                rounds = args
-                    .get(i)
-                    .and_then(|x| x.parse().ok())
-                    .unwrap_or(rounds);
+                rounds =
+                    args.get(i).and_then(|x| x.parse().ok()).unwrap_or(rounds);
             }
             "--filter" => {
                 i += 1;
@@ -98,10 +88,7 @@ fn main() {
     }
 
     if !Path::new(FONTS[0]).exists() {
-        eprintln!(
-            "找不到测试字体 {}，请在仓库根目录运行",
-            FONTS[0]
-        );
+        eprintln!("找不到测试字体 {}，请在仓库根目录运行", FONTS[0]);
         std::process::exit(2);
     }
 
@@ -153,12 +140,7 @@ fn main() {
                     elapsed
                 );
             }
-            results.push(CaseResult {
-                font,
-                case: case.name,
-                times_ms,
-                stat,
-            });
+            results.push(CaseResult { font, case: case.name, times_ms, stat });
         }
     }
 
@@ -167,7 +149,8 @@ fn main() {
 
     let json = render_json(&label, &results);
     let md = render_markdown(&label, &results);
-    fs::write(label_dir.join("bench.json"), &json).expect("写入 bench.json 失败");
+    fs::write(label_dir.join("bench.json"), &json)
+        .expect("写入 bench.json 失败");
     fs::write(label_dir.join("bench.md"), &md).expect("写入 bench.md 失败");
 
     println!("{md}");
@@ -179,7 +162,8 @@ fn median(values: &[f64]) -> f64 {
         return 0.0;
     }
     let mut sorted = values.to_vec();
-    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    sorted
+        .sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     let mid = sorted.len() / 2;
     if sorted.len() % 2 == 0 {
         (sorted[mid - 1] + sorted[mid]) / 2.0
@@ -259,22 +243,18 @@ fn render_markdown(label: &str, results: &[CaseResult]) -> String {
     let mut lines = Vec::new();
     lines.push(format!("# Benchmark: {label}"));
     lines.push(String::new());
-    lines.push(format!(
-        "- commit: `{}`",
-        git_commit()
-    ));
+    lines.push(format!("- commit: `{}`", git_commit()));
     lines.push(format!(
         "- platform: `{}-{}`",
         std::env::consts::OS,
         std::env::consts::ARCH
     ));
-    lines.push(format!(
-        "- timestamp: `{}`",
-        chrono::Local::now().to_rfc3339()
-    ));
+    lines.push(format!("- timestamp: `{}`", chrono::Local::now().to_rfc3339()));
     lines.push(String::new());
     lines.push("| font | case | median ms | min ms | max ms | woff2 bytes | subsets | subset min/median/max |".to_string());
-    lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |".to_string());
+    lines.push(
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |".to_string(),
+    );
     for r in results {
         let t = &r.times_ms;
         let sizes = &r.stat.subset_sizes;

@@ -1,8 +1,8 @@
 use log::error;
-use opentype::layout::{context, ChainedContext, Coverage};
-use opentype::tables::glyph_substitution::Type;
-use opentype::tables::GlyphSubstitution;
 use opentype::Font;
+use opentype::layout::{ChainedContext, Coverage, context};
+use opentype::tables::GlyphSubstitution;
+use opentype::tables::glyph_substitution::Type;
 use std::io::Cursor;
 pub fn analyze_gsub(
     font: &Font,

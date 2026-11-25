@@ -107,7 +107,7 @@ mod tests {
     use super::*;
     use crate::pre_subset::fvar::FvarTable;
     use crate::pre_subset::name_table::NameTableSets;
-    use crate::runner::{create_context, Context};
+    use crate::runner::{Context, create_context};
     use cn_font_proto::api_interface::input_template::CssProperties;
     use cn_font_proto::api_interface::output_report::NameTable;
     use cn_font_proto::api_interface::{InputTemplate, OutputReport};

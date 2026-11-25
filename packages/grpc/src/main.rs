@@ -5,10 +5,10 @@ use cn_font_proto::{
 use cn_font_split::font_split;
 use std::{pin::Pin, time::Duration, usize};
 use tokio::sync::mpsc;
-use tokio_stream::wrappers::UnboundedReceiverStream;
 use tokio_stream::Stream;
+use tokio_stream::wrappers::UnboundedReceiverStream;
 use tonic::{
-    codec::CompressionEncoding, transport::Server, Request, Response, Status,
+    Request, Response, Status, codec::CompressionEncoding, transport::Server,
 };
 
 #[derive(Debug, Default)]

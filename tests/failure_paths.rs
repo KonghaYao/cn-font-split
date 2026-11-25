@@ -6,7 +6,7 @@
 //! ```
 
 use cn_font_proto::api_interface::InputTemplate;
-use cn_font_split::{font_split, FontSplitError};
+use cn_font_split::{FontSplitError, font_split};
 use std::cell::Cell;
 use std::time::{Duration, Instant};
 
@@ -20,11 +20,8 @@ fn run(input: InputTemplate) -> Result<(), FontSplitError> {
 
 #[test]
 fn empty_input_returns_empty_input_error() {
-    let err = run(InputTemplate {
-        input: vec![],
-        ..Default::default()
-    })
-    .expect_err("空输入必须返回 Err");
+    let err = run(InputTemplate { input: vec![], ..Default::default() })
+        .expect_err("空输入必须返回 Err");
     assert!(
         matches!(err, FontSplitError::EmptyInput),
         "期望 EmptyInput，实际为 {err:?}"
@@ -48,11 +45,8 @@ fn random_bytes_returns_invalid_font_error() {
 fn truncated_woff2_returns_invalid_woff2_error() {
     let mut data = b"wOF2".to_vec();
     data.extend_from_slice(&[0u8; 16]);
-    let err = run(InputTemplate {
-        input: data,
-        ..Default::default()
-    })
-    .expect_err("截断的 WOFF2 必须返回 Err");
+    let err = run(InputTemplate { input: data, ..Default::default() })
+        .expect_err("截断的 WOFF2 必须返回 Err");
     assert!(
         matches!(err, FontSplitError::InvalidWoff2(_)),
         "期望 InvalidWoff2，实际为 {err:?}"
@@ -126,10 +120,7 @@ fn zero_max_allow_subsets_count_returns_invalid_config_error() {
 fn error_event_is_emitted_before_returning_err() {
     let events = std::cell::RefCell::new(Vec::new());
     let err = font_split(
-        InputTemplate {
-            input: vec![],
-            ..Default::default()
-        },
+        InputTemplate { input: vec![], ..Default::default() },
         |msg| events.borrow_mut().push(msg.event),
     )
     .expect_err("空输入必须返回 Err");
@@ -165,9 +156,7 @@ fn valid_font_succeeds() {
                     subsets.set(subsets.get() + 1);
                 }
             }
-            Ok(cn_font_proto::api_interface::EventName::End) => {
-                ended.set(true)
-            }
+            Ok(cn_font_proto::api_interface::EventName::End) => ended.set(true),
             _ => {}
         },
     )

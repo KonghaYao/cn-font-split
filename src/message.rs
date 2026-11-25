@@ -23,10 +23,6 @@ impl EventFactory for EventMessage {
     }
     /// 错误事件：复用 `message` 字段携带可读错误文本，`data` 为空。
     fn error(message: String) -> EventMessage {
-        EventMessage {
-            event: EventName::Error.into(),
-            message,
-            data: None,
-        }
+        EventMessage { event: EventName::Error.into(), message, data: None }
     }
 }

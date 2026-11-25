@@ -1,7 +1,7 @@
 use log::warn;
-use opentype::truetype::tables::names::{NameID, PlatformID};
-use opentype::truetype::tables::Names;
 use opentype::Font;
+use opentype::truetype::tables::Names;
+use opentype::truetype::tables::names::{NameID, PlatformID};
 use std::io::Cursor;
 
 use cn_font_proto::api_interface::output_report::NameTable;

@@ -1,9 +1,9 @@
-use opentype::truetype::tables::character_mapping::{
-    Encoding, Encoding0, Encoding12, Encoding4, Encoding6,
-};
-use opentype::truetype::tables::CharacterMapping;
-use opentype::Font;
 use log::warn;
+use opentype::Font;
+use opentype::truetype::tables::CharacterMapping;
+use opentype::truetype::tables::character_mapping::{
+    Encoding, Encoding0, Encoding4, Encoding6, Encoding12,
+};
 use std::collections::HashMap;
 use std::io::Cursor;
 pub fn analyze_cmap(

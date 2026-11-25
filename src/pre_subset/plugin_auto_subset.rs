@@ -171,7 +171,11 @@ pub fn plugin_auto_subset(
 
     info!(
         "predict subset: {}/subset, {:.2} bytes/char, overhead={:.0}, scale_exp={:.3}, {}(chunk_size)",
-        chars_per_subset, per_char, overhead, scale_exp, ctx.predict_bytes_pre_subset
+        chars_per_subset,
+        per_char,
+        overhead,
+        scale_exp,
+        ctx.predict_bytes_pre_subset
     );
     let mut count: usize = 0;
     let mut new_used_languages = HashMap::new();
@@ -233,7 +237,7 @@ fn length_for_index(x: usize, max_count: u32, level: OptLevel) -> usize {
         OptLevel::HIGH => (min_count as f32) * (x as f32).cbrt(),
     }; // 计算立方根并求解y
     let y_ceil = y.ceil(); // 将结果向上取整
-                           // 不能比 max_count 的 1/5 小
+    // 不能比 max_count 的 1/5 小
     std::cmp::min(y_ceil as usize, (max_count) as usize)
 }
 fn split_vector(

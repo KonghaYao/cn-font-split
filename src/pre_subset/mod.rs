@@ -73,12 +73,10 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     // 生成SVG图像
     gen_svg_from_ctx(ctx);
     // 可变字体表缺失或解析失败时按非可变字体处理，不影响切割。
-    let vars: Option<FontVariations> =
-        font.take(&mut font_file).ok().flatten();
+    let vars: Option<FontVariations> = font.take(&mut font_file).ok().flatten();
     ctx.fvar_table = analyze_fvar_table(vars);
 
-    let user_subsets: Vec<Vec<u32>> =
-        decode_user_subsets(&ctx.input.subsets)?;
+    let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&ctx.input.subsets)?;
 
     // 初始化预处理上下文
     let mut subsets: Vec<IndexSet<u32>> = vec![];

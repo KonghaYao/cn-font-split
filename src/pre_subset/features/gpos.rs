@@ -1,6 +1,6 @@
-use opentype::tables::glyph_positioning::Type;
-use opentype::tables::{glyph_positioning, GlyphPositioning};
 use opentype::Font;
+use opentype::tables::glyph_positioning::Type;
+use opentype::tables::{GlyphPositioning, glyph_positioning};
 use std::io::Cursor;
 
 use crate::pre_subset::features::gsub::collect_glyph_id_from_format_1_and_2;

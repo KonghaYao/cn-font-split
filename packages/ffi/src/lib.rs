@@ -1,8 +1,8 @@
 use cn_font_proto::api_interface::{EventMessage, InputTemplate};
-use cn_font_split::{font_split as fp, EventFactory};
+use cn_font_split::{EventFactory, font_split as fp};
 use libc::size_t;
 use prost::Message;
-use std::panic::{catch_unwind, AssertUnwindSafe};
+use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::slice;
 
 type Callback = extern "C" fn(*const u8, size_t);
@@ -35,10 +35,7 @@ pub extern "C" fn font_split(
     let result = catch_unwind(AssertUnwindSafe(|| {
         // null 指针 + 0 长度构造切片属于 UB，空输入直接上报错误。
         if input.is_null() || input_len == 0 {
-            emit(
-                callback,
-                EventMessage::error("输入字体数据为空".to_string()),
-            );
+            emit(callback, EventMessage::error("输入字体数据为空".to_string()));
             return;
         }
         let input_slice = unsafe { slice::from_raw_parts(input, input_len) };

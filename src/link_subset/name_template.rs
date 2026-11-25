@@ -207,8 +207,7 @@ mod tests {
     #[test]
     fn test_hash_alias_equivalence() {
         let fixture = TestFixture::default();
-        let expected =
-            format!("{0}_{0}_{0}", &fixture.hash[..6]);
+        let expected = format!("{0}_{0}_{0}", &fixture.hash[..6]);
         let result = name_template(
             "[hash:6]_[blake3:6]_[md5:6]",
             &fixture.hash,

@@ -146,8 +146,8 @@ mod tests {
     use super::*;
     use crate::{run_subset::RunSubsetResult, runner::create_context};
     use cn_font_proto::api_interface::{
-        input_template::{CssProperties, PolyfillType},
         InputTemplate, OutputReport,
+        input_template::{CssProperties, PolyfillType},
     };
     use harfbuzz_rs_now::Face;
 
