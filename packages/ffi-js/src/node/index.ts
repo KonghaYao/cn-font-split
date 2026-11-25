@@ -61,6 +61,7 @@ const resolveBinPath = (): string => {
         : `当前平台 ${process.platform}-${process.arch} 没有预编译平台包，请设置 CN_FONT_SPLIT_BIN。`;
     throw new Error(
         `cn-font-split 找不到可用的动态库。\n` +
+            `当前平台：${process.platform}-${process.arch}\n` +
             `已尝试：\n${tried.map((item) => `  - ${item}`).join('\n')}\n` +
             `${installHint}\n` +
             `也可以用 CN_FONT_SPLIT_BIN 指向 libffi 动态库。`,
