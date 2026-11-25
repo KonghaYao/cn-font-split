@@ -4,7 +4,6 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>cn-font-split visual baseline</title>
-        <link rel="stylesheet" id="font-css" href="" />
         <style>
             html,
             body {
@@ -63,18 +62,34 @@
                 `,
             };
             document.getElementById('board').innerHTML = cases[name];
-            document.getElementById('font-css').href =
-                './out/' + name + '/result.css';
             document.body.style.fontFamily = name + '-demo';
 
-            const ready = () =>
-                new Promise((resolve) => {
-                    document.fonts.ready.then(() => {
-                        requestAnimationFrame(() =>
-                            requestAnimationFrame(resolve),
-                        );
-                    });
-                });
+            // 必须先等样式表解析，再等字体。document.fonts.ready 在 FontFaceSet
+            // 为空时会立即 resolve；若在 @font-face 注册前调用，Chromium 会得到 0 个字体。
+            const cssLoaded = new Promise((resolve) => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.addEventListener('load', resolve, { once: true });
+                link.addEventListener('error', resolve, { once: true });
+                link.href = './out/' + name + '/result.css';
+                document.head.appendChild(link);
+            });
+
+            const nextFrames = () =>
+                new Promise((resolve) =>
+                    requestAnimationFrame(() =>
+                        requestAnimationFrame(resolve),
+                    ),
+                );
+
+            const ready = async () => {
+                await cssLoaded;
+                // 等一帧让布局真正用上字体，触发字体加载。
+                await nextFrames();
+                await document.fonts.ready;
+                await nextFrames();
+            };
+
             ready().then(() => {
                 window.__fontsLoaded = [...document.fonts].filter(
                     (f) => f.status === 'loaded',

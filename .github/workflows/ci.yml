@@ -19,6 +19,10 @@ env:
     # 但同时在 decode 失败时执行 debug_assert，破坏 truncated_woff2 的优雅报错路径，
     # 因此固定在 0.4.0 并用编译参数补齐头文件。
     CXXFLAGS: -include cstdint
+    # macOS runner 自带 Homebrew harfbuzz，pkg-config 探测成功后会链接系统库，
+    # 而系统库不含 subset 符号（hb_subset_or_fail 等），链接期必然失败。
+    # 与 cross-build.yml 一致：强制 harfbuzz_rs_now 使用内置源码。
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
 
 jobs:
     rust:

@@ -15,6 +15,7 @@ permissions:
 env:
     # woff 0.4.0 在 GCC 13+ 需要补 <cstdint>，原因见 ci.yml。
     CXXFLAGS: -include cstdint
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
 
 jobs:
     publish:
