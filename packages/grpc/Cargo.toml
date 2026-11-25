@@ -21,9 +21,6 @@ tonic = { version = "0.12.3", features = ["gzip"] }
 tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
 
-[build-dependencies]
-tonic-build = "0.12.3"
-
 [features]
 default = ["with_extra"]
 with_extra = ["cn-font-split/with_extra", "cn-font-proto/with_extra"]

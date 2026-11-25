@@ -15,13 +15,15 @@ tonic = { version = "0.12.3", optional = true }
 prost = "0.13.3"
 prost-types = { version = "0.13.3", optional = true }
 
+[dev-dependencies]
+# 仅供 examples/gen_proto.rs 重新生成 src/lib 使用（tonic-build 依赖 protoc）
+tonic-build = "0.12.3"
+
 [features]
 default = ["with_extra"]
 server = ["tonic"]
-with_extra = ["tonic-build"]
-
-[build-dependencies]
-tonic-build = { version = "0.12.3", optional = true }
+# 保留空 feature：8.0 起生成代码已入库，默认构建不再需要 tonic-build/protoc
+with_extra = []
 
 [lib]
 path = "src/lib/mod.rs"

@@ -1,42 +1,27 @@
-#[cfg(feature = "with_extra")]
+//! 8.0 起 `src/lib/*.rs` 已入库，构建阶段不再生成代码，也不需要 protoc。
+//!
+//! 只有在显式重新生成代码时才需要运行 `pnpm gen:proto`
+//! （见 `examples/gen_proto.rs`）。
+
+use std::path::Path;
+
 fn main() {
-    let out_dir = std::path::PathBuf::from("./src/lib");
-    let _ = std::fs::create_dir_all("./src/lib");
+    let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+    let src_dir = Path::new(&manifest_dir).join("src");
+    let mod_rs = src_dir.join("lib").join("mod.rs");
 
-    // 构建 proto 代码
-    tonic_build::configure()
-        .build_server(true)
-        .build_client(true)
-        .out_dir(out_dir)
-        .compile_protos(
-            &["./src/index.proto", "./src/services.proto"],
-            &["./src"],
-        )
-        .unwrap();
+    for file in [
+        mod_rs.clone(),
+        src_dir.join("index.proto"),
+        src_dir.join("services.proto"),
+    ] {
+        println!("cargo:rerun-if-changed={}", file.display());
+    }
 
-    // 构建 mod.rs 出口
-    let files = std::fs::read_dir("./src/lib").unwrap();
-    let mod_code = files
-        .into_iter()
-        .filter(|x| x.as_ref().unwrap().file_name() != "mod.rs")
-        .map(|x| {
-            let file_name = x.unwrap().file_name();
-            let name = file_name.to_str().unwrap();
-            let import_code =
-                format!("pub mod {};", name.replace(".rs", "")).clone();
-            if name.ends_with("_services.rs") {
-                return format!(
-                    "#[cfg(feature = \"server\")]\n{}",
-                    import_code
-                );
-            }
-            import_code
-        })
-        .collect::<Vec<String>>()
-        .join("\n");
-    let mod_code = mod_code+"\npub const INDEX_PROTO: &[u8] = include_bytes!(\"../index.proto\");";
-    let _ = std::fs::write("src/lib/mod.rs", mod_code);
+    if !mod_rs.exists() {
+        panic!(
+            "缺少生成的 proto 代码 {}，请在仓库根目录运行 `pnpm gen:proto`（需要 protoc）重新生成后重试",
+            mod_rs.display()
+        );
+    }
 }
-
-#[cfg(not(feature = "with_extra"))]
-fn main() {}
