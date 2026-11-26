@@ -7,7 +7,7 @@ use log::warn;
 use std::collections::{BTreeSet, HashMap};
 use std::io::Cursor;
 
-use super::plugin::{PreSubsetPlugin, SubsetDraft};
+use super::plugin::{PreSubsetPlugin, Subset, SubsetDraft};
 use crate::config::Config;
 use crate::error::Result;
 pub mod cmap;
@@ -134,19 +134,16 @@ fn combining_mark_codepoints(chars: &IndexSet<u32>) -> Vec<u32> {
 ///
 /// 空分包会被 pipeline 末尾丢弃，往里塞标记等于凭空造出一个「只有标记」的
 /// face，因此跳过；`marks` 来自 BTreeSet 顺序的字符表，本身就是升序。
-fn add_combining_marks_to_all_subsets(
-    marks: &[u32],
-    subsets: &mut [IndexSet<u32>],
-) {
+fn add_combining_marks_to_all_subsets(marks: &[u32], subsets: &mut [Subset]) {
     if marks.is_empty() {
         return;
     }
     for subset in subsets.iter_mut() {
-        if subset.is_empty() {
+        if subset.chars.is_empty() {
             continue;
         }
         for mark in marks {
-            subset.insert(*mark);
+            subset.chars.insert(*mark);
         }
     }
 }
@@ -167,16 +164,16 @@ fn is_combining_mark(c: u32) -> bool {
 
 fn move_feature_set_to_front(
     feature_map: &[IndexSet<u32>],
-    subsets: &mut [IndexSet<u32>],
+    subsets: &mut [Subset],
 ) {
     for feature_set in feature_map {
         let mut have_coverage = false;
         for subset in subsets.iter_mut() {
             if have_coverage {
-                subset.retain(|x| !feature_set.contains(x));
-            } else if has_intersection(feature_set, subset) {
+                subset.chars.retain(|x| !feature_set.contains(x));
+            } else if has_intersection(feature_set, &subset.chars) {
                 for x in feature_set.iter() {
-                    subset.insert(*x);
+                    subset.chars.insert(*x);
                 }
                 have_coverage = true;
             }
@@ -198,19 +195,19 @@ fn has_intersection(a: &IndexSet<u32>, b: &IndexSet<u32>) -> bool {
 fn test_move_feature_set_to_front() {
     let feature_map = vec![IndexSet::from([1, 2]), IndexSet::from([3, 4])];
     let mut subsets = vec![
-        IndexSet::from([2, 3]),
-        IndexSet::from([4, 5]),
-        IndexSet::from([1]),
+        Subset { chars: IndexSet::from([2, 3]), language: None },
+        Subset { chars: IndexSet::from([4, 5]), language: None },
+        Subset { chars: IndexSet::from([1]), language: None },
     ];
 
     move_feature_set_to_front(&feature_map, &mut subsets);
 
-    assert!(subsets[0].contains(&1));
-    assert!(subsets[0].contains(&2));
-    assert!(subsets[0].contains(&3));
-    assert!(subsets[0].contains(&4));
-    assert!(subsets[1].contains(&5));
-    assert!(subsets[2].is_empty());
+    assert!(subsets[0].chars.contains(&1));
+    assert!(subsets[0].chars.contains(&2));
+    assert!(subsets[0].chars.contains(&3));
+    assert!(subsets[0].chars.contains(&4));
+    assert!(subsets[1].chars.contains(&5));
+    assert!(subsets[2].chars.is_empty());
 }
 
 pub fn turn_indices_to_unicode_set(
@@ -535,8 +532,17 @@ mod mark_fallback_tests {
     const ENCLOSING_CIRCLE: u32 = 0x20DD;
 
     /// cmap 反查表、GPOS 关系集、初始分包。
-    type NotoLikeFixture =
-        (HashMap<u16, u32>, Vec<IndexSet<u32>>, Vec<IndexSet<u32>>);
+    type NotoLikeFixture = (HashMap<u16, u32>, Vec<IndexSet<u32>>, Vec<Subset>);
+
+    /// 测试用分包：只有字符集合，不携带语言标签。
+    fn subset(chars: IndexSet<u32>) -> Subset {
+        Subset { chars, language: None }
+    }
+
+    /// 按分包顺序展开字符集合，便于整体比对。
+    fn chars_of(subsets: &[Subset]) -> Vec<Vec<u32>> {
+        subsets.iter().map(|s| s.chars.iter().copied().collect()).collect()
+    }
 
     /// 模拟 NotoSerifSC：a/e/o 分散在 0/1/3 包，U+20DD 单独落在第 2 包，
     /// GPOS 只覆盖了 U+0301（acute），不覆盖 U+20DD。
@@ -555,11 +561,11 @@ mod mark_fallback_tests {
         // GPOS 已建立的关系集（gid 6、7 转成 unicode 后）。
         let pos_map = vec![IndexSet::from([G, ACUTE])];
         let subsets = vec![
-            IndexSet::from([A, HAN_YI]),
-            IndexSet::from([E, ACUTE]),
-            IndexSet::from([ENCLOSING_CIRCLE]),
-            IndexSet::from([O]),
-            IndexSet::from([G]),
+            subset(IndexSet::from([A, HAN_YI])),
+            subset(IndexSet::from([E, ACUTE])),
+            subset(IndexSet::from([ENCLOSING_CIRCLE])),
+            subset(IndexSet::from([O])),
+            subset(IndexSet::from([G])),
         ];
         (cmap, pos_map, subsets)
     }
@@ -568,7 +574,7 @@ mod mark_fallback_tests {
     fn run_fallback(
         cmap: &HashMap<u16, u32>,
         pos_map: &[IndexSet<u32>],
-        subsets: &mut [IndexSet<u32>],
+        subsets: &mut [Subset],
     ) {
         move_feature_set_to_front(pos_map, subsets);
         let chars = font_characters_from_cmap(cmap);
@@ -585,25 +591,28 @@ mod mark_fallback_tests {
         // 基字分散在 0/1/2/3 号包，任何一个包缺标记都会重新制造跨 face。
         let mut live = 0;
         for (index, subset) in subsets.iter().enumerate() {
-            if subset.is_empty() {
+            if subset.chars.is_empty() {
                 // 4 号包唯一的 g 被关系搬进 1 号包，搬空后不该被兜底复活。
                 continue;
             }
             live += 1;
             assert!(
-                subset.contains(&ACUTE),
+                subset.chars.contains(&ACUTE),
                 "分包 {index} 缺少 U+0301，基字与标记会跨 face"
             );
             assert!(
-                subset.contains(&ENCLOSING_CIRCLE),
+                subset.chars.contains(&ENCLOSING_CIRCLE),
                 "分包 {index} 缺少 U+20DD，基字与标记会跨 face"
             );
         }
         assert_eq!(live, 4);
 
         // 兜底只复制标记，基字仍保持原有归属：Han 只出现在一个分包里。
-        assert_eq!(subsets.iter().filter(|s| s.contains(&HAN_YI)).count(), 1);
-        assert_eq!(subsets.iter().filter(|s| s.contains(&A)).count(), 1);
+        assert_eq!(
+            subsets.iter().filter(|s| s.chars.contains(&HAN_YI)).count(),
+            1
+        );
+        assert_eq!(subsets.iter().filter(|s| s.chars.contains(&A)).count(), 1);
     }
 
     #[test]
@@ -612,23 +621,24 @@ mod mark_fallback_tests {
         // 声明一个自身没有字形的码点（探针的 declaredButMissing 会立刻非零）。
         let cmap = HashMap::from([(1_u16, A), (2, E), (3, HAN_YI)]);
         let mut subsets = vec![
-            IndexSet::from([A]),
-            IndexSet::from([E]),
-            IndexSet::from([HAN_YI]),
+            subset(IndexSet::from([A])),
+            subset(IndexSet::from([E])),
+            subset(IndexSet::from([HAN_YI])),
         ];
         run_fallback(&cmap, &[], &mut subsets);
         for subset in &subsets {
-            assert!(!subset.contains(&ACUTE));
-            assert!(!subset.contains(&ENCLOSING_CIRCLE));
+            assert!(!subset.chars.contains(&ACUTE));
+            assert!(!subset.chars.contains(&ENCLOSING_CIRCLE));
         }
 
         // 只有 cmap 里真实存在的那个标记会被复制。
         let cmap = HashMap::from([(1_u16, A), (2, HAN_YI), (3, ACUTE)]);
-        let mut subsets = vec![IndexSet::from([A]), IndexSet::from([HAN_YI])];
+        let mut subsets =
+            vec![subset(IndexSet::from([A])), subset(IndexSet::from([HAN_YI]))];
         run_fallback(&cmap, &[], &mut subsets);
         for subset in &subsets {
-            assert!(subset.contains(&ACUTE));
-            assert!(!subset.contains(&ENCLOSING_CIRCLE));
+            assert!(subset.chars.contains(&ACUTE));
+            assert!(!subset.chars.contains(&ENCLOSING_CIRCLE));
         }
     }
 
@@ -641,28 +651,34 @@ mod mark_fallback_tests {
         // 首个相交分包，且不从关系集里被拆走。
         let relation_subset = subsets
             .iter()
-            .position(|s| s.contains(&G))
+            .position(|s| s.chars.contains(&G))
             .expect("GPOS 基字必须仍被分配到某个分包");
-        assert!(subsets[relation_subset].contains(&ACUTE));
+        assert!(subsets[relation_subset].chars.contains(&ACUTE));
         assert_eq!(
-            subsets.iter().filter(|s| s.contains(&G)).count(),
+            subsets.iter().filter(|s| s.chars.contains(&G)).count(),
             1,
             "关系里的基字不能被兜底复制到多个分包"
         );
         // 兜底让标记遍布所有存活分包（4 个），但关系里的基字仍只在一个包里。
-        assert_eq!(subsets.iter().filter(|s| s.contains(&ACUTE)).count(), 4);
+        assert_eq!(
+            subsets.iter().filter(|s| s.chars.contains(&ACUTE)).count(),
+            4
+        );
     }
 
     #[test]
     fn empty_subsets_are_not_revived() {
         // 关系搬移会把标记从后续分包里摘走，可能留下空包（pipeline 末尾会被丢弃）。
         // 兜底不能把标记塞回空包，否则凭空多出一个「只有标记」的 face。
-        let mut subsets =
-            vec![IndexSet::from([A]), IndexSet::new(), IndexSet::from([E])];
+        let mut subsets = vec![
+            subset(IndexSet::from([A])),
+            subset(IndexSet::new()),
+            subset(IndexSet::from([E])),
+        ];
         add_combining_marks_to_all_subsets(&[ENCLOSING_CIRCLE], &mut subsets);
-        assert!(subsets[0].contains(&ENCLOSING_CIRCLE));
-        assert!(subsets[2].contains(&ENCLOSING_CIRCLE));
-        assert!(subsets[1].is_empty());
+        assert!(subsets[0].chars.contains(&ENCLOSING_CIRCLE));
+        assert!(subsets[2].chars.contains(&ENCLOSING_CIRCLE));
+        assert!(subsets[1].chars.is_empty());
     }
 
     #[test]
@@ -673,16 +689,16 @@ mod mark_fallback_tests {
         assert!(combining_mark_codepoints(&chars).is_empty());
 
         let mut subsets = vec![
-            IndexSet::from([A]),
-            IndexSet::from([E]),
-            IndexSet::from([HAN_YI]),
+            subset(IndexSet::from([A])),
+            subset(IndexSet::from([E])),
+            subset(IndexSet::from([HAN_YI])),
         ];
-        let before = subsets.clone();
+        let before = chars_of(&subsets);
         add_combining_marks_to_all_subsets(
             &combining_mark_codepoints(&chars),
             &mut subsets,
         );
-        assert_eq!(subsets, before);
+        assert_eq!(chars_of(&subsets), before);
     }
 
     #[test]

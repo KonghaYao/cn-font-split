@@ -8,10 +8,17 @@
 //! 比对即可证明「输出字节完全一致」：
 //!
 //! ```sh
-//! cargo test --release --test arch_hashcheck -- --ignored --nocapture
+//! cargo test --release --test arch_hashcheck -- --ignored --nocapture --test-threads=1
 //! ```
 //!
 //! 说明：
+//! - **必须带 `--test-threads=1`**：多线程下多个测试的输出会交错，无法逐行
+//!   比对。单线程下顺序也是确定的：libtest 按测试名排序，因此
+//!   `arch_hash_snapshot` 的 3 段在前，`arch_hash_variants` 的各段随后。
+//! - 规范化输出时要剥掉 libtest 的测试标题前缀：libtest 会把每个测试的第一段
+//!   标题打印在 `test <name> ... ` **同一行**（例如
+//!   `test arch_hash_snapshot ... == packages/... ==`），需要先去掉
+//!   `^test [A-Za-z0-9_]+ \.\.\. ` 再筛选段标题/汇总行/明细行。
 //! - 仓库未引入 `sha2`（不新增依赖），这里用已有的 `blake3` 计算文件摘要，
 //!   等价性证明的强度与 sha256 相同（均为密码学摘要）。
 //! - `reporter.bin` 里的 `duration` 是实际耗时，天然不可复现。harness 会把
@@ -45,6 +52,16 @@ fn encode_subsets() -> Vec<Vec<u8>> {
             chars.iter().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>()
         })
         .collect()
+}
+
+/// 大用户分包：2000 个连续 CJK 码点，编码约定同 [`encode_subsets`]。
+///
+/// 2 字符的用户分包太小，`AutoSubset` 的系数差异（0.5 / 0.7 / 1.0）不会改变
+/// 分包数，测不出「按位置查表」的行为；2000 字符才足以暴露。
+const BIG_USER_SUBSET: std::ops::Range<u32> = 0x4E00..0x55D0;
+
+fn encode_big_user_subset() -> Vec<u8> {
+    BIG_USER_SUBSET.flat_map(|c| c.to_le_bytes()).collect()
 }
 
 fn fixed_template(font: &[u8]) -> InputTemplate {
@@ -135,7 +152,7 @@ fn report(font_path: &str, template: InputTemplate) {
 }
 
 #[test]
-#[ignore = "等价性哈希基线，手动运行：cargo test --release --test arch_hashcheck -- --ignored --nocapture"]
+#[ignore = "等价性哈希基线，手动运行：cargo test --release --test arch_hashcheck -- --ignored --nocapture --test-threads=1"]
 fn arch_hash_snapshot() {
     for font_path in FONTS {
         let binary = fs::read(font_path).expect("读取字体夹具失败");
@@ -144,9 +161,15 @@ fn arch_hash_snapshot() {
 }
 
 /// 覆盖基线之外的分支：name_template 重命名、preview SVG、reduce_min、
-/// 多线程路径与另一个 chunk_size。
+/// 多线程路径、另一个 chunk_size，以及「语言标签按位置查表」的两条盲区：
+///
+/// - `no_user`：没有用户分包，余数包的下标前移，可能命中某个非空区域标签；
+/// - `big_user`：2000 字符的用户分包自身可能命中区域标签，且把后续所有位置
+///   整体后移。
+///
+/// 两条路径都必须与重构前的字节完全一致。
 #[test]
-#[ignore = "等价性哈希基线，手动运行：cargo test --release --test arch_hashcheck -- --ignored --nocapture"]
+#[ignore = "等价性哈希基线，手动运行：cargo test --release --test arch_hashcheck -- --ignored --nocapture --test-threads=1"]
 fn arch_hash_variants() {
     for font_path in FONTS {
         let binary = fs::read(font_path).expect("读取字体夹具失败");
@@ -171,5 +194,15 @@ fn arch_hash_variants() {
         reduce.test_html = Some(false);
         reduce.reporter = Some(false);
         report(&format!("reduce_min {font_path}"), reduce);
+
+        let mut no_user = fixed_template(&binary);
+        no_user.subsets = vec![];
+        report(&format!("no_user {font_path}"), no_user);
+
+        // 字体没有这些码点时该分包为空、最终被丢弃，但它的位置仍然参与查表，
+        // 因此对三款字体都是有效用例。
+        let mut big_user = fixed_template(&binary);
+        big_user.subsets = vec![encode_big_user_subset()];
+        report(&format!("big_user {font_path}"), big_user);
     }
 }

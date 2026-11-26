@@ -1,6 +1,6 @@
 use indexmap::IndexSet;
 
-use super::plugin::{PreSubsetPlugin, SubsetDraft};
+use super::plugin::{PreSubsetPlugin, Subset, SubsetDraft};
 use crate::config::Config;
 use crate::error::Result;
 
@@ -26,7 +26,8 @@ impl PreSubsetPlugin for AddUserSubset {
                 subset.insert(*x);
                 draft.remaining.remove(x);
             });
-            draft.subsets.push(subset);
+            // 用户分包没有语言区域语义，标签为 None。
+            draft.subsets.push(Subset { chars: subset, language: None });
         });
         Ok(())
     }

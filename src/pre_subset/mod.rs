@@ -12,17 +12,14 @@ use cn_font_utils::u8_array_to_u32_array;
 use features::FontFeatures;
 use gen_svg::gen_svg_extra_files;
 use harfbuzz_rs_now::{Face, Owned};
-use indexmap::IndexSet;
 use opentype::tables::FontVariations;
 use plugin::{
-    AddRemainChars, LanguageArea, PreSubsetPlugin, ReduceMin, SubsetDraft,
+    AddRemainChars, LanguageArea, PreSubsetPlugin, ReduceMin, Subset,
+    SubsetDraft,
 };
 use plugin_add_user_subset::AddUserSubset;
 use plugin_auto_subset::AutoSubset;
-use std::{
-    collections::{BTreeSet, HashMap},
-    io::Cursor,
-};
+use std::{collections::BTreeSet, io::Cursor};
 
 /// 预处理流水线。**顺序即产物语义**，不能随意调整：
 ///
@@ -55,13 +52,12 @@ where
     font: &'a opentype::Font,
     font_file: &'a mut Cursor<&'c [u8]>,
     subsets: &'c Vec<Vec<u32>>,
-    /// 语言区域标签，key 是 `create_default_unicode_area` 的区域序号。
+    /// 区域下标 → 语言标签，只含非空区域（空区域为 `None`）。
     ///
-    /// 该状态**不是死代码**：`AutoSubset` 按它选择切分系数（`ZH_TC` 用 0.5、
-    /// 其余已记录区域用 1.0、没有记录的下标用 0.7）。把区域序号当分包下标
-    /// 使用是历史遗留语义，删除或「修正」都会改变分包结果（实测 NotoSerifSC
-    /// 203 → 215 个 face），因此保持原样。
-    used_languages: HashMap<usize, String>,
+    /// 旧实现把「区域下标 → 标签」存在这里，却在 `AutoSubset` 里按**分包
+    /// 在 `draft.subsets` 中的位置**去查；`LanguageArea` 与 `AddRemainChars`
+    /// 用它把旧查表结果物化到 `Subset::language`，保证逐字节等价。
+    pub area_tags: Vec<Option<String>>,
 }
 
 /// 用户传入的 subsets 使用每字符 4 字节的小端编码；
@@ -105,7 +101,7 @@ pub fn pre_subset(
     let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&config.subsets)?;
 
     // 初始化预处理上下文
-    let subsets: Vec<IndexSet<u32>> = vec![];
+    let subsets: Vec<Subset> = vec![];
     // 字符全集在交给插件消费前先留一份升序快照，供 run_subset 复用。
     let all_unicodes_vec: Vec<u32> = all_unicodes.iter().copied().collect();
     let mut context = PreSubsetContext {
@@ -116,7 +112,8 @@ pub fn pre_subset(
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
-        used_languages: HashMap::new(),
+        // `LanguageArea` 在执行时填充；关闭 `language_areas` 时保持为空。
+        area_tags: Vec::new(),
     };
 
     // 执行 PIPELINE 中所有启用的插件，顺序见文件顶部的顺序约束说明。
@@ -128,14 +125,14 @@ pub fn pre_subset(
         }
     }
     // 根据处理结果得到每个分包的字符表，空包不输出。
+    // 语言标签只服务于 `AutoSubset`，不随产物上抛。
     let subsets = draft
         .subsets
         .iter()
-        .filter(|v| !v.is_empty())
-        .map(|v| v.iter().copied().collect::<Vec<u32>>())
+        .filter(|v| !v.chars.is_empty())
+        .map(|v| v.chars.iter().copied().collect::<Vec<u32>>())
         .collect();
     // `draft` 到此不再使用，`context` 的可变借用于此结束。
-    // `context.used_languages` 只服务于 `AutoSubset`（见字段注释），不随产物上抛。
 
     // 分析名称表
     let name_table = analyze_name_table(&font, &mut font_file);
