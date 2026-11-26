@@ -57,6 +57,12 @@ where
     font: &'a opentype::Font,
     font_file: &'a mut Cursor<&'c [u8]>,
     subsets: &'c Vec<Vec<u32>>,
+    /// 语言区域标签，key 是 `create_default_unicode_area` 的区域序号。
+    ///
+    /// 该状态**不是死代码**：`AutoSubset` 按它选择切分系数（`ZH_TC` 用 0.5、
+    /// 其余已记录区域用 1.0、没有记录的下标用 0.7）。把区域序号当分包下标
+    /// 使用是历史遗留语义，删除或「修正」都会改变分包结果（实测 NotoSerifSC
+    /// 203 → 215 个 face），因此保持原样。
     used_languages: HashMap<usize, String>,
 }
 
