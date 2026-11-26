@@ -53,11 +53,11 @@ cargo build --release --locked
 
 以下命令会重新生成已入库的文件，只有此时才需要额外工具链：
 
-| 命令                                | 产物                              | 额外依赖                          |
-| ----------------------------------- | --------------------------------- | --------------------------------- |
-| `pnpm gen:unicodes`                 | `crates/lang_unicodes/data/*.dat` | `cmake`（`opencc-rs` 构建期依赖） |
-| `pnpm gen:proto`                    | `crates/proto/src/lib/*.rs`       | `protoc`                          |
-| `pnpm -C packages/ffi-js gen:proto` | `packages/ffi-js/src/gen/*.ts`    | `protoc`、`protoc-gen-ts`         |
+| 命令                                | 产物                              | 额外依赖                                     |
+| ----------------------------------- | --------------------------------- | -------------------------------------------- |
+| `pnpm gen:unicodes`                 | `crates/lang_unicodes/data/*.dat` | `cmake`（`opencc-rs` 构建期依赖）            |
+| `pnpm gen:proto`                    | `crates/proto/src/lib/*.rs`       | `protoc`                                     |
+| `pnpm -C packages/ffi-js gen:proto` | `packages/ffi-js/src/gen/*.ts`    | `protoc`（>= 3.20）、`@bufbuild/protoc-gen-es`（2.17.0，须与 `@bufbuild/protobuf` 同版本） |
 
 生成后请检查产物 diff 并一并提交。
 

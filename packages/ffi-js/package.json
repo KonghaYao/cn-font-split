@@ -17,7 +17,7 @@
     },
     "scripts": {
         "update-proto": "pnpm gen:proto",
-        "gen:proto": "sh ./scripts/build_proto_ts.sh && proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts && sh scripts/build_proto_ts.sh",
+        "gen:proto": "sh ./scripts/build_proto_ts.sh && proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts",
         "build": "pnpm -C ../proto-to-cli build && vite build && vite build -c vite.config.wasm.mts",
         "test": "node --experimental-strip-types --test \"src/*.test.ts\"",
         "smoke:error": "node ./scripts/smoke-error.mjs",
@@ -48,10 +48,10 @@
         "node": ">=22"
     },
     "dependencies": {
+        "@bufbuild/protobuf": "2.17.0",
         "buffer": "^6.0.3",
         "commander": "^14.0.3",
         "fs-extra": "^11.4.1",
-        "google-protobuf": "^3.21.4",
         "koffi": "2.16.4"
     },
     "optionalDependencies": {
@@ -65,15 +65,14 @@
         "@cn-font-split/wasm32-wasip2": "8.0.0"
     },
     "devDependencies": {
+        "@bufbuild/protoc-gen-es": "2.17.0",
         "@grpc/grpc-js": "^1.14.0",
         "@tybys/wasm-util": "^0.9.0",
-        "@types/google-protobuf": "^3.15.12",
         "@xan105/ffi": "^1.3.1",
         "base64-js": "^1.5.1",
         "ieee754": "^1.2.1",
         "memfs-browser": "^3.5.10302",
         "proto-to-cli": "workspace:^",
-        "protobufjs": "^7.6.5",
-        "protoc-gen-ts": "^0.8.7"
+        "protobufjs": "^7.6.5"
     }
 }

@@ -12,7 +12,6 @@
     "dependencies": {
         "@cn-ui/reactive": "^2.3.0",
         "@grpc/grpc-js": "^1.14.0",
-        "google-protobuf": "^3.21.4",
         "gzip": "^0.1.0",
         "jszip": "^3.10.1",
         "lodash-es": "^4.18.1",

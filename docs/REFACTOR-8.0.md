@@ -80,7 +80,7 @@
 - [ ] Rust：`prost/tonic`、`opentype`、`woff`、`rayon`、`indexmap`、`regex`、`clap`、`chrono`、`log/env_logger` 升到最新可用版本。
 - [x] Rust 替换：`md5 → blake3`；`lazy_static → std::sync::LazyLock`；移除无用依赖。
 - [x] Node：`vite 8`、`typescript`、`koffi`（解禁并重验 ABI）、`commander`、`fs-extra` 升到最新。
-- [ ] Node 移除：`google-protobuf`（迁 `@bufbuild/protobuf`，失败则退回 `protobufjs` 并记 TODO）；`set-value`。
+- [x] Node 移除：`google-protobuf`（已迁 `@bufbuild/protobuf` 2.17，见 `MIGRATION-8.0.md` §5.1）；`set-value`。
 - [x] CI：`actions-rs/toolchain` → `dtolnay/rust-toolchain`；`actions/create-release@v1` → `softprops/action-gh-release`；`checkout@v5`、`setup-node@v4`。
 - [ ] 每类升级后运行 benchmark 与视觉回归并记录变化。
 
@@ -315,7 +315,7 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 | Rust Config builder / 单一配置源 | 延后 | proto 仍是配置事实来源，CLI 参数直接构造 `InputTemplate`，未引入 Config builder 与派生 |
 | `name_template` 解析器化 | 延后 | 仍使用 `regex` 解析模板，未改为手写解析器 |
 | 按实测体积迭代的分包算法 | 延后 | 仍是「采样 + 两点校准」估算；WorkSans VF 单包 157,996B（≈158KB）仍然存在，未按实测体积收敛 |
-| `google-protobuf` 迁移 | 延后 | `packages/ffi-js` 与 `packages/test` 仍依赖 `google-protobuf`；未迁到 `@bufbuild/protobuf` |
+| `google-protobuf` 迁移 | 已完成 | `packages/ffi-js` 改用 `@bufbuild/protobuf` 2.17（生成器 `@bufbuild/protoc-gen-es` 同版本，`protoc --es_out`）；`packages/test` 的未使用依赖已移除；类型改名见 `MIGRATION-8.0.md` §5.1 |
 | `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.5+ 在解码失败时执行 `debug_assert`，会破坏 `truncated_woff2` 的错误返回。0.4.0 的 woff2 C++ 源码缺 `#include <cstdint>`，GCC 13+ 需用 `CXXFLAGS=-include cstdint` 编译（CI 已设置） |
 | `prost` / `tonic 0.14` | 延后 | 仍为 `prost 0.13.5`；0.14 的 MSRV 为 1.88，高于本项目 1.85 |
 | Bun / Deno 平台包解析 | 已完成 | `resolveBinPath` 抽到 `load.ts`，node / bun / deno 共用：env → `createRequire` 解析 `@cn-font-split/<platform>` → 本地 `dist` 回退 → 报错列出尝试项（`8216776`） |
