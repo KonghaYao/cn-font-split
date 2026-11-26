@@ -35,14 +35,12 @@ impl PreSubsetPlugin for FontFeatures {
         let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
         move_feature_set_to_front(&pos_map, subsets);
 
-        // GPOS 关系处理完后再补兜底：字体 GPOS 未收录的组合标记（如
-        // NotoSerifSC 的 U+20DD）拿不到「基字 + 标记」关系，会被分到别的分包，
-        // 浏览器跨 face 无法做 mark 定位。详见 `mark_fallback_clusters`。
+        // 关系搬移完成后再补兜底：组合标记必须出现在每一个分包里，否则基字
+        // 与标记会被分到不同 face，浏览器跨 face 无法做 mark 定位。
+        // 详见 `add_combining_marks_to_all_subsets`。
         let chars = font_characters_from_cmap(&cmap);
-        let mark_clusters = mark_fallback_clusters(&chars, &pos_map);
-        for cluster in &mark_clusters {
-            move_feature_set_to_front(std::slice::from_ref(cluster), subsets);
-        }
+        let marks = combining_mark_codepoints(&chars);
+        add_combining_marks_to_all_subsets(&marks, subsets);
         Ok(())
     }
 }
@@ -63,55 +61,46 @@ fn font_characters_from_cmap(cmap: &HashMap<u16, u32>) -> IndexSet<u32> {
     chars.into_iter().collect()
 }
 
-/// 组合标记兜底合并的 cluster 列表：每个 cluster 是「Latin 基字集合 ∪ 单个标记」。
+/// 组合标记兜底：字体 cmap 中真实存在的组合标记码点。
 ///
-/// 为什么用 Latin 兜底集合：组合标记的脚本属性是 Inherited，字体 GPOS 未必
-/// 为它建 markCoverage（NotoSerifSC 的 U+20DD 就不在 gid 493 的覆盖里），
-/// 这时只能靠码点区间推断宿主语境。Latin 区段（Basic Latin / Latin-1 /
-/// Latin Ext-A-B 起始段 / Latin Extended Additional，外加作基字的
-/// Letterlike Symbols / Number Forms）是 `a⃝`、`Ⅰ⃝` 这类序列最常见的基字
-/// 来源，且集合有限；只把它作为基字，可以保证不会把 Han 或其它脚本牵连进
-/// 同一个分包。
-///
-/// 局限：Inherited 标记理论上可以跟在任意脚本之后，这里只在 Latin 语境兜底。
-/// Han、Cyrillic、Greek 等语境下的孤立标记，以及字体没有 Latin 基字时，
-/// 仍保持原有分包行为。
-fn mark_fallback_clusters(
-    chars: &IndexSet<u32>,
-    pos_map: &[IndexSet<u32>],
-) -> Vec<IndexSet<u32>> {
-    let bases: IndexSet<u32> =
-        chars.iter().copied().filter(|c| is_latin_base(*c)).collect();
-    // 没有 Latin 基字时 cluster 只剩标记本身，合并没有意义。
-    if bases.is_empty() {
-        return Vec::new();
-    }
-    chars
-        .iter()
-        .copied()
-        .filter(|c| is_combining_mark(*c))
-        // 已被 GPOS 关系覆盖的标记由上面的 move_feature_set_to_front 处理。
-        .filter(|c| !pos_map.iter().any(|relation| relation.contains(c)))
-        .map(|mark| {
-            let mut cluster = bases.clone();
-            cluster.insert(mark);
-            cluster
-        })
-        .collect()
+/// 与 GPOS 关系无关，**不排除**已被关系覆盖的标记：GPOS 关系只保证「关系里的
+/// 基字 + 标记」同包，字体没为某个基字建关系时（NotoSerifSC 的 Han + U+0301）
+/// 仍会跨 face，而 Inherited 标记理论上可以跟在任意脚本的基字后面。
+fn combining_mark_codepoints(chars: &IndexSet<u32>) -> Vec<u32> {
+    chars.iter().copied().filter(|c| is_combining_mark(*c)).collect()
 }
 
-/// Latin 兜底基字区段：Basic Latin、Latin-1 Supplement、Latin Extended-A/B
-/// 起始段、Latin Extended Additional，以及 Letterlike Symbols / Number Forms。
+/// 把每个组合标记码点加入**每一个**分包，让每个 face 都覆盖这些标记。
 ///
-/// 后两个区段（U+2100..=U+218F）不是基本拉丁，但 `Ⅰ⃝`、`№⃝` 这类序列用
-/// 罗马数字、№ 作基字，且它们常和组合标记一起被分到「符号」语言包。若基字
-/// 集合不含它们，兜底会把标记从符号包拖到 Latin 包，反而拆散原本同 face 的
-/// `Ⅰ⃝`/`№⃝`（探针 comb2-same 回归）。这两个区段里没有 Han，把它们一并
-/// 视为 Latin 语境基字，标记与其原有同包字符就能一起移动。
-fn is_latin_base(c: u32) -> bool {
-    (0x0020..=0x024F).contains(&c)
-        || (0x1E00..=0x1EFF).contains(&c)
-        || (0x2100..=0x218F).contains(&c)
+/// 为什么不是「把标记搬进某一个分包」：组合标记的脚本属性是 Inherited，可以
+/// 跟在任意脚本的基字之后。只要基字与标记落在不同 face，浏览器就无法跨 face
+/// 做 mark 定位，Chromium 甚至会丢掉基字整字。搬运只能覆盖「被搬进去的那个
+/// face」上的基字，因此早期只搬 Latin 基字的兜底在 Han / Cyrillic / Greek /
+/// 全角 Latin 语境下依然失效（实测 `永⃝` WebKit 差异 643px、Chromium 基字整字
+/// 消失；`字\u0301` 187px）。
+///
+/// 反过来「每个分包都覆盖标记」是浏览器字形匹配的直接要求：grapheme cluster
+/// 的字体由基字决定，基字所在 face 只要也覆盖标记，base + mark 就不会被拆成
+/// 两个 run。字体里真实存在的组合标记通常很少（NotoSerifSC 7 个、
+/// WorkSans 25 个、SmileySans 0 个），复制代价远小于重新划分基字所在分包。
+///
+/// 空分包会被 pipeline 末尾丢弃，往里塞标记等于凭空造出一个「只有标记」的
+/// face，因此跳过；`marks` 来自 BTreeSet 顺序的字符表，本身就是升序。
+fn add_combining_marks_to_all_subsets(
+    marks: &[u32],
+    subsets: &mut [IndexSet<u32>],
+) {
+    if marks.is_empty() {
+        return;
+    }
+    for subset in subsets.iter_mut() {
+        if subset.is_empty() {
+            continue;
+        }
+        for mark in marks {
+            subset.insert(*mark);
+        }
+    }
 }
 
 /// 组合标记区段：Combining Diacritical Marks 及其扩展、Cyrillic 组合标记、
@@ -233,102 +222,125 @@ mod mark_fallback_tests {
         (cmap, pos_map, subsets)
     }
 
-    #[test]
-    fn combining_mark_is_merged_with_latin_base() {
-        let (cmap, pos_map, mut subsets) = noto_like_fixture();
-        let chars = font_characters_from_cmap(&cmap);
-        let clusters = mark_fallback_clusters(&chars, &pos_map);
-
-        // 只兜底 GPOS 未覆盖的 U+20DD；U+0301 已有 GPOS 关系，不重复处理。
-        assert_eq!(clusters.len(), 1);
-        assert!(clusters[0].contains(&ENCLOSING_CIRCLE));
-        assert!(!clusters[0].contains(&ACUTE));
-        assert!(clusters[0].contains(&A));
-        assert!(!clusters[0].contains(&HAN_YI), "Han 不能被拉进 Latin cluster");
-
-        for cluster in &clusters {
-            move_feature_set_to_front(
-                std::slice::from_ref(cluster),
-                &mut subsets,
-            );
-        }
-
-        // a / o / U+20DD 必须落在同一个分包里，浏览器才能做 mark 定位。
-        let mark_subset = subsets
-            .iter()
-            .position(|s| s.contains(&ENCLOSING_CIRCLE))
-            .expect("U+20DD 必须仍被分配到某个分包");
-        assert!(subsets[mark_subset].contains(&A));
-        assert!(subsets[mark_subset].contains(&O));
-        assert!(subsets[mark_subset].contains(&E));
-        assert!(subsets[mark_subset].contains(&G));
-        assert_eq!(
-            subsets.iter().filter(|s| s.contains(&ENCLOSING_CIRCLE)).count(),
-            1,
-            "标记只能出现在一个分包中"
-        );
-
-        // Han 字符保持原有归属，不因兜底被复制或迁移。
-        assert_eq!(subsets.iter().filter(|s| s.contains(&HAN_YI)).count(), 1);
-
-        // GPOS 覆盖的标记及其基字关系不受兜底影响。
-        assert!(subsets[1].contains(&ACUTE));
-        assert!(!subsets[1].contains(&E));
+    /// 复现 `FontFeatures::apply` 在关系搬移之后的兜底步骤，供各用例共享。
+    fn run_fallback(
+        cmap: &HashMap<u16, u32>,
+        pos_map: &[IndexSet<u32>],
+        subsets: &mut [IndexSet<u32>],
+    ) {
+        move_feature_set_to_front(pos_map, subsets);
+        let chars = font_characters_from_cmap(cmap);
+        let marks = combining_mark_codepoints(&chars);
+        add_combining_marks_to_all_subsets(&marks, subsets);
     }
 
     #[test]
-    fn mark_stays_with_roman_numeral_and_numero_bases() {
-        // `Ⅰ⃝` / `№⃝`：罗马数字与 № 常与标记落在同一个符号包。兜底必须把它们
-        // 视为 Latin 语境基字，否则标记会被单独拖走、反而制造跨 face。
-        const ROMAN_ONE: u32 = 0x2160;
-        const NUMERO: u32 = 0x2116;
-        let cmap = HashMap::from([
-            (1_u16, A),
-            (2, ENCLOSING_CIRCLE),
-            (3, ROMAN_ONE),
-            (4, NUMERO),
-        ]);
+    fn combining_marks_enter_every_subset() {
+        let (cmap, pos_map, mut subsets) = noto_like_fixture();
+        run_fallback(&cmap, &pos_map, &mut subsets);
+
+        // 字体里的两个组合标记（U+0301、U+20DD）必须出现在每一个仍然存活的分包里：
+        // 基字分散在 0/1/2/3 号包，任何一个包缺标记都会重新制造跨 face。
+        let mut live = 0;
+        for (index, subset) in subsets.iter().enumerate() {
+            if subset.is_empty() {
+                // 4 号包唯一的 g 被关系搬进 1 号包，搬空后不该被兜底复活。
+                continue;
+            }
+            live += 1;
+            assert!(
+                subset.contains(&ACUTE),
+                "分包 {index} 缺少 U+0301，基字与标记会跨 face"
+            );
+            assert!(
+                subset.contains(&ENCLOSING_CIRCLE),
+                "分包 {index} 缺少 U+20DD，基字与标记会跨 face"
+            );
+        }
+        assert_eq!(live, 4);
+
+        // 兜底只复制标记，基字仍保持原有归属：Han 只出现在一个分包里。
+        assert_eq!(subsets.iter().filter(|s| s.contains(&HAN_YI)).count(), 1);
+        assert_eq!(subsets.iter().filter(|s| s.contains(&A)).count(), 1);
+    }
+
+    #[test]
+    fn combining_marks_absent_from_cmap_are_not_added() {
+        // 字体 cmap 里没有 U+20DD / U+0301 时不能凭空加进分包：那样每个 woff2 都会
+        // 声明一个自身没有字形的码点（探针的 declaredButMissing 会立刻非零）。
+        let cmap = HashMap::from([(1_u16, A), (2, E), (3, HAN_YI)]);
         let mut subsets = vec![
             IndexSet::from([A]),
-            IndexSet::from([ENCLOSING_CIRCLE, ROMAN_ONE, NUMERO]),
+            IndexSet::from([E]),
+            IndexSet::from([HAN_YI]),
         ];
-        let chars = font_characters_from_cmap(&cmap);
-        let clusters = mark_fallback_clusters(&chars, &[]);
-        assert!(clusters[0].contains(&ROMAN_ONE));
-        assert!(clusters[0].contains(&NUMERO));
-
-        for cluster in &clusters {
-            move_feature_set_to_front(
-                std::slice::from_ref(cluster),
-                &mut subsets,
-            );
+        run_fallback(&cmap, &[], &mut subsets);
+        for subset in &subsets {
+            assert!(!subset.contains(&ACUTE));
+            assert!(!subset.contains(&ENCLOSING_CIRCLE));
         }
-        let mark_subset = subsets
+
+        // 只有 cmap 里真实存在的那个标记会被复制。
+        let cmap = HashMap::from([(1_u16, A), (2, HAN_YI), (3, ACUTE)]);
+        let mut subsets = vec![IndexSet::from([A]), IndexSet::from([HAN_YI])];
+        run_fallback(&cmap, &[], &mut subsets);
+        for subset in &subsets {
+            assert!(subset.contains(&ACUTE));
+            assert!(!subset.contains(&ENCLOSING_CIRCLE));
+        }
+    }
+
+    #[test]
+    fn gpos_relations_keep_their_base_and_mark_together() {
+        let (cmap, pos_map, mut subsets) = noto_like_fixture();
+        run_fallback(&cmap, &pos_map, &mut subsets);
+
+        // 关系收集（move_feature_set_to_front）行为不变：g 与 U+0301 仍落在
+        // 首个相交分包，且不从关系集里被拆走。
+        let relation_subset = subsets
             .iter()
-            .position(|s| s.contains(&ENCLOSING_CIRCLE))
-            .expect("U+20DD 必须仍被分配到某个分包");
-        assert!(subsets[mark_subset].contains(&ROMAN_ONE));
-        assert!(subsets[mark_subset].contains(&NUMERO));
+            .position(|s| s.contains(&G))
+            .expect("GPOS 基字必须仍被分配到某个分包");
+        assert!(subsets[relation_subset].contains(&ACUTE));
+        assert_eq!(
+            subsets.iter().filter(|s| s.contains(&G)).count(),
+            1,
+            "关系里的基字不能被兜底复制到多个分包"
+        );
+        // 兜底让标记遍布所有存活分包（4 个），但关系里的基字仍只在一个包里。
+        assert_eq!(subsets.iter().filter(|s| s.contains(&ACUTE)).count(), 4);
     }
 
     #[test]
-    fn latin_base_ranges_cover_latin_and_base_symbols() {
-        for c in [
-            0x0020_u32, 0x007A, 0x00E9, 0x024F, 0x1E00, 0x1EFF, 0x2100, 0x2116,
-            0x2160, 0x218F,
-        ] {
-            assert!(is_latin_base(c), "U+{c:04X} 应被视为 Latin 基字");
-        }
-        for c in [0x001F_u32, 0x0250, 0x1F00, 0x2190, 0x4E00, 0x20DD] {
-            assert!(!is_latin_base(c), "U+{c:04X} 不应被视为 Latin 基字");
-        }
+    fn empty_subsets_are_not_revived() {
+        // 关系搬移会把标记从后续分包里摘走，可能留下空包（pipeline 末尾会被丢弃）。
+        // 兜底不能把标记塞回空包，否则凭空多出一个「只有标记」的 face。
+        let mut subsets =
+            vec![IndexSet::from([A]), IndexSet::new(), IndexSet::from([E])];
+        add_combining_marks_to_all_subsets(&[ENCLOSING_CIRCLE], &mut subsets);
+        assert!(subsets[0].contains(&ENCLOSING_CIRCLE));
+        assert!(subsets[2].contains(&ENCLOSING_CIRCLE));
+        assert!(subsets[1].is_empty());
     }
 
     #[test]
-    fn no_latin_base_means_no_cluster() {
-        let cmap = HashMap::from([(1_u16, HAN_YI), (2, ENCLOSING_CIRCLE)]);
+    fn no_combining_marks_means_no_change() {
+        // SmileySans 这类字体 cmap 里没有组合标记（实测 0 个）：兜底必须完全不改分包。
+        let cmap = HashMap::from([(1_u16, A), (2, E), (3, HAN_YI)]);
         let chars = font_characters_from_cmap(&cmap);
-        assert!(mark_fallback_clusters(&chars, &[]).is_empty());
+        assert!(combining_mark_codepoints(&chars).is_empty());
+
+        let mut subsets = vec![
+            IndexSet::from([A]),
+            IndexSet::from([E]),
+            IndexSet::from([HAN_YI]),
+        ];
+        let before = subsets.clone();
+        add_combining_marks_to_all_subsets(
+            &combining_mark_codepoints(&chars),
+            &mut subsets,
+        );
+        assert_eq!(subsets, before);
     }
 
     #[test]
