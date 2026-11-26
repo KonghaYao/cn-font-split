@@ -28,6 +28,12 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
+            - name: Build（显式构建，产物缺失时在此失败）
+              # 包内 prepack 也会跑 pnpm build（pnpm pack / pnpm publish 都会执行 prepack），
+              # 但把它提到发布步骤之前，可以让构建失败的报错出现在 publish 之前。
+              working-directory: packages/font-replacer
+              run: pnpm build
+
             - name: npm publish --dry-run（默认路径）
               if: ${{ !inputs.publish }}
               working-directory: packages/font-replacer
