@@ -408,9 +408,6 @@ importers:
       cn-font-split:
         specifier: workspace:^
         version: link:../ffi-js
-      fontaine:
-        specifier: ^0.7.0
-        version: 0.7.0
       fs-extra:
         specifier: ^11.2.0
         version: 11.4.1
