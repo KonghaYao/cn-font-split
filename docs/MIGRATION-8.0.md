@@ -242,7 +242,9 @@ font_split(config, |event: EventMessage| {
 
 ## 6. 产物与 CSS
 
--   分包数量、单包字节与视觉结果与 7.x 基线一致（视觉回归三组 `0.000%`）。
+-   分包数量与字节数总体持平：默认配置下 SmileySans WOFF2 为 59 → 63 个包
+    （+6.8%，字节 +0.32%）；12 个 benchmark 用例合计 1020 → 992 个包、总字节 −0.25%。
+    视觉结果不变（回归三组 `0.000%`）。
 -   生成 CSS 的结构与字段不变；`css.*` 配置照常传入。
 -   `reporter.bin` 仍通过 `EventName.OutputData` 发出，`reporter: false` 可关闭。
 

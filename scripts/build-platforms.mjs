@@ -5,8 +5,15 @@
 //!   node scripts/build-platforms.mjs                     # 默认本机平台
 //!   node scripts/build-platforms.mjs --platform darwin-arm64
 //!   node scripts/build-platforms.mjs --all               # 所有已构建产物的平台
+//!   node scripts/build-platforms.mjs --all --artifacts-dir artifacts
+//!                                                        # 从 GitHub artifact 下载目录取产物
+//!
+//! --artifacts-dir <dir> 是可选的最高优先级来源，对应 `actions/download-artifact`
+//! （pattern: bindings-*，merge-multiple: true）落地后的扁平目录。相对路径按仓库
+//! 根目录解析。不传该参数时行为与改动前完全一致。
 //!
 //! 产物来源（按顺序查找）：
+//!   <artifacts-dir>/libffi-<triple>.<ext>      （仅传入 --artifacts-dir 时）
 //!   target/<triple>/release/libffi-<triple>.<ext>
 //!   target/<triple>/release/libffi.<ext>
 //!   target/<triple>/release/ffi.<ext>          （Windows 原始产物）
@@ -141,10 +148,14 @@ function hostTriple() {
 }
 
 /** 查找某平台可用的构建产物。 */
-function findArtifact(key, platform) {
+function findArtifact(key, platform, artifactsDir) {
     const { triple, ext } = platform;
     const releaseDir = path.join(ROOT, 'target', triple, 'release');
     const candidates = [];
+    if (artifactsDir) {
+        // GitHub artifact 下载后的布局：artifacts/libffi-<triple>.<ext>。
+        candidates.push(path.join(artifactsDir, `libffi-${triple}.${ext}`));
+    }
     if (ext === 'wasm') {
         candidates.push(
             path.join(releaseDir, `libffi-${triple}.wasm`),
@@ -172,18 +183,19 @@ function findArtifact(key, platform) {
     return null;
 }
 
-function buildOne(key, version) {
+function buildOne(key, version, artifactsDir) {
     const platform = PLATFORMS[key];
     if (!platform) {
         throw new Error(
             `未知平台 "${key}"，可用：${Object.keys(PLATFORMS).join(', ')}`,
         );
     }
-    const artifact = findArtifact(key, platform);
+    const artifact = findArtifact(key, platform, artifactsDir);
     if (!artifact) {
-        console.error(
-            `[skip] ${key}: 找不到 target/${platform.triple}/release/ 或 target/release/ 下的 ${platform.ext} 产物`,
-        );
+        const sources = artifactsDir
+            ? `--artifacts-dir 下的 libffi-${platform.triple}.${platform.ext}、target/${platform.triple}/release/ 或 target/release/ 下的 ${platform.ext} 产物`
+            : `target/${platform.triple}/release/ 或 target/release/ 下的 ${platform.ext} 产物`;
+        console.error(`[skip] ${key}: 找不到 ${sources}`);
         return false;
     }
     const outDir = path.join(OUT_ROOT, key);
@@ -191,6 +203,8 @@ function buildOne(key, version) {
     fs.rmSync(outDir, { recursive: true, force: true });
     fs.mkdirSync(outDir, { recursive: true });
     fs.copyFileSync(artifact, path.join(outDir, binName));
+    // 平台包以 Apache-2.0 分发，LICENSE 必须随包发布（npm 只会自动收录包目录内的文件）。
+    fs.copyFileSync(path.join(ROOT, 'LICENSE'), path.join(outDir, 'LICENSE'));
 
     const manifest = {
         name: `@cn-font-split/${key}`,
@@ -205,7 +219,7 @@ function buildOne(key, version) {
         cpu: platform.cpu,
         ...(platform.libc ? { libc: platform.libc } : {}),
         main: binName,
-        files: [binName],
+        files: [binName, 'LICENSE'],
         publishConfig: {
             registry: 'https://registry.npmjs.org/',
             access: 'public',
@@ -230,6 +244,23 @@ const getArg = (name) => {
     return index >= 0 ? argv[index + 1] : undefined;
 };
 const version = readVersion();
+const artifactsDirArg = getArg('--artifacts-dir');
+if (
+    argv.includes('--artifacts-dir') &&
+    (!artifactsDirArg || artifactsDirArg.startsWith('--'))
+) {
+    console.error(
+        '--artifacts-dir 需要一个目录参数，例如：--artifacts-dir artifacts',
+    );
+    process.exit(2);
+}
+const artifactsDir = artifactsDirArg
+    ? path.resolve(ROOT, artifactsDirArg)
+    : undefined;
+if (artifactsDir && !fs.existsSync(artifactsDir)) {
+    console.error(`--artifacts-dir 指向的目录不存在：${artifactsDir}`);
+    process.exit(2);
+}
 const selected = argv.includes('--all')
     ? Object.keys(PLATFORMS)
     : [getArg('--platform') ?? hostPlatform()].filter(Boolean);
@@ -246,9 +277,13 @@ if (selected.length === 0) {
 }
 
 console.log(`cn-font-split ${version} platform packages -> dist-platforms/`);
+if (artifactsDir) {
+    const rel = path.relative(ROOT, artifactsDir) || '.';
+    console.log(`产物优先从 --artifacts-dir 读取：${rel}`);
+}
 let built = 0;
 for (const key of selected) {
-    if (buildOne(key, version)) built += 1;
+    if (buildOne(key, version, artifactsDir)) built += 1;
 }
 
 // 只做提示，不修改任何发布配置。

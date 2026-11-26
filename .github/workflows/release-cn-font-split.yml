@@ -2,13 +2,18 @@ name: release-cn-font-split
 
 # 主包 cn-font-split 的发布流水线。
 #
-# 默认 dry-run：inputs.publish=false 时只做版本校验 + 构建 + `pnpm pack --dry-run`，
-# 不访问 registry 的写入接口。只有显式 publish=true 才会依次发布
-# 平台包（`@cn-font-split/*`，必须先发）与主包。
+# 默认 dry-run：inputs.publish=false 时不访问 registry 的写入接口，但会完整走一遍
+# 「下载 cross-build 产物 → 生成 8 个平台包目录 → 目录/命名/版本/大小校验」，
+# 因此 dry-run 变绿才代表 publish=true 有机会成功。
 #
 # 平台包目录 `dist-platforms/<platform>/` 由 `scripts/build-platforms.mjs` 从
 # cross-build.yml 的 `bindings-*` 产物生成，不入库（见 .gitignore）。本 workflow
-# 不猜测产物位置：目录缺失时直接失败并打印缺失列表与获取方式。
+# 不猜测产物位置：先用 actions/download-artifact 从指定的 cross-build 运行下载
+# （run id 由 inputs.cross_build_run_id 指定，留空时自动取当前 commit 上最近一次
+# 成功的运行），再以 `--artifacts-dir artifacts` 生成。缺产物时直接失败并打印
+# 缺失列表与获取方式。
+#
+# 发布顺序固定：先平台包（@cn-font-split/*），确认 registry 可见后再发主包。
 on:
     workflow_dispatch:
         inputs:
@@ -16,14 +21,26 @@ on:
                 description: "真实发布到 npm（默认 false，只 dry-run）"
                 type: boolean
                 default: false
+            cross_build_run_id:
+                description: "cross-build.yml 的运行 ID；留空则自动取当前 commit 上最近一次成功的 cross-build 运行"
+                type: string
+                required: false
+                default: ""
 
 permissions:
     contents: read
+    # 跨 run 下载 artifact（actions/download-artifact 的 run-id 输入）需要它。
+    actions: read
 
 env:
     # woff 0.4.0 在 GCC 13+ 需要补 <cstdint>，原因见 ci.yml。
     CXXFLAGS: -include cstdint
     HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+
+concurrency:
+    # 同一 ref 同时只允许一个发布流程，避免两次 publish 交错。
+    group: release-cn-font-split-${{ github.ref }}
+    cancel-in-progress: false
 
 jobs:
     release:
@@ -54,8 +71,127 @@ jobs:
               working-directory: packages/ffi-js
               run: pnpm pack --dry-run
 
-            - name: 平台包目录检查（仅 publish=true）
-              if: ${{ inputs.publish }}
+            - name: 解析 cross-build 运行 ID
+              id: cross_build
+              shell: bash
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  INPUT_RUN_ID: ${{ inputs.cross_build_run_id }}
+              run: |
+                  set -euo pipefail
+                  run_id="$(echo "${INPUT_RUN_ID}" | tr -d '[:space:]')"
+                  if [ -z "${run_id}" ]; then
+                      # workflow_dispatch 下 GITHUB_SHA（即 github.sha）是被派发 ref 的提交，
+                      # 用它才能对上同一份源码构建出的产物（不要用 GITHUB_REF_NAME）。
+                      echo "未指定 cross_build_run_id，查询 ${GITHUB_SHA} 上最近一次成功的 cross-build 运行..."
+                      run_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/cross-build.yml/runs?head_sha=${GITHUB_SHA}&status=success&per_page=1" --jq '.workflow_runs[0].id // empty' || true)"
+                  fi
+                  if [ -z "${run_id}" ]; then
+                      {
+                          echo "::error::找不到可用的 cross-build 运行"
+                          echo "平台包来自 cross-build.yml 的 bindings-* 产物，请先运行："
+                          echo "  gh workflow run cross-build.yml --ref ${GITHUB_REF_NAME} -f dry_run=true -f create_release=false"
+                          echo "  gh run list --workflow=cross-build.yml --limit 5   # 等全部作业成功后取 run id"
+                          echo "然后在同一个 commit 上重新派发本 workflow："
+                          echo "  gh workflow run release-cn-font-split.yml --ref ${GITHUB_REF_NAME} -f publish=false -f cross_build_run_id=<run id>"
+                          echo "说明：cross-build 的 artifact 保留 14 天；留空时的自动查找只匹配当前 commit。"
+                          echo "详见 scripts/build-platforms.mjs 顶部注释。"
+                      } >&2
+                      exit 1
+                  fi
+                  echo "使用 cross-build 运行 ID：${run_id}"
+                  # 人工填写的 run id 可能指向旧提交上的运行。旧源码编译出的二进制一旦
+                  # 作为 8.0.0 发出，72 小时后无法撤回，因此统一校验 head_sha。
+                  run_sha="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}" --jq '.head_sha' 2>/dev/null || true)"
+                  if [ -z "${run_sha}" ]; then
+                      {
+                          echo "::error::无法读取 cross-build 运行 ${run_id} 的 head_sha"
+                          echo "请确认 run id 是否正确，以及 token 具备 actions: read 权限。"
+                      } >&2
+                      exit 1
+                  fi
+                  if [ "${run_sha}" != "${GITHUB_SHA}" ]; then
+                      {
+                          echo "::error::cross-build 运行 ${run_id} 不属于本次发布的提交"
+                          echo "  run_id:     ${run_id}"
+                          echo "  run_sha:    ${run_sha}"
+                          echo "  GITHUB_SHA: ${GITHUB_SHA}"
+                          echo "产物必须来自同一次提交的构建；请在该 commit 上重跑 cross-build 后使用新的 run id。"
+                      } >&2
+                      exit 1
+                  fi
+                  echo "head_sha 校验通过：${run_sha}"
+                  echo "run_id=${run_id}" >> "$GITHUB_OUTPUT"
+
+            - name: 下载 bindings-* 产物
+              # 跨 run 下载：所有 bindings-* 的 libffi-<triple>.<ext> 平铺到 artifacts/
+              # （含 riscv64 / s390x 与两个 wasm；脚本只取其中的 8 个 npm 平台）。
+              uses: actions/download-artifact@v4
+              with:
+                  run-id: ${{ steps.cross_build.outputs.run_id }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  pattern: bindings-*
+                  merge-multiple: true
+                  path: artifacts
+
+            - name: 生成平台包目录
+              run: |
+                  node scripts/build-platforms.mjs --all --artifacts-dir artifacts
+                  echo "--- dist-platforms/ 内容 ---"
+                  for dir in dist-platforms/*/; do
+                      platform="$(basename "${dir}")"
+                      for bin in "${dir}"libffi-*; do
+                          printf '  %-16s %10s bytes  %s\n' \
+                              "${platform}" "$(wc -c < "${bin}" | tr -d ' ')" "$(basename "${bin}")"
+                      done
+                  done
+
+            - name: 平台包二进制大小下限（必须 > 64KB）
+              # 截断/空产物一旦发布无法撤回（72h 后不可 unpublish），这里提前拦截。
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  node -e '
+                    const fs = require("node:fs");
+                    const path = require("node:path");
+                    const MIN = 64 * 1024;
+                    const root = "dist-platforms";
+                    const dirs = fs.readdirSync(root).filter((name) =>
+                        fs.existsSync(path.join(root, name, "package.json")),
+                    );
+                    const problems = [];
+                    for (const dir of dirs) {
+                        const manifest = JSON.parse(
+                            fs.readFileSync(path.join(root, dir, "package.json"), "utf8"),
+                        );
+                        const bin = path.join(root, dir, manifest.main);
+                        if (!fs.existsSync(bin)) {
+                            problems.push(`${dir}: 缺少 ${manifest.main}`);
+                            continue;
+                        }
+                        const size = fs.statSync(bin).size;
+                        console.log(`${dir}: ${manifest.main} = ${size} bytes`);
+                        if (size <= MIN) {
+                            problems.push(
+                                `${dir}: ${manifest.main} 只有 ${size} 字节，必须大于 64KB`,
+                            );
+                        }
+                    }
+                    if (dirs.length === 0) {
+                        console.error("dist-platforms/ 下没有任何平台包");
+                        process.exit(1);
+                    }
+                    if (problems.length > 0) {
+                        console.error(
+                            "平台包二进制过小或被截断（发布后 72h 内无法撤回）：\n  " +
+                                problems.join("\n  "),
+                        );
+                        process.exit(1);
+                    }
+                    console.log(`平台包二进制均大于 64KB（${dirs.length} 个）`);
+                  '
+
+            - name: 平台包目录检查
               shell: bash
               run: |
                   set -euo pipefail
@@ -70,23 +206,48 @@ jobs:
                       wasm32-wasip2
                   )
                   missing=()
+                  wrong_name=()
+                  missing_license=()
                   for platform in "${platforms[@]}"; do
-                      [ -f "dist-platforms/${platform}/package.json" ] || missing+=("dist-platforms/${platform}")
+                      manifest="dist-platforms/${platform}/package.json"
+                      if [ ! -f "$manifest" ]; then
+                          missing+=("dist-platforms/${platform}")
+                          continue
+                      fi
+                      name="$(node -p "require('./${manifest}').name")"
+                      if [ "$name" != "@cn-font-split/${platform}" ]; then
+                          wrong_name+=("${platform}: ${name}")
+                      fi
+                      if [ ! -f "dist-platforms/${platform}/LICENSE" ]; then
+                          missing_license+=("dist-platforms/${platform}/LICENSE")
+                      fi
                   done
-                  if [ ${#missing[@]} -ne 0 ]; then
+                  if [ ${#missing[@]} -ne 0 ] || [ ${#wrong_name[@]} -ne 0 ] || [ ${#missing_license[@]} -ne 0 ]; then
                       {
-                          echo "::error::缺少平台包目录（${#missing[@]}/${#platforms[@]}）：${missing[*]}"
-                          echo "平台包目录不入库，需要先生成："
-                          echo "  1. 运行 .github/workflows/cross-build.yml，下载 bindings-* artifacts；"
-                          echo "  2. 把每个 libffi-<triple>.<ext> 放到 target/<triple>/release/；"
-                          echo "  3. node scripts/build-platforms.mjs --all   # 产出 dist-platforms/<platform>/"
+                          echo "::error::平台包目录不完整或命名错误"
+                          if [ ${#missing[@]} -ne 0 ]; then
+                              echo "缺少目录（${#missing[@]}/${#platforms[@]}）：${missing[*]}"
+                          fi
+                          if [ ${#wrong_name[@]} -ne 0 ]; then
+                              echo "package.json name 与目录名不符："
+                              printf '  %s\n' "${wrong_name[@]}"
+                          fi
+                          if [ ${#missing_license[@]} -ne 0 ]; then
+                              echo "缺少 LICENSE（以 Apache-2.0 分发，必须随包发布）："
+                              printf '  %s\n' "${missing_license[@]}"
+                          fi
+                          echo "平台包目录不入库，由本 workflow 从 cross-build 产物生成："
+                          echo "  1. 运行 .github/workflows/cross-build.yml（dry_run=true、create_release=false），等全部作业成功；"
+                          echo "  2. 重新派发本 workflow，在 cross_build_run_id 填入该次运行的 ID（留空则自动取当前 commit 上最近一次成功的运行）；"
+                          echo "  3. 本机复现：下载 bindings-* 到某个目录后执行"
+                          echo "     node scripts/build-platforms.mjs --all --artifacts-dir <dir>"
                           echo "详见 scripts/build-platforms.mjs 顶部注释。"
                       } >&2
                       exit 1
                   fi
+                  echo "平台包目录齐全、name 正确且含 LICENSE（${#platforms[@]} 个）"
 
-            - name: 平台包版本校验（仅 publish=true）
-              if: ${{ inputs.publish }}
+            - name: 平台包版本校验
               run: |
                   node -e '
                     const fs = require("node:fs");
@@ -115,6 +276,51 @@ jobs:
                       [ -f "${dir}package.json" ] || continue
                       pnpm publish "${dir}" --access public --no-git-checks
                   done
+
+            - name: 等待平台包在 registry 可见
+              # npm 的读取端有缓存/复制延迟：主包一旦可见就会被安装，必须先确认
+              # 8 个平台包都能解析到 8.0.0，否则用户会装到「找不到可用的动态库」的主包。
+              if: ${{ inputs.publish }}
+              shell: bash
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  version="$(node -p "require('./dist-platforms/darwin-arm64/package.json').version")"
+                  packages=(
+                      darwin-arm64
+                      darwin-x64
+                      win32-x64-msvc
+                      win32-arm64-msvc
+                      linux-x64-gnu
+                      linux-arm64-gnu
+                      wasm32-wasip1
+                      wasm32-wasip2
+                  )
+                  for package in "${packages[@]}"; do
+                      visible=0
+                      for attempt in $(seq 1 12); do
+                          if npm view "@cn-font-split/${package}@${version}" version \
+                              --registry https://registry.npmjs.org/ >/dev/null 2>&1; then
+                              echo "[ok] @cn-font-split/${package}@${version} 已可见"
+                              visible=1
+                              break
+                          fi
+                          echo "[wait] @cn-font-split/${package}@${version} 暂不可见（${attempt}/12）"
+                          if [ "${attempt}" -lt 12 ]; then
+                              sleep 5
+                          fi
+                      done
+                      if [ "${visible}" -ne 1 ]; then
+                          {
+                              echo "::error::@cn-font-split/${package}@${version} 在 12 次重试后仍不可见"
+                              echo "不要继续发布主包：先确认该包已 publish 成功（见上一步日志），"
+                              echo "必要时手动 npm publish dist-platforms/${package} --access public 补齐。"
+                          } >&2
+                          exit 1
+                      fi
+                  done
+                  echo "8 个平台包在 registry 均可见，可以发布主包。"
 
             - name: 发布主包（后）
               if: ${{ inputs.publish }}
