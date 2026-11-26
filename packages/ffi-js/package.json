@@ -20,6 +20,7 @@
         "gen:proto": "sh ./scripts/build_proto_ts.sh && proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts",
         "build": "pnpm -C ../proto-to-cli build && vite build && vite build -c vite.config.wasm.mts",
         "test": "node --experimental-strip-types --test \"src/*.test.ts\"",
+        "smoke:wasm-browser": "bun ./src/wasm/browser.test.ts",
         "smoke:error": "node ./scripts/smoke-error.mjs",
         "bench:e2e": "node ./scripts/bench-e2e.mjs",
         "prepack": "pnpm build"
