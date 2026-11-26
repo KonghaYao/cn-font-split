@@ -127,7 +127,7 @@
 
 - [x] `Context` 拆为阶段化输出（`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`）。
 - [x] 插件改为 trait + 显式顺序表（`PreSubsetPlugin` + `PIPELINE`，顺序有单测）。
-- [ ] `used_languages` 并入 `SubsetMeta`（仍是 `PreSubsetContext.used_languages`）。
+- [x] 语言标签并入分包对象（`Subset.language`），删除 `PreSubsetContext.used_languages`。
 - [x] CSS 生成结构化（`FontFace` → 序列化）；`name_template` 自研小型 parser，去掉 `regex`。
 
 ### 6.4 产物质量

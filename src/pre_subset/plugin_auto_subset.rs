@@ -1,4 +1,4 @@
-use std::collections::{BTreeSet, HashMap};
+use std::collections::BTreeSet;
 
 use indexmap::IndexSet;
 
@@ -6,7 +6,7 @@ use log::{debug, info};
 
 use crate::pack::build_single_subset;
 
-use super::plugin::{PreSubsetPlugin, SubsetDraft};
+use super::plugin::{PreSubsetPlugin, Subset, SubsetDraft};
 use crate::config::Config;
 use crate::error::Result;
 
@@ -14,8 +14,6 @@ use crate::error::Result;
 pub enum OptLevel {
     No = 0,
     Low = 1,
-    Mid = 2,
-    High = 3,
 }
 
 /// 估算阶段的最大采样字符数：估算最多只 subset + 压缩 1000 个字符。
@@ -195,53 +193,21 @@ impl PreSubsetPlugin for AutoSubset {
             scale_exp,
             ctx.predict_bytes_pre_subset
         );
-        let mut count: usize = 0;
-        let mut new_used_languages = HashMap::new();
-        // 后期用于区分算法，现在暂时无用
+        // 后期用于区分算法，现在暂时无用。
+        // `Mid`/`High` 与 `Low` 共用同一立方根公式（结果逐位相同），已合并；
+        // 阈值划分保持原样：<1000 用 `No`，其余用 `Low`。
         let opt_level = match size {
             0..1000 => OptLevel::No,
-            1000..=10000 => OptLevel::Low,
-            10001..=30000 => OptLevel::Mid,
-            _ => OptLevel::High,
+            _ => OptLevel::Low,
         };
-        let new_subsets = subsets
+        let new_subsets: Vec<Subset> = subsets
             .iter()
-            .enumerate()
-            .flat_map(|(index, subset)| {
-                let lang = ctx.used_languages.get(&index);
-                let res = match lang {
-                    // 繁体中文一般比简体中文要大一倍复杂度，故进行特殊处理
-                    Some(i) if i == "ZH_TC" => split_vector(
-                        subset,
-                        ((chars_per_subset as f32) * 0.5_f32) as u32,
-                        opt_level,
-                    ),
-                    None => {
-                        return split_vector(
-                            subset,
-                            ((chars_per_subset as f32) * 0.7_f32) as u32,
-                            opt_level,
-                        );
-                    }
-                    _ => split_vector(subset, chars_per_subset, opt_level),
-                };
-                if let Some(language) = lang {
-                    for _ in 0..res.len() {
-                        new_used_languages.insert(count, language.clone());
-                        count += 1;
-                    }
-                }
-                res
+            .flat_map(|subset| {
+                split_with_language(subset, chars_per_subset, opt_level)
             })
-            .collect::<Vec<IndexSet<u32>>>();
+            .collect();
         subsets.clear();
-        for i in new_subsets {
-            subsets.push(i);
-        }
-        // new_used_languages.iter().for_each(|(index, name)| {
-        //     info!("subset: {} {} {}", index, name, subsets[*index].len());
-        // });
-        ctx.used_languages = new_used_languages;
+        subsets.extend(new_subsets);
         Ok(())
     }
 }
@@ -249,15 +215,42 @@ impl PreSubsetPlugin for AutoSubset {
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
 fn length_for_index(x: usize, max_count: u32, level: OptLevel) -> usize {
     let min_count = max_count / 5;
-    // No 档固定按 5 倍下限分配；Low/Mid/High 都用立方根曲线（结果完全相同）。
+    // No 档固定按 5 倍下限分配；Low 用立方根曲线。
+    // 原 `Mid`/`High` 与本档共用同一公式（结果完全相同），已合并。
     let y: f32 = match level {
         OptLevel::No => (min_count as f32) * 5_f32,
-        _ => (min_count as f32) * (x as f32).cbrt(),
+        OptLevel::Low => (min_count as f32) * (x as f32).cbrt(),
     }; // 计算立方根并求解y
     let y_ceil = y.ceil(); // 将结果向上取整
     // 不能比 max_count 的 1/5 小
     std::cmp::min(y_ceil as usize, (max_count) as usize)
 }
+
+/// 按分包携带的语言标签选择切分目标，并让拆分出的每个分包继承同一标签。
+///
+/// 系数与原 `ctx.used_languages.get(&index)` 分支一致：
+/// - `ZH_TC`：繁体中文的复杂度约为简体的一倍，目标减半；
+/// - 无标签：目标乘以 0.7；
+/// - 其余已记录区域：保持 `chars_per_subset`。
+///
+/// 拆分只搬移字符，标签随对象复制到每个新分包，字符集合与顺序不变。
+fn split_with_language(
+    subset: &Subset,
+    chars_per_subset: u32,
+    level: OptLevel,
+) -> Vec<Subset> {
+    let max_count = match subset.language.as_deref() {
+        // 繁体中文一般比简体中文要大一倍复杂度，故进行特殊处理
+        Some("ZH_TC") => ((chars_per_subset as f32) * 0.5_f32) as u32,
+        None => ((chars_per_subset as f32) * 0.7_f32) as u32,
+        _ => chars_per_subset,
+    };
+    split_vector(&subset.chars, max_count, level)
+        .into_iter()
+        .map(|chars| Subset { chars, language: subset.language.clone() })
+        .collect()
+}
+
 fn split_vector(
     vec: &IndexSet<u32>,
     max_count: u32,
@@ -373,6 +366,63 @@ mod tests {
         let naive = (71_680.0 / (285_000.0 / 1_000.0)) as u32;
         assert!(extrapolated > naive);
         assert!(extrapolated < 1_000);
+    }
+
+    /// 语言标签随分包拆分传播：每个新分包继承同一标签，字符不丢不重。
+    #[test]
+    fn split_with_language_propagates_label_to_every_piece() {
+        let chars: IndexSet<u32> = (0..500).collect();
+        let subset =
+            Subset { chars: chars.clone(), language: Some("ZH_TC".into()) };
+
+        let pieces = split_with_language(&subset, 150, OptLevel::Low);
+
+        assert!(pieces.len() > 1);
+        assert!(
+            pieces
+                .iter()
+                .all(|piece| piece.language.as_deref() == Some("ZH_TC"))
+        );
+        let flat: Vec<u32> =
+            pieces.iter().flat_map(|p| p.chars.iter().copied()).collect();
+        let expected: Vec<u32> = chars.iter().copied().collect();
+        assert_eq!(flat, expected, "拆分不得丢失或重排字符");
+    }
+
+    /// 系数选择与旧 `used_languages` 分支一致：ZH_TC 0.5、无标签 0.7、其余 1.0。
+    #[test]
+    fn split_with_language_uses_legacy_coefficients() {
+        let chars: IndexSet<u32> = (0..500).collect();
+        let piece_count = |language: Option<&str>| {
+            split_with_language(
+                &Subset {
+                    chars: chars.clone(),
+                    language: language.map(str::to_string),
+                },
+                150,
+                OptLevel::Low,
+            )
+            .len()
+        };
+
+        let latin = piece_count(Some("LATIN"));
+        let none = piece_count(None);
+        let tc = piece_count(Some("ZH_TC"));
+        assert!(none > latin, "0.7 系数应切出更多分包：{none} vs {latin}");
+        assert!(tc > none, "0.5 系数应切出更多分包：{tc} vs {none}");
+    }
+
+    /// `Mid`/`High` 合并进 `Low` 后曲线结果不变：`No` 恒为 5 倍下限，`Low` 按立方根增长。
+    #[test]
+    fn length_for_index_keeps_no_and_low_curves() {
+        // max_count = 150 → 下限 30；No 为 30×5 = 150，被 max_count 截断。
+        assert_eq!(length_for_index(1, 150, OptLevel::No), 150);
+        assert_eq!(length_for_index(9, 150, OptLevel::No), 150);
+        assert_eq!(length_for_index(1, 150, OptLevel::Low), 30);
+        assert_eq!(length_for_index(8, 150, OptLevel::Low), 60);
+        assert_eq!(length_for_index(9, 150, OptLevel::Low), 63);
+        // 上限截断：下限 2、立方根增长到 10 后不再增加。
+        assert_eq!(length_for_index(100, 10, OptLevel::Low), 10);
     }
 }
 
