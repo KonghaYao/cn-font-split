@@ -59,7 +59,7 @@ export async function main(build = false) {
             ...sampleReporter,
             textOnlyReporter.get(text.id)!,
         ].map((mapper, index) => {
-            let usage = new Set<proto.OutputReport.SubsetDetail>();
+            let usage = new Set<proto.OutputReport_SubsetDetail>();
             let miss = 0;
             chars.forEach((char) => {
                 const subset = mapper.get(char);

@@ -1,7 +1,8 @@
 //! 字体权重相关的工具函数
 
 use crate::config::CssConfig;
-use crate::{pre_subset::name_table::NameTableSets, runner::Context};
+use crate::pre_subset::fvar::FvarTable;
+use crate::pre_subset::name_table::NameTableSets;
 
 /// 字体权重名称到数值的映射表
 /// 按照字符串长度降序排序，以确保最长匹配优先
@@ -71,14 +72,14 @@ pub fn get_weight(sub_family: &str) -> u32 {
 ///
 /// # 参数
 /// * `css` - CSS 属性配置
-/// * `ctx` - 运行上下文
+/// * `fvar` - 可变字体轴信息
 /// * `name_table` - 字体名称表
 ///
 /// # 返回值
 /// * 字体权重字符串，可能是单个值或范围
 pub fn extract_font_weight(
     css: &CssConfig,
-    ctx: &Context,
+    fvar: Option<&FvarTable>,
     name_table: &NameTableSets,
 ) -> String {
     css.font_weight.clone().unwrap_or_else(|| {
@@ -95,9 +96,7 @@ pub fn extract_font_weight(
                 )
             });
         // 优先使用变量字体的权重范围，否则从子族名称中提取
-        ctx.fvar_table
-            .clone()
-            .map(|x| x.vf_weight)
+        fvar.map(|x| x.vf_weight.clone())
             .unwrap_or(get_weight(&preferred_sub_family).to_string())
     })
 }
@@ -105,13 +104,19 @@ pub fn extract_font_weight(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::Config;
-    use crate::pre_subset::fvar::FvarTable;
-    use crate::pre_subset::name_table::NameTableSets;
-    use crate::runner::create_context;
-    use cn_font_proto::api_interface::OutputReport;
     use cn_font_proto::api_interface::output_report::NameTable;
-    use harfbuzz_rs_now::Face;
+
+    /// 只含一条 name 记录的 Windows/en 表，供权重提取按优先级回退。
+    fn name_table(name: &str, value: &str) -> NameTableSets {
+        NameTableSets {
+            table: vec![NameTable {
+                platform: "Windows".to_string(),
+                language: "en".to_string(),
+                name: name.to_string(),
+                value: value.to_string(),
+            }],
+        }
+    }
 
     #[test]
     fn test_weight_detection() {
@@ -140,98 +145,58 @@ mod tests {
 
     #[test]
     fn test_extract_font_weight() {
+        let empty = NameTableSets::default();
+
         // 测试 CSS 属性中直接指定权重的情况
         let css = CssConfig {
             font_weight: Some("700".to_string()),
             ..Default::default()
         };
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let config = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let ctx =
-            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
-        let name_table = NameTableSets::default();
-        assert_eq!(extract_font_weight(&css, &ctx, &name_table), "700");
+        assert_eq!(extract_font_weight(&css, None, &empty), "700");
 
         // 测试从 TypographicSubfamilyName 获取权重
         let css = CssConfig::default();
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let config = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let ctx =
-            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
-        let name_table = NameTableSets {
-            table: vec![NameTable {
-                platform: "Windows".to_string(),
-                language: "en".to_string(),
-                name: "TypographicSubfamilyName".to_string(),
-                value: "Bold".to_string(),
-            }],
-        };
-        assert_eq!(extract_font_weight(&css, &ctx, &name_table), "700");
+        assert_eq!(
+            extract_font_weight(
+                &css,
+                None,
+                &name_table("TypographicSubfamilyName", "Bold")
+            ),
+            "700"
+        );
 
         // 测试从 FontSubfamilyName 获取权重
         let css = CssConfig::default();
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let config = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let ctx =
-            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
-        let name_table = NameTableSets {
-            table: vec![NameTable {
-                platform: "Windows".to_string(),
-                language: "en".to_string(),
-                name: "FontSubfamilyName".to_string(),
-                value: "Light".to_string(),
-            }],
-        };
-        assert_eq!(extract_font_weight(&css, &ctx, &name_table), "300");
+        assert_eq!(
+            extract_font_weight(
+                &css,
+                None,
+                &name_table("FontSubfamilyName", "Light")
+            ),
+            "300"
+        );
 
         // 测试从 FullFontName 获取权重
         let css = CssConfig::default();
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let config = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let ctx =
-            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
-        let name_table = NameTableSets {
-            table: vec![NameTable {
-                platform: "Windows".to_string(),
-                language: "en".to_string(),
-                name: "FullFontName".to_string(),
-                value: "Regular".to_string(),
-            }],
-        };
-        assert_eq!(extract_font_weight(&css, &ctx, &name_table), "400");
+        assert_eq!(
+            extract_font_weight(
+                &css,
+                None,
+                &name_table("FullFontName", "Regular")
+            ),
+            "400"
+        );
 
         // 测试变量字体的权重
         let css = CssConfig::default();
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let config = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let mut ctx =
-            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
-        ctx.fvar_table = Some(FvarTable {
+        let fvar = FvarTable {
             vf_weight: "100 500".to_string(),
             ..Default::default()
-        });
-        let name_table = NameTableSets::default();
-        assert_eq!(extract_font_weight(&css, &ctx, &name_table), "100 500");
+        };
+        assert_eq!(extract_font_weight(&css, Some(&fvar), &empty), "100 500");
 
         // 测试默认权重情况
         let css = CssConfig::default();
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let config = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let ctx =
-            create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
-        let name_table = NameTableSets::default();
-        assert_eq!(extract_font_weight(&css, &ctx, &name_table), "400");
+        assert_eq!(extract_font_weight(&css, None, &empty), "400");
     }
 }

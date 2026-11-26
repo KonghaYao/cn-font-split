@@ -235,6 +235,9 @@ importers:
 
   packages/ffi-js:
     dependencies:
+      '@bufbuild/protobuf':
+        specifier: 2.17.0
+        version: 2.17.0
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -244,22 +247,16 @@ importers:
       fs-extra:
         specifier: ^11.4.1
         version: 11.4.1
-      google-protobuf:
-        specifier: ^3.21.4
-        version: 3.21.4
       koffi:
         specifier: 2.16.4
         version: 2.16.4
     devDependencies:
-      '@grpc/grpc-js':
-        specifier: ^1.14.0
-        version: 1.14.7
+      '@bufbuild/protoc-gen-es':
+        specifier: 2.17.0
+        version: 2.17.0(@bufbuild/protobuf@2.17.0)(supports-color@8.1.1)
       '@tybys/wasm-util':
         specifier: ^0.9.0
         version: 0.9.0
-      '@types/google-protobuf':
-        specifier: ^3.15.12
-        version: 3.15.12
       '@xan105/ffi':
         specifier: ^1.3.1
         version: 1.3.1(koffi@2.16.4)
@@ -278,9 +275,6 @@ importers:
       protobufjs:
         specifier: ^7.6.5
         version: 7.6.6
-      protoc-gen-ts:
-        specifier: ^0.8.7
-        version: 0.8.7
 
   packages/font-analyze:
     dependencies:
@@ -365,9 +359,6 @@ importers:
       '@grpc/grpc-js':
         specifier: ^1.14.0
         version: 1.14.7
-      google-protobuf:
-        specifier: ^3.21.4
-        version: 3.21.4
       gzip:
         specifier: ^0.1.0
         version: 0.1.0
@@ -577,6 +568,22 @@ packages:
   '@babel/types@7.27.0':
     resolution: {integrity: sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==}
     engines: {node: '>=6.9.0'}
+
+  '@bufbuild/protobuf@2.17.0':
+    resolution: {integrity: sha512-hcPkSz6D7MiTU/5VBBhK+kxaYDoOdQ6yJRFJ3kS8Nydp+VZXfg1vrpABKPNod8bXMufsVCmiUJVIKFzCzta4uw==}
+
+  '@bufbuild/protoc-gen-es@2.17.0':
+    resolution: {integrity: sha512-Uk8Hx145z76lDOEPhWChy53jtKITUnqG0vASuOiRybbZbBbx4oho9JDqt8QZsHemeTCNl6q4yy4Qpc2iV5outQ==}
+    engines: {node: '>=22'}
+    hasBin: true
+    peerDependencies:
+      '@bufbuild/protobuf': 2.17.0
+    peerDependenciesMeta:
+      '@bufbuild/protobuf':
+        optional: true
+
+  '@bufbuild/protoplugin@2.17.0':
+    resolution: {integrity: sha512-4ExU8AGygKkwIx3U8D5kyBOn9rcCM1qnj4wCP95RbP1CRe73QvVGHQ/lOp6IQiyvQMh9BGrYGht+ZDa8gwC2fg==}
 
   '@capsizecss/unpack@3.0.1':
     resolution: {integrity: sha512-8XqW8xGn++Eqqbz3e9wKuK7mxryeRjs4LOHLxbh2lwKeSbuNR4NFifDZT4KzvjU6HMOPbiNTsWpniK5EJfTWkg==}
@@ -1112,9 +1119,6 @@ packages:
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
 
-  '@types/google-protobuf@3.15.12':
-    resolution: {integrity: sha512-40um9QqwHjRS92qnOaDpL7RmDK15NuZYo9HihiJRbYkMQZlWnuH8AdvbMy8/o6lgLmKbDUKa+OALCltHdbOTpQ==}
-
   '@types/jsonfile@6.1.4':
     resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
@@ -1135,6 +1139,11 @@ packages:
 
   '@types/web-bluetooth@0.0.16':
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
+
+  '@typescript/vfs@1.6.6':
+    resolution: {integrity: sha512-gXw0+tpchiQUjTcbnNIPnyLFIhbwJ7M1VaxLQ1vXhjQxtTBK3sdDLY1ih0jxCu1I5K3V0dDxq8CkVZtIMspC3A==}
+    peerDependencies:
+      typescript: '*'
 
   '@vitest/expect@3.1.2':
     resolution: {integrity: sha512-O8hJgr+zREopCAqWl3uCVaOdqJwZ9qaDwUP7vy3Xigad0phZe9APxKhPcDNqYYi0rX5oMvwJMSCAXY2afqeTSA==}
@@ -1506,9 +1515,6 @@ packages:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
 
-  google-protobuf@3.21.4:
-    resolution: {integrity: sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==}
-
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
@@ -1872,10 +1878,6 @@ packages:
     resolution: {integrity: sha512-dYDWdjSl5RNb7SgPxGQcRU+GtvP7s2fpkrY0r432PcOIaZ0/rBcxEZnQN67iJhFuQiVw754JDoPruPCNdGsbjg==}
     engines: {node: '>=12.0.0'}
 
-  protoc-gen-ts@0.8.7:
-    resolution: {integrity: sha512-jr4VJey2J9LVYCV7EVyVe53g1VMw28cCmYJhBe5e3YX5wiyiDwgxWxeDf9oTqAe4P1bN/YGAkW2jhlH8LohwiQ==}
-    hasBin: true
-
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
 
@@ -2076,6 +2078,11 @@ packages:
 
   type-level-regexp@0.1.17:
     resolution: {integrity: sha512-wTk4DH3cxwk196uGLK/E9pE45aLfeKJacKmcEgEOA/q5dnPGNxXt0cfYdFxb57L+sEpf1oJH4Dnx/pnRcku9jg==}
+
+  typescript@5.4.5:
+    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
 
   typescript@5.8.2:
     resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
@@ -2502,6 +2509,24 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
+
+  '@bufbuild/protobuf@2.17.0': {}
+
+  '@bufbuild/protoc-gen-es@2.17.0(@bufbuild/protobuf@2.17.0)(supports-color@8.1.1)':
+    dependencies:
+      '@bufbuild/protoplugin': 2.17.0(supports-color@8.1.1)
+    optionalDependencies:
+      '@bufbuild/protobuf': 2.17.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@bufbuild/protoplugin@2.17.0(supports-color@8.1.1)':
+    dependencies:
+      '@bufbuild/protobuf': 2.17.0
+      '@typescript/vfs': 1.6.6(supports-color@8.1.1)(typescript@5.4.5)
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
 
   '@capsizecss/unpack@3.0.1':
     dependencies:
@@ -2967,8 +2992,6 @@ snapshots:
       '@types/jsonfile': 6.1.4
       '@types/node': 25.9.1
 
-  '@types/google-protobuf@3.15.12': {}
-
   '@types/jsonfile@6.1.4':
     dependencies:
       '@types/node': 25.9.1
@@ -2992,6 +3015,13 @@ snapshots:
       '@types/node': 25.9.1
 
   '@types/web-bluetooth@0.0.16': {}
+
+  '@typescript/vfs@1.6.6(supports-color@8.1.1)(typescript@5.4.5)':
+    dependencies:
+      debug: 4.4.3(supports-color@8.1.1)
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
 
   '@vitest/expect@3.1.2':
     dependencies:
@@ -3359,8 +3389,6 @@ snapshots:
 
   globals@11.12.0: {}
 
-  google-protobuf@3.21.4: {}
-
   graceful-fs@4.2.11: {}
 
   gzip@0.1.0: {}
@@ -3675,8 +3703,6 @@ snapshots:
       '@types/node': 25.9.1
       long: 5.3.2
 
-  protoc-gen-ts@0.8.7: {}
-
   quansync@0.2.11: {}
 
   queue-microtask@1.2.3: {}
@@ -3900,6 +3926,8 @@ snapshots:
   tslib@2.8.1: {}
 
   type-level-regexp@0.1.17: {}
+
+  typescript@5.4.5: {}
 
   typescript@5.8.2:
     optional: true

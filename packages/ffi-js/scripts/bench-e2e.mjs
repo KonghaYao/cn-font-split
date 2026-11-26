@@ -4,10 +4,11 @@
 //! 记录 compute / write / total、文件数与总字节，5 轮取中位数（丢弃 1 轮预热）。
 //!
 //! 配置固定为 `fontFeature=false`、`reporter=false`、`testHtml=true`：
-//! 产品默认下 `fontFeature` 依赖 `analyze_cmap` 的反查，而 cmap 反转用
-//! HashMap 迭代决定共享 glyph 归属，跨调用会随机移动少量字符；`reporter.bin`
-//! 又内嵌每包耗时。两者都会让「两模式文件数/字节一致」的校验无法复跑。
-//! 这里只关掉这两个不确定项，其余（含 testHtml）与默认一致，保证校验可重复。
+//! `reporter.bin` 内嵌每包耗时，跨运行必然不同；`fontFeature=false` 则让本基准
+//! 与既有结果（`bench-results/e2e-v8`、`v8-perf`）保持可比。8.0 已把 cmap 反查
+//! 从 `HashMap` 迭代改为按 unicode 排序注入，`fontFeature=true` 的产物现在也
+//! 跨运行一致（见 `src/pre_subset/features/cmap.rs`），但仍保留此开关以免
+//! 特性分析影响计时口径。
 //!
 //! 前置：
 //!   cargo build --release -p ffi

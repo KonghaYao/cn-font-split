@@ -15,20 +15,20 @@ message InputTemplate {
     optional string target_type = 6; // 目标类型
     repeated bytes subsets = 7; // 子集
     optional int32 chunk_size = 9; // 包大小
-    optional float chunk_size_tolerance = 10; // 包大小容差
-    optional int32 max_allow_subsets_count = 11; // 最大允许子集数量
+    optional float chunk_size_tolerance = 10; // 包大小容差；语义未实现，只接受 0（非 0 返回 InvalidConfig）
+    optional int32 max_allow_subsets_count = 11; // 最大允许子集数量；当前只校验 > 0
 
     optional bool test_html = 13; // 是否生成测试 HTML
     optional bool reporter = 14; // 是否生成 reporter.bin
     optional PreviewImage preview_image = 15; // 预览图像
 
     optional string rename_output_font = 18; // 重命名输出字体
-    optional string build_mode = 20; // TODO 构建模式
+    optional string build_mode = 20; // 构建模式；只接受省略、空串或 "default"（其他值返回 InvalidConfig）
 
     // ====== 预分包优化项配置 =======
 
     optional bool language_areas = 8; // 是否进行语言区域优化
-    optional bool multi_threads = 21; // TODO 是否使用多线程
+    optional bool multi_threads = 21; // 是否并行构建分包；false 时顺序构建，产物相同
     optional bool font_feature = 22; // 是否启用字体特性
     optional bool reduce_mins = 23; // 是否减少最小分包，
     optional bool auto_subset = 24; // 是否自动子集化

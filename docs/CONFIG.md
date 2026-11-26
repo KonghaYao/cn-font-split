@@ -21,16 +21,16 @@
 | 字段                          | 默认值                 | 说明                                                        |
 | ----------------------------- | ---------------------- | ----------------------------------------------------------- |
 | `chunk_size`                  | `71680`（70 KiB）      | 每个分包的压缩后目标字节数；`<= 0` 在入口返回 `InvalidConfig` |
-| `chunk_size_tolerance`        | `0.0`                  | 预留字段，当前未参与分包计算                                |
+| `chunk_size_tolerance`        | `0.0`                  | **尚未实现**：只接受 `0.0`，非 0 值返回 `InvalidConfig`      |
 | `max_allow_subsets_count`     | 未设置                 | 当前只校验 `> 0`，不参与计算                                |
 | `test_html`                   | `true`                 | 输出 `index.html`                                           |
 | `reporter`                    | `true`                 | 输出 `reporter.bin`                                         |
 | `preview_image`               | 未设置                 | 给出时在预处理阶段输出预览 SVG                              |
 | `rename_output_font`          | 未设置                 | 未给出时文件名用 `{blake3}.woff2`                           |
-| `build_mode`                  | 未设置                 | 预留字段，当前只透传                                        |
+| `build_mode`                  | `default`              | 只接受省略、空串或 `"default"`，其他值返回 `InvalidConfig`   |
 | `subsets`                     | 空                     | 每字符 4 字节小端；长度非 4 的倍数返回 `InvalidSubsets`      |
 | `language_areas`              | `true`                 | 按语言区域拆分剩余字符                                      |
-| `multi_threads`               | `true`                 | 预留字段，当前恒并行构建                                    |
+| `multi_threads`               | `true`                 | `false` 时顺序构建分包（结果相同，耗时更长）                 |
 | `font_feature`                | `true`                 | 把 GSUB/GPOS 涉及的字符并回分包                             |
 | `reduce_mins`                 | `false`                | 合并碎片分包（算法未调优，默认关闭）                        |
 | `auto_subset`                 | `true`                 | 按 `chunk_size` 自动切分                                    |
@@ -62,6 +62,28 @@
 | 任一 `subsets[i]` 长度不是 4 的倍数   | `FontSplitError::InvalidSubsets(..)`   |
 | `chunk_size` 给出且 `<= 0`            | `FontSplitError::InvalidConfig(..)`    |
 | `max_allow_subsets_count` 给出且 `<= 0` | `FontSplitError::InvalidConfig(..)`  |
+| `chunk_size_tolerance` 给出且非 `0.0` | `FontSplitError::InvalidConfig(..)`    |
+| `build_mode` 不是省略/空串/`"default"` | `FontSplitError::InvalidConfig(..)`    |
+
+### `chunk_size_tolerance` 为什么直接拒绝
+
+该字段的完整语义是「按实测体积迭代分包」，需要新的分包算法（计划 §A.4），
+目前尚未实现。静默忽略会让调用方误以为包体积受控，因此非 `0.0` 值一律在
+入口返回 `InvalidConfig`，错误文案提示「请置 0」。默认值 `0.0` 不受影响。
+
+### `build_mode` 的取值
+
+内部类型是枚举 `config::BuildMode`，当前只有 `Default` 一种：
+wire IR 里的 `None`、空串与 `"default"` 都解析为它，其他值返回
+`InvalidConfig` 并在文案中列出允许值。保留该字段是为了将来加入预设模式时
+不改 wire 协议。
+
+### `multi_threads`
+
+`true`（默认）用 rayon 并行构建分包，`false` 用顺序 `for` 循环。两条路径
+共用同一个 `run_subset::build_one`，因此**输出文件名、文件顺序、字节内容与
+reporter 内容完全一致**，只有耗时字段（`SubsetDetail.duration`）不同。
+单线程宿主（wasm、受限容器）可关掉它避免线程池开销。
 
 ## wire IR 中不进入 `Config` 的字段
 

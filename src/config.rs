@@ -28,8 +28,54 @@ use crate::error::{FontSplitError, Result};
 /// 因此 [`Config::from_template`] 直接拒绝。
 pub const DEFAULT_CHUNK_SIZE: i32 = 1024 * 70;
 
-/// 默认包大小容差；当前尚未参与分包计算（见计划 §A.7）。
+/// 默认包大小容差。
+///
+/// 该字段的完整语义依赖「按实测体积迭代分包」（尚未实现），因此当前
+/// **只接受 0**；非 0 值在 [`Config::from_template`] 里被拒绝。
 pub const DEFAULT_CHUNK_SIZE_TOLERANCE: f32 = 0.0;
+
+/// 默认构建模式。
+pub const DEFAULT_BUILD_MODE: BuildMode = BuildMode::Default;
+
+/// 构建模式。
+///
+/// wire IR 里 `build_mode` 是字符串；当前只有默认模式一种语义，`None`、
+/// 空串与 `"default"` 都解析为 [`BuildMode::Default`]，其他值在入口返回
+/// [`FontSplitError::InvalidConfig`]。保留字段是为了将来引入预设开关时
+/// 不必改 wire 协议。
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum BuildMode {
+    /// 默认构建流程；当前唯一受支持的取值。
+    #[default]
+    Default,
+}
+
+impl BuildMode {
+    /// 可接受的 wire 取值（错误文案与文档共用）。
+    pub const ALLOWED: &'static [&'static str] = &["default"];
+
+    /// 解析 wire IR 取值：`None` 与空串等价于 `"default"`。
+    pub fn parse(value: Option<&str>) -> Result<Self> {
+        match value {
+            None | Some("") | Some("default") => Ok(Self::Default),
+            Some(other) => Err(FontSplitError::InvalidConfig(format!(
+                "build_mode 仅支持 {}（或省略、空串），当前为 {other:?}",
+                Self::ALLOWED
+                    .iter()
+                    .map(|v| format!("\"{v}\""))
+                    .collect::<Vec<_>>()
+                    .join("、")
+            ))),
+        }
+    }
+
+    /// 回写为 wire IR 的字符串取值。
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Default => "default",
+        }
+    }
+}
 
 /// name 表里找不到字体家族名时的 CSS 回退值。
 pub const DEFAULT_FONT_FAMILY: &str = "default_font_family";
@@ -137,7 +183,7 @@ pub struct Config {
     pub language_areas: bool,
     /// 每个分包的目标字节数。
     pub chunk_size: i32,
-    /// 包大小容差；当前未参与计算。
+    /// 包大小容差；语义未实现，校验阶段只接受 0。
     pub chunk_size_tolerance: f32,
     /// 最大允许分包数；当前只做合法性校验。
     pub max_allow_subsets_count: Option<i32>,
@@ -145,9 +191,9 @@ pub struct Config {
     pub reporter: bool,
     pub preview_image: Option<PreviewImage>,
     pub rename_output_font: Option<String>,
-    /// 构建模式；当前只透传，语义待 §A.7 定义。
-    pub build_mode: Option<String>,
-    /// 是否使用多线程；当前恒为并行构建。
+    /// 构建模式；当前只有 [`BuildMode::Default`]。
+    pub build_mode: BuildMode,
+    /// 是否并行构建分包；`false` 时顺序构建，产物与并行路径一致。
     pub multi_threads: bool,
     pub font_feature: bool,
     pub reduce_mins: bool,
@@ -169,7 +215,7 @@ impl Default for Config {
             reporter: true,
             preview_image: None,
             rename_output_font: None,
-            build_mode: None,
+            build_mode: DEFAULT_BUILD_MODE,
             multi_threads: true,
             font_feature: true,
             reduce_mins: false,
@@ -182,7 +228,7 @@ impl Default for Config {
 impl Config {
     /// 解析 wire IR 并校验。校验失败的错误 variant 与迁入前一致。
     pub fn from_template(template: &InputTemplate) -> Result<Self> {
-        validate(template)?;
+        let build_mode = validate(template)?;
 
         let defaults = Self::default();
         Ok(Self {
@@ -205,7 +251,7 @@ impl Config {
             reporter: template.reporter.unwrap_or(defaults.reporter),
             preview_image: template.preview_image.clone(),
             rename_output_font: template.rename_output_font.clone(),
-            build_mode: template.build_mode.clone(),
+            build_mode,
             multi_threads: template
                 .multi_threads
                 .unwrap_or(defaults.multi_threads),
@@ -234,7 +280,7 @@ impl Config {
             reporter: Some(self.reporter),
             preview_image: self.preview_image.clone(),
             rename_output_font: self.rename_output_font.clone(),
-            build_mode: self.build_mode.clone(),
+            build_mode: Some(self.build_mode.as_str().to_string()),
             multi_threads: Some(self.multi_threads),
             font_feature: Some(self.font_feature),
             reduce_mins: Some(self.reduce_mins),
@@ -246,7 +292,9 @@ impl Config {
 }
 
 /// 入口校验：在读取/解析字体之前把用户输入问题转成结构化错误。
-fn validate(config: &InputTemplate) -> Result<()> {
+///
+/// 返回解析后的 [`BuildMode`]，避免调用方二次解析并漏掉校验。
+fn validate(config: &InputTemplate) -> Result<BuildMode> {
     if config.input.is_empty() {
         return Err(FontSplitError::EmptyInput);
     }
@@ -280,5 +328,15 @@ fn validate(config: &InputTemplate) -> Result<()> {
         }
     }
 
-    Ok(())
+    // 容差的完整语义依赖「按实测体积迭代分包」（尚未实现）。静默忽略会让
+    // 调用方以为分包体积受控，因此非 0 值一律拒绝，0（默认）继续正常工作。
+    if let Some(tolerance) = config.chunk_size_tolerance {
+        if tolerance != 0.0 {
+            return Err(FontSplitError::InvalidConfig(format!(
+                "chunk_size_tolerance 尚未实现，请置 0（当前为 {tolerance}）"
+            )));
+        }
+    }
+
+    BuildMode::parse(config.build_mode.as_deref())
 }

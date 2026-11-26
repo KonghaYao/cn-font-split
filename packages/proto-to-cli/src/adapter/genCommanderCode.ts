@@ -65,7 +65,7 @@ const run = new Command("${defaultCommandName}");
             return [
                 `.${
                     isOption ? 'option' : 'requiredOption'
-                }('${mayShortName}--${longName}${placeholder}',"${comment}"${
+                }('${mayShortName}--${longName}${placeholder}',${JSON.stringify(comment)}${
                     parser ? ',' + parser : ''
                 }${defaultValue ? ',' + defaultValue : ''})`,
             ];

@@ -1,8 +1,7 @@
+use crate::config::Config;
 use crate::error::{FontSplitError, Result};
 use crate::link_subset::name_template::name_template;
-use crate::message::EventFactory;
-use crate::runner::Context;
-use cn_font_proto::api_interface::EventMessage;
+use crate::runner::{FontSource, PreSubsetOutput, RunSubsetOutput};
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
 };
@@ -40,69 +39,104 @@ pub fn build_single_subset(
 struct ThreadResult {
     pub subset_result: RunSubsetResult,
     pub log: SubsetDetail,
-    pub message: EventMessage,
+    /// 待输出的 woff2 字节，emit 由 `font_split_inner` 统一完成。
+    pub data: Vec<u8>,
 }
-/// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
-pub fn run_subset(ctx: &mut Context) -> Result<()> {
-    let origin_bytes = ctx.config.input.len() as u32;
+
+/// 构建第 `index` 个分包：并行路径与顺序路径共用，保证两条路径的产物、
+/// 文件名与 reporter 内容完全一致。
+fn build_one(
+    face: &Owned<Face>,
+    subset: &[u32],
+    file_name_template: Option<&str>,
+    index: usize,
+) -> Result<ThreadResult> {
+    let start_time = Instant::now();
+
+    let result = build_single_subset(face, subset)?;
+    let result_bytes = u8_size_in_kb(&result);
+    let hash_string = blake3::hash(result.as_slice()).to_hex().to_string();
+    let duration = start_time.elapsed();
+    debug!(
+        "{}\t{}ms/{}/{}kb\t{}",
+        index,
+        duration.as_millis(),
+        subset.len(),
+        result_bytes,
+        hash_string
+    );
+    let file_name = file_name_template
+        .map(|name| name_template(name, &hash_string, "woff2", &index))
+        .unwrap_or_else(|| format!("{}.woff2", hash_string));
+    Ok(ThreadResult {
+        subset_result: RunSubsetResult {
+            hash: hash_string.clone(),
+            unicodes: subset.to_vec(),
+            file_name: file_name.clone(),
+        },
+        log: SubsetDetail {
+            id: index as u32 + 1,
+            file_name: file_name.clone(),
+            hash: hash_string.clone(),
+            chars: subset.to_vec(),
+            bytes: result.len() as u32,
+            duration: duration.as_millis() as u32,
+        },
+        data: result,
+    })
+}
+
+/// 根据预处理结果，生成字体子集文件；产物交给调用方按顺序输出。
+///
+/// `multi_threads` 只决定用 rayon 并行还是顺序 `for` 构建，两条路径都走
+/// [`build_one`]，因此输出顺序、文件名与字节内容相同（仅耗时字段不同）。
+pub fn run_subset(
+    source: &FontSource<'_>,
+    config: &Config,
+    pre: &PreSubsetOutput,
+) -> Result<RunSubsetOutput> {
+    // 与拆分前一致：报告里的原始字节数是输入字节数，而不是解码后的字体长度。
+    let origin_bytes = config.input.len() as u32;
     let all_chars: IndexSet<u32> =
-        ctx.face.collect_unicodes().iter().cloned().collect();
+        source.face.collect_unicodes().iter().cloned().collect();
     let origin_size = all_chars.len() as u32;
-    let file_name_template = ctx.config.rename_output_font.clone();
+    let file_name_template = config.rename_output_font.as_deref();
     debug!("font subset result log");
-    let thread_result: Vec<ThreadResult> = ctx
-        .pre_subset_result
-        .par_iter()
-        .enumerate()
-        .map(|(index, r)| {
-            let start_time = Instant::now();
-
-            let result = build_single_subset(ctx.face, r)?;
-            let result_bytes = u8_size_in_kb(&result);
-            let hash_string =
-                blake3::hash(result.as_slice()).to_hex().to_string();
-            let duration = start_time.elapsed();
-            debug!(
-                "{}\t{}ms/{}/{}kb\t{}",
-                index,
-                duration.as_millis(),
-                r.len(),
-                result_bytes,
-                hash_string
-            );
-            let file_name = file_name_template
-                .as_ref()
-                .map(|name| name_template(name, &hash_string, "woff2", &index))
-                .unwrap_or_else(|| format!("{}.woff2", hash_string));
-            Ok(ThreadResult {
-                subset_result: RunSubsetResult {
-                    hash: hash_string.clone(),
-                    unicodes: r.clone(),
-                    file_name: file_name.clone(),
-                },
-                log: SubsetDetail {
-                    id: index as u32 + 1,
-                    file_name: file_name.clone(),
-                    hash: hash_string.clone(),
-                    chars: r.clone(),
-                    bytes: result.len() as u32,
-                    duration: duration.as_millis() as u32,
-                },
-                message: EventMessage::output_data(&file_name, result),
+    let thread_result: Vec<ThreadResult> = if config.multi_threads {
+        pre.subsets
+            .par_iter()
+            .enumerate()
+            .map(|(index, r)| {
+                build_one(&source.face, r, file_name_template, index)
             })
-        })
-        .collect::<Result<Vec<ThreadResult>>>()?;
-    let (bundled_bytes, bundle_chars): (u32, IndexSet<u32>) = thread_result
-        .iter()
-        .fold((0, IndexSet::new()), |(mut bytes, mut chars), res| {
-            (ctx.callback)(res.message.clone());
+            .collect::<Result<Vec<ThreadResult>>>()?
+    } else {
+        // 顺序路径：单线程宿主（如 wasm）避免 rayon 线程池开销。
+        let mut results = Vec::with_capacity(pre.subsets.len());
+        for (index, r) in pre.subsets.iter().enumerate() {
+            results.push(build_one(
+                &source.face,
+                r,
+                file_name_template,
+                index,
+            )?);
+        }
+        results
+    };
 
-            bytes += res.log.bytes;
-            chars.extend(res.log.chars.iter().cloned());
-            ctx.run_subset_result.push(res.subset_result.clone());
-            ctx.reporter.subset_detail.push(res.log.clone());
-            (bytes, chars)
-        });
+    let mut items = Vec::with_capacity(thread_result.len());
+    let mut details = Vec::with_capacity(thread_result.len());
+    let mut files = Vec::with_capacity(thread_result.len());
+    let mut bundle_chars: IndexSet<u32> = IndexSet::new();
+    let mut bundled_bytes: u32 = 0;
+    for res in thread_result {
+        bundled_bytes += res.log.bytes;
+        bundle_chars.extend(res.log.chars.iter().cloned());
+        let file_name = res.log.file_name.clone();
+        items.push(res.subset_result);
+        details.push(res.log);
+        files.push((file_name, res.data));
+    }
 
     // 汇报构建前后的 unicode 差异
     let diff: Vec<u32> = bundle_chars
@@ -122,13 +156,17 @@ pub fn run_subset(ctx: &mut Context) -> Result<()> {
         );
     }
 
-    ctx.reporter.bundle_message = Some(BundleMessage {
-        origin_size,
-        bundled_size: bundle_chars.len() as u32,
-        origin_bytes,
-        bundled_bytes,
-    });
-    Ok(())
+    Ok(RunSubsetOutput {
+        items,
+        bundle: BundleMessage {
+            origin_size,
+            bundled_size: bundle_chars.len() as u32,
+            origin_bytes,
+            bundled_bytes,
+        },
+        files,
+        details,
+    })
 }
 
 #[derive(Debug, Clone, Default)]

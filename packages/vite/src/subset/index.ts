@@ -1,4 +1,4 @@
-import { proto, fontSplit, decodeReporter } from 'cn-font-split';
+import { proto, fontSplit, decodeReporter, reporterToJSON } from 'cn-font-split';
 import path from 'path';
 import fs from 'fs-extra';
 import url from 'url';
@@ -45,7 +45,7 @@ export class BundlePlugin {
         );
 
         const metrics = await fs.readJSON(resolvedPath + '/metrics.json');
-        const details = { ...reporter.toObject(), ...metrics };
+        const details = { ...reporterToJSON(reporter), ...metrics };
         const code = Object.entries(details)
             .map(([k, v]) => {
                 return `export const ${k} = ${JSON.stringify(v)};`;

@@ -1,7 +1,9 @@
-import { api_interface } from '../gen/index';
+import { create, toBinary } from '@bufbuild/protobuf';
+import { InputTemplateSchema } from '../gen/index_pb.js';
+import { toInputTemplateInit } from '../inputTemplate.js';
 import { IFs, Volume, createFsFromVolume } from 'memfs-browser';
 import { WASI } from '@tybys/wasm-util';
-import { FontSplitProps } from '../interface';
+import { FontSplitProps } from '../interface.js';
 export * from '../interface.js';
 export * from '../createAPI.js';
 
@@ -16,12 +18,26 @@ export class APIInterface {
         this.fs = fs;
     }
     async setConfig(config: FontSplitProps | ArrayBuffer) {
-        const buffer =
-            config instanceof ArrayBuffer
-                ? new Uint8Array(config)
-                : api_interface.InputTemplate.fromObject(
-                      config as any,
-                  ).serialize();
+        let buffer: Uint8Array;
+        if (config instanceof ArrayBuffer) {
+            buffer = new Uint8Array(config);
+        } else {
+            const { input } = config;
+            // wasm 宿主没有 Node fs，旧版把字符串路径直接塞进 bytes 字段会写出乱码，
+            // 这里改成显式报错。
+            if (typeof input === 'string') {
+                throw new Error(
+                    'wasm 入口不支持字符串路径 input，请传入 Uint8Array 或 ArrayBuffer',
+                );
+            }
+            buffer = toBinary(
+                InputTemplateSchema,
+                create(
+                    InputTemplateSchema,
+                    toInputTemplateInit({ ...config, input }),
+                ),
+            );
+        }
         await this.fs.promises.writeFile('/tmp/fonts/' + this.key, buffer);
     }
     async callback() {

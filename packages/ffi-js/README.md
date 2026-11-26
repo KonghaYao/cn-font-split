@@ -34,7 +34,7 @@
 pnpm i cn-font-split
 ```
 
-安装时会通过 `optionalDependencies` 自动获取当前平台的 `@cn-font-split/<platform>` 二进制包，不再需要安装期联网下载。如需使用自编译的动态库，设置 `CN_FONT_SPLIT_BIN` 指向 `libffi.{dylib,so,dll}` 即可覆盖。
+安装时会通过 `optionalDependencies` 自动获取当前平台的 `@cn-font-split/<platform>` 二进制包，不再需要安装期联网下载。如需使用自编译的动态库，设置 `CN_FONT_SPLIT_BIN` 指向 `libffi.{dylib,so,dll}` 即可覆盖。Node.js、Bun、Deno 的解析顺序一致，细节见下文「[Bun / Deno 的动态库解析](#bun--deno-的动态库解析)」。
 
 ### 推荐：自动检测环境（Auto）
 
@@ -83,6 +83,22 @@ import { fontSplit } from 'cn-font-split/dist/bun/index';
 ```js
 import { fontSplit } from 'cn-font-split/dist/deno/index';
 ```
+
+### Bun / Deno 的动态库解析
+
+Bun、Deno 入口与 Node 入口共用 `src/load.ts` 的 `resolveBinPath`，优先级如下：
+
+1. `CN_FONT_SPLIT_BIN`：指向自编译或自定义的 `libffi.{dylib,so,dll}`，优先级最高；
+2. `@cn-font-split/<platform>` 平台包（`optionalDependencies`）：用 `createRequire(import.meta.url).resolve()` 解析到平台包目录，再拼接包内的库文件名；
+3. 仓库内 `dist/libffi-<target>.<ext>`：仅本地开发回退；
+4. 全部失败时抛错，错误信息列出当前平台与所有尝试过的包名 / 路径。
+
+注意：
+
+-   Deno 侧走 `createRequire`，而不是 `import.meta.resolve`：后者对 `optionalDependencies` 里的平台包会报 `not a dependency`。
+-   Deno 需要 `--allow-ffi --allow-read --allow-env`：`--allow-ffi` 用于 `Deno.dlopen`，`--allow-read` 用于 `createRequire` 解析 `node_modules`，`--allow-env` 用于读取 `CN_FONT_SPLIT_BIN`。
+-   用 `npm:` 或 CDN 远程导入、没有本地 `node_modules` 时，平台包无法被解析，只能设置 `CN_FONT_SPLIT_BIN` 指向本地动态库。
+-   musl / android / 32 位等平台没有预编译平台包，同样只能靠 `CN_FONT_SPLIT_BIN` 覆盖。
 
 ### 控制生成产物
 
@@ -136,8 +152,9 @@ await fontSplit({
     },
 
     // chunkSize: 70 * 1024,           // 单个分片目标大小
-    // chunkSizeTolerance: 1 * 1024,   // 分片容差，一般不需要修改
+    // chunkSizeTolerance: 0,          // 分片容差；8.0 尚未实现，只能为 0（非 0 会返回 InvalidConfig）
     // maxAllowSubsetsCount: 10,       // 最大允许分包数量，可能会和 chunkSize 冲突
+    // multiThreads: true,             // 是否并行构建分包；false 时顺序构建（产物相同，耗时更长）
 
     testHtml: true, // 是否生成测试 HTML 文件
     reporter: true, // 是否生成 reporter.bin 文件
@@ -190,8 +207,8 @@ console.log(data);
 
 ## 环境变量
 
-| 参数名                 | 描述                   |
-| ---------------------- | ---------------------- |
+| 参数名            | 描述                                     |
+| ----------------- | ---------------------------------------- |
 | CN_FONT_SPLIT_BIN | 二进制动态链接库的地址（覆盖平台包解析） |
 
 ## 感谢

@@ -1,21 +1,13 @@
 import { FontSplitProps } from '../interface.js';
-import { getBinName, matchPlatform } from '../load.js';
+import { resolveBinPath } from '../load.js';
 import { createAPI } from '../createAPI.js';
 export * from '../interface.js';
 export * from '../createAPI.js';
 /** @ts-ignore */
 const _Deno = Deno;
-let binPath = _Deno.env.get('CN_FONT_SPLIT_BIN');
-if (!binPath) {
-    binPath = new URL(
-        '../' +
-            getBinName(
-                matchPlatform(process.platform, process.arch, () => false),
-            ),
-        import.meta.url,
-    );
-    // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
-}
+// Deno 没有可靠的 musl 判定，按项目现有约定视为 glibc；
+// 解析走 node:module 的 createRequire（import.meta.resolve 对 optionalDependencies 不可用）。
+const binPath = resolveBinPath();
 const dylib = _Deno.dlopen(binPath, {
     font_split: { parameters: ['buffer', 'usize', 'function'], result: 'void' },
 } as const);

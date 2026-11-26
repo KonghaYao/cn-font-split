@@ -119,13 +119,124 @@ if let Err(FontSplitError::InvalidConfig(msg)) = result {
 `InvalidSubsets`、`InvalidConfig`、`Io`、`Internal`。原来依赖 panic 文本的
 兼容代码需要改为匹配错误枚举。
 
+#### 管线内部 API：`runner::Context` 已删除（breaking）
+
+8.0 把管线拆成阶段产物，不再对外暴露带 `&mut face` / `&mut reporter` /
+`callback` 的可变上下文：
+
+-   `runner::Context` 与 `runner::create_context` **已删除**，不保留兼容别名；
+-   替代类型：`runner::FontSource<'a>`（输入）、`runner::PreSubsetOutput`、
+    `runner::RunSubsetOutput`、`runner::LinkSubsetOutput`（三段产物）；
+-   三段签名为 `pre_subset(&mut FontSource, &Config)`、
+    `run_subset(&FontSource, &Config, &PreSubsetOutput)`、
+    `link_subset(&Config, &PreSubsetOutput, &RunSubsetOutput)`，各自返回对应产物；
+-   `gen_svg_from_ctx` 改为 `gen_svg_extra_files(&Config, &Face)`，只返回待输出的
+    `(文件名, 内容)` 列表，不再自行 emit。
+
+Rust 使用者不应再构造上下文或手工串联三段，改为消费 `font_split` 的事件流：
+
+```rust
+use cn_font_proto::api_interface::EventMessage;
+use cn_font_split::font_split;
+
+font_split(config, |event: EventMessage| {
+    // OutputData：文件名在 event.message，内容在 event.data；
+    // End / Error 的处理见上文错误模型。
+})?;
+```
+
+确需单独调用某个阶段时，按 `src/runner.rs` 中 `font_split_inner` 的组合方式
+传递阶段产物，并自行负责 `OutputData` 事件与 `reporter.bin` 的组装。
+
+#### 配置字段：从「静默忽略」改为「显式拒绝/生效」（breaking）
+
+8.0 之前下列字段不参与计算，传什么都被静默忽略；8.0 起：
+
+| 字段 | 8.0 行为 |
+| ---- | -------- |
+| `chunk_size_tolerance` | 只接受 `0.0`；**任何非 0 值返回 `FontSplitError::InvalidConfig`**，文案提示「尚未实现，请置 0」。完整语义（按实测体积迭代分包）尚未实现。 |
+| `build_mode` | 收为枚举，只接受省略 / 空串 / `"default"`；其他值返回 `InvalidConfig` 并列出允许值。 |
+| `multi_threads` | `true`（默认）并行构建，`false` 顺序构建（`run_subset` 改为顺序 `for`）。**产物与并行路径逐字节一致**，只有 reporter 里的 `duration` 不同；单线程宿主建议设为 `false`。 |
+| `max_allow_subsets_count` | 行为不变：仍只校验 `> 0`，不参与分包预测。 |
+
+迁移方式：删除或置零旧配置里的 `chunkSizeTolerance` / `chunk_size_tolerance`，
+并把 `buildMode` / `build_mode` 去掉或改为 `"default"`。TS 类型仍允许任意字符串，
+因此非法值只会在调用 `fontSplit()` 时以 `InvalidConfig` 报错。
+
+```diff
+ await fontSplit({
+     input,
+     outDir,
+-    chunkSizeTolerance: 1 * 1024,
+-    buildMode: 'fast',
++    // 8.0：容差语义未实现，只能为 0；build_mode 只支持 'default'
++    multiThreads: false,
+ });
+```
+
 ## 5. 移除的运行期依赖
 
 -   **`set-value`** 已移除（不再做深层属性赋值）。
--   **`google-protobuf`** 不再用于解析配置事件；TS 侧使用入库的生成代码。
-    若你直接依赖 `cn-font-split` 的内部 proto 运行时，请改用导出的
-    `proto` / `FontSplitProps` 类型。
+-   **`google-protobuf`** 已移除，JS 侧的 proto 运行时换成 **`@bufbuild/protobuf`
+    2.17.0**（生成器 `@bufbuild/protoc-gen-es` 与运行时锁同一版本）。见 5.1。
 -   `postinstall` 脚本与 `init` CLI 命令一并移除。
+
+### 5.1 JS proto 运行时：google-protobuf → @bufbuild/protobuf（breaking）
+
+生成的 `src/gen/index.ts`（protoc-gen-ts）替换为 `src/gen/index_pb.ts`
+（`protoc --es_out`，`target=ts`）。`@bufbuild/protobuf` 是 `cn-font-split` 的运行时
+`dependencies`，调用方无需额外安装。
+
+调用 API 对照：
+
+| 旧（google-protobuf / protoc-gen-ts） | 新（@bufbuild/protobuf 2.17） |
+| ------------------------------------- | ----------------------------- |
+| `InputTemplate.fromObject(obj)`       | `create(InputTemplateSchema, obj)`，入参即 `MessageInitShape<typeof InputTemplateSchema>` |
+| `msg.serialize()`                     | `toBinary(InputTemplateSchema, msg)` |
+| `InputTemplate.deserialize(bytes)`    | `fromBinary(InputTemplateSchema, bytes)` |
+| `EventMessage.deserialize(bytes)`     | `fromBinary(EventMessageSchema, bytes)` |
+| `report.toObject()`                   | `reporterToJSON(report)`（`cn-font-split` 导出，返回 proto3 JSON 映射的普通对象） |
+| `OriginInput`                         | `MessageInitShape<typeof InputTemplateSchema>` |
+| `FontReporter`                        | `OutputReport`（消息对象，不再是 `toObject()` 的普通对象） |
+
+`proto` 命名空间里的公开类型名对照（同名枚举与 `FontSplitProps` 不变）：
+
+| 旧                                  | 新                                                  |
+| ----------------------------------- | --------------------------------------------------- |
+| `proto.OutputReport.SubsetDetail`   | `proto.OutputReport_SubsetDetail`                   |
+| `proto.OutputReport.NameTable`      | `proto.OutputReport_NameTable`                      |
+| `proto.OutputReport.BundleMessage`  | `proto.OutputReport_BundleMessage`                  |
+| `proto.OutputReport.Css`            | `proto.OutputReport_Css`                            |
+| `proto.InputTemplate.CssProperties` | `proto.InputTemplate_CssProperties`                 |
+| `proto.InputTemplate.PolyfillType`  | `proto.InputTemplate_PolyfillType`                  |
+| `proto.InputTemplate.PreviewImage`  | `proto.InputTemplate_PreviewImage`                  |
+| `proto.InputTemplate` / `proto.OutputReport`（class） | 同名**类型** + `InputTemplateSchema` / `OutputReportSchema` 常量 |
+| `proto.EventMessage` / `proto.MultiMessages`（class） | 同名**类型** + `EventMessageSchema` / `MultiMessagesSchema` 常量 |
+| `proto.EventName`                   | `proto.EventName`（枚举值不变）                     |
+| `proto.font_services`（gRPC client）| 已删除：`src/gen/services.ts` 既未导出也未参与打包，`services.proto` 不再生成到 JS |
+
+```diff
+-import { proto } from 'cn-font-split';
+-const detail: proto.OutputReport.SubsetDetail = report.subsetDetail[0];
++import { proto, reporterToJSON } from 'cn-font-split';
++const detail: proto.OutputReport_SubsetDetail = report.subsetDetail[0];
++const plain = reporterToJSON(report); // 等价于旧版的 report.toObject()
+```
+
+行为差异（wire 兼容，Rust 侧解码不受影响）：
+
+-   未设置的 `optional` 字段返回 `undefined`，旧实现返回 proto 默认值
+    （`''` / `0` / `false`；消息字段旧版同样是 `undefined`）。例如 `css` 子消息
+    存在但未设置 `compress` 时，`css.compress` 从 `false` 变成 `undefined`。
+-   `EventMessage.data` 未设置时为 `undefined`（旧实现是空 `Uint8Array`）。
+    `fontSplit()` 内部已兜底为空字节。
+-   序列化字段顺序由「proto 声明顺序」改为「字段编号升序」。真正会变化的是
+    `CssProperties.compress/file_name`（声明在 11/12/13 之后）与
+    `InputTemplate.language_areas`（声明在 20 之后）这两处；字段值完全一致。
+-   wasm 入口：`input` 为字符串时显式报错（旧版会把它塞进 `bytes` 字段，写出乱码）；
+    `subsets` 现在与 FFI 入口一致地按 `Uint32Array` 转成字节（旧版把
+    `number[][]` 原样写入，同样是乱码）。
+-   `subsets` 仍是 `number[][]` → `Uint8Array[]` 的转换，入参类型不变。
 
 ## 6. 产物与 CSS
 
@@ -141,6 +252,11 @@ if let Err(FontSplitError::InvalidConfig(msg)) = result {
 -   [ ] 更新对 md5 文件名（32 hex）的假设与缓存键。
 -   [ ] JS 侧为 `fontSplit()` 增加 `try/catch`；Rust 侧处理 `Result`。
 -   [ ] 如果监听事件流，增加 `EventName.Error`（值 `3`）分支。
+-   [ ] 如果直接用 `proto.OutputReport.SubsetDetail` 等生成类型，按 5.1 的类型对照改名。
+-   [ ] 如果直接依赖 `runner::Context` / `create_context` / `gen_svg_from_ctx`，
+        改为消费 `font_split` 的事件流（这些符号 8.0 已删除或改名）。
+-   [ ] 删除 `chunkSizeTolerance` / `chunk_size_tolerance`（非 0 会报
+        `InvalidConfig`）；`buildMode` / `build_mode` 只保留 `"default"` 或删除。
 
 ## 8. 回滚建议
 

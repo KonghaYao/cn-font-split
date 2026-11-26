@@ -87,6 +87,10 @@ jobs:
               # 使用上面构建的 target/release/libffi.so，验证缓存布局与产物。
               run: pnpm -C packages/vite test
 
+            - name: FFI JS 单元测试
+              # 平台包解析（resolveBinPath）等纯 JS 逻辑，用临时 node_modules 构造场景。
+              run: pnpm -C packages/ffi-js test
+
             - name: Node smoke（合法字体 → 生成文件）
               run: node packages/ffi-js/scripts/smoke-node.mjs
 

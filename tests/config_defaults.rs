@@ -8,7 +8,7 @@ use cn_font_proto::api_interface::input_template::{
     CssProperties, PreviewImage,
 };
 use cn_font_split::FontSplitError;
-use cn_font_split::config::Config;
+use cn_font_split::config::{BuildMode, Config};
 
 /// 用「只有合法输入」的最小模板构造配置，其余字段全部走默认值。
 fn config_from_default_template() -> Config {
@@ -40,7 +40,7 @@ fn documented_defaults_match_config() {
     assert!(config.reporter, "reporter 默认生成");
     assert_eq!(config.preview_image, None);
     assert_eq!(config.rename_output_font, None);
-    assert_eq!(config.build_mode, None);
+    assert_eq!(config.build_mode, BuildMode::Default);
 
     // ===== 预分包优化项 =====
     assert!(config.language_areas);
@@ -113,7 +113,8 @@ fn template_roundtrip_is_stable() {
         }),
         language_areas: Some(false),
         chunk_size: Some(70 * 1024),
-        chunk_size_tolerance: Some(0.25),
+        // 容差语义未实现，当前只接受 0（非 0 会被校验拒绝）。
+        chunk_size_tolerance: Some(0.0),
         max_allow_subsets_count: Some(10),
         test_html: Some(false),
         reporter: Some(false),
@@ -159,4 +160,40 @@ fn validation_variants_are_unchanged() {
     })
     .expect_err("非 4 字节对齐的 subsets 必须返回 Err");
     assert!(matches!(err, FontSplitError::InvalidSubsets(_)));
+
+    // 容差语义未实现：非 0 值必须显式拒绝，0 继续可用。
+    let err = Config::from_template(&InputTemplate {
+        input: vec![0x00],
+        chunk_size_tolerance: Some(0.1),
+        ..Default::default()
+    })
+    .expect_err("非 0 chunk_size_tolerance 必须返回 Err");
+    assert!(matches!(err, FontSplitError::InvalidConfig(_)));
+
+    Config::from_template(&InputTemplate {
+        input: vec![0x00],
+        chunk_size_tolerance: Some(0.0),
+        ..Default::default()
+    })
+    .expect("chunk_size_tolerance = 0 必须可用");
+
+    // build_mode 已收为枚举：只接受 None / 空串 / "default"。
+    let err = Config::from_template(&InputTemplate {
+        input: vec![0x00],
+        build_mode: Some("fast".to_string()),
+        ..Default::default()
+    })
+    .expect_err("未知 build_mode 必须返回 Err");
+    assert!(matches!(err, FontSplitError::InvalidConfig(_)));
+
+    for mode in [None, Some(String::new()), Some("default".to_string())] {
+        Config::from_template(&InputTemplate {
+            input: vec![0x00],
+            build_mode: mode.clone(),
+            ..Default::default()
+        })
+        .unwrap_or_else(|err| {
+            panic!("build_mode = {mode:?} 必须合法，实际错误: {err:?}")
+        });
+    }
 }

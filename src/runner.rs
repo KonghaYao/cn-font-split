@@ -7,53 +7,55 @@ use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::pre_subset::pre_subset;
 use crate::run_subset::{RunSubsetResult, run_subset};
+use cn_font_proto::api_interface::output_report::{
+    BundleMessage, Css, SubsetDetail,
+};
 use cn_font_proto::api_interface::{EventMessage, InputTemplate, OutputReport};
 use harfbuzz_rs_now::{Face, Owned};
 use log::info;
 use prost::Message;
+use std::collections::HashMap;
 
-pub struct Context<'a, 'b, 'c>
-where
-    'b: 'a,
-    'c: 'a,
-{
-    pub config: &'c Config,
-    pub binary: &'c [u8],
-    pub pre_subset_result: Vec<Vec<u32>>,
-    pub run_subset_result: Vec<RunSubsetResult>,
-    pub name_table: NameTableSets,
-    pub face: &'a mut Owned<Face<'b>>,
-    pub callback: &'a dyn Fn(EventMessage),
-    pub reporter: &'a mut OutputReport,
-    pub fvar_table: Option<FvarTable>,
+/// 管线输入：字体原始字节与已解析的 harfbuzz face。
+///
+/// `pre_subset` 需要 `&mut Face`（部分插件会改写 face 状态），后续阶段只读。
+pub struct FontSource<'a> {
+    pub binary: &'a [u8],
+    pub face: Owned<Face<'a>>,
 }
 
-pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
-    config: &'c Config,
-    binary: &'c [u8],
-    face: &'a mut Owned<Face<'b>>,
-    reporter: &'a mut OutputReport,
-    callback: &'a F,
-) -> Context<'a, 'b, 'c> {
-    let ctx = Context {
-        config,
-        binary,
-        pre_subset_result: vec![],
-        run_subset_result: vec![],
-        name_table: NameTableSets { table: vec![] },
-        callback,
-        face,
-        reporter,
-        fvar_table: None, // 防止后文拿到default数据，所以填 None
-    };
-    ctx.reporter.version = env!("CARGO_PKG_VERSION").to_string();
-    ctx.reporter.platform = current_platform::CURRENT_PLATFORM.to_string();
+/// `pre_subset` 阶段产物。
+pub struct PreSubsetOutput {
+    /// 过滤掉空包后的分包字符表。
+    pub subsets: Vec<Vec<u32>>,
+    pub name_table: NameTableSets,
+    /// 可变字体轴信息；非可变字体为 `None`。
+    pub fvar: Option<FvarTable>,
+    /// `AutoSubset` 之后每个分包对应的语言区域标签。
+    pub languages: HashMap<usize, String>,
+    /// 需要在 pre 阶段输出的附加文件（当前只有 preview SVG），按产生顺序排列。
+    pub extra_files: Vec<(String, Vec<u8>)>,
+}
 
-    info!(
-        "version {}; platform {}",
-        ctx.reporter.version, ctx.reporter.platform
-    );
-    ctx
+/// `run_subset` 阶段产物。
+pub struct RunSubsetOutput {
+    pub items: Vec<RunSubsetResult>,
+    pub bundle: BundleMessage,
+    /// 待输出的 woff2 文件，与 [`Self::items`]、[`Self::details`]
+    /// 一一对应且顺序相同。
+    pub files: Vec<(String, Vec<u8>)>,
+    /// 每个分包的构建明细，供 `OutputReport::subset_detail` 使用。
+    pub details: Vec<SubsetDetail>,
+}
+
+/// `link_subset` 阶段产物。
+pub struct LinkSubsetOutput {
+    /// CSS 文件内容。
+    pub css: String,
+    /// 附带产物（`index.html`、`index.proto`），按输出顺序排列。
+    pub extra_files: Vec<(String, Vec<u8>)>,
+    /// 供 `OutputReport::css` 使用的字体家族/样式/字重/display。
+    pub css_report: Css,
 }
 
 /// 核心入口：把 wire IR 解析成 [`Config`] 后依次执行
@@ -81,25 +83,45 @@ fn font_split_inner<F: Fn(EventMessage)>(
 ) -> Result<()> {
     let config = Config::from_template(template)?;
 
-    let mut reporter = OutputReport::default();
-    let binary = smart_load_woff2(&config.input)?;
-    let mut face = Face::from_bytes(&binary, 0);
-    let mut ctx =
-        create_context(&config, &binary, &mut face, &mut reporter, callback);
+    let loaded = smart_load_woff2(&config.input)?;
+    let binary: &[u8] = loaded.as_ref();
+    let mut source = FontSource { binary, face: Face::from_bytes(binary, 0) };
 
-    pre_subset(&mut ctx)?;
-    run_subset(&mut ctx)?;
-    link_subset(&mut ctx)?;
+    let mut reporter = OutputReport {
+        version: env!("CARGO_PKG_VERSION").to_string(),
+        platform: current_platform::CURRENT_PLATFORM.to_string(),
+        ..Default::default()
+    };
 
-    // name_table 转 proto
-    ctx.reporter.name_table = ctx.name_table.table;
+    info!("version {}; platform {}", reporter.version, reporter.platform);
+
+    let pre = pre_subset(&mut source, &config)?;
+    // 事件顺序固定为 svg(pre) → woff2 → css → html → proto。
+    emit_files(callback, &pre.extra_files);
+
+    let run = run_subset(&source, &config, &pre)?;
+    emit_files(callback, &run.files);
+
+    let link = link_subset(&config, &pre, &run)?;
+    callback(EventMessage::output_data(
+        &config.css.file_name,
+        link.css.into_bytes(),
+    ));
+    emit_files(callback, &link.extra_files);
+
+    // reporter 组装集中在这里；字段来源与拆分前三段各自写入时一致。
+    reporter.name_table = pre.name_table.table;
+    reporter.subset_detail = run.details;
+    reporter.bundle_message = Some(run.bundle);
+    reporter.css = Some(link.css_report);
+
     // 日志转二进制输出
     let mut reporter_buffer = Vec::new();
-    ctx.reporter.encode(&mut reporter_buffer).map_err(|e| {
+    reporter.encode(&mut reporter_buffer).map_err(|e| {
         FontSplitError::Internal(format!("reporter 序列化失败: {e}"))
     })?;
 
-    if ctx.config.reporter {
+    if config.reporter {
         callback(EventMessage::output_data("reporter.bin", reporter_buffer));
     }
 
@@ -108,30 +130,26 @@ fn font_split_inner<F: Fn(EventMessage)>(
     Ok(())
 }
 
+/// 按阶段产物的顺序发出 `OutputData` 事件。
+fn emit_files<F: Fn(EventMessage)>(callback: &F, files: &[(String, Vec<u8>)]) {
+    for (name, data) in files {
+        callback(EventMessage::output_data(name, data.clone()));
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
     use super::*;
 
     #[test]
-    fn test_create_context() {
-        let config = Config::default();
+    fn test_font_source() {
         let binary = vec![0u8; 100];
-        let mut face = Face::from_bytes(&binary, 0);
-        let mut reporter = OutputReport::default();
-        let callback = |_msg: EventMessage| {};
+        let source =
+            FontSource { binary: &binary, face: Face::from_bytes(&binary, 0) };
 
-        let ctx = create_context(
-            &config,
-            &binary,
-            &mut face,
-            &mut reporter,
-            &callback,
-        );
-
-        assert!(ctx.pre_subset_result.is_empty());
-        assert!(ctx.run_subset_result.is_empty());
-        assert!(ctx.name_table.table.is_empty());
-        assert!(ctx.fvar_table.is_none());
+        assert_eq!(source.binary.len(), binary.len());
+        // 全零字节不是有效字体，harfbuzz 仍会给出一个空 face。
+        assert!(source.face.collect_unicodes().is_empty());
     }
 }
