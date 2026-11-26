@@ -1,6 +1,6 @@
 use clap::Parser;
 use cn_font_proto::api_interface::EventName;
-use cn_font_split::config::Config;
+use cn_font_split::config::{BuildMode, Config};
 use cn_font_split::font_split;
 use cn_font_utils::output_file;
 use std::path::PathBuf;
@@ -36,7 +36,7 @@ struct Args {
     #[clap(long)]
     chunk_size: Option<i32>,
 
-    /// 块大小容差
+    /// 块大小容差（尚未实现，只接受 0）
     #[clap(long)]
     chunk_size_tolerance: Option<f32>,
 
@@ -59,11 +59,11 @@ struct Args {
     #[clap(long)]
     rename_output_font: Option<String>,
 
-    /// 构建模式
+    /// 构建模式（目前仅支持 default）
     #[clap(long)]
     build_mode: Option<String>,
 
-    /// 多线程
+    /// 是否并行构建分包（false 时顺序构建，产物相同）
     #[clap(long)]
     multi_threads: Option<bool>,
 
@@ -176,7 +176,11 @@ fn run(args: Args) -> std::result::Result<(), String> {
     apply(&mut config.test_html, args.test_html);
     apply(&mut config.reporter, args.reporter);
     apply_optional(&mut config.rename_output_font, args.rename_output_font);
-    apply_optional(&mut config.build_mode, args.build_mode);
+    if let Some(mode) = args.build_mode.as_deref() {
+        // 与核心使用同一解析/校验，非法取值在这里直接变成可读命令错误。
+        config.build_mode =
+            BuildMode::parse(Some(mode)).map_err(|err| err.to_string())?;
+    }
     apply(&mut config.multi_threads, args.multi_threads);
     apply(&mut config.font_feature, args.font_feature);
     apply(&mut config.reduce_mins, args.reduce_mins);

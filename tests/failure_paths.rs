@@ -116,6 +116,63 @@ fn zero_max_allow_subsets_count_returns_invalid_config_error() {
     );
 }
 
+/// `chunk_size_tolerance` 的语义依赖「按实测体积迭代分包」（未实现）。
+/// 非 0 值必须显式拒绝，沉默忽略会让调用方以为分包体积受控。
+#[test]
+fn non_zero_chunk_size_tolerance_returns_invalid_config_error() {
+    let err = run(InputTemplate {
+        input: VALID_FONT.to_vec(),
+        chunk_size_tolerance: Some(0.1),
+        ..Default::default()
+    })
+    .expect_err("chunk_size_tolerance = 0.1 必须返回 Err");
+    let FontSplitError::InvalidConfig(message) = &err else {
+        panic!("期望 InvalidConfig，实际为 {err:?}");
+    };
+    assert!(
+        message.contains("chunk_size_tolerance") && message.contains("0"),
+        "错误文案必须指出字段名与「请置 0」，实际为 {message}"
+    );
+}
+
+/// `build_mode` 已收为枚举，只接受 `None` / 空串 / `"default"`。
+#[test]
+fn unknown_build_mode_returns_invalid_config_error() {
+    let err = run(InputTemplate {
+        input: VALID_FONT.to_vec(),
+        build_mode: Some("x".to_string()),
+        ..Default::default()
+    })
+    .expect_err("build_mode = \"x\" 必须返回 Err");
+    let FontSplitError::InvalidConfig(message) = &err else {
+        panic!("期望 InvalidConfig，实际为 {err:?}");
+    };
+    assert!(
+        message.contains("build_mode") && message.contains("default"),
+        "错误文案必须列出允许值，实际为 {message}"
+    );
+}
+
+/// 空串、`"default"` 与省略 `build_mode` 都必须正常工作。
+#[test]
+fn default_build_mode_is_accepted() {
+    for build_mode in [None, Some(String::new()), Some("default".to_string())] {
+        font_split(
+            InputTemplate {
+                input: VALID_FONT.to_vec(),
+                build_mode: build_mode.clone(),
+                test_html: Some(false),
+                reporter: Some(false),
+                ..Default::default()
+            },
+            |_| {},
+        )
+        .unwrap_or_else(|err| {
+            panic!("build_mode = {build_mode:?} 必须成功，实际错误: {err:?}")
+        });
+    }
+}
+
 #[test]
 fn error_event_is_emitted_before_returning_err() {
     let events = std::cell::RefCell::new(Vec::new());

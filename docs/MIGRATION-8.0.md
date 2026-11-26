@@ -148,6 +148,32 @@ font_split(config, |event: EventMessage| {
 确需单独调用某个阶段时，按 `src/runner.rs` 中 `font_split_inner` 的组合方式
 传递阶段产物，并自行负责 `OutputData` 事件与 `reporter.bin` 的组装。
 
+#### 配置字段：从「静默忽略」改为「显式拒绝/生效」（breaking）
+
+8.0 之前下列字段不参与计算，传什么都被静默忽略；8.0 起：
+
+| 字段 | 8.0 行为 |
+| ---- | -------- |
+| `chunk_size_tolerance` | 只接受 `0.0`；**任何非 0 值返回 `FontSplitError::InvalidConfig`**，文案提示「尚未实现，请置 0」。完整语义（按实测体积迭代分包）尚未实现。 |
+| `build_mode` | 收为枚举，只接受省略 / 空串 / `"default"`；其他值返回 `InvalidConfig` 并列出允许值。 |
+| `multi_threads` | `true`（默认）并行构建，`false` 顺序构建（`run_subset` 改为顺序 `for`）。**产物与并行路径逐字节一致**，只有 reporter 里的 `duration` 不同；单线程宿主建议设为 `false`。 |
+| `max_allow_subsets_count` | 行为不变：仍只校验 `> 0`，不参与分包预测。 |
+
+迁移方式：删除或置零旧配置里的 `chunkSizeTolerance` / `chunk_size_tolerance`，
+并把 `buildMode` / `build_mode` 去掉或改为 `"default"`。TS 类型仍允许任意字符串，
+因此非法值只会在调用 `fontSplit()` 时以 `InvalidConfig` 报错。
+
+```diff
+ await fontSplit({
+     input,
+     outDir,
+-    chunkSizeTolerance: 1 * 1024,
+-    buildMode: 'fast',
++    // 8.0：容差语义未实现，只能为 0；build_mode 只支持 'default'
++    multiThreads: false,
+ });
+```
+
 ## 5. 移除的运行期依赖
 
 -   **`set-value`** 已移除（不再做深层属性赋值）。
@@ -172,6 +198,8 @@ font_split(config, |event: EventMessage| {
 -   [ ] 如果监听事件流，增加 `EventName.Error`（值 `3`）分支。
 -   [ ] 如果直接依赖 `runner::Context` / `create_context` / `gen_svg_from_ctx`，
         改为消费 `font_split` 的事件流（这些符号 8.0 已删除或改名）。
+-   [ ] 删除 `chunkSizeTolerance` / `chunk_size_tolerance`（非 0 会报
+        `InvalidConfig`）；`buildMode` / `build_mode` 只保留 `"default"` 或删除。
 
 ## 8. 回滚建议
 

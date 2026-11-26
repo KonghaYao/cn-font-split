@@ -22,10 +22,10 @@ pub struct InputTemplate {
     /// 包大小
     #[prost(int32, optional, tag = "9")]
     pub chunk_size: ::core::option::Option<i32>,
-    /// 包大小容差
+    /// 包大小容差；语义未实现，只接受 0（非 0 返回 InvalidConfig）
     #[prost(float, optional, tag = "10")]
     pub chunk_size_tolerance: ::core::option::Option<f32>,
-    /// 最大允许子集数量
+    /// 最大允许子集数量；当前只校验 > 0
     #[prost(int32, optional, tag = "11")]
     pub max_allow_subsets_count: ::core::option::Option<i32>,
     /// 是否生成测试 HTML
@@ -41,13 +41,13 @@ pub struct InputTemplate {
     #[prost(string, optional, tag = "18")]
     pub rename_output_font:
         ::core::option::Option<::prost::alloc::string::String>,
-    /// TODO 构建模式
+    /// 构建模式；只接受省略、空串或 "default"（其他值返回 InvalidConfig）
     #[prost(string, optional, tag = "20")]
     pub build_mode: ::core::option::Option<::prost::alloc::string::String>,
     /// 是否进行语言区域优化
     #[prost(bool, optional, tag = "8")]
     pub language_areas: ::core::option::Option<bool>,
-    /// TODO 是否使用多线程
+    /// 是否并行构建分包；false 时顺序构建，产物相同
     #[prost(bool, optional, tag = "21")]
     pub multi_threads: ::core::option::Option<bool>,
     /// 是否启用字体特性

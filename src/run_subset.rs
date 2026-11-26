@@ -42,7 +42,54 @@ struct ThreadResult {
     /// 待输出的 woff2 字节，emit 由 `font_split_inner` 统一完成。
     pub data: Vec<u8>,
 }
-/// 根据预处理结果，生成字体子集文件；产物交给调用方按顺序输出
+
+/// 构建第 `index` 个分包：并行路径与顺序路径共用，保证两条路径的产物、
+/// 文件名与 reporter 内容完全一致。
+fn build_one(
+    face: &Owned<Face>,
+    subset: &[u32],
+    file_name_template: Option<&str>,
+    index: usize,
+) -> Result<ThreadResult> {
+    let start_time = Instant::now();
+
+    let result = build_single_subset(face, subset)?;
+    let result_bytes = u8_size_in_kb(&result);
+    let hash_string = blake3::hash(result.as_slice()).to_hex().to_string();
+    let duration = start_time.elapsed();
+    debug!(
+        "{}\t{}ms/{}/{}kb\t{}",
+        index,
+        duration.as_millis(),
+        subset.len(),
+        result_bytes,
+        hash_string
+    );
+    let file_name = file_name_template
+        .map(|name| name_template(name, &hash_string, "woff2", &index))
+        .unwrap_or_else(|| format!("{}.woff2", hash_string));
+    Ok(ThreadResult {
+        subset_result: RunSubsetResult {
+            hash: hash_string.clone(),
+            unicodes: subset.to_vec(),
+            file_name: file_name.clone(),
+        },
+        log: SubsetDetail {
+            id: index as u32 + 1,
+            file_name: file_name.clone(),
+            hash: hash_string.clone(),
+            chars: subset.to_vec(),
+            bytes: result.len() as u32,
+            duration: duration.as_millis() as u32,
+        },
+        data: result,
+    })
+}
+
+/// 根据预处理结果，生成字体子集文件；产物交给调用方按顺序输出。
+///
+/// `multi_threads` 只决定用 rayon 并行还是顺序 `for` 构建，两条路径都走
+/// [`build_one`]，因此输出顺序、文件名与字节内容相同（仅耗时字段不同）。
 pub fn run_subset(
     source: &FontSource<'_>,
     config: &Config,
@@ -53,50 +100,29 @@ pub fn run_subset(
     let all_chars: IndexSet<u32> =
         source.face.collect_unicodes().iter().cloned().collect();
     let origin_size = all_chars.len() as u32;
-    let file_name_template = config.rename_output_font.clone();
+    let file_name_template = config.rename_output_font.as_deref();
     debug!("font subset result log");
-    let thread_result: Vec<ThreadResult> = pre
-        .subsets
-        .par_iter()
-        .enumerate()
-        .map(|(index, r)| {
-            let start_time = Instant::now();
-
-            let result = build_single_subset(&source.face, r)?;
-            let result_bytes = u8_size_in_kb(&result);
-            let hash_string =
-                blake3::hash(result.as_slice()).to_hex().to_string();
-            let duration = start_time.elapsed();
-            debug!(
-                "{}\t{}ms/{}/{}kb\t{}",
-                index,
-                duration.as_millis(),
-                r.len(),
-                result_bytes,
-                hash_string
-            );
-            let file_name = file_name_template
-                .as_ref()
-                .map(|name| name_template(name, &hash_string, "woff2", &index))
-                .unwrap_or_else(|| format!("{}.woff2", hash_string));
-            Ok(ThreadResult {
-                subset_result: RunSubsetResult {
-                    hash: hash_string.clone(),
-                    unicodes: r.clone(),
-                    file_name: file_name.clone(),
-                },
-                log: SubsetDetail {
-                    id: index as u32 + 1,
-                    file_name: file_name.clone(),
-                    hash: hash_string.clone(),
-                    chars: r.clone(),
-                    bytes: result.len() as u32,
-                    duration: duration.as_millis() as u32,
-                },
-                data: result,
+    let thread_result: Vec<ThreadResult> = if config.multi_threads {
+        pre.subsets
+            .par_iter()
+            .enumerate()
+            .map(|(index, r)| {
+                build_one(&source.face, r, file_name_template, index)
             })
-        })
-        .collect::<Result<Vec<ThreadResult>>>()?;
+            .collect::<Result<Vec<ThreadResult>>>()?
+    } else {
+        // 顺序路径：单线程宿主（如 wasm）避免 rayon 线程池开销。
+        let mut results = Vec::with_capacity(pre.subsets.len());
+        for (index, r) in pre.subsets.iter().enumerate() {
+            results.push(build_one(
+                &source.face,
+                r,
+                file_name_template,
+                index,
+            )?);
+        }
+        results
+    };
 
     let mut items = Vec::with_capacity(thread_result.len());
     let mut details = Vec::with_capacity(thread_result.len());
