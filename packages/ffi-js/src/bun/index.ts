@@ -1,23 +1,13 @@
 /** @ts-ignore */
 import { dlopen, FFIType, ptr, JSCallback, toArrayBuffer } from 'bun:ffi';
-import path from 'path';
 import { FontSplitProps } from '../interface.js';
-import { getBinName, matchPlatform } from '../load.js';
+import { resolveBinPath } from '../load.js';
 import { isMusl } from '../node/isMusl.js';
 import { createAPI } from '../createAPI.js';
 export * from '../interface.js';
 export * from '../createAPI.js';
 
-let binPath = process.env.CN_FONT_SPLIT_BIN;
-if (!binPath) {
-    binPath = path.resolve(
-        __dirname,
-        '../' +
-            getBinName(matchPlatform(process.platform, process.arch, isMusl)),
-    );
-    // console.log(binPath);
-    // throw new Error('CN_FONT_SPLIT_BIN is undefined!');
-}
+const binPath = resolveBinPath({ isMusl });
 const {
     symbols: { font_split },
     close,
