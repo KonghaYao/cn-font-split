@@ -196,8 +196,9 @@ if (files.length === 0) process.exit(1);
 '
 ```
 
-预期输出包数与 7.x 基线同量级（SmileySans 默认配置 59–63 个包）；只要不抛错、
-确实写出 woff2 即视为通过。
+预期：TTF 输入默认配置约 47 个包（与 `bench-results/v8-perf/bench.md` 的
+`SmileySans-Oblique.ttf` + `default` 行一致；59 → 63 是 `.ttf.woff2` 输入的
+v7 → v8 对比）。只要不抛错、确实写出 woff2 即视为通过。
 
 ### 4.3 平台包二进制确实存在
 
@@ -233,11 +234,12 @@ npm 的版本删除窗口很短：
     影响；若本轮还要发这几个包，先改成 `prepack` 或改用 pnpm 发布。
 2.  **wasm 平台包的 `os` / `cpu`**：两个 wasm 包声明的是
     `os: [darwin, linux, win32]` + `cpu: [x64, arm64]`，所以每个桌面用户安装主包时都会
-    多装两个 wasm 包（约几百 KB）。`src/load.ts` 的 `getPlatformPackageName()`
-    从不解析 wasm 包，`matchPlatform()` 只是把不支持的平台映射成 `wasm32-wasip1`
-    这个 triple 然后报错。是否在本轮之后把 wasm 从 `optionalDependencies` 移除，
-    需要用户决定：移除会改变 edge 用户的可传递安装行为，且
-    `test-cross-use.yml` 的 wasm 作业依赖它被传递安装。
+    多装两个 wasm 包（单个 wasm 二进制的实际体积本轮未测，发布后可用
+    `npm view @cn-font-split/wasm32-wasip1 dist.unpackedSize` 核对）。
+    `src/load.ts` 的 `getPlatformPackageName()` 从不解析 wasm 包，`matchPlatform()`
+    只是把不支持的平台映射成 `wasm32-wasip1` 这个 triple 然后报错。是否在本轮之后把
+    wasm 从 `optionalDependencies` 移除，需要用户决定：移除会改变 edge 用户的可传递
+    安装行为，且 `test-cross-use.yml` 的 wasm 作业依赖它被传递安装。
 3.  **产物保留期**：cross-build 的 artifacts 只有 14 天。超过后必须重跑 cross-build
     才能再次发布；`cross_build_run_id` 与 `release-cn-font-split` 必须在同一 commit。
 4.  **macos-13 → macos-14**：`cross-build.yml` 的 `x86_64-apple-darwin` 条目已改到
