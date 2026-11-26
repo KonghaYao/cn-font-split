@@ -41,5 +41,6 @@ pip3 install -e .
 
 `sh build.sh` 依赖 `../../crates/proto/src/` 下的 `index.proto` 与
 `services.proto`，本机 protoc 36.2 已验证可用。生成代码会写入 protobuf 运行时
-版本断言（protoc 36.x ⇒ protobuf 7.x），因此 `setup.py` 里的 `protobuf` pin
-必须与生成时使用的 protoc 匹配：用更老的 protoc 重新生成后需同步下调 pin。
+版本断言（protoc 36.2 ⇒ protobuf `7.36.2`），因此 `setup.py` 与
+`requirements.txt` 里的 `protobuf` pin 当前均为 `7.36.2`，必须与生成时使用的
+protoc 匹配：换 protoc 重新生成后需同步修改这两处 pin。

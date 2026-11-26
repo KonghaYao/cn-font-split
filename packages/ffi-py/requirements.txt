@@ -1,1 +1,3 @@
-protobuf==5.29.2
+# 必须与 build.sh 生成 gen/*_pb2.py 所用 protoc 的版本一致（当前 protoc 36.2），
+# 否则 ValidateProtobufRuntimeVersion 会在 import 时失败。换 protoc 需同步此 pin。
+protobuf==7.36.2

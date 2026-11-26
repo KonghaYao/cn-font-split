@@ -55,8 +55,10 @@ wrapper 是对外接口，按部署形态各有一个包：
 
 ## packages/ 地图
 
-`packages/**` 同时是根 pnpm workspace 与根 Cargo workspace 的成员（`server` 除外，
-它自带 `[workspace]` 并被 `exclude`）。
+根 pnpm workspace 覆盖 `packages/**` 与 `crates/**`；根 Cargo workspace 的成员只有
+`crates/*` 与 `packages/{ffi,grpc,wasmer,wasm-edge}` 这四个 Rust 包，其余 `packages/*`
+是 pnpm 包，不参与 Cargo 构建。`packages/server` 是例外：它自带 `[workspace]` 与
+`Cargo.lock`，被根 `Cargo.toml` 的 `exclude` 排除，单独构建。
 
 | 目录 | 类型 | 说明 |
 | --- | --- | --- |
@@ -82,7 +84,8 @@ wrapper 是对外接口，按部署形态各有一个包：
 
 - 版本唯一真源是根 `Cargo.toml` 的 `[workspace.package].version`；
   `script/sync-version.mjs` 把版本写到各 `package.json` 的 `version` 与
-  `@cn-font-split/*` 的 `optionalDependencies`。
+  `@cn-font-split/*` 的 `optionalDependencies`，以及 Python 包的
+  `packages/ffi-py/setup.py`（`setup(version="x.y.z")`）。
 - 平台包目录 `dist-platforms/<platform>/` 由 `scripts/build-platforms.mjs` 从
   Rust 产物生成，不入库。
 - 发布 workflow 全部默认 `publish=false`（dry-run）。

@@ -314,7 +314,7 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 | plugin trait 与显式顺序表 | 已完成 | `src/pre_subset/plugin.rs` 定义 `PreSubsetPlugin`（`name` / `enabled` / `apply`），`src/pre_subset/mod.rs` 用 `static PIPELINE: &[&dyn PreSubsetPlugin]` 声明顺序，并有 `pipeline_order_is_stable` 单测锁住顺序；文档化的顺序约束见该文件顶部注释 |
 | CSS 结构化 / AST | 已完成 | `src/link_subset/css/ast.rs`：`Stylesheet` / `CssNode` / `FontFace` / `SrcItem` 结构化类型，渲染结果与历史字符串拼接逐字节一致；`output_css.rs` 只组装 AST |
 | Rust Config builder / 单一配置源 | 延后 | proto 仍是配置事实来源，CLI 参数直接构造 `InputTemplate`，未引入 Config builder 与派生 |
-| `name_template` 解析器化 | 已完成 | `src/link_subset/name_template.rs` 改为手写解析器（`Placeholder` + `is_word`），`regex` 依赖已从 `Cargo.toml` 移除；`\w` 语义用两张差集表（`WORD_EXTRA` / `NOT_WORD`）与旧正则逐码位对齐 |
+| `name_template` 解析器化 | 已完成 | `src/naming.rs` 改为手写解析器（`Placeholder` + `is_word`），`regex` 依赖已从 `Cargo.toml` 移除；`\w` 语义用两张差集表（`WORD_EXTRA` / `NOT_WORD`）与旧正则逐码位对齐 |
 | 按实测体积迭代的分包算法 | 延后 | 仍是「采样 + 两点校准」估算；WorkSans VF 单包 157,996B（≈158KB）仍然存在，未按实测体积收敛 |
 | `google-protobuf` 迁移 | 已完成 | `packages/ffi-js` 改用 `@bufbuild/protobuf` 2.17（生成器 `@bufbuild/protoc-gen-es` 同版本，`protoc --es_out`）；`packages/test` 的未使用依赖已移除；类型改名见 `MIGRATION-8.0.md` §5.1 |
 | `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.5+ 在解码失败时执行 `debug_assert`，会破坏 `truncated_woff2` 的错误返回。0.4.0 的 woff2 C++ 源码缺 `#include <cstdint>`，GCC 13+ 需用 `CXXFLAGS=-include cstdint` 编译（CI 已设置） |
