@@ -1,3 +1,4 @@
+pub mod config;
 pub mod error;
 pub mod link_subset;
 pub mod pre_subset;

@@ -44,11 +44,11 @@ struct ThreadResult {
 }
 /// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
 pub fn run_subset(ctx: &mut Context) -> Result<()> {
-    let origin_bytes = ctx.input.input.len() as u32;
+    let origin_bytes = ctx.config.input.len() as u32;
     let all_chars: IndexSet<u32> =
         ctx.face.collect_unicodes().iter().cloned().collect();
     let origin_size = all_chars.len() as u32;
-    let file_name_template = ctx.input.rename_output_font.clone();
+    let file_name_template = ctx.config.rename_output_font.clone();
     debug!("font subset result log");
     let thread_result: Vec<ThreadResult> = ctx
         .pre_subset_result

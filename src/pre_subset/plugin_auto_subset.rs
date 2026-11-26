@@ -6,7 +6,8 @@ use log::{debug, info};
 
 use crate::run_subset::build_single_subset;
 
-use super::plugin::{Config, PreSubsetPlugin, SubsetDraft};
+use super::plugin::{PreSubsetPlugin, SubsetDraft};
+use crate::config::Config;
 use crate::error::Result;
 
 #[derive(Copy, Clone, Debug)]
@@ -136,7 +137,7 @@ impl PreSubsetPlugin for AutoSubset {
     }
 
     fn enabled(&self, config: &Config) -> bool {
-        config.auto_subset.unwrap_or(true)
+        config.auto_subset
     }
 
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {

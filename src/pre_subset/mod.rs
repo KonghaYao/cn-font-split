@@ -96,7 +96,7 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     let vars: Option<FontVariations> = font.take(&mut font_file).ok().flatten();
     ctx.fvar_table = analyze_fvar_table(vars);
 
-    let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&ctx.input.subsets)?;
+    let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&ctx.config.subsets)?;
 
     // 初始化预处理上下文
     let subsets: Vec<IndexSet<u32>> = vec![];
@@ -104,8 +104,7 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
         all_unicodes: all_unicodes.clone(),
         face: ctx.face,
         // 每个包的大小
-        predict_bytes_pre_subset: ctx.input.chunk_size.unwrap_or(1024 * 70)
-            as u32,
+        predict_bytes_pre_subset: ctx.config.chunk_size as u32,
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
@@ -116,7 +115,7 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     let mut draft =
         SubsetDraft { subsets, remaining: all_unicodes, ctx: &mut context };
     for plugin in PIPELINE {
-        if plugin.enabled(ctx.input) {
+        if plugin.enabled(ctx.config) {
             plugin.apply(&mut draft)?;
         }
     }

@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package api_interface;
 
+// InputTemplate 只是跨语言的 wire IR：它描述调用方想传什么，
+// 不承载默认值与校验语义。默认值与入口校验在核心的 src/config.rs，
+// 默认值表见 docs/CONFIG.md。
 message InputTemplate {
     bytes input = 1; // ttf/woff2 文件的 buffer
     optional string out_dir = 2; // 切割后放置文件的文件夹

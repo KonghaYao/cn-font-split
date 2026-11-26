@@ -12,15 +12,15 @@ fn output_file(ctx: &mut Context, file_name: &str, content: Vec<u8>) {
 }
 
 pub fn link_subset(ctx: &mut Context) -> Result<()> {
-    let css = ctx.input.css.clone().unwrap_or_default();
+    let css = ctx.config.css.clone();
 
     let css_code = output_css::output_css(ctx, &css);
     // 输出 CSS 文件
-    let css_file_name = css.file_name.unwrap_or("result.css".to_string());
+    let css_file_name = css.file_name.clone();
     output_file(ctx, &css_file_name, css_code.as_bytes().to_vec());
 
     // 输出 HTML 文件（如果需要）
-    if ctx.input.test_html.unwrap_or(true) {
+    if ctx.config.test_html {
         output_file(ctx, "index.html", HTML_TEMPLATE.to_vec());
     }
 

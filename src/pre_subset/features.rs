@@ -4,7 +4,8 @@ use gsub::analyze_gsub;
 use indexmap::IndexSet;
 use std::collections::HashMap;
 
-use super::plugin::{Config, PreSubsetPlugin, SubsetDraft};
+use super::plugin::{PreSubsetPlugin, SubsetDraft};
+use crate::config::Config;
 use crate::error::Result;
 pub mod cmap;
 pub mod gpos;
@@ -19,7 +20,7 @@ impl PreSubsetPlugin for FontFeatures {
     }
 
     fn enabled(&self, config: &Config) -> bool {
-        config.font_feature.unwrap_or(true)
+        config.font_feature
     }
 
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {

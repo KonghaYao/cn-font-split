@@ -1,6 +1,7 @@
 use indexmap::IndexSet;
 
-use super::plugin::{Config, PreSubsetPlugin, SubsetDraft};
+use super::plugin::{PreSubsetPlugin, SubsetDraft};
+use crate::config::Config;
 use crate::error::Result;
 
 /// 把用户传入的 subsets 放到分包列表最前面。

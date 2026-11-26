@@ -1,5 +1,6 @@
 use clap::Parser;
-use cn_font_proto::api_interface::{EventName, InputTemplate};
+use cn_font_proto::api_interface::EventName;
+use cn_font_split::config::Config;
 use cn_font_split::font_split;
 use cn_font_utils::output_file;
 use std::path::PathBuf;
@@ -137,43 +138,53 @@ fn main() -> ExitCode {
     }
 }
 
+/// 只在参数显式给出时覆盖默认值；默认值本身只存在于 `Config`。
+fn apply<T>(slot: &mut T, value: Option<T>) {
+    if let Some(value) = value {
+        *slot = value;
+    }
+}
+
+/// 可选字段：参数给出时整体覆盖。
+fn apply_optional<T>(slot: &mut Option<T>, value: Option<T>) {
+    if let Some(value) = value {
+        *slot = Some(value);
+    }
+}
+
 fn run(args: Args) -> std::result::Result<(), String> {
     let out_dir = args.out_dir.clone();
     let input = std::fs::read(&args.input).map_err(|e| {
         format!("读取输入字体 {} 失败: {e}", args.input.display())
     })?;
 
-    let config = InputTemplate {
-        input,
-        css: if let Some(css) = args.css {
-            Some(cn_font_proto::api_interface::input_template::CssProperties {
-                font_display: css.font_display,
-                file_name: css.file_name,
-                font_style: css.font_style,
-                font_family: css.font_family,
-                font_weight: css.font_weight,
-                ..Default::default()
-            })
-        } else {
-            None
-        },
-        language_areas: args.language_areas,
-        chunk_size: args.chunk_size,
-        chunk_size_tolerance: args.chunk_size_tolerance,
-        max_allow_subsets_count: args.max_allow_subsets_count,
-        test_html: args.test_html,
-        reporter: args.reporter,
-        rename_output_font: args.rename_output_font,
-        build_mode: args.build_mode,
-        multi_threads: args.multi_threads,
-        font_feature: args.font_feature,
-        reduce_mins: args.reduce_mins,
-        auto_subset: args.auto_subset,
-        subset_remain_chars: args.subset_remain_chars,
-        ..Default::default()
-    };
+    let mut config = Config { input, ..Config::default() };
+    if let Some(css) = args.css {
+        apply(&mut config.css.font_display, css.font_display);
+        apply(&mut config.css.file_name, css.file_name);
+        apply_optional(&mut config.css.font_style, css.font_style);
+        apply_optional(&mut config.css.font_family, css.font_family);
+        apply_optional(&mut config.css.font_weight, css.font_weight);
+    }
+    apply(&mut config.language_areas, args.language_areas);
+    apply(&mut config.chunk_size, args.chunk_size);
+    apply(&mut config.chunk_size_tolerance, args.chunk_size_tolerance);
+    apply_optional(
+        &mut config.max_allow_subsets_count,
+        args.max_allow_subsets_count,
+    );
+    apply(&mut config.test_html, args.test_html);
+    apply(&mut config.reporter, args.reporter);
+    apply_optional(&mut config.rename_output_font, args.rename_output_font);
+    apply_optional(&mut config.build_mode, args.build_mode);
+    apply(&mut config.multi_threads, args.multi_threads);
+    apply(&mut config.font_feature, args.font_feature);
+    apply(&mut config.reduce_mins, args.reduce_mins);
+    apply(&mut config.auto_subset, args.auto_subset);
+    apply(&mut config.subset_remain_chars, args.subset_remain_chars);
+
     let write_failed = AtomicBool::new(false);
-    font_split(config, |x| {
+    font_split(config.to_template(), |x| {
         let p = std::path::Path::new(&out_dir).join(&x.message);
         match EventName::try_from(x.event).unwrap_or(EventName::Unspecified) {
             EventName::Unspecified => {}

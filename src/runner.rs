@@ -1,3 +1,4 @@
+use crate::config::Config;
 use crate::error::{FontSplitError, Result};
 use crate::link_subset::link_subset;
 use crate::loader::smart_load_woff2;
@@ -16,7 +17,7 @@ where
     'b: 'a,
     'c: 'a,
 {
-    pub input: &'c InputTemplate,
+    pub config: &'c Config,
     pub binary: &'c [u8],
     pub pre_subset_result: Vec<Vec<u32>>,
     pub run_subset_result: Vec<RunSubsetResult>,
@@ -28,14 +29,14 @@ where
 }
 
 pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
-    config: &'c InputTemplate,
+    config: &'c Config,
     binary: &'c [u8],
     face: &'a mut Owned<Face<'b>>,
     reporter: &'a mut OutputReport,
     callback: &'a F,
 ) -> Context<'a, 'b, 'c> {
     let ctx = Context {
-        input: config,
+        config,
         binary,
         pre_subset_result: vec![],
         run_subset_result: vec![],
@@ -55,44 +56,11 @@ pub fn create_context<'a, 'b, 'c, F: Fn(EventMessage)>(
     ctx
 }
 
-/// 入口校验：在读取/解析字体之前把用户输入问题转成结构化错误。
-fn validate_config(config: &InputTemplate) -> Result<()> {
-    if config.input.is_empty() {
-        return Err(FontSplitError::EmptyInput);
-    }
-
-    for (index, subset) in config.subsets.iter().enumerate() {
-        if subset.len() % 4 != 0 {
-            return Err(FontSplitError::InvalidSubsets(format!(
-                "subsets[{index}] 的字节长度 {} 不是 4 的倍数",
-                subset.len()
-            )));
-        }
-    }
-
-    // chunk_size 会被转换为 u32 用作分包字节预算；
-    // 0 会让 `split_vector` 每次取 0 个字符而陷入死循环，负数则会被
-    // 当成巨大的 u32，因此必须在入口拒绝。
-    if let Some(chunk_size) = config.chunk_size {
-        if chunk_size <= 0 {
-            return Err(FontSplitError::InvalidConfig(format!(
-                "chunk_size 必须大于 0，当前为 {chunk_size}"
-            )));
-        }
-    }
-
-    // 该字段当前未参与分包计算，但非法值说明调用方配置有误，仍然拒绝。
-    if let Some(count) = config.max_allow_subsets_count {
-        if count <= 0 {
-            return Err(FontSplitError::InvalidConfig(format!(
-                "max_allow_subsets_count 必须大于 0，当前为 {count}"
-            )));
-        }
-    }
-
-    Ok(())
-}
-
+/// 核心入口：把 wire IR 解析成 [`Config`] 后依次执行
+/// `pre_subset` → `run_subset` → `link_subset`，通过 callback 输出事件。
+///
+/// 入口校验已迁入 [`Config::from_template`]，错误仍以 `FontSplitError` 返回，
+/// 并在此之前发出一个 Error 事件。
 pub fn font_split<F: Fn(EventMessage)>(
     config: InputTemplate,
     callback: F,
@@ -108,16 +76,16 @@ pub fn font_split<F: Fn(EventMessage)>(
 }
 
 fn font_split_inner<F: Fn(EventMessage)>(
-    config: &InputTemplate,
+    template: &InputTemplate,
     callback: &F,
 ) -> Result<()> {
-    validate_config(config)?;
+    let config = Config::from_template(template)?;
 
     let mut reporter = OutputReport::default();
     let binary = smart_load_woff2(&config.input)?;
     let mut face = Face::from_bytes(&binary, 0);
     let mut ctx =
-        create_context(config, &binary, &mut face, &mut reporter, callback);
+        create_context(&config, &binary, &mut face, &mut reporter, callback);
 
     pre_subset(&mut ctx)?;
     run_subset(&mut ctx)?;
@@ -131,7 +99,7 @@ fn font_split_inner<F: Fn(EventMessage)>(
         FontSplitError::Internal(format!("reporter 序列化失败: {e}"))
     })?;
 
-    if ctx.input.reporter.unwrap_or(true) {
+    if ctx.config.reporter {
         callback(EventMessage::output_data("reporter.bin", reporter_buffer));
     }
 
@@ -147,14 +115,14 @@ mod tests {
 
     #[test]
     fn test_create_context() {
-        let input = InputTemplate { ..Default::default() };
+        let config = Config::default();
         let binary = vec![0u8; 100];
         let mut face = Face::from_bytes(&binary, 0);
         let mut reporter = OutputReport::default();
         let callback = |_msg: EventMessage| {};
 
         let ctx = create_context(
-            &input,
+            &config,
             &binary,
             &mut face,
             &mut reporter,

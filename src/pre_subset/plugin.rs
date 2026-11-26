@@ -1,6 +1,5 @@
 use std::collections::BTreeSet;
 
-use cn_font_proto::api_interface::InputTemplate;
 use indexmap::IndexSet;
 
 use lang_unicodes::{
@@ -9,19 +8,13 @@ use lang_unicodes::{
 use log::info;
 
 use super::PreSubsetContext;
+use crate::config::Config;
 use crate::error::Result;
-
-/// 预处理插件读取的配置类型。
-///
-/// 8.0 尚未引入独立的 `Config` 结构（见 `docs/PLAN-8.0-FOLLOWUPS.md` §A.5），
-/// 这里先用别名把 trait 签名固定为 `&Config`；等默认值收拢进 `Config` 时
-/// 只需替换别名，不必改动各插件。
-pub type Config = InputTemplate;
 
 /// 预处理插件。
 ///
-/// 启用默认值只在各插件的 `enabled` 里出现一次（来自 `Config` 字段的
-/// `unwrap_or`），顺序表不重复记录开关。
+/// 启用开关读取 [`Config`] 中已解析的字段，默认值只在 `crate::config` 里
+/// 定义一次，顺序表不重复记录开关。
 ///
 /// `Sync` 是 `PIPELINE` 能声明为 `static` 的前提，unit struct 天然满足。
 pub trait PreSubsetPlugin: Sync {
@@ -55,7 +48,7 @@ impl PreSubsetPlugin for LanguageArea {
     }
 
     fn enabled(&self, config: &Config) -> bool {
-        config.language_areas.unwrap_or(true)
+        config.language_areas
     }
 
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {
@@ -94,7 +87,7 @@ impl PreSubsetPlugin for AddRemainChars {
     }
 
     fn enabled(&self, config: &Config) -> bool {
-        config.subset_remain_chars.unwrap_or(true)
+        config.subset_remain_chars
     }
 
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {
@@ -116,8 +109,8 @@ impl PreSubsetPlugin for ReduceMin {
     }
 
     fn enabled(&self, config: &Config) -> bool {
-        // 尚未调试好这个算法，所以默认不启用
-        config.reduce_mins.unwrap_or(false)
+        // 尚未调试好这个算法，所以默认不启用（默认值见 crate::config）
+        config.reduce_mins
     }
 
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {

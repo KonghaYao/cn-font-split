@@ -16,7 +16,7 @@ pub fn gen_svg_from_font_file(file: &[u8], text: &str) -> String {
 }
 
 pub fn gen_svg_from_ctx(ctx: &mut Context) {
-    if let Some(preview) = &ctx.input.preview_image {
+    if let Some(preview) = &ctx.config.preview_image {
         let text = gen_svg(ctx.face, &preview.text);
         let name = if preview.name.is_empty() {
             String::from("preview")
