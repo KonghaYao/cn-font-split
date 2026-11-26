@@ -12,6 +12,7 @@
 | plugin trait | 已完成（3d83540） |
 | Config builder | 已完成（f42098f） |
 | 端到端 benchmark | 已完成（5c321e8） |
+| `fontFeature` 输出确定性 | 已完成：cmap 反查改为按 unicode 排序注入（同 glyph 取最小 unicode） |
 | CSS AST / Context 拆分 / 实测体积分包 | CSS AST、Context 拆分：已完成（批次 3）；实测体积分包待排期（按本文顺序） |
 | woff / prost / wasm / cross-build / Linux 像素基线 / Feature 矩阵 | 依赖决策或远端环境 |
 
