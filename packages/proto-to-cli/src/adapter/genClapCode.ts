@@ -4,6 +4,16 @@ import { Adapter } from '../cli.js';
 import { snakeCase } from 'change-case';
 
 /**
+ * proto 注释会原样进入 Rust 字符串字面量，注释里的引号/反斜杠/换行必须转义，
+ * 否则生成的 clap 代码无法编译（例如注释写成 `只接受 "default"`）。
+ */
+const escapeRustString = (text: string): string =>
+    text
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\r?\n/g, ' ');
+
+/**
  * @zh 生成 clap 参数定义
  * @en Generate clap parameter definitions
  */
@@ -78,7 +88,7 @@ pub struct ${messageName} {
                 `    #[arg(${[
                     `long = "${longName}"`,
                     mayShortName ? `short = '${mayShortName}'` : '',
-                    `help = "${comment}"`,
+                    `help = "${escapeRustString(comment)}"`,
                     defaultValue ? `default_value = "${defaultValue}"` : '',
                     // value.type === 'bytes' ? `value_parser = parse_bytes` : '',
                 ]
