@@ -318,19 +318,20 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 | `google-protobuf` 迁移 | 延后 | `packages/ffi-js` 与 `packages/test` 仍依赖 `google-protobuf`；未迁到 `@bufbuild/protobuf` |
 | `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.5+ 在解码失败时执行 `debug_assert`，会破坏 `truncated_woff2` 的错误返回。0.4.0 的 woff2 C++ 源码缺 `#include <cstdint>`，GCC 13+ 需用 `CXXFLAGS=-include cstdint` 编译（CI 已设置） |
 | `prost` / `tonic 0.14` | 延后 | 仍为 `prost 0.13.5`；0.14 的 MSRV 为 1.88，高于本项目 1.85 |
-| Bun / Deno 平台包解析 | 延后 | 两者仍只读 `CN_FONT_SPLIT_BIN`，没有 `optionalDependencies` 解析 |
+| Bun / Deno 平台包解析 | 已完成 | `resolveBinPath` 抽到 `load.ts`，node / bun / deno 共用：env → `createRequire` 解析 `@cn-font-split/<platform>` → 本地 `dist` 回退 → 报错列出尝试项（`8216776`） |
 | wasm 平台包 | 未实测 | `wasm32-wasip1/p2` 有构建 workflow 与加载入口，但本轮未做发布验收 |
 | `packages/server` 独立 workspace | 延后 | 仍带独立 `Cargo.toml` / `Cargo.lock`，未收编或显式排除 |
-| 端到端（含写盘）benchmark | 延后 | `examples/bench.rs` 仍是纯内存计算；Node 写盘耗时仅有一次手工记录 |
+| 端到端（含写盘）benchmark | 已完成 | `packages/ffi-js/scripts/bench-e2e.mjs`：内存 sink 与真实写盘各跑一轮，产物逐字节一致；结果入库 `bench-results/e2e-v8/`（`5c321e8`） |
 | Feature 矩阵（远程字体） | 延后 | 旧 `FeatureConfig` 依赖远程 CDN 字体，已从 CI 移除；`test-font-feature` 改为本地字体 Chromium 冒烟 |
 | 全平台 cross-build dry-run artifacts | 未执行 | `cross-build.yml` 已重写并通过 YAML 解析，但未实际触发远端构建 |
 
 其他已知观察项保持原状：
 
 - `chunk_size_tolerance` / `max_allow_subsets_count` / `build_mode` / `multi_threads`
-  仍未参与核心分包计算（仅做入口校验）。
-- 许可证未统一：`packages/font-replacer` 仍为 MIT，`metrics` / `font-analyze` /
-  `performance` 仍为 ISC。
+  的现状：`multi_threads=false` 已走顺序构建、`build_mode` 已枚举化、
+  `chunk_size_tolerance` 非 0 会被显式拒绝；`max_allow_subsets_count` 仍只校验 `> 0`，
+  完整语义与「按实测体积迭代分包」一起做（`2835776`）。
+- 许可证已统一为 Apache-2.0（7 个发布包 + `script/check-licenses.mjs` 校验）。
 - `performance` 为实验包，已标记 `private: true`，不参与发布。
 - `font-sharp` / `font-analyze` 已修复构建并纳入根构建。`font-sharp` 现已可用：
   `main` / `types` / `exports` 指向真实产物 `dist/index.js` 与 `dist/index.d.ts`；

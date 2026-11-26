@@ -13,7 +13,10 @@
 | Config builder | 已完成（f42098f） |
 | 端到端 benchmark | 已完成（5c321e8） |
 | `fontFeature` 输出确定性 | 已完成：cmap 反查改为按 unicode 排序注入（同 glyph 取最小 unicode） |
-| CSS AST / Context 拆分 / 实测体积分包 | CSS AST、Context 拆分：已完成（批次 3）；实测体积分包待排期（按本文顺序） |
+| CSS AST / Context 拆分 | 已完成（de64fc1 / 315e40a） |
+| 配置字段语义（`multi_threads` / `build_mode` / `chunk_size_tolerance`） | 已完成（2835776）：`max_allow_subsets_count` 留给实测体积分包 |
+| Bun / Deno 平台包解析 | 已完成（8216776），单测已纳入 CI |
+| 实测体积分包（WorkSans 157,996B） | 待三项决策：tolerance 单位、包数增幅上限、超限处理 |
 | woff / prost / wasm / cross-build / Linux 像素基线 / Feature 矩阵 | 依赖决策或远端环境 |
 
 批次 1–2 已随 PR #221 合入 `release`（合并 commit `b3d8b03`）。
