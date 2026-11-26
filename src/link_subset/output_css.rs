@@ -1,7 +1,7 @@
 use crate::config::{CssConfig, DEFAULT_FONT_FAMILY};
+use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
 use crate::run_subset::RunSubsetResult;
-use crate::runner::Context;
 use cn_font_proto::api_interface::output_report::{self};
 use cn_font_utils::vec_u32_to_string;
 
@@ -11,6 +11,12 @@ use super::css::header_comment::create_header_comment;
 
 /// 非压缩模式下 `@font-face` 内部声明的缩进空格数。
 const FONT_FACE_INDENT: usize = 4;
+
+/// CSS 渲染结果：文件内容与 reporter 需要的元信息。
+pub struct CssOutput {
+    pub code: String,
+    pub report: output_report::Css,
+}
 
 fn extract_font_family(css: &CssConfig, name_table: &NameTableSets) -> String {
     css.font_family.clone().unwrap_or_else(|| {
@@ -78,18 +84,23 @@ fn build_font_face(
     }
 }
 
-pub fn output_css(ctx: &mut Context, css: &CssConfig) -> String {
-    let name_table = &ctx.name_table;
+pub fn output_css(
+    css: &CssConfig,
+    version: &str,
+    name_table: &NameTableSets,
+    fvar: Option<&FvarTable>,
+    items: &[RunSubsetResult],
+) -> CssOutput {
     let font_family = extract_font_family(css, name_table);
     let font_style = extract_font_style(css, name_table);
-    let font_weight = extract_font_weight(css, ctx, name_table);
+    let font_weight = extract_font_weight(css, fvar, name_table);
     let display = css.font_display.clone();
 
     let locals = generate_local_sources(css, &font_family);
     let polyfills = generate_polyfill_sources(css);
 
-    let mut nodes = Vec::with_capacity(ctx.run_subset_result.len());
-    for res in ctx.run_subset_result.iter().rev() {
+    let mut nodes = Vec::with_capacity(items.len());
+    for res in items.iter().rev() {
         if css.comment_unicodes {
             nodes.push(CssNode::Comment(vec_u32_to_string(&res.unicodes)));
         }
@@ -104,16 +115,21 @@ pub fn output_css(ctx: &mut Context, css: &CssConfig) -> String {
         )));
     }
 
-    ctx.reporter.css = Some(output_report::Css {
+    let report = output_report::Css {
         family: font_family.clone(),
         style: font_style.clone(),
         display: display.clone(),
         weight: font_weight.clone(),
-    });
+    };
 
-    let stylesheet =
-        Stylesheet { header: create_header_comment(ctx, css), nodes };
-    stylesheet.render(css.compress, FONT_FACE_INDENT)
+    let stylesheet = Stylesheet {
+        header: create_header_comment(css, name_table, version),
+        nodes,
+    };
+    CssOutput {
+        code: stylesheet.render(css.compress, FONT_FACE_INDENT),
+        report,
+    }
 }
 
 /** 判断是否为斜体 */
@@ -123,27 +139,22 @@ fn is_italic(str: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::Config;
     use crate::run_subset::RunSubsetResult;
-    use crate::runner::create_context;
-    use cn_font_proto::api_interface::OutputReport;
     use cn_font_proto::api_interface::input_template::PolyfillType;
-    use harfbuzz_rs_now::Face;
 
-    /// 只渲染 CSS：上下文固定为空，CSS 配置与分包结果由调用方给出。
+    /// 只渲染 CSS：name 表与 fvar 固定为空，CSS 配置与分包结果由调用方给出。
     fn render_results(
         css: &CssConfig,
         results: Vec<RunSubsetResult>,
     ) -> String {
-        let mut reporter = OutputReport::default();
-        let binary = vec![];
-        let base = Config::default();
-        let mut face = Face::from_bytes(&binary, 0);
-        let mut ctx =
-            create_context(&base, &binary, &mut face, &mut reporter, &|_| {});
-
-        ctx.run_subset_result = results;
-        output_css(&mut ctx, css)
+        output_css(
+            css,
+            env!("CARGO_PKG_VERSION"),
+            &NameTableSets::default(),
+            None,
+            &results,
+        )
+        .code
     }
 
     fn render(css: &CssConfig, unicodes: Vec<u32>) -> String {

@@ -12,7 +12,7 @@
 | plugin trait | 已完成（3d83540） |
 | Config builder | 已完成（f42098f） |
 | 端到端 benchmark | 已完成（5c321e8） |
-| CSS AST / Context 拆分 / 实测体积分包 | CSS AST、Context 拆分：批次 3；实测体积分包待排期（按本文顺序） |
+| CSS AST / Context 拆分 / 实测体积分包 | CSS AST、Context 拆分：已完成（批次 3）；实测体积分包待排期（按本文顺序） |
 | woff / prost / wasm / cross-build / Linux 像素基线 / Feature 矩阵 | 依赖决策或远端环境 |
 
 批次 1–2 已随 PR #221 合入 `release`（合并 commit `b3d8b03`）。
@@ -36,6 +36,8 @@
 **可立即实施**：可以。第一步只引入类型、保留签名（可单 commit 回滚），第二步再纯函数化。
 
 **待决策**：是否保留 `runner::Context` 兼容别名（8.0 已 breaking，建议删除并在 MIGRATION 记录）。
+
+**结论**：按建议删除兼容别名，迁移说明见 `docs/MIGRATION-8.0.md` §4「管线内部 API」；实现时 `PreSubsetOutput` 多带一个 `extra_files` 字段承载 preview SVG，`RunSubsetOutput` 多带 `files` / `details` 两个字段承载待输出字节与 `subset_detail` 明细。
 
 ### 2. plugin trait 与显式顺序表
 

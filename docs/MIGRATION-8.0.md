@@ -119,6 +119,35 @@ if let Err(FontSplitError::InvalidConfig(msg)) = result {
 `InvalidSubsets`、`InvalidConfig`、`Io`、`Internal`。原来依赖 panic 文本的
 兼容代码需要改为匹配错误枚举。
 
+#### 管线内部 API：`runner::Context` 已删除（breaking）
+
+8.0 把管线拆成阶段产物，不再对外暴露带 `&mut face` / `&mut reporter` /
+`callback` 的可变上下文：
+
+-   `runner::Context` 与 `runner::create_context` **已删除**，不保留兼容别名；
+-   替代类型：`runner::FontSource<'a>`（输入）、`runner::PreSubsetOutput`、
+    `runner::RunSubsetOutput`、`runner::LinkSubsetOutput`（三段产物）；
+-   三段签名为 `pre_subset(&mut FontSource, &Config)`、
+    `run_subset(&FontSource, &Config, &PreSubsetOutput)`、
+    `link_subset(&Config, &PreSubsetOutput, &RunSubsetOutput)`，各自返回对应产物；
+-   `gen_svg_from_ctx` 改为 `gen_svg_extra_files(&Config, &Face)`，只返回待输出的
+    `(文件名, 内容)` 列表，不再自行 emit。
+
+Rust 使用者不应再构造上下文或手工串联三段，改为消费 `font_split` 的事件流：
+
+```rust
+use cn_font_proto::api_interface::EventMessage;
+use cn_font_split::font_split;
+
+font_split(config, |event: EventMessage| {
+    // OutputData：文件名在 event.message，内容在 event.data；
+    // End / Error 的处理见上文错误模型。
+})?;
+```
+
+确需单独调用某个阶段时，按 `src/runner.rs` 中 `font_split_inner` 的组合方式
+传递阶段产物，并自行负责 `OutputData` 事件与 `reporter.bin` 的组装。
+
 ## 5. 移除的运行期依赖
 
 -   **`set-value`** 已移除（不再做深层属性赋值）。
@@ -141,6 +170,8 @@ if let Err(FontSplitError::InvalidConfig(msg)) = result {
 -   [ ] 更新对 md5 文件名（32 hex）的假设与缓存键。
 -   [ ] JS 侧为 `fontSplit()` 增加 `try/catch`；Rust 侧处理 `Result`。
 -   [ ] 如果监听事件流，增加 `EventName.Error`（值 `3`）分支。
+-   [ ] 如果直接依赖 `runner::Context` / `create_context` / `gen_svg_from_ctx`，
+        改为消费 `font_split` 的事件流（这些符号 8.0 已删除或改名）。
 
 ## 8. 回滚建议
 

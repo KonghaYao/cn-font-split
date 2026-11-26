@@ -1,8 +1,7 @@
+use crate::config::Config;
 use crate::error::{FontSplitError, Result};
 use crate::link_subset::name_template::name_template;
-use crate::message::EventFactory;
-use crate::runner::Context;
-use cn_font_proto::api_interface::EventMessage;
+use crate::runner::{FontSource, PreSubsetOutput, RunSubsetOutput};
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
 };
@@ -40,24 +39,30 @@ pub fn build_single_subset(
 struct ThreadResult {
     pub subset_result: RunSubsetResult,
     pub log: SubsetDetail,
-    pub message: EventMessage,
+    /// 待输出的 woff2 字节，emit 由 `font_split_inner` 统一完成。
+    pub data: Vec<u8>,
 }
-/// 根据预处理结果，生成字体子集文件，通过 callback 返回文件保存数据
-pub fn run_subset(ctx: &mut Context) -> Result<()> {
-    let origin_bytes = ctx.config.input.len() as u32;
+/// 根据预处理结果，生成字体子集文件；产物交给调用方按顺序输出
+pub fn run_subset(
+    source: &FontSource<'_>,
+    config: &Config,
+    pre: &PreSubsetOutput,
+) -> Result<RunSubsetOutput> {
+    // 与拆分前一致：报告里的原始字节数是输入字节数，而不是解码后的字体长度。
+    let origin_bytes = config.input.len() as u32;
     let all_chars: IndexSet<u32> =
-        ctx.face.collect_unicodes().iter().cloned().collect();
+        source.face.collect_unicodes().iter().cloned().collect();
     let origin_size = all_chars.len() as u32;
-    let file_name_template = ctx.config.rename_output_font.clone();
+    let file_name_template = config.rename_output_font.clone();
     debug!("font subset result log");
-    let thread_result: Vec<ThreadResult> = ctx
-        .pre_subset_result
+    let thread_result: Vec<ThreadResult> = pre
+        .subsets
         .par_iter()
         .enumerate()
         .map(|(index, r)| {
             let start_time = Instant::now();
 
-            let result = build_single_subset(ctx.face, r)?;
+            let result = build_single_subset(&source.face, r)?;
             let result_bytes = u8_size_in_kb(&result);
             let hash_string =
                 blake3::hash(result.as_slice()).to_hex().to_string();
@@ -88,21 +93,24 @@ pub fn run_subset(ctx: &mut Context) -> Result<()> {
                     bytes: result.len() as u32,
                     duration: duration.as_millis() as u32,
                 },
-                message: EventMessage::output_data(&file_name, result),
+                data: result,
             })
         })
         .collect::<Result<Vec<ThreadResult>>>()?;
-    let (bundled_bytes, bundle_chars): (u32, IndexSet<u32>) = thread_result
-        .iter()
-        .fold((0, IndexSet::new()), |(mut bytes, mut chars), res| {
-            (ctx.callback)(res.message.clone());
 
-            bytes += res.log.bytes;
-            chars.extend(res.log.chars.iter().cloned());
-            ctx.run_subset_result.push(res.subset_result.clone());
-            ctx.reporter.subset_detail.push(res.log.clone());
-            (bytes, chars)
-        });
+    let mut items = Vec::with_capacity(thread_result.len());
+    let mut details = Vec::with_capacity(thread_result.len());
+    let mut files = Vec::with_capacity(thread_result.len());
+    let mut bundle_chars: IndexSet<u32> = IndexSet::new();
+    let mut bundled_bytes: u32 = 0;
+    for res in thread_result {
+        bundled_bytes += res.log.bytes;
+        bundle_chars.extend(res.log.chars.iter().cloned());
+        let file_name = res.log.file_name.clone();
+        items.push(res.subset_result);
+        details.push(res.log);
+        files.push((file_name, res.data));
+    }
 
     // 汇报构建前后的 unicode 差异
     let diff: Vec<u32> = bundle_chars
@@ -122,13 +130,17 @@ pub fn run_subset(ctx: &mut Context) -> Result<()> {
         );
     }
 
-    ctx.reporter.bundle_message = Some(BundleMessage {
-        origin_size,
-        bundled_size: bundle_chars.len() as u32,
-        origin_bytes,
-        bundled_bytes,
-    });
-    Ok(())
+    Ok(RunSubsetOutput {
+        items,
+        bundle: BundleMessage {
+            origin_size,
+            bundled_size: bundle_chars.len() as u32,
+            origin_bytes,
+            bundled_bytes,
+        },
+        files,
+        details,
+    })
 }
 
 #[derive(Debug, Clone, Default)]

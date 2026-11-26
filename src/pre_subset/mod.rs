@@ -5,13 +5,14 @@ pub mod name_table;
 pub mod plugin;
 mod plugin_auto_subset;
 
+use crate::config::Config;
 use crate::error::{FontSplitError, Result};
-use crate::runner::Context;
+use crate::runner::{FontSource, PreSubsetOutput};
 mod plugin_add_user_subset;
 use cn_font_utils::u8_array_to_u32_array;
 use features::FontFeatures;
 use fvar::analyze_fvar_table;
-use gen_svg::gen_svg_from_ctx;
+use gen_svg::gen_svg_extra_files;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
 use opentype::tables::FontVariations;
@@ -78,33 +79,35 @@ fn decode_user_subsets(subsets: &[Vec<u8>]) -> Result<Vec<Vec<u32>>> {
 }
 
 // 主要的预处理函数，用于执行字体的预处理和子集化操作
-pub fn pre_subset(ctx: &mut Context) -> Result<()> {
+pub fn pre_subset(
+    source: &mut FontSource<'_>,
+    config: &Config,
+) -> Result<PreSubsetOutput> {
     // 初始化二进制文件数据和所有Unicode字符的集合
-    let file_binary = ctx.binary;
     let all_unicodes: BTreeSet<u32> =
-        BTreeSet::from_iter(ctx.face.collect_unicodes());
+        BTreeSet::from_iter(source.face.collect_unicodes());
 
     // 创建字体文件游标并读取字体数据
-    let mut font_file = Cursor::new(file_binary);
+    let mut font_file = Cursor::new(source.binary);
     let font = opentype::Font::read(&mut font_file).map_err(|e| {
         FontSplitError::InvalidFont(format!("读取 OpenType 字体失败: {e}"))
     })?;
 
-    // 生成SVG图像
-    gen_svg_from_ctx(ctx);
+    // 生成SVG图像（pre 阶段的附加文件，由调用方统一按顺序 emit）
+    let extra_files = gen_svg_extra_files(config, &source.face);
     // 可变字体表缺失或解析失败时按非可变字体处理，不影响切割。
     let vars: Option<FontVariations> = font.take(&mut font_file).ok().flatten();
-    ctx.fvar_table = analyze_fvar_table(vars);
+    let fvar = analyze_fvar_table(vars);
 
-    let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&ctx.config.subsets)?;
+    let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&config.subsets)?;
 
     // 初始化预处理上下文
     let subsets: Vec<IndexSet<u32>> = vec![];
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
-        face: ctx.face,
+        face: &mut source.face,
         // 每个包的大小
-        predict_bytes_pre_subset: ctx.config.chunk_size as u32,
+        predict_bytes_pre_subset: config.chunk_size as u32,
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
@@ -115,21 +118,23 @@ pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     let mut draft =
         SubsetDraft { subsets, remaining: all_unicodes, ctx: &mut context };
     for plugin in PIPELINE {
-        if plugin.enabled(ctx.config) {
+        if plugin.enabled(config) {
             plugin.apply(&mut draft)?;
         }
     }
-    let subsets = draft.subsets;
-    // 根据处理结果更新上下文的预处理子集结果
-    ctx.pre_subset_result = subsets
+    // 根据处理结果得到每个分包的字符表，空包不输出。
+    let subsets = draft
+        .subsets
         .iter()
         .filter(|v| !v.is_empty())
         .map(|v| v.iter().copied().collect::<Vec<u32>>())
         .collect();
+    // `draft` 到此不再使用，`context` 的可变借用于此结束。
+    let languages = context.used_languages;
 
-    // 分析并更新名称表
-    ctx.name_table = name_table::analyze_name_table(&font, &mut font_file);
-    Ok(())
+    // 分析名称表
+    let name_table = name_table::analyze_name_table(&font, &mut font_file);
+    Ok(PreSubsetOutput { subsets, name_table, fvar, languages, extra_files })
 }
 
 #[cfg(test)]

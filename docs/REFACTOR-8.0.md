@@ -125,7 +125,7 @@
 
 ### 6.3 模块拆分
 
-- [ ] `Context` 拆为阶段化输出（`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`）。
+- [x] `Context` 拆为阶段化输出（`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`）。
 - [ ] 插件改为 trait + 显式顺序表；`used_languages` 并入 `SubsetMeta`。
 - [ ] CSS 生成结构化（`FontFace` → 序列化）；`name_template` 自研小型 parser，去掉 `regex`。
 
@@ -309,7 +309,7 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 
 | 项目 | 状态 | 说明 |
 | --- | --- | --- |
-| `Context` 拆分与阶段产物类型 | 延后 | 仍是单个 `Context`，`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput` 未引入 |
+| `Context` 拆分与阶段产物类型 | 已完成 | 拆为 `FontSource` + `PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`；`runner::Context` 已删除（见 `MIGRATION-8.0.md`） |
 | plugin trait 与显式顺序表 | 延后 | 仍是 `pre_subset` 内的 `Vec<fn(...)>` 顺序表 |
 | CSS 结构化 / AST | 延后 | 仍是 `format!` 拼字符串；`name_template` 仍用 `regex` |
 | Rust Config builder / 单一配置源 | 延后 | proto 仍是配置事实来源，CLI 参数直接构造 `InputTemplate`，未引入 Config builder 与派生 |
