@@ -1,4 +1,4 @@
-import { fontSplit, StaticWasm } from '../dist/wasm/index.js';
+import { fontSplit, StaticWasm } from '../dist/wasm/index.mjs';
 import {
     BlobReader,
     BlobWriter,

@@ -124,6 +124,9 @@ gh run watch <run-id> --exit-status
 `release-cn-font-split.yml` 用 `github.sha`（被派发 ref 的提交）自动查找产物，
 所以中间不要再往 `release` 合新提交，否则要重跑 cross-build。
 
+workflow 会读取 `cross_build_run_id` 指向运行所在提交的 `head_sha`，并校验它必须等于
+本次发布 commit（`GITHUB_SHA`），不匹配直接失败——人工填了别处运行的 run id 也会被拦下。
+
 ### 3.2 dry-run（`publish=false`，必须全绿）
 
 ```sh
@@ -253,3 +256,7 @@ npm 的版本删除窗口很短：
     `cn-font-metrics` / `vite-plugin-font`）属于用户决定；workflow 不覆盖。
 7.  **`@cn-font-split` scope 写权限**未在发布前被证明（见 2.3），这是本轮最大的
     单点风险。
+8.  **根目录 `publish-all.sh` 是 crates.io 发布脚本**：默认只做
+    `cargo publish --dry-run`，传 `--publish` 会对 `crates/*` 逐个真实
+    `cargo publish`。本轮 crates.io 不是发布目标，发版当天不要运行它；npm 发布只走
+    本手册/workflow。

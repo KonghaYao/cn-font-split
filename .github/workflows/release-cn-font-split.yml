@@ -100,6 +100,27 @@ jobs:
                       exit 1
                   fi
                   echo "使用 cross-build 运行 ID：${run_id}"
+                  # 人工填写的 run id 可能指向旧提交上的运行。旧源码编译出的二进制一旦
+                  # 作为 8.0.0 发出，72 小时后无法撤回，因此统一校验 head_sha。
+                  run_sha="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}" --jq '.head_sha' 2>/dev/null || true)"
+                  if [ -z "${run_sha}" ]; then
+                      {
+                          echo "::error::无法读取 cross-build 运行 ${run_id} 的 head_sha"
+                          echo "请确认 run id 是否正确，以及 token 具备 actions: read 权限。"
+                      } >&2
+                      exit 1
+                  fi
+                  if [ "${run_sha}" != "${GITHUB_SHA}" ]; then
+                      {
+                          echo "::error::cross-build 运行 ${run_id} 不属于本次发布的提交"
+                          echo "  run_id:     ${run_id}"
+                          echo "  run_sha:    ${run_sha}"
+                          echo "  GITHUB_SHA: ${GITHUB_SHA}"
+                          echo "产物必须来自同一次提交的构建；请在该 commit 上重跑 cross-build 后使用新的 run id。"
+                      } >&2
+                      exit 1
+                  fi
+                  echo "head_sha 校验通过：${run_sha}"
                   echo "run_id=${run_id}" >> "$GITHUB_OUTPUT"
 
             - name: 下载 bindings-* 产物
