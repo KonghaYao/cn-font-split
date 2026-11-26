@@ -67,6 +67,12 @@ jobs:
             - name: cargo test
               run: cargo test --locked
 
+            # 根包之外的工作区成员（cn_font_utils / lang_unicodes / proto /
+            # unicode_range / wasm-edge / ffi / grpc / wasmer）也必须跑测试，
+            # 只跑根包会漏掉这些 crate 已有的回归。
+            - name: cargo test --workspace
+              run: cargo test --workspace --locked
+
             - name: cargo test (failure paths)
               run: cargo test --test failure_paths --locked
 
