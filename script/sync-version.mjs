@@ -1,8 +1,9 @@
-// 从根 Cargo.toml 读取版本号，同步到所有对外 npm 包的 package.json。
+// 从根 Cargo.toml 读取版本号，同步到所有对外分发的包的清单文件。
 // 同步范围：
-//   1. 顶层 "version"；
-//   2. "optionalDependencies" 中所有 `@cn-font-split/*` 平台包依赖
-//      （主包通过它们分发原生二进制，版本必须与主包严格一致）。
+//   1. 对外 npm 包 package.json（清单见 MANIFESTS）的顶层 "version"；
+//   2. 这些 package.json 的 "optionalDependencies" 中所有 `@cn-font-split/*`
+//      平台包依赖（主包通过它们分发原生二进制，版本必须与主包严格一致）；
+//   3. packages/ffi-py/setup.py 中 setup(version="x.y.z") 的版本字符串。
 // 其余字段、键顺序、缩进与换行原样保留，因此同样可以用于 --check 的前后对比。
 // 用法：
 //   node ./script/sync-version.mjs          写入
@@ -24,6 +25,10 @@ const MANIFESTS = [
     'packages/proto-to-cli/package.json',
     'packages/vite/package.json',
 ];
+
+// Python 包入口：版本写在 setup.py 的 setup(version="x.y.z") 关键字参数里。
+const SETUP_PY = 'packages/ffi-py/setup.py';
+const SETUP_VERSION = /^([ \t]*version[ \t]*=[ \t]*")([^"]*)(")/m;
 
 // 平台包作用域：optionalDependencies 里只有这些条目需要跟随主包版本。
 const PLATFORM_SCOPE = '@cn-font-split/';
@@ -157,10 +162,39 @@ function rewriteManifest(text, version, file, names) {
     return updated;
 }
 
+/** 读取 setup.py 中 setup(version="...") 的版本字符串。 */
+function readSetupVersion(text, file) {
+    const match = SETUP_VERSION.exec(text);
+    if (!match) throw new Error(`${file} 中找不到 version="..." 字段`);
+    return match[2];
+}
+
+/**
+ * 只替换 setup.py 的 `version="x.y.z"` 一行，其余格式原样保留。
+ * setup() 里应当只有一个 version 关键字参数；多于一个说明结构已变化，直接报错。
+ */
+function rewriteSetup(text, version, file) {
+    const occurrences = text.match(/^[ \t]*version[ \t]*=[ \t]*"[^"]*"/gm) ?? [];
+    if (occurrences.length !== 1) {
+        throw new Error(
+            `${file} 中应有且仅有一个 version="..." 字段，实际 ${occurrences.length} 个`,
+        );
+    }
+    const updated = text.replace(
+        SETUP_VERSION,
+        (_, head, _old, tail) => head + version + tail,
+    );
+    if (readSetupVersion(updated, file) !== version) {
+        throw new Error(`${file} 版本写入失败`);
+    }
+    return updated;
+}
+
 const version = readCargoVersion();
 const checkOnly = process.argv.includes('--check');
 const mismatched = [];
-let changed = 0;
+let changedManifests = 0;
+let changedSetup = 0;
 
 for (const manifestPath of MANIFESTS) {
     const file = join(ROOT, manifestPath);
@@ -175,9 +209,26 @@ for (const manifestPath of MANIFESTS) {
         continue;
     }
     writeFileSync(file, rewriteManifest(text, version, manifestPath, names));
-    changed += 1;
+    changedManifests += 1;
     console.log(`updated ${manifestPath}: ${drift.join('; ')}`);
 }
+
+// setup.py 不是 JSON，按行同步，冲突项沿用 package.json 的输出格式。
+const setupFile = join(ROOT, SETUP_PY);
+const setupText = readFileSync(setupFile, 'utf8');
+const setupVersion = readSetupVersion(setupText, SETUP_PY);
+if (setupVersion !== version) {
+    const drift = `version: ${setupVersion} -> ${version}`;
+    if (checkOnly) {
+        mismatched.push(`${SETUP_PY}: ${drift}`);
+    } else {
+        writeFileSync(setupFile, rewriteSetup(setupText, version, SETUP_PY));
+        changedSetup += 1;
+        console.log(`updated ${SETUP_PY}: ${drift}`);
+    }
+}
+
+const scope = `${MANIFESTS.length} package.json files + ${SETUP_PY}`;
 
 if (checkOnly) {
     if (mismatched.length > 0) {
@@ -186,12 +237,16 @@ if (checkOnly) {
         process.exit(1);
     }
     console.log(
-        `all ${MANIFESTS.length} package.json files are at ${version} (version + ${PLATFORM_SCOPE}* optionalDependencies)`,
+        `all ${scope} are at ${version} (version + ${PLATFORM_SCOPE}* optionalDependencies)`,
     );
 } else {
-    console.log(
-        changed === 0
-            ? `all ${MANIFESTS.length} package.json files already at ${version}`
-            : `synced ${changed} package.json file(s) to ${version}`,
-    );
+    const changed = changedManifests + changedSetup;
+    if (changed === 0) {
+        console.log(`all ${scope} already at ${version}`);
+    } else {
+        const parts = [];
+        if (changedManifests > 0) parts.push(`${changedManifests} package.json`);
+        if (changedSetup > 0) parts.push(SETUP_PY);
+        console.log(`synced ${changed} file(s) to ${version}: ${parts.join(' + ')}`);
+    }
 }
