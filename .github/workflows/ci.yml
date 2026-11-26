@@ -25,6 +25,25 @@ env:
     HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
 
 jobs:
+    meta:
+        name: 版本与许可证门禁（无构建）
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            # 版本唯一真源是根 Cargo.toml。这里同时校验各 package.json 的 version
+            # 与 ffi-js 的 @cn-font-split/* optionalDependencies（平台包必须与主包同版本）。
+            # 只需要 node 内置模块，故意不跑 pnpm install。
+            - name: 版本同步（Cargo.toml 为准）
+              run: node ./script/sync-version.mjs --check
+
+            - name: 许可证声明
+              run: node ./script/check-licenses.mjs
+
     rust:
         name: Rust fmt / clippy / test / build
         runs-on: ubuntu-latest
