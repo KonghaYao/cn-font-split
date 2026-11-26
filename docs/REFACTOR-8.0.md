@@ -126,8 +126,9 @@
 ### 6.3 模块拆分
 
 - [x] `Context` 拆为阶段化输出（`PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`）。
-- [ ] 插件改为 trait + 显式顺序表；`used_languages` 并入 `SubsetMeta`。
-- [ ] CSS 生成结构化（`FontFace` → 序列化）；`name_template` 自研小型 parser，去掉 `regex`。
+- [x] 插件改为 trait + 显式顺序表（`PreSubsetPlugin` + `PIPELINE`，顺序有单测）。
+- [ ] `used_languages` 并入 `SubsetMeta`（仍是 `PreSubsetContext.used_languages`）。
+- [x] CSS 生成结构化（`FontFace` → 序列化）；`name_template` 自研小型 parser，去掉 `regex`。
 
 ### 6.4 产物质量
 
@@ -305,15 +306,15 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 
 8.0 主线已具备可复跑的本地门禁：`fmt` / `clippy -D warnings` / `test` /
 `failure_paths` / release build / Node 冒烟 / WebKit 视觉三组 `0.000%` 全部通过。
-以下项目本轮**未完成或明确延后**，不计入 8.0 验收：
+下表逐项记录 8.0 收尾状态（已完成 / 延后 / 未实测）：
 
 | 项目 | 状态 | 说明 |
 | --- | --- | --- |
 | `Context` 拆分与阶段产物类型 | 已完成 | 拆为 `FontSource` + `PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput`；`runner::Context` 已删除（见 `MIGRATION-8.0.md`） |
-| plugin trait 与显式顺序表 | 延后 | 仍是 `pre_subset` 内的 `Vec<fn(...)>` 顺序表 |
-| CSS 结构化 / AST | 延后 | 仍是 `format!` 拼字符串；`name_template` 仍用 `regex` |
+| plugin trait 与显式顺序表 | 已完成 | `src/pre_subset/plugin.rs` 定义 `PreSubsetPlugin`（`name` / `enabled` / `apply`），`src/pre_subset/mod.rs` 用 `static PIPELINE: &[&dyn PreSubsetPlugin]` 声明顺序，并有 `pipeline_order_is_stable` 单测锁住顺序；文档化的顺序约束见该文件顶部注释 |
+| CSS 结构化 / AST | 已完成 | `src/link_subset/css/ast.rs`：`Stylesheet` / `CssNode` / `FontFace` / `SrcItem` 结构化类型，渲染结果与历史字符串拼接逐字节一致；`output_css.rs` 只组装 AST |
 | Rust Config builder / 单一配置源 | 延后 | proto 仍是配置事实来源，CLI 参数直接构造 `InputTemplate`，未引入 Config builder 与派生 |
-| `name_template` 解析器化 | 延后 | 仍使用 `regex` 解析模板，未改为手写解析器 |
+| `name_template` 解析器化 | 已完成 | `src/link_subset/name_template.rs` 改为手写解析器（`Placeholder` + `is_word`），`regex` 依赖已从 `Cargo.toml` 移除；`\w` 语义用两张差集表（`WORD_EXTRA` / `NOT_WORD`）与旧正则逐码位对齐 |
 | 按实测体积迭代的分包算法 | 延后 | 仍是「采样 + 两点校准」估算；WorkSans VF 单包 157,996B（≈158KB）仍然存在，未按实测体积收敛 |
 | `google-protobuf` 迁移 | 已完成 | `packages/ffi-js` 改用 `@bufbuild/protobuf` 2.17（生成器 `@bufbuild/protoc-gen-es` 同版本，`protoc --es_out`）；`packages/test` 的未使用依赖已移除；类型改名见 `MIGRATION-8.0.md` §5.1 |
 | `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.5+ 在解码失败时执行 `debug_assert`，会破坏 `truncated_woff2` 的错误返回。0.4.0 的 woff2 C++ 源码缺 `#include <cstdint>`，GCC 13+ 需用 `CXXFLAGS=-include cstdint` 编译（CI 已设置） |

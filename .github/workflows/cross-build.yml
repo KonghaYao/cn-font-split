@@ -61,6 +61,10 @@ jobs:
                       ext: so
                       cross: true
 
+                    # riscv64 / s390x 没有对应的 npm 平台包（`@cn-font-split/*` 只覆盖
+                    # darwin-arm64/x64、win32-x64/arm64、linux-x64/arm64 与两个 wasm 目标）。
+                    # 这两个目标构建出来只作为 GitHub Release 的附件（bindings-* artifact），
+                    # 供自行设置 CN_FONT_SPLIT_BIN 的用户使用，不会进入 dist-platforms/。
                     - os-name: Linux-riscv64-gnu
                       runs-on: ubuntu-22.04
                       target: riscv64gc-unknown-linux-gnu
@@ -133,6 +137,8 @@ jobs:
                   Copy-Item $src $dst
 
             - name: Upload artifact
+              # 所有目标（含无 npm 平台包的 riscv64 / s390x）都只上传 artifact；
+              # 若显式 create_release，它们会作为 release 附件，仍不进 npm。
               uses: actions/upload-artifact@v4
               with:
                   name: bindings-${{ matrix.target }}
