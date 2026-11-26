@@ -16,7 +16,7 @@
 | CSS AST / Context 拆分 | 已完成（de64fc1 / 315e40a） |
 | 配置字段语义（`multi_threads` / `build_mode` / `chunk_size_tolerance`） | 已完成（2835776）：`max_allow_subsets_count` 留给实测体积分包 |
 | Bun / Deno 平台包解析 | 已完成（8216776），单测已纳入 CI |
-| JS proto 运行时 `google-protobuf` → `@bufbuild/protobuf` | 已完成：`@bufbuild/protobuf` / `@bufbuild/protoc-gen-es` 同为 2.17.0，`protoc --es_out` 生成 `src/gen/index_pb.ts`；新旧序列化逐字节一致，详见 `MIGRATION-8.0.md` §5.1 |
+| JS proto 运行时 `google-protobuf` → `@bufbuild/protobuf` | 已完成（a00e694）：`@bufbuild/protobuf` / `@bufbuild/protoc-gen-es` 同为 2.17.0，`protoc --es_out` 生成 `src/gen/index_pb.ts`；新旧序列化 wire 一致，详见 `MIGRATION-8.0.md` §5.1 |
 | 实测体积分包（WorkSans 157,996B） | 待三项决策：tolerance 单位、包数增幅上限、超限处理 |
 | woff / prost / wasm / cross-build / Linux 像素基线 / Feature 矩阵 | 依赖决策或远端环境 |
 
