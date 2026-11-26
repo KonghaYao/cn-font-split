@@ -70,25 +70,39 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[tokio::test]
+// 多线程 runtime：`font_split` 内部是同步阻塞调用，会占住一个 worker 线程，
+// 单线程 runtime 下消费事件流的 future 无法被调度。
+#[tokio::test(flavor = "multi_thread")]
 async fn test_font_split() {
-    async fn test_on(path: &str) {
-        use cn_font_proto::font_services::font_api_client::FontApiClient;
-        use cn_font_utils::read_binary_file;
-        let font_file = read_binary_file(path).expect("Failed to read file");
-        let data = InputTemplate { input: font_file, ..Default::default() };
+    use tokio_stream::StreamExt;
 
-        let mut client =
-            FontApiClient::connect("http://0.0.0.0:50051").await.unwrap();
-        let mut stream = client.font_split(data).await.unwrap().into_inner();
-        loop {
-            let Ok(Some(next_message)) = stream.message().await else {
-                break;
-            };
-            println!("{:?}", next_message.message);
+    async fn test_on(path: &str) {
+        use cn_font_utils::read_binary_file;
+        let font_file = read_binary_file(path)
+            .unwrap_or_else(|e| panic!("failed to read font file {path}: {e}"));
+        let request = Request::new(InputTemplate {
+            input: font_file,
+            ..Default::default()
+        });
+
+        // 进程内直接调用被测实现，不经过 gRPC 网络层。
+        let port = FontApiPort::default();
+        let mut stream = port
+            .font_split(request)
+            .await
+            .expect("font_split should accept the request")
+            .into_inner();
+
+        let mut count = 0usize;
+        while let Some(message) = stream.next().await {
+            let message = message
+                .unwrap_or_else(|e| panic!("stream from {path} failed: {e}"));
+            println!("{:?}", message.message);
+            count += 1;
         }
+        assert!(count > 0, "expected at least one event from {path}");
     }
 
-    test_on("../../../demo/public/SmileySans-Oblique.ttf").await;
-    test_on("../../../demo/public/SmileySans-Oblique.ttf.woff2").await;
+    test_on("../demo/public/SmileySans-Oblique.ttf").await;
+    test_on("../demo/public/SmileySans-Oblique.ttf.woff2").await;
 }
