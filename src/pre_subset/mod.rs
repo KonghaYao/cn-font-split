@@ -1,17 +1,15 @@
 pub mod features;
-pub mod fvar;
 pub mod gen_svg;
-pub mod name_table;
 pub mod plugin;
 mod plugin_auto_subset;
 
 use crate::config::Config;
 use crate::contract::{FontSource, PreSubsetOutput};
 use crate::error::{FontSplitError, Result};
+use crate::tables::{fvar::analyze_fvar_table, name_table::analyze_name_table};
 mod plugin_add_user_subset;
 use cn_font_utils::u8_array_to_u32_array;
 use features::FontFeatures;
-use fvar::analyze_fvar_table;
 use gen_svg::gen_svg_extra_files;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
@@ -140,7 +138,7 @@ pub fn pre_subset(
     // `context.used_languages` 只服务于 `AutoSubset`（见字段注释），不随产物上抛。
 
     // 分析名称表
-    let name_table = name_table::analyze_name_table(&font, &mut font_file);
+    let name_table = analyze_name_table(&font, &mut font_file);
     Ok(PreSubsetOutput {
         subsets,
         all_unicodes: all_unicodes_vec,

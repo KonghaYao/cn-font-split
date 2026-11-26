@@ -9,6 +9,7 @@ mod pack;
 mod pre_subset;
 mod run_subset;
 mod runner;
+mod tables;
 pub use error::{FontSplitError, Result};
 pub use message::EventFactory;
 pub use runner::font_split;

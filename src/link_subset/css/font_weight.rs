@@ -1,8 +1,8 @@
 //! 字体权重相关的工具函数
 
 use crate::config::CssConfig;
-use crate::pre_subset::fvar::FvarTable;
-use crate::pre_subset::name_table::NameTableSets;
+use crate::tables::fvar::FvarTable;
+use crate::tables::name_table::NameTableSets;
 
 /// 字体权重名称到数值的映射表
 /// 按照字符串长度降序排序，以确保最长匹配优先

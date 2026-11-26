@@ -1,7 +1,7 @@
 use crate::config::{CssConfig, DEFAULT_FONT_FAMILY};
 use crate::contract::RunSubsetResult;
-use crate::pre_subset::fvar::FvarTable;
-use crate::pre_subset::name_table::NameTableSets;
+use crate::tables::fvar::FvarTable;
+use crate::tables::name_table::NameTableSets;
 use cn_font_proto::api_interface::output_report::{self};
 use cn_font_utils::vec_u32_to_string;
 

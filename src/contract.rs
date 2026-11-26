@@ -7,13 +7,15 @@
 //! pre_subset → contract
 //! run_subset → contract
 //! link_subset → contract
+//! contract → tables
 //! ```
 //!
-//! 三个阶段彼此不互相引用（`pack` 与 `naming` 是共享的叶子实现），
-//! 这样调整任一阶段的内部结构不会牵动其余阶段。本模块只在 crate 内可见。
+//! 三个阶段彼此不互相引用。`pack` / `naming` / `tables` 是共享的叶子实现
+//! （`tables` 只做字体表解析，不感知管线阶段），这样调整任一阶段的内部结构
+//! 不会牵动其余阶段。本模块只在 crate 内可见。
 
-use crate::pre_subset::fvar::FvarTable;
-use crate::pre_subset::name_table::NameTableSets;
+use crate::tables::fvar::FvarTable;
+use crate::tables::name_table::NameTableSets;
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, Css, SubsetDetail,
 };
