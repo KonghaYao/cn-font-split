@@ -2,29 +2,39 @@ use cmap::analyze_cmap;
 use gpos::analyze_gpos;
 use gsub::analyze_gsub;
 use indexmap::IndexSet;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::HashMap;
 
-use super::PreSubsetContext;
+use super::plugin::{Config, PreSubsetPlugin, SubsetDraft};
 use crate::error::Result;
 pub mod cmap;
 pub mod gpos;
 pub mod gsub;
-// 插件入口必须保持 `&mut Vec<..>`：与 `pre_subset` 中的统一函数指针签名一致。
-#[allow(clippy::ptr_arg)]
-pub fn features_plugin(
-    subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut BTreeSet<u32>,
-    ctx: &mut PreSubsetContext,
-) -> Result<()> {
-    let cmap = analyze_cmap(ctx.font, ctx.font_file);
-    let sub_map = analyze_gsub(ctx.font, ctx.font_file);
-    let sub_map = turn_indics_to_unicode_set(sub_map, &cmap);
-    move_feature_set_to_front(&sub_map, subsets);
 
-    let pos_map = analyze_gpos(ctx.font, ctx.font_file);
-    let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
-    move_feature_set_to_front(&pos_map, subsets);
-    Ok(())
+/// 把 GSUB/GPOS 特性涉及的字符并回首个相交的分包。
+pub struct FontFeatures;
+
+impl PreSubsetPlugin for FontFeatures {
+    fn name(&self) -> &'static str {
+        "font_features"
+    }
+
+    fn enabled(&self, config: &Config) -> bool {
+        config.font_feature.unwrap_or(true)
+    }
+
+    fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {
+        let ctx = &mut *draft.ctx;
+        let subsets = &mut draft.subsets;
+        let cmap = analyze_cmap(ctx.font, ctx.font_file);
+        let sub_map = analyze_gsub(ctx.font, ctx.font_file);
+        let sub_map = turn_indics_to_unicode_set(sub_map, &cmap);
+        move_feature_set_to_front(&sub_map, subsets);
+
+        let pos_map = analyze_gpos(ctx.font, ctx.font_file);
+        let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
+        move_feature_set_to_front(&pos_map, subsets);
+        Ok(())
+    }
 }
 
 fn move_feature_set_to_front(

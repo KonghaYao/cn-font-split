@@ -6,7 +6,7 @@ use log::{debug, info};
 
 use crate::run_subset::build_single_subset;
 
-use super::PreSubsetContext;
+use super::plugin::{Config, PreSubsetPlugin, SubsetDraft};
 use crate::error::Result;
 
 #[derive(Copy, Clone, Debug)]
@@ -127,104 +127,122 @@ fn chars_for_target(
     }
 }
 
-pub fn plugin_auto_subset(
-    subsets: &mut Vec<IndexSet<u32>>,
-    _remaining_chars_set: &mut BTreeSet<u32>,
-    ctx: &mut PreSubsetContext,
-) -> Result<()> {
-    let size = ctx.all_unicodes.len();
-    // 旧实现 `space = (size / 100).min(1)` 恒等于 1，等于对全量字符做一次
-    // subset + woff2 压缩（CJK 约 3 万字符、单次约 190ms），既是估算阶段的
-    // 主要性能开销，也让固定开销完全被平摊掉。这里改为等距采样，
-    // 采样上限 SAMPLE_MAX_CHARS 个字符。
-    let sample = sample_unicodes(&ctx.all_unicodes);
-    if sample.is_empty() {
-        // 字体没有任何可映射字符时无法采样估算，直接跳过自动分包。
-        return Ok(());
-    }
-    let mut model: Option<SizeModel> = None;
-    let large_bytes;
-    if sample.len() == size {
-        // 字体字符数不超过采样上限：一次性压缩全量字符，结果与修复前一致。
-        large_bytes = build_single_subset(ctx.face, &sample)?.len();
-    } else {
-        // 两点采样：小样本（约 100 字符）与大样本（≤1000 字符），共 2 次压缩。
-        let small_step = (sample.len() / SAMPLE_MIN_CHARS).max(1);
-        let small =
-            sample.iter().step_by(small_step).copied().collect::<Vec<u32>>();
-        let small_bytes = build_single_subset(ctx.face, &small)?.len();
-        large_bytes = build_single_subset(ctx.face, &sample)?.len();
-        model =
-            SizeModel::fit(small.len(), small_bytes, sample.len(), large_bytes);
-    }
-    let chars_per_subset = chars_for_target(
-        model,
-        size,
-        sample.len(),
-        large_bytes,
-        ctx.predict_bytes_pre_subset,
-    );
-    let (overhead, per_char, scale_exp) = match model {
-        Some(m) => (m.overhead, m.per_char, m.scale_exp),
-        None => (0.0, large_bytes as f64 / sample.len().max(1) as f64, 1.0),
-    };
+/// 按 `chunk_size` 目标体积自动切分已有分包。
+pub struct AutoSubset;
 
-    info!(
-        "predict subset: {}/subset, {:.2} bytes/char, overhead={:.0}, scale_exp={:.3}, {}(chunk_size)",
-        chars_per_subset,
-        per_char,
-        overhead,
-        scale_exp,
-        ctx.predict_bytes_pre_subset
-    );
-    let mut count: usize = 0;
-    let mut new_used_languages = HashMap::new();
-    // 后期用于区分算法，现在暂时无用
-    let opt_level = match size {
-        0..1000 => OptLevel::No,
-        1000..=10000 => OptLevel::Low,
-        10001..=30000 => OptLevel::Mid,
-        _ => OptLevel::High,
-    };
-    let new_subsets = subsets
-        .iter()
-        .enumerate()
-        .flat_map(|(index, subset)| {
-            let lang = ctx.used_languages.get(&index);
-            let res = match lang {
-                // 繁体中文一般比简体中文要大一倍复杂度，故进行特殊处理
-                Some(i) if i == "ZH_TC" => split_vector(
-                    subset,
-                    ((chars_per_subset as f32) * 0.5_f32) as u32,
-                    opt_level,
-                ),
-                None => {
-                    return split_vector(
-                        subset,
-                        ((chars_per_subset as f32) * 0.7_f32) as u32,
-                        opt_level,
-                    );
-                }
-                _ => split_vector(subset, chars_per_subset, opt_level),
-            };
-            if let Some(language) = lang {
-                for _ in 0..res.len() {
-                    new_used_languages.insert(count, language.clone());
-                    count += 1;
-                }
-            }
-            res
-        })
-        .collect::<Vec<IndexSet<u32>>>();
-    subsets.clear();
-    for i in new_subsets {
-        subsets.push(i);
+impl PreSubsetPlugin for AutoSubset {
+    fn name(&self) -> &'static str {
+        "auto_subset"
     }
-    // new_used_languages.iter().for_each(|(index, name)| {
-    //     info!("subset: {} {} {}", index, name, subsets[*index].len());
-    // });
-    ctx.used_languages = new_used_languages;
-    Ok(())
+
+    fn enabled(&self, config: &Config) -> bool {
+        config.auto_subset.unwrap_or(true)
+    }
+
+    fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {
+        let ctx = &mut *draft.ctx;
+        let subsets = &mut draft.subsets;
+        let size = ctx.all_unicodes.len();
+        // 旧实现 `space = (size / 100).min(1)` 恒等于 1，等于对全量字符做一次
+        // subset + woff2 压缩（CJK 约 3 万字符、单次约 190ms），既是估算阶段的
+        // 主要性能开销，也让固定开销完全被平摊掉。这里改为等距采样，
+        // 采样上限 SAMPLE_MAX_CHARS 个字符。
+        let sample = sample_unicodes(&ctx.all_unicodes);
+        if sample.is_empty() {
+            // 字体没有任何可映射字符时无法采样估算，直接跳过自动分包。
+            return Ok(());
+        }
+        let mut model: Option<SizeModel> = None;
+        let large_bytes;
+        if sample.len() == size {
+            // 字体字符数不超过采样上限：一次性压缩全量字符，结果与修复前一致。
+            large_bytes = build_single_subset(ctx.face, &sample)?.len();
+        } else {
+            // 两点采样：小样本（约 100 字符）与大样本（≤1000 字符），共 2 次压缩。
+            let small_step = (sample.len() / SAMPLE_MIN_CHARS).max(1);
+            let small = sample
+                .iter()
+                .step_by(small_step)
+                .copied()
+                .collect::<Vec<u32>>();
+            let small_bytes = build_single_subset(ctx.face, &small)?.len();
+            large_bytes = build_single_subset(ctx.face, &sample)?.len();
+            model = SizeModel::fit(
+                small.len(),
+                small_bytes,
+                sample.len(),
+                large_bytes,
+            );
+        }
+        let chars_per_subset = chars_for_target(
+            model,
+            size,
+            sample.len(),
+            large_bytes,
+            ctx.predict_bytes_pre_subset,
+        );
+        let (overhead, per_char, scale_exp) = match model {
+            Some(m) => (m.overhead, m.per_char, m.scale_exp),
+            None => (0.0, large_bytes as f64 / sample.len().max(1) as f64, 1.0),
+        };
+
+        info!(
+            "predict subset: {}/subset, {:.2} bytes/char, overhead={:.0}, scale_exp={:.3}, {}(chunk_size)",
+            chars_per_subset,
+            per_char,
+            overhead,
+            scale_exp,
+            ctx.predict_bytes_pre_subset
+        );
+        let mut count: usize = 0;
+        let mut new_used_languages = HashMap::new();
+        // 后期用于区分算法，现在暂时无用
+        let opt_level = match size {
+            0..1000 => OptLevel::No,
+            1000..=10000 => OptLevel::Low,
+            10001..=30000 => OptLevel::Mid,
+            _ => OptLevel::High,
+        };
+        let new_subsets = subsets
+            .iter()
+            .enumerate()
+            .flat_map(|(index, subset)| {
+                let lang = ctx.used_languages.get(&index);
+                let res = match lang {
+                    // 繁体中文一般比简体中文要大一倍复杂度，故进行特殊处理
+                    Some(i) if i == "ZH_TC" => split_vector(
+                        subset,
+                        ((chars_per_subset as f32) * 0.5_f32) as u32,
+                        opt_level,
+                    ),
+                    None => {
+                        return split_vector(
+                            subset,
+                            ((chars_per_subset as f32) * 0.7_f32) as u32,
+                            opt_level,
+                        );
+                    }
+                    _ => split_vector(subset, chars_per_subset, opt_level),
+                };
+                if let Some(language) = lang {
+                    for _ in 0..res.len() {
+                        new_used_languages.insert(count, language.clone());
+                        count += 1;
+                    }
+                }
+                res
+            })
+            .collect::<Vec<IndexSet<u32>>>();
+        subsets.clear();
+        for i in new_subsets {
+            subsets.push(i);
+        }
+        // new_used_languages.iter().for_each(|(index, name)| {
+        //     info!("subset: {} {} {}", index, name, subsets[*index].len());
+        // });
+        ctx.used_languages = new_used_languages;
+        Ok(())
+    }
 }
 
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
