@@ -4,18 +4,21 @@ use opentype::tables::glyph_positioning::{self, Type};
 use std::io::Cursor;
 
 use super::opentype::{
-    collect_glyph_id_from_class, collect_glyph_id_from_format_1_and_2,
-    expand_extension, subtables_with_positions,
+    TableError, collect_glyph_id_from_class,
+    collect_glyph_id_from_format_1_and_2, expand_extension,
+    subtables_with_positions,
 };
 
 pub fn analyze_gpos(
     font: &Font,
     font_file: &mut Cursor<&[u8]>,
-) -> Vec<Vec<u16>> {
-    // GPOS table；解析失败按无 GPOS 表处理，跳过字距特性分析。
-    let data: Option<GlyphPositioning> = font.take(font_file).ok().flatten();
-    let Some(data) = data else {
-        return vec![];
+) -> Result<Vec<Vec<u16>>, TableError> {
+    let data: GlyphPositioning = match font.take(font_file) {
+        Ok(Some(data)) => data,
+        Ok(None) => return Err(TableError::missing(font, b"GPOS", "GPOS")),
+        Err(e) => {
+            return Err(TableError::read(font, b"GPOS", "GPOS", e.to_string()));
+        }
     };
 
     let mut relation_list: Vec<Vec<u16>> = vec![];
@@ -33,7 +36,7 @@ pub fn analyze_gpos(
             0,
         );
     }
-    relation_list
+    Ok(relation_list)
 }
 
 /// 收集单个 GPOS 子表涉及的交互字形。
@@ -160,7 +163,7 @@ fn test_gpos() {
     .unwrap();
     let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
-    let _result = analyze_gpos(&font, &mut font_file);
+    let _result = analyze_gpos(&font, &mut font_file).expect("GPOS 解析");
 }
 
 #[test]
@@ -264,8 +267,9 @@ fn test_gpos_extension_positioning_expands_kerning() {
     let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
     let cmap =
-        crate::pre_subset::features::cmap::analyze_cmap(&font, &mut font_file);
-    let relations = analyze_gpos(&font, &mut font_file);
+        crate::pre_subset::features::cmap::analyze_cmap(&font, &mut font_file)
+            .expect("cmap 解析");
+    let relations = analyze_gpos(&font, &mut font_file).expect("GPOS 解析");
 
     // 探针样本 "eo va ey vo"：左右两侧字形必须落在同一个关系集里
     let has_kerning_pair = relations.iter().any(|set| {

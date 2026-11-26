@@ -1,4 +1,3 @@
-use log::error;
 use opentype::Font;
 use opentype::layout::{ChainedContext, Coverage};
 use opentype::tables::GlyphSubstitution;
@@ -6,26 +5,20 @@ use opentype::tables::glyph_substitution::{LigatureSubstitution, Type};
 use std::io::Cursor;
 
 use super::opentype::{
-    collect_glyph_id_from_format_1_and_2, expand_extension,
+    TableError, collect_glyph_id_from_format_1_and_2, expand_extension,
     subtables_with_positions,
 };
 
 pub fn analyze_gsub(
     font: &Font,
     font_file: &mut Cursor<&[u8]>,
-) -> Vec<Vec<u16>> {
-    let temp: Result<Option<GlyphSubstitution>, std::io::Error> =
-        font.take(font_file);
-    // 国标宋体，解析就报错，所以干脆先不解析
-    let data = match temp {
+) -> Result<Vec<Vec<u16>>, TableError> {
+    // 国标宋体字体的 GSUB 解析会直接报错，错误带上表名与偏移交给调用方记录。
+    let data: GlyphSubstitution = match font.take(font_file) {
         Ok(Some(data)) => data,
-        Ok(None) => {
-            error!("Font without GSUB table");
-            return vec![vec![]];
-        }
+        Ok(None) => return Err(TableError::missing(font, b"GSUB", "GSUB")),
         Err(e) => {
-            error!("{}", e);
-            return vec![vec![]];
+            return Err(TableError::read(font, b"GSUB", "GSUB", e.to_string()));
         }
     };
 
@@ -42,7 +35,7 @@ pub fn analyze_gsub(
                 .filter(|i| !i.is_empty()),
         );
     }
-    all_maybe_relative_glyph
+    Ok(all_maybe_relative_glyph)
 }
 
 /// 收集单个 GSUB 子表涉及的交互字形。
@@ -180,7 +173,7 @@ fn test_gsub() {
     .unwrap();
     let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
-    let _result = analyze_gsub(&font, &mut font_file);
+    let _result = analyze_gsub(&font, &mut font_file).expect("GSUB 解析");
 }
 
 #[test]

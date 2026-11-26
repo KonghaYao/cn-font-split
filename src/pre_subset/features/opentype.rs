@@ -9,7 +9,70 @@ use opentype::Font;
 use opentype::layout::{Class, Coverage, Lookups};
 use opentype::tape::Read as _;
 use opentype::walue;
+use std::fmt;
 use std::io::{Cursor, Seek, SeekFrom};
+
+/// GSUB/GPOS/cmap 表级读取失败的上下文。
+///
+/// 只用于阶段内部诊断：失败时调用方 `warn!` 记录并回退到空结果，
+/// 不进入对外错误类型。
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct TableError {
+    table: &'static str,
+    offset: Option<u32>,
+    size: Option<u32>,
+    message: String,
+}
+
+impl TableError {
+    /// 表在目录里有登记，但读取/解析失败。
+    pub(crate) fn read(
+        font: &Font,
+        tag: &[u8; 4],
+        table: &'static str,
+        message: impl Into<String>,
+    ) -> Self {
+        let (offset, size) = Self::locate(font, tag);
+        Self { table, offset, size, message: message.into() }
+    }
+
+    /// 字体里没有这张表。
+    pub(crate) fn missing(
+        font: &Font,
+        tag: &[u8; 4],
+        table: &'static str,
+    ) -> Self {
+        let (offset, size) = Self::locate(font, tag);
+        Self {
+            table, offset, size, message: format!("字体缺少 {table} 表")
+        }
+    }
+
+    fn locate(font: &Font, tag: &[u8; 4]) -> (Option<u32>, Option<u32>) {
+        font.offsets
+            .records
+            .iter()
+            .find(|record| record.tag.0 == *tag)
+            .map(|record| (Some(record.offset), Some(record.size)))
+            .unwrap_or((None, None))
+    }
+}
+
+impl fmt::Display for TableError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "解析 {} 表失败", self.table)?;
+        if let Some(offset) = self.offset {
+            write!(f, "（offset={offset}")?;
+            if let Some(size) = self.size {
+                write!(f, ", size={size}")?;
+            }
+            write!(f, "）")?;
+        }
+        write!(f, ": {}", self.message)
+    }
+}
+
+impl std::error::Error for TableError {}
 
 /// Extension 包装的最大展开层数，防止畸形字体里的嵌套导致无限递归。
 ///

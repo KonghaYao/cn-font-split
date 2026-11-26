@@ -1,8 +1,11 @@
+use ::opentype::Font;
 use cmap::analyze_cmap;
 use gpos::analyze_gpos;
 use gsub::analyze_gsub;
 use indexmap::IndexSet;
+use log::warn;
 use std::collections::{BTreeSet, HashMap};
+use std::io::Cursor;
 
 use super::plugin::{PreSubsetPlugin, SubsetDraft};
 use crate::config::Config;
@@ -27,12 +30,12 @@ impl PreSubsetPlugin for FontFeatures {
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {
         let ctx = &mut *draft.ctx;
         let subsets = &mut draft.subsets;
-        let cmap = analyze_cmap(ctx.font, ctx.font_file);
-        let sub_map = analyze_gsub(ctx.font, ctx.font_file);
+        let cmap = cmap_or_empty(ctx.font, ctx.font_file);
+        let sub_map = gsub_relations_or_empty(ctx.font, ctx.font_file);
         let sub_map = turn_indics_to_unicode_set(sub_map, &cmap);
         move_feature_set_to_front(&sub_map, subsets);
 
-        let pos_map = analyze_gpos(ctx.font, ctx.font_file);
+        let pos_map = gpos_relations_or_empty(ctx.font, ctx.font_file);
         let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
         move_feature_set_to_front(&pos_map, subsets);
 
@@ -43,6 +46,50 @@ impl PreSubsetPlugin for FontFeatures {
         let marks = combining_mark_codepoints(&chars);
         add_combining_marks_to_all_subsets(&marks, subsets);
         Ok(())
+    }
+}
+
+/// 解析失败时记录上下文并回退空表（fail-open）。
+///
+/// 回退值必须与重构前一致：cmap 为空表、GSUB 为 `vec![vec![]]`、GPOS 为
+/// 空列表。GSUB 的空关系集在 `move_feature_set_to_front` 里天然无副作用，
+/// 保留原值只是为了逐字节复现旧行为。
+fn cmap_or_empty(
+    font: &Font,
+    font_file: &mut Cursor<&[u8]>,
+) -> HashMap<u16, u32> {
+    match analyze_cmap(font, font_file) {
+        Ok(cmap) => cmap,
+        Err(e) => {
+            warn!("{e}");
+            HashMap::new()
+        }
+    }
+}
+
+fn gsub_relations_or_empty(
+    font: &Font,
+    font_file: &mut Cursor<&[u8]>,
+) -> Vec<Vec<u16>> {
+    match analyze_gsub(font, font_file) {
+        Ok(relations) => relations,
+        Err(e) => {
+            warn!("{e}");
+            vec![vec![]]
+        }
+    }
+}
+
+fn gpos_relations_or_empty(
+    font: &Font,
+    font_file: &mut Cursor<&[u8]>,
+) -> Vec<Vec<u16>> {
+    match analyze_gpos(font, font_file) {
+        Ok(relations) => relations,
+        Err(e) => {
+            warn!("{e}");
+            vec![]
+        }
     }
 }
 
@@ -293,7 +340,7 @@ mod open_type_snapshots {
             let (binary, font) = load(path);
             let mut cursor = Cursor::new(&*binary);
             assert_snapshot(
-                snapshot(&analyze_gsub(&font, &mut cursor)),
+                snapshot(&analyze_gsub(&font, &mut cursor).expect("GSUB 解析")),
                 gsub,
                 path,
             );
@@ -306,7 +353,7 @@ mod open_type_snapshots {
             let (binary, font) = load(path);
             let mut cursor = Cursor::new(&*binary);
             assert_snapshot(
-                snapshot(&analyze_gpos(&font, &mut cursor)),
+                snapshot(&analyze_gpos(&font, &mut cursor).expect("GPOS 解析")),
                 gpos,
                 path,
             );
@@ -319,7 +366,7 @@ mod open_type_snapshots {
         for (path, _, _, expected_len, expected_digest) in FIXTURES {
             let (binary, font) = load(path);
             let mut cursor = Cursor::new(&*binary);
-            let cmap = analyze_cmap(&font, &mut cursor);
+            let cmap = analyze_cmap(&font, &mut cursor).expect("cmap 解析");
             let mut entries: Vec<(u16, u32)> =
                 cmap.iter().map(|(gid, uni)| (*gid, *uni)).collect();
             entries.sort_unstable();
@@ -335,6 +382,144 @@ mod open_type_snapshots {
                 "{path}"
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod parse_failure_tests {
+    //! 表级解析失败必须走 `Err` 分支、不得 panic，并由调用方回退为空值。
+
+    use super::cmap::analyze_cmap;
+    use super::gpos::analyze_gpos;
+    use super::gsub::analyze_gsub;
+    use super::{
+        cmap_or_empty, gpos_relations_or_empty, gsub_relations_or_empty,
+    };
+    use opentype::Font;
+    use std::io::Cursor;
+
+    const FONT: &str = "./packages/demo/public/WorkSans-VariableFont_wght.ttf";
+
+    fn load() -> Vec<u8> {
+        cn_font_utils::read_binary_file(FONT).unwrap()
+    }
+
+    /// 表目录条目在整个文件中的位置：12 字节 sfnt 头之后，每条 16 字节。
+    fn record_position(bytes: &[u8], tag: &[u8; 4]) -> usize {
+        let mut cursor = Cursor::new(bytes);
+        let font = Font::read(&mut cursor).unwrap();
+        let index = font
+            .offsets
+            .records
+            .iter()
+            .position(|record| record.tag.0 == *tag)
+            .expect("测试字体必须包含该表");
+        12 + index * 16
+    }
+
+    fn table_offset(bytes: &[u8], tag: &[u8; 4]) -> usize {
+        let position = record_position(bytes, tag);
+        u32::from_be_bytes(
+            bytes[position + 8..position + 12].try_into().unwrap(),
+        ) as usize
+    }
+
+    /// 把目录条目的 tag 改掉，等价于「字体没有这张表」。
+    fn hide_table(bytes: &mut [u8], tag: &[u8; 4]) {
+        let position = record_position(bytes, tag);
+        bytes[position..position + 4].copy_from_slice(b"ZZZZ");
+    }
+
+    /// 把表指向文件末尾且长度为 0：目录里存在但没有任何字节可读。
+    fn empty_table(bytes: &mut [u8], tag: &[u8; 4]) {
+        let position = record_position(bytes, tag);
+        let eof = bytes.len() as u32;
+        bytes[position + 4..position + 8].copy_from_slice(&0_u32.to_be_bytes());
+        bytes[position + 8..position + 12].copy_from_slice(&eof.to_be_bytes());
+        bytes[position + 12..position + 16]
+            .copy_from_slice(&0_u32.to_be_bytes());
+    }
+
+    fn font(bytes: &[u8]) -> Font {
+        let mut cursor = Cursor::new(bytes);
+        Font::read(&mut cursor).unwrap()
+    }
+
+    #[test]
+    fn missing_gsub_returns_error_and_empty_fallback() {
+        let mut bytes = load();
+        hide_table(&mut bytes, b"GSUB");
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(&bytes[..]);
+
+        let error = analyze_gsub(&font, &mut cursor).unwrap_err();
+        let message = error.to_string();
+        assert!(message.contains("GSUB"), "{message}");
+        assert!(message.contains("缺少"), "{message}");
+
+        let mut cursor = Cursor::new(&bytes[..]);
+        assert_eq!(
+            gsub_relations_or_empty(&font, &mut cursor),
+            vec![Vec::<u16>::new()]
+        );
+    }
+
+    #[test]
+    fn empty_gsub_table_returns_error_with_offset_and_length() {
+        let mut bytes = load();
+        empty_table(&mut bytes, b"GSUB");
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(&bytes[..]);
+
+        let error = analyze_gsub(&font, &mut cursor).unwrap_err();
+        let message = error.to_string();
+        assert!(message.contains("GSUB"), "{message}");
+        assert!(message.contains("offset="), "{message}");
+        assert!(message.contains("size=0"), "{message}");
+    }
+
+    #[test]
+    fn truncated_gpos_returns_error_and_empty_fallback() {
+        let bytes = load();
+        let gpos = table_offset(&bytes, b"GPOS");
+        // 只保留 GPOS 表头的前两个字节，读取必然失败。
+        let truncated = &bytes[..gpos + 2];
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(truncated);
+
+        let error = analyze_gpos(&font, &mut cursor).unwrap_err();
+        assert!(error.to_string().contains("GPOS"), "{error}");
+
+        let mut cursor = Cursor::new(truncated);
+        assert!(gpos_relations_or_empty(&font, &mut cursor).is_empty());
+    }
+
+    #[test]
+    fn truncated_cmap_returns_error_and_empty_fallback() {
+        let bytes = load();
+        let cmap = table_offset(&bytes, b"cmap");
+        let truncated = &bytes[..cmap + 2];
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(truncated);
+
+        let error = analyze_cmap(&font, &mut cursor).unwrap_err();
+        assert!(error.to_string().contains("cmap"), "{error}");
+
+        let mut cursor = Cursor::new(truncated);
+        assert!(cmap_or_empty(&font, &mut cursor).is_empty());
+    }
+
+    /// 空表同样不能 panic：cmap 的目录长度被改写为 0 后沿用空表回退。
+    #[test]
+    fn empty_cmap_returns_error_and_empty_fallback() {
+        let mut bytes = load();
+        empty_table(&mut bytes, b"cmap");
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(&bytes[..]);
+        assert!(analyze_cmap(&font, &mut cursor).is_err());
+
+        let mut cursor = Cursor::new(&bytes[..]);
+        assert!(cmap_or_empty(&font, &mut cursor).is_empty());
     }
 }
 
