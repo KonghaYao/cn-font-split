@@ -1,4 +1,9 @@
 // 从根 Cargo.toml 读取版本号，同步到所有对外 npm 包的 package.json。
+// 同步范围：
+//   1. 顶层 "version"；
+//   2. "optionalDependencies" 中所有 `@cn-font-split/*` 平台包依赖
+//      （主包通过它们分发原生二进制，版本必须与主包严格一致）。
+// 其余字段、键顺序、缩进与换行原样保留，因此同样可以用于 --check 的前后对比。
 // 用法：
 //   node ./script/sync-version.mjs          写入
 //   node ./script/sync-version.mjs --check  仅校验，不一致时非零退出
@@ -19,6 +24,9 @@ const MANIFESTS = [
     'packages/proto-to-cli/package.json',
     'packages/vite/package.json',
 ];
+
+// 平台包作用域：optionalDependencies 里只有这些条目需要跟随主包版本。
+const PLATFORM_SCOPE = '@cn-font-split/';
 
 /** 读取 Cargo.toml 中的版本：优先 [workspace.package]，退回 [package]。 */
 function readCargoVersion() {
@@ -43,16 +51,108 @@ function readCargoVersion() {
     return version;
 }
 
+/** 需要跟随主包版本的 optionalDependencies 键。 */
+function platformDependencyNames(manifest) {
+    return Object.keys(manifest.optionalDependencies ?? {}).filter((name) =>
+        name.startsWith(PLATFORM_SCOPE),
+    );
+}
+
+/**
+ * 找到顶层 `"key": { ... }` 对象块在文本中的 [start, end) 区间。
+ * 只做花括号配对，跳过字符串内的括号；找不到时返回 null。
+ */
+function findObjectBlock(text, key) {
+    const head = new RegExp(`^[ \\t]*"${key}"[ \\t]*:[ \\t]*\\{`, 'm').exec(text);
+    if (!head) return null;
+    const start = head.index + head[0].length - 1;
+    let depth = 0;
+    let inString = false;
+    for (let i = start; i < text.length; i += 1) {
+        const char = text[i];
+        if (inString) {
+            if (char === '\\') i += 1;
+            else if (char === '"') inString = false;
+            continue;
+        }
+        if (char === '"') inString = true;
+        else if (char === '{') depth += 1;
+        else if (char === '}') {
+            depth -= 1;
+            if (depth === 0) return { start, end: i + 1 };
+        }
+    }
+    throw new Error(`"${key}" 的对象块没有闭合`);
+}
+
+function escapeRegExp(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /** 只替换顶层 "version" 字段的值，其余格式与缩进原样保留。 */
 function rewriteVersion(text, version, file) {
     const pattern = /(^[ \t]*"version"[ \t]*:[ \t]*")([^"]*)(")/m;
     if (!pattern.test(text)) {
         throw new Error(`${file} 中找不到顶层 "version" 字段`);
     }
-    const updated = text.replace(pattern, (_, head, _old, tail) => head + version + tail);
+    return text.replace(pattern, (_, head, _old, tail) => head + version + tail);
+}
+
+/**
+ * 把 optionalDependencies 里 `@cn-font-split/*` 的值改写到当前版本。
+ * 逐条按 `"name": "value"` 精确替换，保留原有缩进、顺序与尾随内容。
+ */
+function rewriteOptionalDependencies(text, version, file, names) {
+    if (names.length === 0) return text;
+    const block = findObjectBlock(text, 'optionalDependencies');
+    if (!block) {
+        throw new Error(`${file} 中找不到 optionalDependencies，但存在平台包依赖`);
+    }
+    let segment = text.slice(block.start, block.end);
+    for (const name of names) {
+        const pattern = new RegExp(
+            `("${escapeRegExp(name)}"[ \\t]*:[ \\t]*")([^"]*)(")`,
+        );
+        if (!pattern.test(segment)) {
+            throw new Error(
+                `${file} 的 optionalDependencies 中找不到 ${name}`,
+            );
+        }
+        segment = segment.replace(
+            pattern,
+            (_, head, _old, tail) => head + version + tail,
+        );
+    }
+    return text.slice(0, block.start) + segment + text.slice(block.end);
+}
+
+/** 当前文本相对目标版本的偏差列表；空数组表示已同步。 */
+function collectDrift(manifest, names, version) {
+    const drift = [];
+    if (manifest.version !== version) {
+        drift.push(`version: ${manifest.version} -> ${version}`);
+    }
+    for (const name of names) {
+        const current = manifest.optionalDependencies[name];
+        if (current !== version) {
+            drift.push(`${name}: ${current} -> ${version}`);
+        }
+    }
+    return drift;
+}
+
+/** 写入后自检：版本与全部平台包依赖都必须等于目标版本。 */
+function rewriteManifest(text, version, file, names) {
+    const updated = rewriteOptionalDependencies(
+        rewriteVersion(text, version, file),
+        version,
+        file,
+        names,
+    );
     const parsed = JSON.parse(updated);
-    if (parsed.version !== version) {
-        throw new Error(`${file} 版本写入失败`);
+    const drift = collectDrift(parsed, names, version);
+    if (drift.length > 0) {
+        throw new Error(`${file} 版本写入失败：${drift.join('; ')}`);
     }
     return updated;
 }
@@ -62,19 +162,21 @@ const checkOnly = process.argv.includes('--check');
 const mismatched = [];
 let changed = 0;
 
-for (const manifest of MANIFESTS) {
-    const file = join(ROOT, manifest);
+for (const manifestPath of MANIFESTS) {
+    const file = join(ROOT, manifestPath);
     const text = readFileSync(file, 'utf8');
-    const current = JSON.parse(text).version;
-    if (current === version) continue;
+    const manifest = JSON.parse(text);
+    const names = platformDependencyNames(manifest);
+    const drift = collectDrift(manifest, names, version);
+    if (drift.length === 0) continue;
 
     if (checkOnly) {
-        mismatched.push(`${manifest}: ${current} -> ${version}`);
+        for (const item of drift) mismatched.push(`${manifestPath}: ${item}`);
         continue;
     }
-    writeFileSync(file, rewriteVersion(text, version, manifest));
+    writeFileSync(file, rewriteManifest(text, version, manifestPath, names));
     changed += 1;
-    console.log(`updated ${manifest}: ${current} -> ${version}`);
+    console.log(`updated ${manifestPath}: ${drift.join('; ')}`);
 }
 
 if (checkOnly) {
@@ -83,7 +185,9 @@ if (checkOnly) {
         for (const item of mismatched) console.error(`  ${item}`);
         process.exit(1);
     }
-    console.log(`all ${MANIFESTS.length} package.json files are at ${version}`);
+    console.log(
+        `all ${MANIFESTS.length} package.json files are at ${version} (version + ${PLATFORM_SCOPE}* optionalDependencies)`,
+    );
 } else {
     console.log(
         changed === 0
