@@ -38,13 +38,10 @@
         // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
         // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
         /* Module Resolution Options */
-        "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
+        "moduleResolution": "bundler" /* fontaine 0.7 只提供 .d.mts，需按 exports 解析 */,
         "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
         // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
         // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-        "typeRoots": [
-            "@types/node"
-        ] /* List of folders to include type definitions from. */,
         // "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
         "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
         // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */

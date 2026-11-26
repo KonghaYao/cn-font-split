@@ -1,4 +1,4 @@
-# 中文 Web Font 切割工具 7.0 —— Rust Speed
+# 中文 Web Font 切割工具 8.0 —— Rust Speed
 
 ![中文网字计划](/assets/chinese-fonts.png)
 
@@ -24,18 +24,17 @@
 -   ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
 -   🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
-> 7.0 版本更改了一些使用方式，请阅读文档进行修改。
+> 8.0 是 breaking release，请阅读 [8.0 迁移指南](../../docs/MIGRATION-8.0.md)。
 >
 > [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
 
 ## 使用方式
 
 ```sh
-# 国内请设置环境变量, windows 用 set
-export CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github
-# set CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github # windows
 pnpm i cn-font-split
 ```
+
+安装时会通过 `optionalDependencies` 自动获取当前平台的 `@cn-font-split/<platform>` 二进制包，不再需要安装期联网下载。如需使用自编译的动态库，设置 `CN_FONT_SPLIT_BIN` 指向 `libffi.{dylib,so,dll}` 即可覆盖。
 
 ### 推荐：自动检测环境（Auto）
 
@@ -157,14 +156,13 @@ await fontSplit({
 虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](./test/deno-wasm.mjs)。
 
 ```sh
-# 首先安装 wasm 版本
-cn-font-split i wasm32-wasip1
-cn-font-split ls
+# 平台包随主包安装（optionalDependencies），也可以单独安装：
+pnpm i @cn-font-split/wasm32-wasip1
 ```
 
 ```ts
 import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.js';
-import wasmBuffer from 'cn-font-split/dist/libffi-wasm32-wasip1.wasm?url';
+import wasmBuffer from '@cn-font-split/wasm32-wasip1/libffi-wasm32-wasip1.wasm?url';
 // 你的字体
 const input = await fetch(
     'https://jsdelivr.deno.dev/gh/KonghaYao/cn-font-split/packages/demo/public/SmileySans-Oblique.ttf',
@@ -194,9 +192,7 @@ console.log(data);
 
 | 参数名                 | 描述                   |
 | ---------------------- | ---------------------- |
-| CN_FONT_SPLIT_BIN      | 二进制动态链接库的地址 |
-| CN_FONT_SPLIT_GH_HOST  | GitHub 域名（代理用）  |
-| CN_FONT_SPLIT_PLATFORM | 覆盖默认判断的平台     |
+| CN_FONT_SPLIT_BIN | 二进制动态链接库的地址（覆盖平台包解析） |
 
 ## 感谢
 

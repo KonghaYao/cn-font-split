@@ -1,291 +1,230 @@
 name: Rust Cross Build
+
+# 手动触发的多平台构建。默认 dry-run：只构建并上传 artifact，不创建 release、
+# 不发布 npm / crates.io。任何发布动作都必须显式打开 create_release。
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version number"
-        required: true
-        default: "7.1.0"
-      dryRun:
-        description: "测试写这个为 true"
-        required: true
-        default: "false"
-env:
-  CARGO_PKG_VERSION: ${{ github.event.inputs.version }}
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: "只构建并上传 artifacts（默认 true）"
+                type: boolean
+                default: true
+            create_release:
+                description: "创建 draft release（需要 dry_run=false，默认 false）"
+                type: boolean
+                default: false
+            tag:
+                description: "draft release 的 tag；留空使用当前 ref"
+                required: false
+                default: ""
+
+permissions:
+    contents: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    TZ: Asia/Shanghai
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
 
 jobs:
-  cross-build:
-    name: Release - ${{ matrix.platform.os-name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - os-name: FreeBSD-x86_64
-            runs-on: ubuntu-22.04
-            target: x86_64-unknown-freebsd
+    build:
+        name: Build - ${{ matrix.os-name }}
+        runs-on: ${{ matrix.runs-on }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os-name: macOS-aarch64
+                      runs-on: macos-14
+                      target: aarch64-apple-darwin
+                      ext: dylib
+                      cross: false
 
-          - os-name: aarch64-unknown-linux-gnu
-            runs-on: ubuntu-22.04
-            target: aarch64-unknown-linux-gnu
+                    - os-name: macOS-x86_64
+                      runs-on: macos-13
+                      target: x86_64-apple-darwin
+                      ext: dylib
+                      cross: false
 
-          - os-name: x86_64-unknown-linux-gnu
-            runs-on: ubuntu-22.04
-            target: x86_64-unknown-linux-gnu
-            container: rocm/dev-ubuntu-20.04
+                    - os-name: Linux-x86_64-gnu
+                      runs-on: ubuntu-22.04
+                      target: x86_64-unknown-linux-gnu
+                      ext: so
+                      cross: false
 
-          # - os-name: Linux-x86_64-musl
-          #   runs-on: ubuntu-22.04
-          #   target: x86_64-unknown-linux-musl
+                    - os-name: Linux-aarch64-gnu
+                      runs-on: ubuntu-22.04
+                      target: aarch64-unknown-linux-gnu
+                      ext: so
+                      cross: true
 
-          # - os-name: Linux-aarch64-musl
-          #   runs-on: ubuntu-22.04
-          #   target: aarch64-unknown-linux-musl
+                    - os-name: Linux-riscv64-gnu
+                      runs-on: ubuntu-22.04
+                      target: riscv64gc-unknown-linux-gnu
+                      ext: so
+                      cross: true
 
-          - os-name: Linux-riscv64
-            runs-on: ubuntu-22.04
-            target: riscv64gc-unknown-linux-gnu
+                    - os-name: Linux-s390x-gnu
+                      runs-on: ubuntu-22.04
+                      target: s390x-unknown-linux-gnu
+                      ext: so
+                      cross: true
 
-          - os-name: Linux-s390x
-            runs-on: ubuntu-22.04
-            target: s390x-unknown-linux-gnu
+                    - os-name: Windows-x86_64-msvc
+                      runs-on: windows-latest
+                      target: x86_64-pc-windows-msvc
+                      ext: dll
+                      cross: false
 
-          - os-name: Windows-x86_64-msvc
-            runs-on: windows-latest
-            target: x86_64-pc-windows-msvc
+                    - os-name: Windows-aarch64-msvc
+                      runs-on: windows-latest
+                      target: aarch64-pc-windows-msvc
+                      ext: dll
+                      cross: false
 
-          - os-name: Windows-x86_64-aarch64
-            runs-on: windows-latest
-            target: aarch64-pc-windows-msvc
+        steps:
+            - uses: actions/checkout@v5
 
-          - os-name: Windows-x86_64-gnu
-            runs-on: windows-2022
-            target: x86_64-pc-windows-gnu
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+                  targets: ${{ matrix.target }}
 
-          - os-name: macOS-x86_64
-            runs-on: macOS-latest
-            target: x86_64-apple-darwin
+            - uses: Swatinem/rust-cache@v2
+              with:
+                  key: ${{ matrix.target }}
 
-          - os-name: macOS-aarch64
-            runs-on: macOS-latest
-            target: aarch64-apple-darwin
+            - name: Install Linux build tools
+              if: runner.os == 'Linux' && !matrix.cross
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y clang llvm pkg-config g++
 
-          # more targets here ...
-    env:
-      TZ: Asia/Shanghai
-    runs-on: ${{ matrix.platform.runs-on }}
-    container: ${{ matrix.platform.container }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-      - name: Setup Windows Environment
-        if: ${{ runner.os == 'Windows' }}
-        shell: pwsh
-        run: |
-          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-          scoop install main/llvm
-          scoop install main/mingw
-          scoop install main/nodejs
-          ${{ matrix.platform.setup }}
-      - name: Change Version Windows
-        if: ${{ runner.os == 'Windows' }}
-        run: |
-          (Get-Content -Path .\Cargo.toml -Raw) -replace '^version\s*=\s*".*?"', "version = `"${{inputs.version}}`"" |
-          Set-Content -Path .\Cargo.toml
-        shell: pwsh
-      - name: Change Version Linux
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sed -i 's/^version = \"[^\"]*\"/version = "${{inputs.version}}"/' Cargo.toml
-      - name: Change Version Mac
-        if: ${{ runner.os == 'macOS' }}
-        run: |
-          sed -i '' 's/^version = \"[^\"]*\"/version = "${{inputs.version}}"/' Cargo.toml
-      - name: Setup Linux Environment
-        if: ${{ runner.os == 'Linux' && !matrix.platform.container }}
-        run: |
-          sudo apt update
-          sudo apt install -y nodejs llvm clang pkg-config libssl-dev
-          ${{ matrix.platform.setup }}
-      - name: Setup Amazon Linux Environment
-        if: ${{ runner.os == 'Linux' && matrix.platform.container }}
-        run: |
-          apt update -y
-          apt install -y nodejs npm llvm clang pkg-config  unzip gcc make cmake sudo
-          ${{ matrix.platform.setup }}
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        if: ${{ runner.os == 'macOS' }}
-        uses: Homebrew/actions/setup-homebrew@master
+            - name: Build (native target)
+              if: ${{ !matrix.cross }}
+              run: cargo build --locked --release -p ffi --no-default-features --target ${{ matrix.target }}
 
-      - name: Setup MacOS Environment
-        if: ${{ runner.os == 'macOS' }}
-        run: |
-          brew install llvm protobuf automake libtool
-          ${{ matrix.platform.setup }}
+            # Linux 交叉目标用 cross（docker 提供 sysroot），保持与旧流程一致的产物。
+            - name: Build (cross)
+              if: ${{ matrix.cross }}
+              uses: houseabsolute/actions-rust-cross@v1
+              with:
+                  command: build
+                  target: ${{ matrix.target }}
+                  args: "--locked --release -p ffi --no-default-features"
+                  strip: false
 
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v3
-        with:
-          version: "23.x"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Prepare artifact (Unix)
+              if: runner.os != 'Windows'
+              shell: bash
+              run: |
+                  src="target/${{ matrix.target }}/release/libffi.${{ matrix.ext }}"
+                  cp "$src" "target/${{ matrix.target }}/release/libffi-${{ matrix.target }}.${{ matrix.ext }}"
 
-      - name: Install latest stable
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.platform.target }}
+            - name: Prepare artifact (Windows)
+              if: runner.os == 'Windows'
+              shell: pwsh
+              run: |
+                  $src = "target/${{ matrix.target }}/release/ffi.dll"
+                  $dst = "target/${{ matrix.target }}/release/libffi-${{ matrix.target }}.dll"
+                  Copy-Item $src $dst
 
-      - name: BUILD PROTO & lang-unicodes
-        run: |
-          cargo build -p lang-unicodes
-          cargo build -p cn-font-proto
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: bindings-${{ matrix.target }}
+                  path: target/${{ matrix.target }}/release/libffi-${{ matrix.target }}.*
+                  if-no-files-found: error
+                  retention-days: 14
 
-      - name: Build binary
-        uses: houseabsolute/actions-rust-cross@v1
-        if: ${{ !matrix.platform.container }}
-        with:
-          command: build
-          target: ${{ matrix.platform.target }}
-          args: "--locked --release -p ffi --no-default-features"
-          strip: false
-        env:
-          HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+    build-wasm:
+        name: Build - WASM (${{ matrix.wasm-target }})
+        runs-on: ubuntu-24.04
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - wasm-target: wasm32-wasip1
+                      optimize: true
+                    - wasm-target: wasm32-wasip2
+                      optimize: false
+        steps:
+            - uses: actions/checkout@v5
 
-      - name: Build binary (cargo)
-        if: ${{ matrix.platform.container }}
-        run: cargo build --locked --release -p ffi --no-default-features --target ${{ matrix.platform.target }}
-        env:
-          HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
-      - name: Rename Package On Mac
-        if: ${{ runner.os == 'macOS'}}
-        working-directory: ./target/${{ matrix.platform.target }}/release
-        run: |
-          mv ./libffi.dylib ./libffi-${{ matrix.platform.target }}.dylib
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+                  targets: ${{ matrix.wasm-target }}
 
-      - name: Rename Package On Linux
-        if: ${{ runner.os == 'Linux'}}
-        working-directory: ./target/${{ matrix.platform.target }}/release
-        run: |
-          mv ./libffi.so ./libffi-${{ matrix.platform.target }}.so
+            - name: Install Linux build tools
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y clang llvm pkg-config g++ cmake
 
-      - name: Rename Package on Windows
-        if: ${{ runner.os == 'Windows' }}
-        working-directory: ./target/${{ matrix.platform.target }}/release
-        run: |
-          ren ffi.dll libffi-${{ matrix.platform.target }}.dll
+            - name: Setup WASI SDK / binaryen
+              run: |
+                  sudo sh ./.devcontainer/wasi-install.sh
+                  sudo sh ./.devcontainer/wasm-opt-install.sh
 
-      #  这里先不重命名，因为每个环境的架构不一样，操作繁琐
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bindings-${{ matrix.platform.target }}
-          path: ./target/${{ matrix.platform.target }}/release/libffi-${{ matrix.platform.target }}.*
-          if-no-files-found: error
-  build-wasm:
-    name: Release - WASM (${{ matrix.wasm-target }})
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - wasm-target: wasm32-wasip1
-            optimize: true
-          - wasm-target: wasm32-wasip2
-            optimize: false
-    env:
-      TZ: Asia/Shanghai
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Environment
-        run: |
-          sudo apt update
-          sudo apt upgrade
-          sudo apt install -y llvm clang pkg-config libssl-dev protobuf-compiler
-      - name: Change Version Linux
-        run: |
-          sed -i 's/^version = \"[^\"]*\"/version = "${{inputs.version}}"/' Cargo.toml
-      - name: Setup WASI Environment
-        working-directory: .
-        run: |
-          sudo sh ./.devcontainer/wasi-install.sh
-          sudo sh ./.devcontainer/wasm-opt-install.sh
-      - name: Install latest stable
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - name: Update Rust
-        run: /home/runner/.cargo/bin/rustup target add ${{ matrix.wasm-target }}
+            - name: Build
+              working-directory: ./packages/wasm-edge
+              run: |
+                  export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-27.0-x86_64-linux/share/wasi-sysroot/"
+                  export PATH=$PATH:/opt/binaryen/binaryen-version_124/bin
+                  export WASI_SDK_PATH="/opt/wasi-sdk/wasi-sdk-27.0-x86_64-linux/"
+                  cargo build --target ${{ matrix.wasm-target }} --release --locked
 
-      - name: Build
-        working-directory: ./packages/wasm-edge
-        run: |
-          export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-27.0-x86_64-linux/share/wasi-sysroot/"
-          export PATH=$PATH:/opt/binaryen/binaryen-version_124/bin
-          export WASI_SDK_PATH="/opt/wasi-sdk/wasi-sdk-27.0-x86_64-linux/"
-          cargo build --target ${{ matrix.wasm-target }} --release
+            - name: Optimize WASM
+              if: ${{ matrix.optimize }}
+              working-directory: ./packages/wasm-edge
+              run: |
+                  export PATH=$PATH:/opt/binaryen/binaryen-version_124/bin
+                  wasm-opt -Oz \
+                      --output ../../target/${{ matrix.wasm-target }}/release/wasm_edge.Oz.wasm \
+                      ../../target/${{ matrix.wasm-target }}/release/wasm_edge.wasm
 
-      - name: Optimize WASM
-        if: ${{ matrix.optimize }}
-        working-directory: ./packages/wasm-edge
-        run: |
-          export PATH=$PATH:/opt/binaryen/binaryen-version_124/bin
-          wasm-opt -Oz --output ../../target/${{ matrix.wasm-target }}/release/wasm_edge.Oz.wasm ../../target/${{ matrix.wasm-target }}/release/wasm_edge.wasm
+            - name: Prepare artifact
+              run: |
+                  if [ "${{ matrix.optimize }}" = "true" ]; then
+                      src="./target/${{ matrix.wasm-target }}/release/wasm_edge.Oz.wasm"
+                  else
+                      src="./target/${{ matrix.wasm-target }}/release/wasm_edge.wasm"
+                  fi
+                  cp "$src" "./target/${{ matrix.wasm-target }}/release/libffi-${{ matrix.wasm-target }}.wasm"
 
-      - name: Rename Package
-        working-directory: .
-        run: |
-          if [ "${{ matrix.optimize }}" = "true" ]; then
-            mv ./target/${{ matrix.wasm-target }}/release/wasm_edge.Oz.wasm ./target/${{ matrix.wasm-target }}/release/libffi-${{ matrix.wasm-target }}.wasm
-          else
-            mv ./target/${{ matrix.wasm-target }}/release/wasm_edge.wasm ./target/${{ matrix.wasm-target }}/release/libffi-${{ matrix.wasm-target }}.wasm
-          fi
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: bindings-${{ matrix.wasm-target }}
+                  path: ./target/${{ matrix.wasm-target }}/release/libffi-${{ matrix.wasm-target }}.wasm
+                  if-no-files-found: error
+                  retention-days: 14
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bindings-${{ matrix.wasm-target }}
-          path: ./target/${{ matrix.wasm-target }}/release/libffi-${{ matrix.wasm-target }}.wasm
-          if-no-files-found: error
-  create-release:
-    if: ${{ github.event.inputs.dryRun != 'true' }}
-    runs-on: ubuntu-latest
-    needs: [build-wasm, cross-build]
-    permissions: write-all
-    steps:
-      - name: Create Release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          tag_name: ${{ github.event.inputs.version }}
-          release_name: Release ${{ github.event.inputs.version }}
-          body: |
-            Release ${{ github.event.inputs.version }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    create-release:
+        name: Create draft release
+        runs-on: ubuntu-latest
+        needs: [build, build-wasm]
+        # 只有显式要求创建 release 且不是 dry-run 时才执行；永不 publish 到 npm/crates。
+        if: ${{ inputs.create_release && !inputs.dry_run }}
+        steps:
+            - uses: actions/download-artifact@v4
+              with:
+                  path: ./artifacts
+                  merge-multiple: true
 
-      - uses: actions/download-artifact@v4
-        with:
-          path: ./artifacts
-          merge-multiple: true
+            - name: Display structure of downloaded files
+              run: ls -R ./artifacts
 
-      - name: Display structure of downloaded files
-        run: ls -R ./artifacts
-
-      - name: prepare upload
-        run: |
-          mkdir release
-
-      - name: Release Upload Assets
-        uses: jaywcjlove/github-action-upload-assets@main
-        with:
-          tag: ${{github.event.inputs.version}}
-          asset-path: '["./artifacts/*"]'
-          token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Create draft release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: ${{ inputs.tag || github.ref_name }}
+                  name: ${{ inputs.tag || github.ref_name }}
+                  draft: true
+                  prerelease: true
+                  files: artifacts/**/*
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

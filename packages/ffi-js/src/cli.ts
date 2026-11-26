@@ -1,8 +1,19 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
 import { getCliParams } from './gen/proto.js';
-import { runInitScript } from './init.js';
-import set from 'set-value';
+
+/** CLI 选项使用点路径（如 css.fontFamily），这里只做最小深赋值。 */
+const setDeep = (target: Record<string, any>, key: string, value: unknown) => {
+    const parts = key.split('.');
+    let cursor = target;
+    for (const part of parts.slice(0, -1)) {
+        if (typeof cursor[part] !== 'object' || cursor[part] === null) {
+            cursor[part] = {};
+        }
+        cursor = cursor[part];
+    }
+    cursor[parts[parts.length - 1]] = value;
+};
+
 getCliParams(process.argv, (program, run) => {
     run.action(async (data) => {
         let fontSplit;
@@ -11,30 +22,13 @@ getCliParams(process.argv, (program, run) => {
         } else {
             fontSplit = (await import('./node/index.js')).fontSplit;
         }
-        const newData = { ...data };
-        Object.entries(newData).forEach(([key, value]) => {
-            set(newData, key, value);
+        const newData: Record<string, any> = {};
+        Object.entries(data).forEach(([key, value]) => {
+            setDeep(newData, key, value);
         });
         await fontSplit(newData);
     });
-    program
-        .usage(
-            '\ncn-font-split -i <字体地址> -o <文件夹地址>\ncn-font-split run -h # 查看更详细信息',
-        )
-        .description('')
-        .addCommand(
-            new Command('i')
-                .description('安装指定源 wasm32-wasip1@版本号')
-                // .option('-f, --force', '强制下载源')
-                .action(async () => {
-                    await runInitScript();
-                }),
-        )
-        .addCommand(
-            new Command('ls')
-                .description('列出本地和远程信息')
-                .action(async () => {
-                    await runInitScript();
-                }),
-        );
+    program.usage(
+        '\ncn-font-split -i <字体地址> -o <文件夹地址>\ncn-font-split run -h # 查看更详细信息',
+    );
 });

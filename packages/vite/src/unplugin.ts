@@ -1,5 +1,6 @@
 import type { UnpluginFactory } from 'unplugin';
 import { createUnplugin } from 'unplugin';
+import type { HmrContext, ResolvedConfig } from 'vite';
 import {
     SubsetBundlePlugin,
     SubsetBundlePluginConfig,
@@ -98,12 +99,12 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (
         },
         enforce: 'pre',
         vite: {
-            async configResolved(c) {
+            async configResolved(c: ResolvedConfig) {
                 plugin.setCacheDir(c.cacheDir);
                 await plugin.start();
             },
             /** 先对 vite 进行热更新支持 */
-            handleHotUpdate(ctx) {
+            handleHotUpdate(ctx: HmrContext) {
                 const plugins = plugin.getWatchingPlugin(ctx.file);
                 return ctx.modules.concat(
                     plugins.map((i) => {

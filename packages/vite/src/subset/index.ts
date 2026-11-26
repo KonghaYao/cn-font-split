@@ -81,7 +81,6 @@ export class BundlePlugin {
             const FontPath = filePath.split('?')[0];
             const onlySubset = mode !== 'full';
             await fontSplit({
-                ...this.config,
                 input: FontPath,
                 outDir: resolvedPath,
                 reporter: true,
@@ -92,6 +91,8 @@ export class BundlePlugin {
                 subsetRemainChars: !onlySubset,
                 subsets: onlySubset ? chunk(this.subsets?.flat(), this.config.subsetChunkSize) : undefined,
                 silent: true,
+                // 用户配置放在最后，允许覆盖插件默认值（如 silent / autoSubset / subsets）
+                ...this.config,
             }).catch((e) => {
                 console.error(e);
             });

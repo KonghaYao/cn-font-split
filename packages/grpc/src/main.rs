@@ -3,12 +3,12 @@ use cn_font_proto::{
     font_services::font_api_server::{FontApi, FontApiServer},
 };
 use cn_font_split::font_split;
-use std::{pin::Pin, time::Duration, usize};
+use std::{pin::Pin, time::Duration};
 use tokio::sync::mpsc;
-use tokio_stream::wrappers::UnboundedReceiverStream;
 use tokio_stream::Stream;
+use tokio_stream::wrappers::UnboundedReceiverStream;
 use tonic::{
-    codec::CompressionEncoding, transport::Server, Request, Response, Status,
+    Request, Response, Status, codec::CompressionEncoding, transport::Server,
 };
 
 #[derive(Debug, Default)]
@@ -24,10 +24,10 @@ impl FontApi for FontApiPort {
     ) -> Result<Response<Self::FontSplitStream>, Status> {
         let input = request.into_inner();
 
-        let (tx, mut rx) = mpsc::unbounded_channel::<Result<EventMessage, _>>();
+        let (tx, rx) = mpsc::unbounded_channel::<Result<EventMessage, _>>();
         println!("{}", input.input.len());
         tokio::spawn(async move {
-            font_split(input, |e| {
+            let _ = font_split(input, |e| {
                 // println!("{} {}", &e.message, tx.is_closed());
                 let _ = tx.send(Ok(e));
             });
@@ -75,13 +75,16 @@ async fn test_font_split() {
     async fn test_on(path: &str) {
         use cn_font_proto::font_services::font_api_client::FontApiClient;
         use cn_font_utils::read_binary_file;
-        let font_file = read_binary_file(&path).expect("Failed to read file");
+        let font_file = read_binary_file(path).expect("Failed to read file");
         let data = InputTemplate { input: font_file, ..Default::default() };
 
         let mut client =
             FontApiClient::connect("http://0.0.0.0:50051").await.unwrap();
         let mut stream = client.font_split(data).await.unwrap().into_inner();
-        while let Ok(Some(next_message)) = stream.message().await {
+        loop {
+            let Ok(Some(next_message)) = stream.message().await else {
+                break;
+            };
             println!("{:?}", next_message.message);
         }
     }

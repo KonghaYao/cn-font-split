@@ -1,9 +1,12 @@
 {
     "name": "proto-to-cli",
-    "version": "1.2.1",
+    "version": "8.0.0",
     "main": "./dist/cli.js",
     "module": "./dist/cli.mjs",
     "description": "A tool to convert Protocol Buffers files to command line interfaces.",
+    "engines": {
+        "node": ">=22"
+    },
     "bin": {
         "proto-to-cli": "dist/cli.js"
     },
@@ -12,6 +15,7 @@
         "access": "public"
     },
     "scripts": {
+        "build": "vite build",
         "test:ts": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ./dist/gen/proto.ts",
         "test:rust": "pnpm ./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ../cli/src/proto.rs -t clap",
         "prepublish": "pnpm vite build"
@@ -21,12 +25,15 @@
         "cli",
         "commander"
     ],
-    "author": "",
-    "license": "KonghaYao <3446798488@qq.com>",
+    "author": "KonghaYao <3446798488@qq.com>",
+    "license": "Apache-2.0",
     "dependencies": {
         "change-case": "^5.4.4",
         "commander": "^13.1.0",
         "fs-extra": "^11.2.0",
-        "protobufjs": "^7.6.2"
+        "protobufjs": "^7.6.5"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0"
     }
 }

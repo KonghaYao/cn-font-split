@@ -5,23 +5,44 @@ pub mod name_table;
 pub mod plugin;
 mod plugin_auto_subset;
 
+use crate::error::{FontSplitError, Result};
 use crate::runner::Context;
 mod plugin_add_user_subset;
 use cn_font_utils::u8_array_to_u32_array;
-use features::features_plugin;
+use features::FontFeatures;
 use fvar::analyze_fvar_table;
 use gen_svg::gen_svg_from_ctx;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
 use opentype::tables::FontVariations;
 use plugin::{
-    add_remain_chars_plugin, language_area_plugin, reduce_min_plugin,
+    AddRemainChars, LanguageArea, PreSubsetPlugin, ReduceMin, SubsetDraft,
 };
-use plugin_auto_subset::plugin_auto_subset;
+use plugin_add_user_subset::AddUserSubset;
+use plugin_auto_subset::AutoSubset;
 use std::{
     collections::{BTreeSet, HashMap},
     io::Cursor,
 };
+
+/// 预处理流水线。**顺序即产物语义**，不能随意调整：
+///
+/// - `AddUserSubset` 必须第一个执行：它要把用户分包里的字符用
+///   `remaining.remove` 摘掉，后续插件才不会重复分配；
+/// - `AddRemainChars` 必须在 `AutoSubset` 之前：剩余字符先成包，再由体积切分；
+/// - `FontFeatures` 必须在 `AutoSubset` 之后：`features.rs` 会把特性字符并回
+///   首个相交包，若先于切分执行，包体积与切分结果都会改变；
+/// - `ReduceMin` 放在最后：它只合并/重排已存在的分包。
+///
+/// 启用开关由各插件的 `enabled` 决定，默认值来自 `Config`，不要在这里重复。
+static PIPELINE: &[&dyn PreSubsetPlugin] = &[
+    &AddUserSubset,
+    &LanguageArea,
+    &AddRemainChars,
+    &AutoSubset,
+    &FontFeatures,
+    &ReduceMin,
+];
 
 // 定义预处理上下文结构体，用于存储预处理阶段的各种状态和数据
 pub struct PreSubsetContext<'a, 'b, 'c>
@@ -38,70 +59,67 @@ where
     used_languages: HashMap<usize, String>,
 }
 
+/// 用户传入的 subsets 使用每字符 4 字节的小端编码；
+/// 入口已校验长度，这里再做一次检查，避免直接调用 `pre_subset` 时 panic。
+fn decode_user_subsets(subsets: &[Vec<u8>]) -> Result<Vec<Vec<u32>>> {
+    subsets
+        .iter()
+        .enumerate()
+        .map(|(index, subset)| {
+            if subset.len() % 4 != 0 {
+                return Err(FontSplitError::InvalidSubsets(format!(
+                    "subsets[{index}] 的字节长度 {} 不是 4 的倍数",
+                    subset.len()
+                )));
+            }
+            Ok(u8_array_to_u32_array(subset))
+        })
+        .collect()
+}
+
 // 主要的预处理函数，用于执行字体的预处理和子集化操作
-pub fn pre_subset(ctx: &mut Context) {
+pub fn pre_subset(ctx: &mut Context) -> Result<()> {
     // 初始化二进制文件数据和所有Unicode字符的集合
-    let file_binary = &*ctx.binary;
-    let mut all_unicodes: BTreeSet<u32> =
+    let file_binary = ctx.binary;
+    let all_unicodes: BTreeSet<u32> =
         BTreeSet::from_iter(ctx.face.collect_unicodes());
 
     // 创建字体文件游标并读取字体数据
     let mut font_file = Cursor::new(file_binary);
-    let font = opentype::Font::read(&mut font_file)
-        .expect("cn-font-split | pre_subset | read font file error");
+    let font = opentype::Font::read(&mut font_file).map_err(|e| {
+        FontSplitError::InvalidFont(format!("读取 OpenType 字体失败: {e}"))
+    })?;
 
     // 生成SVG图像
     gen_svg_from_ctx(ctx);
-    let vars: Option<FontVariations> =
-        font.take(&mut font_file).unwrap_or(None);
+    // 可变字体表缺失或解析失败时按非可变字体处理，不影响切割。
+    let vars: Option<FontVariations> = font.take(&mut font_file).ok().flatten();
     ctx.fvar_table = analyze_fvar_table(vars);
 
-    let user_subsets: Vec<Vec<u32>> =
-        ctx.input.subsets.iter().map(|x| u8_array_to_u32_array(x)).collect();
+    let user_subsets: Vec<Vec<u32>> = decode_user_subsets(&ctx.config.subsets)?;
 
     // 初始化预处理上下文
-    let mut subsets: Vec<IndexSet<u32>> = vec![];
+    let subsets: Vec<IndexSet<u32>> = vec![];
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
-        face: &mut ctx.face,
+        face: ctx.face,
         // 每个包的大小
-        predict_bytes_pre_subset: ctx.input.chunk_size.unwrap_or(1024 * 70)
-            as u32,
+        predict_bytes_pre_subset: ctx.config.chunk_size as u32,
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
         used_languages: HashMap::new(),
     };
 
-    // 初始化处理流程，根据输入配置决定是否启用各个插件功能
-    let mut process: Vec<
-        fn(
-            &mut Vec<IndexSet<u32>>,
-            &mut BTreeSet<u32>,
-            &mut PreSubsetContext<'_, '_, '_>,
-        ),
-    > = vec![];
-    process.push(plugin_add_user_subset::plugin_add_user_subset);
-    if ctx.input.language_areas.unwrap_or(true) {
-        process.push(language_area_plugin);
+    // 执行 PIPELINE 中所有启用的插件，顺序见文件顶部的顺序约束说明。
+    let mut draft =
+        SubsetDraft { subsets, remaining: all_unicodes, ctx: &mut context };
+    for plugin in PIPELINE {
+        if plugin.enabled(ctx.config) {
+            plugin.apply(&mut draft)?;
+        }
     }
-    if ctx.input.subset_remain_chars.unwrap_or(true) {
-        process.push(add_remain_chars_plugin);
-    }
-    if ctx.input.auto_subset.unwrap_or(true) {
-        process.push(plugin_auto_subset);
-    }
-    if ctx.input.font_feature.unwrap_or(true) {
-        process.push(features_plugin);
-    }
-    // 尚未调试好这个算法，所以不启用
-    if ctx.input.reduce_mins.unwrap_or(false) {
-        process.push(reduce_min_plugin);
-    }
-    // 执行所有启用的插件处理流程
-    for p in process {
-        p(&mut subsets, &mut all_unicodes, &mut context);
-    }
+    let subsets = draft.subsets;
     // 根据处理结果更新上下文的预处理子集结果
     ctx.pre_subset_result = subsets
         .iter()
@@ -111,4 +129,28 @@ pub fn pre_subset(ctx: &mut Context) {
 
     // 分析并更新名称表
     ctx.name_table = name_table::analyze_name_table(&font, &mut font_file);
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::PIPELINE;
+
+    /// 顺序即产物语义；改动顺序必须同步更新此断言并重跑 bench hash 对比。
+    #[test]
+    fn pipeline_order_is_stable() {
+        let names: Vec<&str> =
+            PIPELINE.iter().map(|plugin| plugin.name()).collect();
+        assert_eq!(
+            names,
+            vec![
+                "add_user_subset",
+                "language_area",
+                "add_remain_chars",
+                "auto_subset",
+                "font_features",
+                "reduce_min",
+            ]
+        );
+    }
 }

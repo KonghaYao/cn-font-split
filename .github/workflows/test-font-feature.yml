@@ -1,85 +1,63 @@
 name: test-font-feature
 
+# 字体特性冒烟：只使用仓库内 packages/demo/public 的本地字体，
+# 不下载任何远程 CDN 字体，也不依赖已归档的 microsoft/playwright-github-action。
+#
+# 旧的 FeatureConfig 远程字体矩阵（高棉文、天城文等）需要联网下载，
+# 已从 CI 移除；本地用例覆盖 CJK、可变字重（300/500/800）、第二中文字体。
 on:
-    push:
-        tags:
-            - '*'
     workflow_dispatch:
-        inputs:
-            version:
-                description: '不填为最新版本'
-                required: true
-                default: ''
+
+permissions:
+    contents: read
+
+env:
+    # woff 0.4.0 在 GCC 13+ 需要补 <cstdint>，原因见 ci.yml。
+    CXXFLAGS: -include cstdint
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+
 jobs:
     test:
-        runs-on: macOS-latest
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v5
 
-            - uses: microsoft/playwright-github-action@v1
+            - uses: pnpm/action-setup@v4
 
             - name: Set up Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: '18'
-                  registry-url: 'https://registry.npmjs.org'
+                  node-version: 22
+                  cache: pnpm
+
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+
+            - uses: Swatinem/rust-cache@v2
 
             - name: Install dependencies
-              run: |
-                  npm install pnpm -g
-                  pnpm install
-            - name: Install Playwright Browsers
-              run: |
-                  npm i -g playwright
-                  npx playwright install --with-deps
+              run: pnpm install --frozen-lockfile
 
-            - name: Cache fonts
-              id: cache-fonts
-              uses: actions/cache@v3
-              with:
-                  path: packages/test/temp/font # 字体文件的实际存放路径
-                  key: ${{ runner.os }}-fonts-${{ hashFiles('packages/test/script/downloadFonts.mjs','packages/test/script/downloadFont/**/*','packages/test/FeatureConfig.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-fonts-
+            - name: Install Playwright Chromium
+              run: pnpm -C packages/test exec playwright install --with-deps chromium
 
-            - name: Install fonts dependencies
-              if: steps.cache-fonts.outputs.cache-hit != 'true'
-              run: node ./script/downloadFonts.mjs
-              working-directory: packages/test
+            - name: Build native FFI
+              run: cargo build --release -p ffi --locked
 
-            - name: Update Deps
-              working-directory: packages/test
-              run: |
-                  pnpm uninstall cn-font-split
-                  pnpm i cn-font-split
-                  pnpm cn-font-split ls
+            - name: Build workspace packages
+              run: pnpm build
 
-            - name: Install cn-font-split
-              if: inputs.version != ''
-              working-directory: packages/test
-              run: |
-                  pnpm cn-font-split i default@${{inputs.version}}
+            # 本地字体渲染冒烟：检查字体加载、截图非空、无 console error。
+            - name: Local font feature smoke
+              run: node packages/test/visual/run.mjs --browser=chromium --smoke
 
-            - name: Build Font
-              working-directory: packages/test
-              run: |
-                  pnpm exec playwright install  
-                  pnpm build
-
-            - name: Start development server
-              working-directory: packages/test
-              run: |
-                  nohup pnpm dev > /dev/null 2>&1 & 
-                  sleep 3
-
-            - name: Run Playwright tests
-              working-directory: packages/test
-              run: pnpm test
-
-            - name: Upload test results
+            - name: Upload smoke artifacts
               if: ${{ !cancelled() }}
               uses: actions/upload-artifact@v4
               with:
-                  name: playwright-report
-                  path: packages/test/dist
+                  name: font-feature-smoke
+                  path: packages/test/visual/out
+                  if-no-files-found: ignore
+                  retention-days: 7

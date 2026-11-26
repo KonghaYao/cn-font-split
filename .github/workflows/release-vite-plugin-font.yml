@@ -1,22 +1,50 @@
 name: release-vite-plugin-font
 
+# 默认 dry-run：inputs.publish=false 时只打包并执行 publish --dry-run。
 on:
-    workflow_dispatch: # 添加 workflow_dispatch 触发器
+    workflow_dispatch:
+        inputs:
+            publish:
+                description: "真实发布到 npm（默认 false，只 dry-run）"
+                type: boolean
+                default: false
+
+permissions:
+    contents: read
+
+env:
+    # woff 0.4.0 在 GCC 13+ 需要补 <cstdint>，原因见 ci.yml。
+    CXXFLAGS: -include cstdint
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
 
 jobs:
     publish:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v2
+            - uses: actions/checkout@v5
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
               with:
-                  node-version: 18
+                  node-version: 22
+                  cache: pnpm
                   registry-url: 'https://registry.npmjs.org'
-            - run: npm install pnpm -g
-            - run: pnpm install --no-frozen-lockfile
-            - run: pnpm -C ./packages/font-sharp build
-            - run: pnpm -C ./packages/subsets prepublish
-            - run: pnpm publish --access public --no-git-checks
+
+            - run: pnpm install --frozen-lockfile
+
+            - run: pnpm build
+
+            - name: npm publish --dry-run（默认路径）
+              if: ${{ !inputs.publish }}
               working-directory: packages/vite
+              run: pnpm publish --dry-run --access public --no-git-checks
+
+            - name: npm publish（真实发布）
+              if: ${{ inputs.publish }}
+              working-directory: packages/vite
+              run: |
+                  pnpm publish --dry-run --access public --no-git-checks
+                  pnpm publish --access public --no-git-checks
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

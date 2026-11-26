@@ -1,38 +1,38 @@
 [package]
 name = "cn-font-split"
 description = "划时代的字体切割工具，CJK与任何字符！支持 otf、ttf、woff2 字体多线程切割，完美地细颗粒度地进行包大小控制。A revolutionary font subetter that supports CJK and any characters! It enables multi-threaded subset of otf, ttf, and woff2 fonts, allowing for precise control over package size."
-version = "7.4.0"
-edition = "2021"
-authors = ["KonghaYao<3446798488@qq.com>"]
-homepage = "https://chinese-font.netlify.app/"
-repository = "https://github.com/konghaYao/cn-font-split"
-license = "Apache-2.0"
-exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+exclude = ["packages", "assets", ".devcontainer", ".github", ".vscode", "examples"]
 
 [dependencies]
-cn-font-utils = { version = "0.2.0", path = "crates/cn_font_utils" }
+cn-font-utils.workspace = true
 harfbuzz_rs_now = "2.3.2"
-lang-unicodes = { version = "0.2.0", path = "crates/lang_unicodes", default-features = false }
-log = "0.4.27"
-md5 = "0.7.0"
-opentype = "0.38.1"
+lang-unicodes.workspace = true
+log = "0.4.35"
+blake3 = "1.8.7"
+# 注意：opentype 0.39 依赖 truetype 0.48，其中 0.48.3 使用了
+# `slice::as_chunks`（Rust 1.88+ 才稳定），在 MSRV 1.85 上无法编译，
+# 因此 Cargo.lock 中固定 truetype = 0.48.2。
+opentype = "0.39.1"
 prost = "0.13.5"
-cn-font-proto = { version = "0.1.1", path = "crates/proto", default-features = false }
-rayon = "1.10.0"
-unicode-range = { version = "0.1.0", path = "crates/unicode_range" }
-woff = "0.3.4"
+thiserror = "2.0.21"
+cn-font-proto.workspace = true
+rayon = "1.12.0"
+unicode-range.workspace = true
+woff = "0.4.0"
 current_platform = "0.2.0"
-clap = { version = "4.5.37", features = ["derive"] }
-chrono = "0.4.38"
-regex = "1.11.1"
-indexmap = "2.9.0"
+clap = { version = "4.6.10", features = ["derive"] }
+chrono = "0.4.45"
+indexmap = "2.14.2"
 
 [dev-dependencies]
-env_logger = "0.11.8"
-
-[build-dependencies]
-cross = "0.2.5"
-tonic-build = "0.13.0"
+env_logger = "0.11.12"
 
 [features]
 default = ["with_extra"]
@@ -49,6 +49,25 @@ members = [
     "packages/grpc",
     "packages/wasm-edge",
 ]
+# packages/server 是独立部署的服务，自带 [workspace] 与 Cargo.lock，单独构建。
+exclude = ["packages/server"]
+
+[workspace.package]
+version = "8.0.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+authors = ["KonghaYao<3446798488@qq.com>"]
+homepage = "https://chinese-font.netlify.app/"
+repository = "https://github.com/konghaYao/cn-font-split"
+
+[workspace.dependencies]
+# default-features 只能在 workspace 声明，成员里再用 `default-features = false` 会报错。
+cn-font-split = { version = "8.0.0", path = ".", default-features = false }
+cn-font-utils = { version = "8.0.0", path = "crates/cn_font_utils" }
+lang-unicodes = { version = "8.0.0", path = "crates/lang_unicodes", default-features = false }
+cn-font-proto = { version = "8.0.0", path = "crates/proto", default-features = false }
+unicode-range = { version = "8.0.0", path = "crates/unicode_range" }
 
 [profile.release]
 lto = true

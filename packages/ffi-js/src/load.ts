@@ -31,57 +31,30 @@ export const matchPlatform = (
     return platformArchMap?.[platform]?.[arch] ?? 'wasm32-wasip1';
 };
 
-export const getBinaryFile = async (
+/**
+ * 当前平台对应的可发布二进制包名后缀（`@cn-font-split/<name>`）。
+ * 没有对应包时返回 null：musl / android / 32 位等只支持 CN_FONT_SPLIT_BIN 覆盖。
+ */
+export const getPlatformPackageName = (
     platform: string,
-    version: string,
-    proxy = 'https://github.com',
-) => {
-    const fileName = getBinName(platform);
-    console.log(`using gh proxy ${proxy}`);
-    const binary = await fetch(
-        proxy +
-            `/KonghaYao/cn-font-split/releases/download/${version}/${fileName}`,
-    ).then((res) => {
-        if (res.ok) return res.arrayBuffer();
-        throw new Error('download error');
-    });
-    return binary;
-};
-
-interface Release {
-    id: number;
-    tag: string;
-    author: string;
-    name: string;
-    draft: boolean;
-    prerelease: boolean;
-    createdAt: string;
-    publishedAt: string;
-    markdown: string;
-    html: string;
-}
-
-/** 直接拿最后一个版本的信息 */
-export const getLatestVersion = async () => {
-    const data: {
-        release: Release;
-    } = await fetch(
-        `https://ungh.cc/repos/KonghaYao/cn-font-split/releases/latest`,
-    ).then((res) => res.json());
-    return data.release;
-};
-export const getVersionBinary = async (
-    v = 'latest',
-): Promise<Release | undefined> => {
-    if (v === 'latest') return getLatestVersion();
-    const versions = await getAllVersions();
-    return versions.find((i: any) => i.tag === v);
-};
-export const getAllVersions = async (): Promise<Release[]> => {
-    const { releases } = await fetch(
-        'https://ungh.cc/repos/KonghaYao/cn-font-split/releases',
-    ).then((res) => res.json());
-    return releases;
+    arch: string,
+    isMusl: () => boolean,
+): string | null => {
+    if (platform === 'darwin') {
+        if (arch === 'arm64') return 'darwin-arm64';
+        if (arch === 'x64') return 'darwin-x64';
+        return null;
+    }
+    if (platform === 'win32') {
+        if (arch === 'x64') return 'win32-x64-msvc';
+        if (arch === 'arm64') return 'win32-arm64-msvc';
+        return null;
+    }
+    if (platform === 'linux' && !isMusl()) {
+        if (arch === 'x64') return 'linux-x64-gnu';
+        if (arch === 'arm64') return 'linux-arm64-gnu';
+    }
+    return null;
 };
 
 export function getBinName(platform: string) {

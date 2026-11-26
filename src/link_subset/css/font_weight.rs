@@ -1,7 +1,7 @@
 //! 字体权重相关的工具函数
 
+use crate::config::CssConfig;
 use crate::{pre_subset::name_table::NameTableSets, runner::Context};
-use cn_font_proto::api_interface::input_template::CssProperties;
 
 /// 字体权重名称到数值的映射表
 /// 按照字符串长度降序排序，以确保最长匹配优先
@@ -39,11 +39,12 @@ const FONT_WEIGHT_NAME: [(&str, u32); 21] = [
 /// * 对应的字体权重值（100-900），如果未找到匹配则返回默认值 400
 ///
 /// # 示例
-/// ```
+/// ```text
 /// assert_eq!(get_weight("bold"), 700);
 /// assert_eq!(get_weight("extra light"), 200);
 /// assert_eq!(get_weight("unknown"), 400); // 默认值
 /// ```
+/// （`css` 模块未对外导出，示例只作文档说明；等价断言见本文件 `tests`。）
 pub fn get_weight(sub_family: &str) -> u32 {
     let sub_family = sub_family.to_ascii_lowercase();
 
@@ -76,7 +77,7 @@ pub fn get_weight(sub_family: &str) -> u32 {
 /// # 返回值
 /// * 字体权重字符串，可能是单个值或范围
 pub fn extract_font_weight(
-    css: &CssProperties,
+    css: &CssConfig,
     ctx: &Context,
     name_table: &NameTableSets,
 ) -> String {
@@ -104,12 +105,12 @@ pub fn extract_font_weight(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::Config;
     use crate::pre_subset::fvar::FvarTable;
     use crate::pre_subset::name_table::NameTableSets;
-    use crate::runner::{create_context, Context};
-    use cn_font_proto::api_interface::input_template::CssProperties;
+    use crate::runner::create_context;
+    use cn_font_proto::api_interface::OutputReport;
     use cn_font_proto::api_interface::output_report::NameTable;
-    use cn_font_proto::api_interface::{InputTemplate, OutputReport};
     use harfbuzz_rs_now::Face;
 
     #[test]
@@ -140,11 +141,13 @@ mod tests {
     #[test]
     fn test_extract_font_weight() {
         // 测试 CSS 属性中直接指定权重的情况
-        let mut css = CssProperties::default();
-        css.font_weight = Some("700".to_string());
+        let css = CssConfig {
+            font_weight: Some("700".to_string()),
+            ..Default::default()
+        };
         let mut reporter = OutputReport::default();
         let binary = vec![];
-        let config = InputTemplate::default();
+        let config = Config::default();
         let mut face = Face::from_bytes(&binary, 0);
         let ctx =
             create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
@@ -152,10 +155,10 @@ mod tests {
         assert_eq!(extract_font_weight(&css, &ctx, &name_table), "700");
 
         // 测试从 TypographicSubfamilyName 获取权重
-        let css = CssProperties::default();
+        let css = CssConfig::default();
         let mut reporter = OutputReport::default();
         let binary = vec![];
-        let config = InputTemplate::default();
+        let config = Config::default();
         let mut face = Face::from_bytes(&binary, 0);
         let ctx =
             create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
@@ -170,10 +173,10 @@ mod tests {
         assert_eq!(extract_font_weight(&css, &ctx, &name_table), "700");
 
         // 测试从 FontSubfamilyName 获取权重
-        let css = CssProperties::default();
+        let css = CssConfig::default();
         let mut reporter = OutputReport::default();
         let binary = vec![];
-        let config = InputTemplate::default();
+        let config = Config::default();
         let mut face = Face::from_bytes(&binary, 0);
         let ctx =
             create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
@@ -188,10 +191,10 @@ mod tests {
         assert_eq!(extract_font_weight(&css, &ctx, &name_table), "300");
 
         // 测试从 FullFontName 获取权重
-        let css = CssProperties::default();
+        let css = CssConfig::default();
         let mut reporter = OutputReport::default();
         let binary = vec![];
-        let config = InputTemplate::default();
+        let config = Config::default();
         let mut face = Face::from_bytes(&binary, 0);
         let ctx =
             create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
@@ -206,10 +209,10 @@ mod tests {
         assert_eq!(extract_font_weight(&css, &ctx, &name_table), "400");
 
         // 测试变量字体的权重
-        let css = CssProperties::default();
+        let css = CssConfig::default();
         let mut reporter = OutputReport::default();
         let binary = vec![];
-        let config = InputTemplate::default();
+        let config = Config::default();
         let mut face = Face::from_bytes(&binary, 0);
         let mut ctx =
             create_context(&config, &binary, &mut face, &mut reporter, &|_| {});
@@ -221,10 +224,10 @@ mod tests {
         assert_eq!(extract_font_weight(&css, &ctx, &name_table), "100 500");
 
         // 测试默认权重情况
-        let css = CssProperties::default();
+        let css = CssConfig::default();
         let mut reporter = OutputReport::default();
         let binary = vec![];
-        let config = InputTemplate::default();
+        let config = Config::default();
         let mut face = Face::from_bytes(&binary, 0);
         let ctx =
             create_context(&config, &binary, &mut face, &mut reporter, &|_| {});

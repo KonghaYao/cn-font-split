@@ -1,7 +1,39 @@
-import type { HB } from '../../subsets/src/hb.js';
+/**
+ * 本包内对 harfbuzzjs 句柄的最小类型声明。
+ * 原先从已删除的 `packages/subsets` 跨包引用，这里只保留本包实际用到的成员。
+ */
+export interface HbGlyphInfo {
+    g: number;
+    /** x 方向偏移 */
+    dx: number;
+    /** y 方向偏移 */
+    dy: number;
+    /** x 方向前进量 */
+    ax: number;
+    [key: string]: unknown;
+}
+
+export interface HbBuffer {
+    addText(text: string): void;
+    guessSegmentProperties(): void;
+    setDirection(direction: 'ltr' | 'rtl' | 'ttb' | 'btt'): void;
+    json(): HbGlyphInfo[];
+    destroy(): void;
+}
+
+export interface HbFont {
+    setScale(xScale: number, yScale: number): void;
+    glyphToPath(glyphId: number): string;
+}
+
+export interface HbHandle {
+    createBuffer(): HbBuffer;
+    shape(font: HbFont, buffer: HbBuffer): void;
+}
+
 function shape(
-    hb: HB.Handle,
-    font: HB.Font,
+    hb: HbHandle,
+    font: HbFont,
     text: string,
     options: Font2SVGOptions,
 ) {
@@ -29,8 +61,8 @@ export interface Font2SVGOptions {
 
 /** render harfbuzz info to svg */
 export const makeImage = (
-    hb: HB.Handle,
-    font: HB.Font,
+    hb: HbHandle,
+    font: HbFont,
     input = '中文网字计划\nThe Project For Web',
     options: Font2SVGOptions = {},
 ) => {

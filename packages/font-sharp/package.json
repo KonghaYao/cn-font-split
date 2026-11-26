@@ -1,16 +1,26 @@
 {
     "name": "font-sharp",
-    "version": "5.0.1",
+    "version": "8.0.0",
     "description": "font to SVG Render.",
-    "main": "dist/font-sharp/src/index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
     "type": "module",
+    "engines": {
+        "node": ">=22"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/font-sharp"
     },
     "scripts": {
         "build": "tsc",
-        "prepublish": "rm -r dist && tsc"
+        "prepack": "rm -rf dist && tsc"
     },
     "keywords": [
         "font",
@@ -26,8 +36,8 @@
     ],
     "author": "KonghaYao<dongzhongzhidong@qq.com>",
     "license": "Apache-2.0",
-    "peerDependencies": {
-        "@konghayao/harfbuzzjs": "9.0.5"
+    "dependencies": {
+        "@konghayao/harfbuzzjs": "^9.0.5"
     },
     "devDependencies": {
         "@rollup/plugin-terser": "^0.4.4"

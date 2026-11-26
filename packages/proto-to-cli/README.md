@@ -56,4 +56,4 @@ getCliParams(process.argv);
 
 ## 许可证
 
-proto-to-cli 采用 MIT 许可证
+proto-to-cli 采用 Apache-2.0 许可证

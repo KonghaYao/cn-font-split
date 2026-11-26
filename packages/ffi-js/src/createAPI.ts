@@ -33,12 +33,31 @@ export const createAPI = <
         const key = Math.random().toString().slice(2, 5);
         console.time('cn-font-split ' + key);
         let handles: Promise<void>[] = [];
-        return new Promise<void>((res) => {
+        return new Promise<void>((res, rej) => {
             const buf = input.serialize();
+            // 事件流只允许结算一次：先到 ERROR 就 reject，先到 END 就 resolve。
+            let settled = false;
             const appCallback = (data: Uint8Array): void => {
-                let e = api_interface.EventMessage.deserialize(data);
+                if (settled) return;
+                let e: api_interface.EventMessage;
+                try {
+                    e = api_interface.EventMessage.deserialize(data);
+                } catch (err) {
+                    settled = true;
+                    rej(err);
+                    return;
+                }
                 switch (e.event) {
+                    case api_interface.EventName.ERROR:
+                        settled = true;
+                        rej(
+                            new Error(
+                                e.message || 'cn-font-split 未知错误',
+                            ),
+                        );
+                        break;
                     case api_interface.EventName.END:
+                        settled = true;
                         res();
                         break;
                     case api_interface.EventName.OUTPUT_DATA:

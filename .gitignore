@@ -2,6 +2,7 @@ node_modules
 fonts
 build
 dist
+dist-platforms
 otf
 **/temp
 .rollup.cache
@@ -17,3 +18,5 @@ src/pb/*.rs
 /target
 .shuttle*
 Secrets*.toml
+.claude/workflow-runs/
+.peri/

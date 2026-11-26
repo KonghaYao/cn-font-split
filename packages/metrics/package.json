@@ -1,10 +1,13 @@
 {
     "name": "cn-font-metrics",
-    "version": "2.1.6",
+    "version": "8.0.0",
     "description": "",
     "main": "dist/cn-font-metrics.js",
     "module": "dist/cn-font-metrics.mjs",
     "types": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=22"
+    },
     "files": [
         "dist"
     ],
@@ -19,8 +22,12 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "dependencies": {
-        "fontaine": "^0.6.0"
+        "fontaine": "^0.7.0"
+    },
+    "devDependencies": {
+        "@types/node": "^25.9.1",
+        "typescript": "^5.9.3"
     }
 }

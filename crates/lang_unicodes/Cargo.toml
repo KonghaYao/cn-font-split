@@ -1,28 +1,31 @@
 [package]
 name = "lang-unicodes"
-version = "0.2.2"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 description = "Effortlessly convert and validate text across various Unicode ranges, supporting multiple languages for seamless internationalization in your applications."
-authors = ["KonghaYao<3446798488@qq.com>"]
-homepage = "https://chinese-font.netlify.app/"
-repository = "https://github.com/konghaYao/cn-font-split"
-license = "Apache-2.0"
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
 include = ["data", "src"]
 
 [dependencies]
-lazy_static = "1.5.0"
-cn-font-utils = { version = "0.2.0", path = "../cn_font_utils" }
-
+cn-font-utils.workspace = true
+# 仅供 examples/gen_unicodes.rs 重新生成 data/*.dat 使用（opencc-rs 依赖 cmake）。
+# 通过 `gen` feature 显式开启，默认构建与测试不会编译它。
+opencc-rs = { version = "0.4.7", optional = true }
 
 [lib]
 path = "src/lib.rs"
 
-[build-dependencies]
-cn-font-utils = { version = "0.2.0", path = "../cn_font_utils" }
-lazy_static = { version = "1.5.0", optional = true }
-opencc-rs = { version = "0.4.7", optional = true }
-regex = "1.11.1"
+[[example]]
+name = "gen_unicodes"
+required-features = ["gen"]
 
 [features]
 default = ["with_extra"]
-with_extra = ["lazy_static", "opencc-rs"]
+# 保留空 feature：8.0 起数据文件已入库，默认构建不再需要任何额外依赖
+with_extra = []
+# 重新生成 data/*.dat 时才需要（会编译 opencc-rs，要求 PATH 中有 cmake）
+gen = ["dep:opencc-rs"]

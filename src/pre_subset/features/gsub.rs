@@ -1,8 +1,8 @@
 use log::error;
-use opentype::layout::{context, ChainedContext, Coverage};
-use opentype::tables::glyph_substitution::Type;
-use opentype::tables::GlyphSubstitution;
 use opentype::Font;
+use opentype::layout::{ChainedContext, Coverage, context};
+use opentype::tables::GlyphSubstitution;
+use opentype::tables::glyph_substitution::Type;
 use std::io::Cursor;
 pub fn analyze_gsub(
     font: &Font,
@@ -11,15 +11,16 @@ pub fn analyze_gsub(
     let temp: Result<Option<GlyphSubstitution>, std::io::Error> =
         font.take(font_file);
     // 国标宋体，解析就报错，所以干脆先不解析
-    if let Err(e) = temp {
-        error!("{}", e);
-        return vec![vec![]];
-    }
-
-    // GSUB
-    let Some(data) = temp.unwrap() else {
-        error!("Font without GSUB table");
-        return vec![vec![]];
+    let data = match temp {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            error!("Font without GSUB table");
+            return vec![vec![]];
+        }
+        Err(e) => {
+            error!("{}", e);
+            return vec![vec![]];
+        }
     };
 
     // let mut feature_tags: Vec<&str> = data
@@ -168,10 +169,10 @@ pub fn analyze_gsub(
                                     ctx.records
                                         .iter()
                                         .flat_map(|r| {
-                                            if r.clone().is_none() {
+                                            let Some(record) = r.clone()
+                                            else {
                                                 return vec![];
-                                            }
-                                            let record = r.clone().unwrap();
+                                            };
                                             record
                                                 .records
                                                 .iter()
@@ -220,7 +221,7 @@ pub fn analyze_gsub(
                             // 反正所有的字形都是相关的，合并到一块
                             let mut result: Vec<u16> = vec![];
                             collect_glyph_id_from_format_1_and_2(
-                                &[context.coverage.clone()].to_vec(),
+                                &[context.coverage.clone()],
                                 &mut result,
                             );
                             collect_glyph_id_from_format_1_and_2(
@@ -255,22 +256,22 @@ fn test_gsub() {
     .unwrap();
     let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
-    let result = analyze_gsub(&font, &mut font_file);
+    let _result = analyze_gsub(&font, &mut font_file);
     // println!("{:?}", result);
 }
 
 /// 将 cover 中的 glyph_id 直接注入 result
 pub fn collect_glyph_id_from_format_1_and_2(
-    coverages: &Vec<Coverage>,
+    coverages: &[Coverage],
     result: &mut Vec<u16>,
 ) {
     coverages.iter().for_each(|c| match c {
         Coverage::Format1(cov) => cov.glyph_ids.iter().for_each(|center| {
-            result.push(center.clone());
+            result.push(*center);
         }),
         Coverage::Format2(cov) => cov.records.iter().for_each(|r| {
             for x in r.start_glyph_id..=r.end_glyph_id {
-                result.push(x.clone());
+                result.push(x);
             }
         }),
     })

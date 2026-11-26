@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import nodeExternals from 'rollup-plugin-node-externals';
 import dts from 'vite-plugin-dts';
 import fs from 'fs-extra';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 try {
     fs.unlinkSync('./src/version');

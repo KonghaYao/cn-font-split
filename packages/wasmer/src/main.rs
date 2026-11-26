@@ -3,9 +3,8 @@ use std::path::{Path, PathBuf};
 use clap::Parser;
 mod proto;
 use cn_font_proto::api_interface::{
-    self,
+    self, InputTemplate,
     input_template::{CssProperties, PreviewImage},
-    InputTemplate,
 };
 use cn_font_utils::{output_file, read_binary_file};
 
@@ -69,21 +68,18 @@ fn main() {
     let args = proto::InputTemplate::parse();
     let config = InputTemplate::from(args);
     let out_dir = config.out_dir.clone().unwrap();
-    cn_font_split::font_split(config, |m| {
+    let _ = cn_font_split::font_split(config, |m| {
         // println!("{}  {}", m.event, m.message.unwrap_or("".to_owned()));
         // 打开一个文件以供写入，如果文件不存在，则创建它
-        match m.data {
-            Some(data) => {
-                let path = resolve_path(&out_dir, &m.message);
-                output_file(&path.to_str().unwrap(), &data)
-                    .expect("write file error");
-            }
-            _ => (),
+        if let Some(data) = m.data {
+            let path = resolve_path(&out_dir, &m.message);
+            output_file(path.to_str().unwrap(), &data)
+                .expect("write file error");
         }
     });
 }
 fn resolve_path(out_dir: &str, relative_path: &str) -> PathBuf {
     let out_path = Path::new(out_dir);
-    let resolved_path = out_path.join(relative_path);
-    resolved_path
+
+    out_path.join(relative_path)
 }

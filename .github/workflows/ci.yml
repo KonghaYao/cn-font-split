@@ -1,0 +1,185 @@
+name: CI
+
+on:
+    push:
+    pull_request:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    CARGO_TERM_COLOR: always
+    TZ: Asia/Shanghai
+    # woff 0.4.0 内置的 woff2 C++ 源码未 include <cstdint>，而 GCC 13+ 不再传递引入
+    # <stdint.h>，Linux 上会报 uint8_t does not name a type。woff 0.5+ 已修复该 include，
+    # 但同时在 decode 失败时执行 debug_assert，破坏 truncated_woff2 的优雅报错路径，
+    # 因此固定在 0.4.0 并用编译参数补齐头文件。
+    CXXFLAGS: -include cstdint
+    # macOS runner 自带 Homebrew harfbuzz，pkg-config 探测成功后会链接系统库，
+    # 而系统库不含 subset 符号（hb_subset_or_fail 等），链接期必然失败。
+    # 与 cross-build.yml 一致：强制 harfbuzz_rs_now 使用内置源码。
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+
+jobs:
+    rust:
+        name: Rust fmt / clippy / test / build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            # 工具链版本以 rust-toolchain.toml 为准（1.85.0 / MSRV）。
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+                  components: rustfmt, clippy
+
+            - uses: Swatinem/rust-cache@v2
+
+            - name: cargo fmt
+              run: cargo fmt --all --check
+
+            - name: cargo clippy
+              run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+            - name: cargo test
+              run: cargo test --locked
+
+            - name: cargo test (failure paths)
+              run: cargo test --test failure_paths --locked
+
+            - name: cargo build --release
+              run: cargo build --release --locked
+
+    node:
+        name: Node FFI 构建与冒烟
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+
+            - uses: Swatinem/rust-cache@v2
+
+            - name: pnpm install
+              run: pnpm install --frozen-lockfile
+
+            - name: Build native FFI
+              run: cargo build --release -p ffi --locked
+
+            - name: Build workspace packages
+              # 根 build 按 workspace 依赖顺序执行：proto-to-cli → ffi-js → metrics → vite。
+              run: pnpm build
+
+            - name: Vite 插件集成测试
+              # 使用上面构建的 target/release/libffi.so，验证缓存布局与产物。
+              run: pnpm -C packages/vite test
+
+            - name: Node smoke（合法字体 → 生成文件）
+              run: node packages/ffi-js/scripts/smoke-node.mjs
+
+            - name: Node smoke（错误路径）
+              run: node packages/ffi-js/scripts/smoke-error.mjs
+
+    visual-macos:
+        name: 视觉回归（macOS / WebKit，像素比对）
+        runs-on: macos-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+
+            - uses: Swatinem/rust-cache@v2
+
+            - name: pnpm install
+              run: pnpm install --frozen-lockfile
+
+            # Playwright 版本由 pnpm-workspace.yaml 精确锁定，避免 WebKit 漂移。
+            - name: Install WebKit
+              run: pnpm -C packages/test exec playwright install --with-deps webkit
+
+            - name: Build native FFI
+              run: cargo build --release -p ffi --locked
+
+            - name: Build workspace packages
+              run: pnpm build
+
+            - name: Visual regression
+              run: node packages/test/visual/run.mjs
+
+            - name: Upload diff artifacts
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: visual-diff
+                  path: |
+                      packages/test/visual/out
+                      packages/test/visual/temp
+                  if-no-files-found: ignore
+                  retention-days: 7
+
+    visual-linux-smoke:
+        name: 视觉冒烟（Linux / Chromium，不比对像素）
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: 1.85.0
+
+            - uses: Swatinem/rust-cache@v2
+
+            - name: pnpm install
+              run: pnpm install --frozen-lockfile
+
+            - name: Install Chromium
+              run: pnpm -C packages/test exec playwright install --with-deps chromium
+
+            - name: Build native FFI
+              run: cargo build --release -p ffi --locked
+
+            - name: Build workspace packages
+              run: pnpm build
+
+            # 跨平台字体渲染存在系统性差异，Linux 只验证渲染和加载，
+            # 像素基线仍由 macOS/WebKit 承担。
+            - name: Visual smoke
+              run: node packages/test/visual/run.mjs --browser=chromium --smoke
+
+            - name: Upload smoke screenshots
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: visual-linux-smoke
+                  path: packages/test/visual/out
+                  if-no-files-found: ignore
+                  retention-days: 7

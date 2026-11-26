@@ -1,5 +1,5 @@
 // bun test ./src/load.test.ts
-import { getLatestVersion, matchPlatform, getBinaryFile } from './load';
+import { getPlatformPackageName, matchPlatform } from './load';
 // @ts-ignore
 import { test } from 'bun:test';
 import assert from 'node:assert';
@@ -64,5 +64,45 @@ test('multi-platform', () => {
     assert.strictEqual(
         matchPlatform('win32', 'ia32', () => false),
         'wasm32-wasip1',
+    );
+});
+
+test('platform package name', () => {
+    assert.strictEqual(
+        getPlatformPackageName('darwin', 'arm64', () => false),
+        'darwin-arm64',
+    );
+    assert.strictEqual(
+        getPlatformPackageName('darwin', 'x64', () => false),
+        'darwin-x64',
+    );
+    assert.strictEqual(
+        getPlatformPackageName('win32', 'x64', () => false),
+        'win32-x64-msvc',
+    );
+    assert.strictEqual(
+        getPlatformPackageName('win32', 'arm64', () => false),
+        'win32-arm64-msvc',
+    );
+    assert.strictEqual(
+        getPlatformPackageName('linux', 'x64', () => false),
+        'linux-x64-gnu',
+    );
+    assert.strictEqual(
+        getPlatformPackageName('linux', 'arm64', () => false),
+        'linux-arm64-gnu',
+    );
+    // musl / 其它架构没有预编译包，只能走 CN_FONT_SPLIT_BIN。
+    assert.strictEqual(
+        getPlatformPackageName('linux', 'x64', () => true),
+        null,
+    );
+    assert.strictEqual(
+        getPlatformPackageName('android', 'arm64', () => false),
+        null,
+    );
+    assert.strictEqual(
+        getPlatformPackageName('win32', 'ia32', () => false),
+        null,
     );
 });

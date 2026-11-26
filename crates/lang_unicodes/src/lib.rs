@@ -1,7 +1,7 @@
 use cjk_unicodes::{
     HANGUL_JAMO, HANGUL_SYL, HIRAGANA_AND_KATAKANA, ZH_SC, ZH_TC,
 };
-use lazy_static::lazy_static;
+use std::sync::LazyLock;
 pub mod cjk_unicodes;
 pub fn expand_ranges(ranges: &[(u32, u32)]) -> Vec<u32> {
     ranges
@@ -9,25 +9,28 @@ pub fn expand_ranges(ranges: &[(u32, u32)]) -> Vec<u32> {
         .flat_map(|&(start, end)| (start..=end).collect::<Vec<u32>>())
         .collect()
 }
-lazy_static! {
-    /**
-     * Latin 范围替换
-     * 0 不归入此，一般 0 是用于占位的
-     */
-    pub static ref LATIN: Vec<u32> = expand_ranges(&[(0x0001, 0x007F)]);
-    pub static ref LATIN_1: Vec<u32> = expand_ranges(&[(0x0080, 0x00FF)]);
-    pub static ref LATIN_EXT_A: Vec<u32> = expand_ranges(&[(0x0100, 0x017F)]);
-    pub static ref LATIN_EXT_B: Vec<u32> = expand_ranges(&[(0x0180, 0x024F)]);
+/**
+ * Latin 范围替换
+ * 0 不归入此，一般 0 是用于占位的
+ */
+pub static LATIN: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0001, 0x007F)]));
+pub static LATIN_1: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0080, 0x00FF)]));
+pub static LATIN_EXT_A: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0100, 0x017F)]));
+pub static LATIN_EXT_B: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0180, 0x024F)]));
 
+pub static IPA_SYMBOLS: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0250, 0x02FF)]));
 
-
-    pub static ref IPA_SYMBOLS: Vec<u32> = expand_ranges(&[(0x0250, 0x02FF)]);
-
-    // 定义 ZH_SYMBOL 静态引用，包含特化处理的中文常用符号的 Unicode 码点
-    // 参考 https://www.w3.org/International/clreq/#tables_of_chinese_punctuation_marks
-    // 以及 https://zh.wikipedia.org/wiki/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7
-    // 。．，、：；！‼？⁇⸺——…⋯～-–·・‧/／「」『』“”‘’（）《》〈〉【】〖〗〔〕［］｛｝＿﹏●•－｜﹁﹂﹃﹄〘〙
-    pub static ref ZH_SYMBOL: Vec<u32> = expand_ranges(&[
+// 定义 ZH_SYMBOL 静态引用，包含特化处理的中文常用符号的 Unicode 码点
+// 参考 https://www.w3.org/International/clreq/#tables_of_chinese_punctuation_marks
+// 以及 https://zh.wikipedia.org/wiki/%E6%A0%87%E7%82%B9%E7%AC%A6%E5%8F%B7
+// 。．，、：；！‼？⁇⸺——…⋯～-–·・‧/／「」『』“”‘’（）《》〈〉【】〖〗〔〕［］｛｝＿﹏●•－｜﹁﹂﹃﹄〘〙
+pub static ZH_SYMBOL: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    expand_ranges(&[
         // 句号
         (0x3002, 0x3002), // 。
         (0xFF0E, 0xFF0E), // ．
@@ -92,116 +95,118 @@ lazy_static! {
         (0xFE41, 0xFE42), // ﹁﹂
         (0xFE43, 0xFE44), // ﹃﹄
         (0x3018, 0x3019), // 〘〙
-    ]);
+    ])
+});
 
-    pub static ref HALFWIDTH_FULLWIDTH: Vec<u32> = expand_ranges(&[(0xFF00, 0xFFEF)]);
+pub static HALFWIDTH_FULLWIDTH: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0xFF00, 0xFFEF)]));
 
-    pub static ref GREEK: Vec<u32> = expand_ranges(&[(0x0370, 0x03FF), (0x1F00, 0x1FFF)]);
+pub static GREEK: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0370, 0x03FF), (0x1F00, 0x1FFF)]));
 
-    /// 西里尔文范围
-    pub static ref CYRILLIC: Vec<u32> = expand_ranges(&[
+/// 西里尔文范围
+pub static CYRILLIC: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    expand_ranges(&[
         (0x0400, 0x052F),
         (0x1C80, 0x1C8F),
         (0x2DE0, 0x2DFF),
-        (0xA640, 0xA69F)
-    ]);
+        (0xA640, 0xA69F),
+    ])
+});
 
-    /**
-     * 阿拉伯文范围
-     */
-    pub static ref ARABIC: Vec<u32> = expand_ranges(&[
+/**
+ * 阿拉伯文范围
+ */
+pub static ARABIC: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    expand_ranges(&[
         (0x0600, 0x06FF),
         (0x0750, 0x077F),
         (0x0870, 0x08FF),
         (0xFB50, 0xFDFF),
-        (0xFE70, 0xFEFF)
-    ]);
+        (0xFE70, 0xFEFF),
+    ])
+});
 
-    /**
-     * 孟加拉语
-     */
-    pub static ref BENGALI: Vec<u32> = expand_ranges(&[(0x0980, 0x09FF)]);
+/**
+ * 孟加拉语
+ */
+pub static BENGALI: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0980, 0x09FF)]));
 
-    /**
-     * 天城文
-     */
-    pub static ref DEVANAGARI: Vec<u32> = expand_ranges(&[
-        (0x0900, 0x097F),
-        (0xA8E0, 0xA8FF),
-        (0x11B00, 0x11B5F)
-    ]);
+/**
+ * 天城文
+ */
+pub static DEVANAGARI: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    expand_ranges(&[(0x0900, 0x097F), (0xA8E0, 0xA8FF), (0x11B00, 0x11B5F)])
+});
 
-    /** 泰文 */
-    pub static ref THAI: Vec<u32> = expand_ranges(&[(0x0E00, 0x0E7F)]);
+/** 泰文 */
+pub static THAI: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0E00, 0x0E7F)]));
 
-    /** 高棉 */
-    pub static ref KHMER: Vec<u32> = expand_ranges(&[
-        (0x1780, 0x17FF),
-        (0x19E0, 0x19FF)
-    ]);
+/** 高棉 */
+pub static KHMER: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x1780, 0x17FF), (0x19E0, 0x19FF)]));
 
-    // 少数民族的文字
+// 少数民族的文字
 
-    /** 藏文 */
-    pub static ref TIBETAN: Vec<u32> = expand_ranges(&[(0x0F00, 0x0FFF)]);
+/** 藏文 */
+pub static TIBETAN: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x0F00, 0x0FFF)]));
 
-    /** 蒙古文 */
-    pub static ref MONGOLIAN: Vec<u32> = expand_ranges(&[(0x1800, 0x18AF)]);
+/** 蒙古文 */
+pub static MONGOLIAN: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x1800, 0x18AF)]));
 
-    /** 傣文 */
-    pub static ref TAI_LE: Vec<u32> = expand_ranges(&[(0x1950, 0x197F)]);
+/** 傣文 */
+pub static TAI_LE: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x1950, 0x197F)]));
 
-    /** 西双版纳傣文 */
-    pub static ref TAI_LUE: Vec<u32> = expand_ranges(&[(0x1980, 0x19DF)]);
+/** 西双版纳傣文 */
+pub static TAI_LUE: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x1980, 0x19DF)]));
 
-    /** 彝文 */
-    pub static ref YI: Vec<u32> = expand_ranges(&[
-        (0xA000, 0xA48F),
-        (0xA490, 0xA4C6)
-    ]);
+/** 彝文 */
+pub static YI: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0xA000, 0xA48F), (0xA490, 0xA4C6)]));
 
-    /** 八思巴文 */
-    pub static ref PHAGS_PA: Vec<u32> = expand_ranges(&[(0xA840, 0xA87F)]);
+/** 八思巴文 */
+pub static PHAGS_PA: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0xA840, 0xA87F)]));
 
-    /**
-     * 朝鲜文
-     * 采用韩文的解析方式
-     */
+// 朝鲜文采用韩文的解析方式（此处旧条目已移除，保留说明）。
 
-    /** 傈僳文 */
-    pub static ref LISU: Vec<u32> = expand_ranges(&[(0x10C00, 0x10C4F)]);
+/** 傈僳文 */
+pub static LISU: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x10C00, 0x10C4F)]));
 
-    /** 布依文 */
-    pub static ref BUHID: Vec<u32> = expand_ranges(&[(0x1740, 0x175F)]);
+/** 布依文 */
+pub static BUHID: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x1740, 0x175F)]));
 
-    /** 苗文 */
-    pub static ref MIAO: Vec<u32> = expand_ranges(&[(0x16F00, 0x16F9F)]);
+/** 苗文 */
+pub static MIAO: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x16F00, 0x16F9F)]));
 
-    /** 哈尼文 */
-    pub static ref HANI: Vec<u32> = expand_ranges(&[(0x13A0, 0x13F5)]);
+/** 哈尼文 */
+pub static HANI: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x13A0, 0x13F5)]));
 
-    /** 拉祜文 */
-    pub static ref LAHU: Vec<u32> = expand_ranges(&[(0x10900, 0x1091F)]);
+/** 拉祜文 */
+pub static LAHU: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x10900, 0x1091F)]));
 
-    /** 佤文 */
-    pub static ref VA: Vec<u32> = expand_ranges(&[(0x10A00, 0x10A5F)]);
+/** 佤文 */
+pub static VA: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x10A00, 0x10A5F)]));
 
-    /** 壮文 */
-    pub static ref ZHUANG: Vec<u32> = expand_ranges(&[(0x10D30, 0x10D7F)]);
+/** 壮文 */
+pub static ZHUANG: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x10D30, 0x10D7F)]));
 
-    /** 纳西文 */
-    pub static ref NAXI_DONGBA: Vec<u32> = expand_ranges(&[(0x10FB0, 0x10FDF)]);
-
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test() {
-        assert_eq!(LATIN.len(), 127)
-    }
-}
+/** 纳西文 */
+pub static NAXI_DONGBA: LazyLock<Vec<u32>> =
+    LazyLock::new(|| expand_ranges(&[(0x10FB0, 0x10FDF)]));
 
 pub fn create_default_unicode_area() -> [Vec<u32>; 32] {
     [
@@ -280,4 +285,13 @@ pub fn create_default_unicode_area_tag() -> [&'static str; 32] {
         "NAXI_DONGBA",
         "HALFWIDTH_FULLWIDTH",
     ]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test() {
+        assert_eq!(LATIN.len(), 127)
+    }
 }
