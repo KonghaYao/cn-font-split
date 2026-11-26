@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cn_font_split",
-    version="7.1.0",
+    version="8.0.0",
     description="A revolutionary font subsetter that supports CJK and any characters!",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -26,7 +26,9 @@ setup(
     # Adjust as necessary
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
     install_requires=[  # Include your dependencies here
-        "google===3.0.0",
+        # 运行时版本下限由生成代码决定：gen/ 由本机 protoc 生成（当前 36.2 会写入
+        # protobuf 7.x 的 ValidateProtobufRuntimeVersion 断言）。用更老的 protoc
+        # 重新执行 build.sh 后，需要把这里的 pin 一并下调。
         "protobuf==5.29.2",
     ],
     entry_points={

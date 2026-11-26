@@ -1,6 +1,7 @@
 import os
 from ctypes import CDLL, CFUNCTYPE, c_size_t, POINTER, c_ubyte, string_at
 import sys
+import subprocess
 from typing import Any
 from .gen import index_pb2
 from pathlib import Path
@@ -20,6 +21,7 @@ def create_api(ctx):
         cloned_byte_data = bytes(byte_data)
         msg = index_pb2.EventMessage()  # type: ignore
         msg.ParseFromString(cloned_byte_data)
+        # EventName: 0=UNSPECIFIED, 1=OUTPUT_DATA（带文件名与数据）, 2=END, 3=ERROR
         if msg.event == 0:
             print("构建成功")
         if msg.event == 1:
@@ -31,9 +33,6 @@ def create_api(ctx):
 
             with open(file_path, "wb") as file:
                 file.write(msg.data)
-        if msg.event == 2:
-            # OUTPUTDATA
-            print("hello")
 
     return cb
 
@@ -131,10 +130,32 @@ def match_platform(platform: str, arch: str, is_musl: Any) -> str:
             "s390x": "s390x-unknown-linux-gnu",
         },
     }
-    return platform_arch_map.get(platform, {}).get(arch, "wasm32-wasip1")
+    # 表里显式写成 None 的组合（musl、arm、android）没有对应的预编译包，
+    # 与未知平台一样退回 wasm32-wasip1，避免拼出 "libffi-None.so" 这种路径。
+    triple = platform_arch_map.get(platform, {}).get(arch, "wasm32-wasip1")
+    return triple or "wasm32-wasip1"
 
 
-# 示例
-def is_musl():
-    # 这里可以放置实际的检测逻辑
-    return False
+def is_musl() -> bool:
+    """当前解释器是否运行在 musl libc 上（非 Linux 一律 False）。
+
+    语义说明：本项目只发布 glibc 版 Linux 平台包（`linux-x64-gnu` /
+    `linux-arm64-gnu`），没有 musl 产物。因此检测到 musl 时不猜测文件名，
+    而是和未知平台一样退回 wasm32-wasip1；此时需要用户设置
+    `CN_FONT_SPLIT_BIN` 指向本地构建的 libffi.so（见 README）。
+    """
+    if not sys.platform.startswith("linux"):
+        return False
+    libc_name, _ = platform.libc_ver()
+    if libc_name == "musl":
+        return True
+    if libc_name == "glibc":
+        return False
+    # 精简镜像上 libc_ver() 可能返回空字符串，退化为读 ldd 的版本串。
+    try:
+        probe = subprocess.run(
+            ["ldd", "--version"], capture_output=True, text=True, timeout=5
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return "musl" in (probe.stdout + probe.stderr).lower()
