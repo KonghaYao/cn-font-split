@@ -31,6 +31,9 @@ pub struct FontSource<'a> {
 pub struct PreSubsetOutput {
     /// 过滤掉空包后的分包字符表。
     pub subsets: Vec<Vec<u32>>,
+    /// 字体覆盖的全部码点（升序去重），供 `run_subset` 复用，
+    /// 避免对同一个 face 再调一次 `collect_unicodes`。
+    pub all_unicodes: Vec<u32>,
     pub name_table: NameTableSets,
     /// 可变字体轴信息；非可变字体为 `None`。
     pub fvar: Option<FvarTable>,

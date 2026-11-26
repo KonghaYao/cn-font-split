@@ -77,8 +77,8 @@ pub fn run_subset(
 ) -> Result<RunSubsetOutput> {
     // 与拆分前一致：报告里的原始字节数是输入字节数，而不是解码后的字体长度。
     let origin_bytes = config.input.len() as u32;
-    let all_chars: IndexSet<u32> =
-        source.face.collect_unicodes().iter().cloned().collect();
+    // 字符全集由 pre 阶段给出（同一 face 不再重复 collect_unicodes）。
+    let all_chars: IndexSet<u32> = pre.all_unicodes.iter().copied().collect();
     let origin_size = all_chars.len() as u32;
     let file_name_template = config.rename_output_font.as_deref();
     debug!("font subset result log");

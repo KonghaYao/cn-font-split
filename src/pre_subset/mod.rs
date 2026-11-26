@@ -109,6 +109,8 @@ pub fn pre_subset(
 
     // 初始化预处理上下文
     let subsets: Vec<IndexSet<u32>> = vec![];
+    // 字符全集在交给插件消费前先留一份升序快照，供 run_subset 复用。
+    let all_unicodes_vec: Vec<u32> = all_unicodes.iter().copied().collect();
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
         face: &mut source.face,
@@ -136,12 +138,17 @@ pub fn pre_subset(
         .map(|v| v.iter().copied().collect::<Vec<u32>>())
         .collect();
     // `draft` 到此不再使用，`context` 的可变借用于此结束。
-    // 注意：`context.used_languages` 仍是 `AutoSubset` 的输入（语言区域缩放
-    // 因子），这里只丢弃对外字段，不再随 `PreSubsetOutput` 上抛。
+    // `context.used_languages` 只服务于 `AutoSubset`（见字段注释），不随产物上抛。
 
     // 分析名称表
     let name_table = name_table::analyze_name_table(&font, &mut font_file);
-    Ok(PreSubsetOutput { subsets, name_table, fvar, extra_files })
+    Ok(PreSubsetOutput {
+        subsets,
+        all_unicodes: all_unicodes_vec,
+        name_table,
+        fvar,
+        extra_files,
+    })
 }
 
 #[cfg(test)]
