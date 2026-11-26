@@ -107,6 +107,10 @@ node script/check-licenses.mjs
 此外 npm 的读路径有复制/缓存延迟，所以 workflow 在两次发布之间还有一个「等待平台包
 可见」的门禁。
 
+> 本手册假定包含本次发布的提交已合并到 `release`（`gh workflow run --ref release`
+> 读取的是远端 `release` 上的 workflow 文件）；若在合并前操作，请把 `--ref` 换成实际
+> 分支，否则会跑旧流程。
+
 ### 3.1 触发 cross-build（只构建，不发布）
 
 ```sh
@@ -136,7 +140,7 @@ gh workflow run release-cn-font-split.yml --ref release \
 
 dry-run 不再只是 `pnpm pack --dry-run`：它会真实下载 `bindings-*`、生成 8 个
 `dist-platforms/<platform>/`，并校验目录存在、`package.json` 的 `name` /
-`version`、以及每个二进制 > 64KB。任何一项失败都不要进入 3.3。
+`version`、每个目录存在 `LICENSE`、以及每个二进制 > 64KB。任何一项失败都不要进入 3.3。
 
 ### 3.3 正式发布（`publish=true`）
 
@@ -219,14 +223,17 @@ ls -l node_modules/@cn-font-split/darwin-arm64/libffi-*.dylib
 
 npm 的版本删除窗口很短：
 
--   **72 小时内**：`npm unpublish cn-font-split@8.0.0`、
-    `npm unpublish @cn-font-split/darwin-arm64@8.0.0`（逐个平台包）。撤回顺序与发布
-    相反：先撤主包，再撤平台包。
+-   **72 小时内**：通常可 `npm unpublish cn-font-split@8.0.0`、
+    `npm unpublish @cn-font-split/darwin-arm64@8.0.0`（逐个平台包）；若该版本已被
+    其它包依赖或 registry 拒绝，则只能 `npm deprecate` 并尽快发修复版。撤回顺序与
+    发布相反：先撤主包，再撤平台包。
 -   **超过 72 小时**：不能再删版本，只能 `npm deprecate` 标记，并尽快发布修复版本。
     `npm deprecate cn-font-split@8.0.0 "原因"` 会让 `npm i` 打印警告，但不会阻止安装。
--   **主包已发布、平台包缺失**：正确做法是补齐平台包（重跑 3.3 或手工
-    `npm publish dist-platforms/<p> --access public`），**不要撤回主包**——撤回会让
-    声明了 `cn-font-split@8.0.0` 的项目无法重新安装（只能退回 7.x）。
+-   **主包已发布、平台包缺失**：正确做法是补齐缺失的平台包：先对 8 个包逐个
+    `npm view @cn-font-split/<p>@<version> version` 确认哪些缺失，只手工发布缺失的
+    那些（`npm publish dist-platforms/<p> --access public`）；不要整体重跑 workflow，
+    它会在已发布的包上失败。**不要撤回主包**——撤回会让声明了
+    `cn-font-split@8.0.0` 的项目无法重新安装（只能退回 7.x）。
 -   8.0 与 7.x 的产物指纹算法不同，回滚到 7.x 时不要混用两代产物与缓存键。
 
 ## 6. 已知风险 / 待决（本轮不改）
@@ -234,7 +241,8 @@ npm 的版本删除窗口很短：
 1.  **`prepublish` ≠ `prepack`**：`packages/metrics`、`packages/proto-to-cli`、
     `packages/font-analyze` 用的是 `prepublish`。npm 11 的 `npm pack` / `npm publish`
     不再执行 `prepublish`，用 npm 手工发布会发出空 `dist`。走 workflow 的 pnpm 不受
-    影响；若本轮还要发这几个包，先改成 `prepack` 或改用 pnpm 发布。
+    影响；若本轮还要发这几个包，必须先改成 `prepack`（实测 `npm pack` 与 `pnpm pack`
+    都不执行 `prepublish`）；否则无论用 npm 还是 pnpm 手工发布，都会发出空 `dist`。
 2.  **wasm 平台包的 `os` / `cpu`**：两个 wasm 包声明的是
     `os: [darwin, linux, win32]` + `cpu: [x64, arm64]`，所以每个桌面用户安装主包时都会
     多装两个 wasm 包（单个 wasm 二进制的实际体积本轮未测，发布后可用
@@ -248,8 +256,8 @@ npm 的版本删除窗口很短：
 4.  **macos-13 → macos-14**：`cross-build.yml` 的 `x86_64-apple-darwin` 条目已改到
     macos-14（arm64 runner）上交叉编译，因为 GitHub 正在淘汰 macos-13。该 workflow
     从未运行过，第一次 cross-build 才能验证 `libffi-x86_64-apple-darwin.dylib` 是否
-    正常产出；如果失败，需要在发布前换方案（例如临时保留 macos-13 或改用
-    `cross` 构建），不要跳过 `darwin-x64` 平台包。
+    正常产出；如果失败，需要在发布前换方案（例如临时保留 `macos-13`，或改用 Intel
+    macOS runner——需确认 runner 标签对应的架构），不要跳过 `darwin-x64` 平台包。
 5.  **仓库无 CHANGELOG、无 8.0 tag**；`arch_hashcheck` 的两个测试是 `#[ignore]`，
     不在 CI 内。发布说明需要手工整理。
 6.  **其他 npm 包的发布范围**（`font-analyze` / `font-sharp` / `proto-to-cli` /

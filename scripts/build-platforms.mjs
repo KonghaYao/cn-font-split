@@ -203,6 +203,8 @@ function buildOne(key, version, artifactsDir) {
     fs.rmSync(outDir, { recursive: true, force: true });
     fs.mkdirSync(outDir, { recursive: true });
     fs.copyFileSync(artifact, path.join(outDir, binName));
+    // 平台包以 Apache-2.0 分发，LICENSE 必须随包发布（npm 只会自动收录包目录内的文件）。
+    fs.copyFileSync(path.join(ROOT, 'LICENSE'), path.join(outDir, 'LICENSE'));
 
     const manifest = {
         name: `@cn-font-split/${key}`,
@@ -217,7 +219,7 @@ function buildOne(key, version, artifactsDir) {
         cpu: platform.cpu,
         ...(platform.libc ? { libc: platform.libc } : {}),
         main: binName,
-        files: [binName],
+        files: [binName, 'LICENSE'],
         publishConfig: {
             registry: 'https://registry.npmjs.org/',
             access: 'public',

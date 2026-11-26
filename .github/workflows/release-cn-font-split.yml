@@ -84,7 +84,7 @@ jobs:
                       # workflow_dispatch 下 GITHUB_SHA（即 github.sha）是被派发 ref 的提交，
                       # 用它才能对上同一份源码构建出的产物（不要用 GITHUB_REF_NAME）。
                       echo "未指定 cross_build_run_id，查询 ${GITHUB_SHA} 上最近一次成功的 cross-build 运行..."
-                      run_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/cross-build.yml/runs?head_sha=${GITHUB_SHA}&status=success&per_page=1" --jq '.workflow_runs[0].database_id // empty' || true)"
+                      run_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/cross-build.yml/runs?head_sha=${GITHUB_SHA}&status=success&per_page=1" --jq '.workflow_runs[0].id // empty' || true)"
                   fi
                   if [ -z "${run_id}" ]; then
                       {
@@ -207,6 +207,7 @@ jobs:
                   )
                   missing=()
                   wrong_name=()
+                  missing_license=()
                   for platform in "${platforms[@]}"; do
                       manifest="dist-platforms/${platform}/package.json"
                       if [ ! -f "$manifest" ]; then
@@ -217,8 +218,11 @@ jobs:
                       if [ "$name" != "@cn-font-split/${platform}" ]; then
                           wrong_name+=("${platform}: ${name}")
                       fi
+                      if [ ! -f "dist-platforms/${platform}/LICENSE" ]; then
+                          missing_license+=("dist-platforms/${platform}/LICENSE")
+                      fi
                   done
-                  if [ ${#missing[@]} -ne 0 ] || [ ${#wrong_name[@]} -ne 0 ]; then
+                  if [ ${#missing[@]} -ne 0 ] || [ ${#wrong_name[@]} -ne 0 ] || [ ${#missing_license[@]} -ne 0 ]; then
                       {
                           echo "::error::平台包目录不完整或命名错误"
                           if [ ${#missing[@]} -ne 0 ]; then
@@ -227,6 +231,10 @@ jobs:
                           if [ ${#wrong_name[@]} -ne 0 ]; then
                               echo "package.json name 与目录名不符："
                               printf '  %s\n' "${wrong_name[@]}"
+                          fi
+                          if [ ${#missing_license[@]} -ne 0 ]; then
+                              echo "缺少 LICENSE（以 Apache-2.0 分发，必须随包发布）："
+                              printf '  %s\n' "${missing_license[@]}"
                           fi
                           echo "平台包目录不入库，由本 workflow 从 cross-build 产物生成："
                           echo "  1. 运行 .github/workflows/cross-build.yml（dry_run=true、create_release=false），等全部作业成功；"
@@ -237,7 +245,7 @@ jobs:
                       } >&2
                       exit 1
                   fi
-                  echo "平台包目录齐全且 name 正确（${#platforms[@]} 个）"
+                  echo "平台包目录齐全、name 正确且含 LICENSE（${#platforms[@]} 个）"
 
             - name: 平台包版本校验
               run: |

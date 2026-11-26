@@ -149,7 +149,7 @@
 ## 附：计划来源与关键证据
 计划文件：`/Users/kk/code/cn-font-split/.peri/plans/refactor-8.0-arch-deferred.md`（未修改任何源码，未执行 git 写操作）
 
-关键证据：`docs/REFACTOR-8.0.md` §12 遗留表与 §11 数据；`src/runner.rs:14/59/110`、`src/pre_subset/mod.rs:98`、`src/run_subset.rs:46/53`、`src/link_subset/output_css.rs:63/104/117`、`src/naming.rs:52/69`、`src/pre_subset/plugin_auto_subset.rs:95/243`、`src/pre_subset/features.rs:30`；`bench-results/v8-perf/bench.md`（WorkSans 9 包，min/median/max=1780/4544/157996）；`packages/test/visual/out/vf/result.css` 末条 `@font-face` 证实 157,996B 包是 Latin 剩余包（约 210 字符）；`packages/ffi-js/README.md:139` 的 tolerance 语义与文档 §11 冲突。
+关键证据：`docs/REFACTOR-8.0.md` §12 遗留表与 §11 数据；`src/runner.rs:14/59/110`、`src/pre_subset/mod.rs:98`、`src/run_subset.rs:46/53`、`src/link_subset/output_css.rs:63/104/117`、`src/naming.rs:53/68`、`src/pre_subset/plugin_auto_subset.rs:95/243`、`src/pre_subset/features.rs:30`；`bench-results/v8-perf/bench.md`（WorkSans 9 包，min/median/max=1780/4544/157996）；`packages/test/visual/out/vf/result.css` 末条 `@font-face` 证实 157,996B 包是 Latin 剩余包（约 210 字符）；`packages/ffi-js/README.md:139` 的 tolerance 语义与文档 §11 冲突。
 
 ## C. JS 与分发
 
