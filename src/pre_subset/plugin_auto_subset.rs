@@ -4,7 +4,7 @@ use indexmap::IndexSet;
 
 use log::{debug, info};
 
-use crate::run_subset::build_single_subset;
+use crate::pack::build_single_subset;
 
 use super::plugin::{PreSubsetPlugin, SubsetDraft};
 use crate::config::Config;

@@ -2,13 +2,13 @@ use crate::config::Config;
 use crate::contract::{
     FontSource, PreSubsetOutput, RunSubsetOutput, RunSubsetResult,
 };
-use crate::error::{FontSplitError, Result};
+use crate::error::Result;
 use crate::naming::name_template;
+use crate::pack::build_single_subset;
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
 };
 use cn_font_utils::u8_size_in_kb;
-use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
 use log::{debug, warn};
@@ -16,27 +16,6 @@ use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
 use std::time::Instant;
-use woff::version2::compress;
-
-/// 构建单个分包为字体文件
-pub fn build_single_subset(
-    face: &Owned<Face>,
-    subset: &[u32],
-) -> Result<Vec<u8>> {
-    let subset_runner = Subset::new();
-    subset_runner.clear_drop_table();
-    subset_runner.adjust_layout();
-    subset_runner.add_chars(subset);
-    let new_face = subset_runner.run_subset(face).face_data();
-    let ttf_binary = new_face.get_data();
-    // woff 0.4.0 的 compress 以 Option 表示失败（上游 woff2 编码失败）。
-    compress(ttf_binary, String::from(""), 1, true).ok_or_else(|| {
-        FontSplitError::Internal(format!(
-            "WOFF2 压缩失败（{} 个字符）",
-            subset.len()
-        ))
-    })
-}
 
 struct ThreadResult {
     pub subset_result: RunSubsetResult,

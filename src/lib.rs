@@ -5,6 +5,7 @@ mod link_subset;
 mod loader;
 mod message;
 mod naming;
+mod pack;
 mod pre_subset;
 mod run_subset;
 mod runner;
