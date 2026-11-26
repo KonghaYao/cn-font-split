@@ -249,11 +249,10 @@ impl PreSubsetPlugin for AutoSubset {
 // 计算当前包需要容纳多少个字符 y= max_count/ x^(1/3)
 fn length_for_index(x: usize, max_count: u32, level: OptLevel) -> usize {
     let min_count = max_count / 5;
+    // No 档固定按 5 倍下限分配；Low/Mid/High 都用立方根曲线（结果完全相同）。
     let y: f32 = match level {
         OptLevel::No => (min_count as f32) * 5_f32,
-        OptLevel::Low => (min_count as f32) * (x as f32).cbrt(),
-        OptLevel::Mid => (min_count as f32) * (x as f32).cbrt(),
-        OptLevel::High => (min_count as f32) * (x as f32).cbrt(),
+        _ => (min_count as f32) * (x as f32).cbrt(),
     }; // 计算立方根并求解y
     let y_ceil = y.ceil(); // 将结果向上取整
     // 不能比 max_count 的 1/5 小
@@ -277,7 +276,6 @@ fn split_vector(
             break;
         }
         let len = length_for_index(i, max_count, level).max(1);
-        // println!("{}", len);
         let to_take = std::cmp::min(len, size - current_start);
         let new_sub_vec = IndexSet::from_iter(
             vec[current_start..current_start + to_take].iter().cloned(),
@@ -308,7 +306,6 @@ mod tests {
         let result = split_vector(&input, 150, OptLevel::Low);
         assert_eq!(result.len(), 1);
         assert_eq!(result[0], input);
-        // println!("result: {:?}", result)
     }
 
     #[test]
@@ -318,7 +315,6 @@ mod tests {
             input.insert(x);
         }
         let result = split_vector(&input, 150, OptLevel::Low);
-        println!("result: {:#?}", result);
         assert_eq!(result.len(), 9);
     }
 

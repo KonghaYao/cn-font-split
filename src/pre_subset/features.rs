@@ -32,11 +32,11 @@ impl PreSubsetPlugin for FontFeatures {
         let subsets = &mut draft.subsets;
         let cmap = cmap_or_empty(ctx.font, ctx.font_file);
         let sub_map = gsub_relations_or_empty(ctx.font, ctx.font_file);
-        let sub_map = turn_indics_to_unicode_set(sub_map, &cmap);
+        let sub_map = turn_indices_to_unicode_set(sub_map, &cmap);
         move_feature_set_to_front(&sub_map, subsets);
 
         let pos_map = gpos_relations_or_empty(ctx.font, ctx.font_file);
-        let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
+        let pos_map = turn_indices_to_unicode_set(pos_map, &cmap);
         move_feature_set_to_front(&pos_map, subsets);
 
         // 关系搬移完成后再补兜底：组合标记必须出现在每一个分包里，否则基字
@@ -95,7 +95,7 @@ fn gpos_relations_or_empty(
 
 /// 从 `analyze_cmap` 的 gid -> unicode 反查表里取「字体真实存在的字符」。
 ///
-/// gid 0 是 .notdef；`turn_indics_to_unicode_set` 里未命中的 gid 也会落到
+/// gid 0 是 .notdef；`turn_indices_to_unicode_set` 里未命中的 gid 也会落到
 /// 0，两者都不代表真实码点，必须过滤，否则兜底集合会把不存在的字符塞进分包。
 /// 用 `BTreeSet` 去重并保持稳定顺序，避免包内字符顺序随哈希迭代漂移。
 fn font_characters_from_cmap(cmap: &HashMap<u16, u32>) -> IndexSet<u32> {
@@ -205,7 +205,6 @@ fn test_move_feature_set_to_front() {
 
     move_feature_set_to_front(&feature_map, &mut subsets);
 
-    // println!("{:?}", subsets);
     assert!(subsets[0].contains(&1));
     assert!(subsets[0].contains(&2));
     assert!(subsets[0].contains(&3));
@@ -214,7 +213,7 @@ fn test_move_feature_set_to_front() {
     assert!(subsets[2].is_empty());
 }
 
-pub fn turn_indics_to_unicode_set(
+pub fn turn_indices_to_unicode_set(
     all_maybe_relative_glyph: Vec<Vec<u16>>,
     cmap: &HashMap<u16, u32>,
 ) -> Vec<IndexSet<u32>> {
