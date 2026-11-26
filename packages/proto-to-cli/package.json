@@ -25,8 +25,8 @@
         "cli",
         "commander"
     ],
-    "author": "",
-    "license": "KonghaYao <3446798488@qq.com>",
+    "author": "KonghaYao <3446798488@qq.com>",
+    "license": "Apache-2.0",
     "dependencies": {
         "change-case": "^5.4.4",
         "commander": "^13.1.0",

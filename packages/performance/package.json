@@ -9,7 +9,7 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "dependencies": {
         "@japont/unicode-range": "^1.0.0",
         "byte-size": "^8.1.1",

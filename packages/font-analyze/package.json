@@ -17,7 +17,7 @@
         "analyze"
     ],
     "author": "",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "dependencies": {
         "@konghayao/opentype.js": "^2023.11.20"
     },

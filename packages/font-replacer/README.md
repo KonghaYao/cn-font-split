@@ -36,4 +36,4 @@ fontReplacer.applyFont(
 
 ## 证书
 
-MIT
+Apache-2.0
