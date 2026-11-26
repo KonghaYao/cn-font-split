@@ -239,10 +239,12 @@ npm 的版本删除窗口很短：
 ## 6. 已知风险 / 待决（本轮不改）
 
 1.  **`prepublish` ≠ `prepack`**：`packages/metrics`、`packages/proto-to-cli`、
-    `packages/font-analyze` 用的是 `prepublish`。npm 11 的 `npm pack` / `npm publish`
-    不再执行 `prepublish`，用 npm 手工发布会发出空 `dist`。走 workflow 的 pnpm 不受
-    影响；若本轮还要发这几个包，必须先改成 `prepack`（实测 `npm pack` 与 `pnpm pack`
-    都不执行 `prepublish`）；否则无论用 npm 还是 pnpm 手工发布，都会发出空 `dist`。
+    `packages/font-analyze` 用的是 `prepublish`。实测 `npm pack` / `npm publish`
+    （npm 11）与 `pnpm pack`（pnpm 12.6.0）都不执行 `prepublish`，所以用
+    `npm publish`（或 `pnpm pack` 后再 `npm publish`）发出的是空 `dist`。但项目锁定的
+    `pnpm@12.6.0` 的 `pnpm publish` 仍会执行 `prepublish`（`prepack`、`prepare`、
+    `prepublish` 都会跑），用 pnpm 发布不会缺 `dist`，走 workflow 的 pnpm 也不受影响。
+    若以后要独立发布这三个包，建议统一改成 `prepack`，不要依赖 pnpm 与 npm 的生命周期差异。
 2.  **wasm 平台包的 `os` / `cpu`**：两个 wasm 包声明的是
     `os: [darwin, linux, win32]` + `cpu: [x64, arm64]`，所以每个桌面用户安装主包时都会
     多装两个 wasm 包（单个 wasm 二进制的实际体积本轮未测，发布后可用
