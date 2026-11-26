@@ -18,3 +18,5 @@ src/pb/*.rs
 /target
 .shuttle*
 Secrets*.toml
+.claude/workflow-runs/
+.peri/
