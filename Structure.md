@@ -2,40 +2,93 @@
 
 ## cn-font-split 代码架构
 
-cn-font-split 是一个复杂的字体分包系统，整体架构分为三个主要部分：core、message_channel 和 wrapper。
+cn-font-split 由三段式管线（core）、事件协议层（protobuf）与多种语言绑定（wrapper）
+组成。三者之间只通过 protobuf 定义的 wire IR 与事件流交互。
 
-### 1. Core 核心层
+### 1. Core 核心层（`src/`）
 
-core 是 cn-font-split 的核心部分，负责实际的字体分包操作。它通过接收回调函数作为参数，实现异步数据返回。
+core 负责字体分包本身。入口是 `src/runner.rs` 的 `font_split(config, callback)`：
+先把 wire IR 解析成 `Config`，再依次执行三个阶段，每一阶段产出显式的类型
+（`FontSource` → `PreSubsetOutput` → `RunSubsetOutput` → `LinkSubsetOutput`），
+不再共享一个可变的 `Context`。
 
-> font_split 现在为同步实现，速度足够快。异步数据返回这种形式可兼容不同的信道层实现。
+- 预分包（`pre_subset`）：在实际切割前决定「哪些字符进哪个分包」。内部是按
+  固定顺序执行的插件表（`src/pre_subset/mod.rs` 的 `PIPELINE`）：
+  `add_user_subset` → `language_area` → `add_remain_chars` → `auto_subset` →
+  `font_features` → `reduce_min`。插件实现 `PreSubsetPlugin` trait
+  （`name` / `enabled` / `apply`），顺序有单元测试断言。
+- 批量分包（`run_subset`）：按 `chunkSize` 等配置调用 harfbuzz 逐个切出分包，
+  产出 woff2 二进制、`SubsetDetail` 明细与 `BundleMessage`。
+- 链接分包（`link_subset`）：**不产出字体二进制**，而是根据 `Config.css`、
+  `name_table` 与可变字体轴信息，把上面得到的 per-subset 字符表渲染成 CSS
+  （`@font-face` + `unicode-range`，按 `items.iter().rev()` 输出、可压缩），
+  并附带 `index.html`（可选）与 `index.proto`。CSS 由 `src/link_subset/css/ast.rs`
+  的结构化 AST 生成，不再是字符串拼接。
 
-core 内部主要包含以下三个核心逻辑模块：
+这些操作基于 harfbuzz 与 opentype 库实现，兼顾分包质量与速度。
 
-- 预分包（pre_subset）：在进行实际分包操作之前，预处理字体数据，进行多语言的分包优化，确定分包内字符。
-- 批量分包（run_subset）：处理大批量字体数据的分包操作，确保在高负载情况下依然能够高效运行。
-- 链接分包（link_subset）：将分包后的字体数据进行链接、整合和汇报，生成最终的分包结果。
+### 2. 事件与协议层（protobuf，无独立「信道」模块）
 
-这些操作基于 harfbuzz 和 opentype 库实现，确保了对字体操作的高效和准确。
+输出侧没有单独的 message channel 模块：`src/message.rs` 用 `EventFactory` trait
+在 `EventMessage` 上构造三类事件——`output_data`（文件名 + 二进制）、`END`、
+`ERROR`。所有 wrapper 复用同一套事件语义：
 
-### 2. Message Channel 信道层
+1. 结构体传递：Rust 内部（`src/runner.rs` → `src/main.rs`）直接使用 protobuf 生成类型。
+2. 二进制传递：跨语言时把 `EventMessage` 序列化后通过 callback / FFI / gRPC 传出，
+   定义集中在 `crates/proto/src/index.proto`（`cn-font-proto`）。
 
-message_channel 是 cn-font-split 与外部系统交互的桥梁，基于 protobuf（Protocol Buffers）实现。所有的交互接口通过 cn-font-proto 库进行定义和创建。
-
-protobuf 在现实实现中，有两种使用方式：
-
-1. 结构体传递: Rust 程序间进行沟通时，直接采用 protobuf 代码生成的定义。
-2. 二进制数据传递：不同语言之间，通过 protobuf 的，和任何一种可以传递二进制的信道进行数据同步。
+`OutputReport`（`reporter.bin`）是同一套 proto 里的「构建报告」，与事件流分开：
+包含版本、平台、`name_table`、`subset_detail`、`bundle_message` 与 CSS 元信息。
 
 ### 3. Wrapper 适配层
 
-wrapper 是 cn-font-split 对外提供的功能接口，支持多种语言调用和不同的部署方案。wrapper 主要包括以下几种实现：
+wrapper 是对外接口，按部署形态各有一个包：
 
-- ✅ gRPC Wrapper：基于 HTTP/2 协议，提供独立的字体构建服务。gRPC 方案简单易用，适用于所有支持 gRPC 的项目。
-- ✅ FFI Wrapper：通过标准的 C API 调用 Rust 生成的二进制动态链接库，使用 protobuf 解析二进制数据，支持双边语言通信。
-- ✅ CLI Wrapper：提供一个命令行接口，完全由 Rust 编写，用户可以通过简单的命令完成基础的字体分包操作。
-- ✅ WASI Wrapper：基于 WebAssembly System Interface (WASI)，支持在多种操作系统环境中运行，提供更广泛的部署可能性。
-  - 浏览器可以通过 WASI（@tybys/wasm-util）实现完成接入。
+- ✅ gRPC Wrapper（`packages/grpc`）：基于 HTTP/2 的独立构建服务。
+- ✅ FFI Wrapper（`packages/ffi`）：C ABI 动态库（cdylib），跨语言用 protobuf 交换二进制。
+- ✅ CLI Wrapper（`src/main.rs`，`cn-font-split` 可执行文件）：纯 Rust 命令行。
+- ✅ WASI Wrapper（`packages/wasm-edge`）：`wasm32-wasip1/p2` 产物。
+  - 浏览器通过 `@tybys/wasm-util` 接入（`packages/ffi-js/src/wasm`）。
+- ✅ Node / Bun / Deno / 浏览器（`packages/ffi-js`）：主 npm 包 `cn-font-split`。
+- ⚠️ Python（`packages/ffi-py`）：best-effort，不阻塞发布。
+- ⚠️ 服务端（`packages/server`）：8.0 冻结，见该包 README 的「冻结说明」。
+
+## packages/ 地图
+
+根 pnpm workspace 覆盖 `packages/**` 与 `crates/**`；根 Cargo workspace 的成员只有
+`crates/*` 与 `packages/{ffi,grpc,wasmer,wasm-edge}` 这四个 Rust 包，其余 `packages/*`
+是 pnpm 包，不参与 Cargo 构建。`packages/server` 是例外：它自带 `[workspace]` 与
+`Cargo.lock`，被根 `Cargo.toml` 的 `exclude` 排除，单独构建。
+
+| 目录 | 类型 | 说明 |
+| --- | --- | --- |
+| 仓库根 `src/`（crate `cn-font-split`） | Rust 库 + bin | 三段式管线与 `cn-font-split` CLI，版本真源在根 `Cargo.toml` |
+| `packages/ffi` | Rust cdylib | C ABI，`dist-platforms/` 平台包的产物来源 |
+| `packages/grpc` | Rust bin | gRPC 服务 |
+| `packages/wasm-edge` | Rust cdylib | WASI（wasm32-wasip1 / wasip2） |
+| `packages/wasmer` | Rust bin | `cli` crate，WASM 侧的入口程序 |
+| `packages/ffi-js` | npm 主包 | `cn-font-split`：Node/Bun/Deno/浏览器/CLI；通过 `optionalDependencies` 分发 8 个 `@cn-font-split/<platform>` 平台包 |
+| `packages/ffi-py` | Python | `cn_font_split`（best-effort，不发布 PyPI） |
+| `packages/proto-to-cli` | npm | proto → TS 类型/CLI 生成工具，构建期依赖 |
+| `packages/metrics` | npm | `cn-font-metrics`：字体度量与中文 fallback |
+| `packages/vite` | npm | `vite-plugin-font`：Vite/Next/Nuxt/Webpack 插件 |
+| `packages/font-replacer` | npm | `cn-font-replacer`：运行期字体替换 |
+| `packages/font-sharp` | npm | `font-sharp`：字体转 SVG（基于 harfbuzzjs） |
+| `packages/font-analyze` | npm | `font-analyze`：中文字符集检查工具 |
+| `packages/test` | 私有 | 测试台 + 视觉回归 runner（唯一 CI 像素门禁在 `test/visual/`） |
+| `packages/performance` | 私有 | 实验性性能测量，不参与构建与发布 |
+| `packages/demo` | 静态资源 | 演示站点与 `public/` 下的本地测试字体 |
+| `packages/server` | 独立 Rust | axum 构建服务，8.0 冻结（不参与构建/CI/发布） |
+
+发布相关约定：
+
+- 版本唯一真源是根 `Cargo.toml` 的 `[workspace.package].version`；
+  `script/sync-version.mjs` 把版本写到各 `package.json` 的 `version` 与
+  `@cn-font-split/*` 的 `optionalDependencies`，以及 Python 包的
+  `packages/ffi-py/setup.py`（`setup(version="x.y.z")`）。
+- 平台包目录 `dist-platforms/<platform>/` 由 `scripts/build-platforms.mjs` 从
+  Rust 产物生成，不入库。
+- 发布 workflow 全部默认 `publish=false`（dry-run）。
 
 ## 开发规范
 
@@ -54,3 +107,9 @@ wrapper 是 cn-font-split 对外提供的功能接口，支持多种语言调用
 如果遇到某些依赖没安装，可以参考 [Developer.md](./Developer.md)
 
 ### 测试流程
+
+- Rust：`cargo test --locked`、失败路径 `cargo test --test failure_paths --locked`。
+- 视觉回归：`node packages/test/visual/run.mjs`（细节见 `packages/test/README.md`）。
+- Node 侧单测：`pnpm -C packages/ffi-js test`、`pnpm -C packages/vite test`。
+- CI 门禁见 `.github/workflows/ci.yml`（Rust fmt/clippy/test/build、Node 构建与冒烟、
+  macOS WebKit 像素回归、Linux Chromium 冒烟），另有版本同步与许可证检查 job。

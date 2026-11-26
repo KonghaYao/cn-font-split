@@ -1,5 +1,6 @@
 import { fontSplit, decodeReporter, proto } from 'cn-font-split/dist/bun';
 import fs from 'fs-extra';
+import { buildCMapForCssFromReporter } from './cmap.ts';
 
 const sampleText: { id: string; content: string }[] = fs
     .readdirSync('./sample')
@@ -113,16 +114,6 @@ export async function main(build = false) {
 main(true);
 
 type Mapper = Map<number, proto.OutputReport['subsetDetail'][number]>;
-
-function buildCMapForCssFromReporter(reporter: proto.OutputReport) {
-    const map: Mapper = new Map();
-    reporter.subsetDetail.forEach((subset) => {
-        subset.chars.forEach((unicode) => {
-            map.set(unicode, subset);
-        });
-    });
-    return map;
-}
 
 async function getAllReporter(id: number | string) {
     const buffer = await fs.promises.readFile(

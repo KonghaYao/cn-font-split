@@ -1,4 +1,4 @@
-use log::warn;
+use crate::pre_subset::features::opentype::TableError;
 use opentype::Font;
 use opentype::truetype::tables::CharacterMapping;
 use opentype::truetype::tables::character_mapping::{
@@ -6,21 +6,19 @@ use opentype::truetype::tables::character_mapping::{
 };
 use std::collections::HashMap;
 use std::io::Cursor;
+
+/// 解析 cmap，返回「glyph id → unicode」反查表。
+///
+/// 失败时带表名/偏移返回 [`TableError`]，由调用方记录并回退空表。
 pub fn analyze_cmap(
     font: &Font,
     font_file: &mut Cursor<&[u8]>,
-) -> HashMap<u16, u32> {
-    // GSUB
+) -> Result<HashMap<u16, u32>, TableError> {
     let data: CharacterMapping = match font.take(font_file) {
         Ok(Some(data)) => data,
-        Ok(None) => {
-            // 缺少 cmap 时仅影响 GSUB/GPOS 的 glyph->unicode 反查，按空表继续。
-            warn!("字体缺少 cmap 表");
-            return HashMap::new();
-        }
+        Ok(None) => return Err(TableError::missing(font, b"cmap", "cmap")),
         Err(e) => {
-            warn!("读取 cmap 表失败: {e}");
-            return HashMap::new();
+            return Err(TableError::read(font, b"cmap", "cmap", e.to_string()));
         }
     };
     let mut cmap: HashMap<u16, u32> = HashMap::new();
@@ -50,7 +48,7 @@ pub fn analyze_cmap(
             Encoding::Unknown(_e) => {}
         }
     });
-    cmap
+    Ok(cmap)
 }
 
 /// 把「unicode → glyph id」注入成「glyph id → unicode」的反查表。

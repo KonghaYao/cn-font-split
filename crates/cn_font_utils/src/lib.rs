@@ -13,6 +13,9 @@ pub fn vec_u32_to_string(vec: &[u32]) -> String {
 }
 
 /// 读取指定路径的完成二进制文件，并返回 Vec<u8>。
+///
+/// panic 契约：本函数不会 panic。文件不存在、无权限、读取中断都以
+/// `std::io::Result` 返回，是否 `unwrap` 由调用方决定。
 pub fn read_binary_file(file_path: &str) -> std::io::Result<Vec<u8>> {
     use std::io::Read;
     let mut file = std::fs::File::open(file_path)?;
@@ -33,23 +36,59 @@ pub fn u32_array_to_u8_array(input: &[u32]) -> Vec<u8> {
     output
 }
 
+/// 字节切片长度与目标整型的对齐要求不符。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AlignmentError {
+    /// 实际字节长度。
+    pub length: usize,
+    /// 单个元素占用的字节数（2 或 4）。
+    pub unit: usize,
+}
+
+impl std::fmt::Display for AlignmentError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "字节长度 {} 不是 {} 的倍数", self.length, self.unit)
+    }
+}
+
+impl std::error::Error for AlignmentError {}
+
 // 将 Vec<u8> 转换为 Vec<u32>
-pub fn u8_array_to_u32_array(arr: &[u8]) -> Vec<u32> {
-    assert!(arr.len() % 4 == 0, "File length is not a multiple of 4");
-    arr.chunks(4)
+//
+// panic 契约：长度不是 4 的倍数时返回 [`AlignmentError`]，不 panic。
+pub fn u8_array_to_u32_array(
+    arr: &[u8],
+) -> std::result::Result<Vec<u32>, AlignmentError> {
+    if arr.len() % 4 != 0 {
+        return Err(AlignmentError { length: arr.len(), unit: 4 });
+    }
+    Ok(arr
+        .chunks(4)
         .map(|chunk| {
             u32::from_be_bytes([chunk[3], chunk[2], chunk[1], chunk[0]])
         })
-        .collect()
+        .collect())
 }
+
 // 将 Vec<u8> 转换为 Vec<u16>
-pub fn u8_array_to_u16_array(arr: &[u8]) -> Vec<u16> {
-    assert!(arr.len() % 2 == 0, "Array length is not a multiple of 2");
-    arr.chunks(2)
+//
+// panic 契约：长度不是 2 的倍数时返回 [`AlignmentError`]，不 panic。
+pub fn u8_array_to_u16_array(
+    arr: &[u8],
+) -> std::result::Result<Vec<u16>, AlignmentError> {
+    if arr.len() % 2 != 0 {
+        return Err(AlignmentError { length: arr.len(), unit: 2 });
+    }
+    Ok(arr
+        .chunks(2)
         .map(|chunk| u16::from_be_bytes([chunk[1], chunk[0]]))
-        .collect()
+        .collect())
 }
+
 /// 输出一个文件，会自动创建文件夹
+///
+/// panic 契约：本函数不会 panic；创建目录与写文件的失败都以
+/// `std::io::Result` 返回。
 pub fn output_file(file_path: &str, buffer: &[u8]) -> std::io::Result<()> {
     use std::fs::File;
     use std::io::Write;
@@ -135,15 +174,34 @@ mod tests {
     fn test_u8_array_to_u32_array() {
         let input = vec![0x78, 0x56, 0x34, 0x12, 0xef, 0xcd, 0xab, 0x90];
         let expected_output = vec![0x12345678, 0x90abcdef];
-        let output = u8_array_to_u32_array(&input);
+        let output = u8_array_to_u32_array(&input).unwrap();
         assert_eq!(output, expected_output);
+    }
+
+    #[test]
+    fn test_u8_array_to_u32_array_rejects_unaligned_length() {
+        let error = u8_array_to_u32_array(&[1, 2, 3]).unwrap_err();
+        assert_eq!(error, AlignmentError { length: 3, unit: 4 });
+        assert_eq!(error.to_string(), "字节长度 3 不是 4 的倍数");
+    }
+
+    #[test]
+    fn test_u8_array_to_u16_array_round_trip() {
+        let output = u8_array_to_u16_array(&[0x34, 0x12, 0xcd, 0xab]).unwrap();
+        assert_eq!(output, vec![0x1234, 0xabcd]);
+    }
+
+    #[test]
+    fn test_u8_array_to_u16_array_rejects_unaligned_length() {
+        let error = u8_array_to_u16_array(&[1, 2, 3]).unwrap_err();
+        assert_eq!(error, AlignmentError { length: 3, unit: 2 });
     }
 
     #[test]
     fn test_round_trip_conversion() {
         let input = vec![0x12345678, 0x90abcdef, 0xdeadbeef];
         let u8_array = u32_array_to_u8_array(&input);
-        let output = u8_array_to_u32_array(&u8_array);
+        let output = u8_array_to_u32_array(&u8_array).unwrap();
         assert_eq!(input, output);
     }
 }

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cn_font_split",
-    version="7.1.0",
+    version="8.0.0",
     description="A revolutionary font subsetter that supports CJK and any characters!",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -26,8 +26,11 @@ setup(
     # Adjust as necessary
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
     install_requires=[  # Include your dependencies here
-        "google===3.0.0",
-        "protobuf==5.29.2",
+        # 运行时版本由生成代码决定：gen/ 由本机 protoc 生成，protoc 36.2 会写入
+        # protobuf 7.36.2 的 ValidateProtobufRuntimeVersion 断言，运行时不匹配会
+        # 直接 import 失败。因此 pin 必须等于生成时所用 protoc 的版本；
+        # 换 protoc 重新执行 build.sh 后，需同步修改这里与 requirements.txt。
+        "protobuf==7.36.2",
     ],
     entry_points={
         "console_scripts": [

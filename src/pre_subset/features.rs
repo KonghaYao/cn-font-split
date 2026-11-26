@@ -1,8 +1,11 @@
+use ::opentype::Font;
 use cmap::analyze_cmap;
 use gpos::analyze_gpos;
 use gsub::analyze_gsub;
 use indexmap::IndexSet;
+use log::warn;
 use std::collections::{BTreeSet, HashMap};
+use std::io::Cursor;
 
 use super::plugin::{PreSubsetPlugin, SubsetDraft};
 use crate::config::Config;
@@ -10,6 +13,7 @@ use crate::error::Result;
 pub mod cmap;
 pub mod gpos;
 pub mod gsub;
+pub(crate) mod opentype;
 
 /// 把 GSUB/GPOS 特性涉及的字符并回首个相交的分包。
 pub struct FontFeatures;
@@ -26,13 +30,13 @@ impl PreSubsetPlugin for FontFeatures {
     fn apply(&self, draft: &mut SubsetDraft<'_, '_, '_, '_>) -> Result<()> {
         let ctx = &mut *draft.ctx;
         let subsets = &mut draft.subsets;
-        let cmap = analyze_cmap(ctx.font, ctx.font_file);
-        let sub_map = analyze_gsub(ctx.font, ctx.font_file);
-        let sub_map = turn_indics_to_unicode_set(sub_map, &cmap);
+        let cmap = cmap_or_empty(ctx.font, ctx.font_file);
+        let sub_map = gsub_relations_or_empty(ctx.font, ctx.font_file);
+        let sub_map = turn_indices_to_unicode_set(sub_map, &cmap);
         move_feature_set_to_front(&sub_map, subsets);
 
-        let pos_map = analyze_gpos(ctx.font, ctx.font_file);
-        let pos_map = turn_indics_to_unicode_set(pos_map, &cmap);
+        let pos_map = gpos_relations_or_empty(ctx.font, ctx.font_file);
+        let pos_map = turn_indices_to_unicode_set(pos_map, &cmap);
         move_feature_set_to_front(&pos_map, subsets);
 
         // 关系搬移完成后再补兜底：组合标记必须出现在每一个分包里，否则基字
@@ -45,9 +49,53 @@ impl PreSubsetPlugin for FontFeatures {
     }
 }
 
+/// 解析失败时记录上下文并回退空表（fail-open）。
+///
+/// 回退值必须与重构前一致：cmap 为空表、GSUB 为 `vec![vec![]]`、GPOS 为
+/// 空列表。GSUB 的空关系集在 `move_feature_set_to_front` 里天然无副作用，
+/// 保留原值只是为了逐字节复现旧行为。
+fn cmap_or_empty(
+    font: &Font,
+    font_file: &mut Cursor<&[u8]>,
+) -> HashMap<u16, u32> {
+    match analyze_cmap(font, font_file) {
+        Ok(cmap) => cmap,
+        Err(e) => {
+            warn!("{e}");
+            HashMap::new()
+        }
+    }
+}
+
+fn gsub_relations_or_empty(
+    font: &Font,
+    font_file: &mut Cursor<&[u8]>,
+) -> Vec<Vec<u16>> {
+    match analyze_gsub(font, font_file) {
+        Ok(relations) => relations,
+        Err(e) => {
+            warn!("{e}");
+            vec![vec![]]
+        }
+    }
+}
+
+fn gpos_relations_or_empty(
+    font: &Font,
+    font_file: &mut Cursor<&[u8]>,
+) -> Vec<Vec<u16>> {
+    match analyze_gpos(font, font_file) {
+        Ok(relations) => relations,
+        Err(e) => {
+            warn!("{e}");
+            vec![]
+        }
+    }
+}
+
 /// 从 `analyze_cmap` 的 gid -> unicode 反查表里取「字体真实存在的字符」。
 ///
-/// gid 0 是 .notdef；`turn_indics_to_unicode_set` 里未命中的 gid 也会落到
+/// gid 0 是 .notdef；`turn_indices_to_unicode_set` 里未命中的 gid 也会落到
 /// 0，两者都不代表真实码点，必须过滤，否则兜底集合会把不存在的字符塞进分包。
 /// 用 `BTreeSet` 去重并保持稳定顺序，避免包内字符顺序随哈希迭代漂移。
 fn font_characters_from_cmap(cmap: &HashMap<u16, u32>) -> IndexSet<u32> {
@@ -157,7 +205,6 @@ fn test_move_feature_set_to_front() {
 
     move_feature_set_to_front(&feature_map, &mut subsets);
 
-    // println!("{:?}", subsets);
     assert!(subsets[0].contains(&1));
     assert!(subsets[0].contains(&2));
     assert!(subsets[0].contains(&3));
@@ -166,7 +213,7 @@ fn test_move_feature_set_to_front() {
     assert!(subsets[2].is_empty());
 }
 
-pub fn turn_indics_to_unicode_set(
+pub fn turn_indices_to_unicode_set(
     all_maybe_relative_glyph: Vec<Vec<u16>>,
     cmap: &HashMap<u16, u32>,
 ) -> Vec<IndexSet<u32>> {
@@ -178,6 +225,301 @@ pub fn turn_indics_to_unicode_set(
             )
         })
         .collect::<Vec<IndexSet<u32>>>()
+}
+
+#[cfg(test)]
+mod open_type_snapshots {
+    //! 统一 GSUB/GPOS 遍历前的输出快照。
+    //!
+    //! `analyze_gsub` / `analyze_gpos` 的返回值决定「哪些字符被并回同一个
+    //! 分包」，一旦顺序或内容变化，最终 woff2 字节就会变。这里对三份字体
+    //! 固定「关系集数量 + 字形总数 + 序列化摘要」，重构前后必须完全一致。
+
+    use super::cmap::analyze_cmap;
+    use super::gpos::analyze_gpos;
+    use super::gsub::analyze_gsub;
+    use opentype::Font;
+    use std::io::Cursor;
+
+    /// 关系集数量、字形总数、以及按顺序序列化后的 blake3。
+    #[derive(Debug)]
+    struct Snapshot {
+        sets: usize,
+        glyphs: usize,
+        digest: String,
+    }
+
+    /// 基线值：重构前的 `analyze_gsub` / `analyze_gpos` 输出。
+    struct Expected {
+        sets: usize,
+        glyphs: usize,
+        digest: &'static str,
+    }
+
+    fn snapshot(sets: &[Vec<u16>]) -> Snapshot {
+        let mut buffer: Vec<u8> = Vec::new();
+        for set in sets {
+            buffer.extend_from_slice(&(set.len() as u32).to_le_bytes());
+            for glyph in set {
+                buffer.extend_from_slice(&glyph.to_le_bytes());
+            }
+        }
+        Snapshot {
+            sets: sets.len(),
+            glyphs: sets.iter().map(|set| set.len()).sum(),
+            digest: blake3::hash(&buffer).to_hex().to_string(),
+        }
+    }
+
+    fn assert_snapshot(actual: Snapshot, expected: &Expected, path: &str) {
+        assert_eq!(actual.sets, expected.sets, "{path} 关系集数量");
+        assert_eq!(actual.glyphs, expected.glyphs, "{path} 字形总数");
+        assert_eq!(actual.digest, expected.digest, "{path} 序列化摘要");
+    }
+
+    /// (字体, GSUB 快照, GPOS 快照, cmap 条目数, cmap 摘要)
+    const FIXTURES: &[(&str, Expected, Expected, usize, &str)] = &[
+        (
+            "./packages/demo/public/NotoSerifSC-Regular.ttf",
+            Expected {
+                sets: 329,
+                glyphs: 893,
+                digest: "8a1ce836421945ede3b85f7f1491aa2362726ba95de35d7b984805e50b30356c",
+            },
+            Expected {
+                sets: 8,
+                glyphs: 3138,
+                digest: "f1645095058dc4d27e33cb692425202b0f5d07aa890db1aba4b4841023973125",
+            },
+            30424,
+            "d32bf7987793b29e814b3c595f3ff93a10704f882acf7603b37eef8f1815e3bc",
+        ),
+        (
+            "./packages/demo/public/WorkSans-VariableFont_wght.ttf",
+            Expected {
+                sets: 58,
+                glyphs: 163,
+                digest: "3c9bdae068d520ef520ce58d2a893ac5bc556defec312dff49526c038bf1fe74",
+            },
+            Expected {
+                sets: 8,
+                glyphs: 25286,
+                digest: "39f207cdaae60d2181ed90b97e928709b8dbe7f7dd12e53706be64e1f256aff3",
+            },
+            754,
+            "9ff815c5386f4d7af4d17af5a59f8e349399f3a5aa227cdc36b341057b75a2e6",
+        ),
+        (
+            "./packages/demo/public/SmileySans-Oblique.ttf",
+            Expected {
+                sets: 8,
+                glyphs: 24,
+                digest: "3d84354c72e7f099b42c0bfc9c2ab063068f84e484ab805981a1ee7df59c016c",
+            },
+            Expected {
+                sets: 2,
+                glyphs: 1458,
+                digest: "4597812d4b0fecaa4915074fb03bd6bbda4ee61562b4fcf24837883453f3dd30",
+            },
+            7866,
+            "de860693ebb245eca2be999f1ecfdcd2edb17254142aa2022ac837f846b9d4ae",
+        ),
+    ];
+
+    fn load(path: &str) -> (Vec<u8>, Font) {
+        let binary = cn_font_utils::read_binary_file(path).unwrap();
+        let mut cursor = Cursor::new(&*binary);
+        let font = Font::read(&mut cursor).unwrap();
+        (binary, font)
+    }
+
+    #[test]
+    fn gsub_relations_snapshot() {
+        for (path, gsub, _, _, _) in FIXTURES {
+            let (binary, font) = load(path);
+            let mut cursor = Cursor::new(&*binary);
+            assert_snapshot(
+                snapshot(&analyze_gsub(&font, &mut cursor).expect("GSUB 解析")),
+                gsub,
+                path,
+            );
+        }
+    }
+
+    #[test]
+    fn gpos_relations_snapshot() {
+        for (path, _, gpos, _, _) in FIXTURES {
+            let (binary, font) = load(path);
+            let mut cursor = Cursor::new(&*binary);
+            assert_snapshot(
+                snapshot(&analyze_gpos(&font, &mut cursor).expect("GPOS 解析")),
+                gpos,
+                path,
+            );
+        }
+    }
+
+    /// cmap 反查表规模快照：GSUB/GPOS 的 gid→unicode 转换依赖它。
+    #[test]
+    fn cmap_snapshot() {
+        for (path, _, _, expected_len, expected_digest) in FIXTURES {
+            let (binary, font) = load(path);
+            let mut cursor = Cursor::new(&*binary);
+            let cmap = analyze_cmap(&font, &mut cursor).expect("cmap 解析");
+            let mut entries: Vec<(u16, u32)> =
+                cmap.iter().map(|(gid, uni)| (*gid, *uni)).collect();
+            entries.sort_unstable();
+            let mut buffer: Vec<u8> = Vec::new();
+            for (gid, unicode) in &entries {
+                buffer.extend_from_slice(&gid.to_le_bytes());
+                buffer.extend_from_slice(&unicode.to_le_bytes());
+            }
+            assert_eq!(entries.len(), *expected_len, "{path}");
+            assert_eq!(
+                blake3::hash(&buffer).to_hex().as_str(),
+                *expected_digest,
+                "{path}"
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod parse_failure_tests {
+    //! 表级解析失败必须走 `Err` 分支、不得 panic，并由调用方回退为空值。
+
+    use super::cmap::analyze_cmap;
+    use super::gpos::analyze_gpos;
+    use super::gsub::analyze_gsub;
+    use super::{
+        cmap_or_empty, gpos_relations_or_empty, gsub_relations_or_empty,
+    };
+    use opentype::Font;
+    use std::io::Cursor;
+
+    const FONT: &str = "./packages/demo/public/WorkSans-VariableFont_wght.ttf";
+
+    fn load() -> Vec<u8> {
+        cn_font_utils::read_binary_file(FONT).unwrap()
+    }
+
+    /// 表目录条目在整个文件中的位置：12 字节 sfnt 头之后，每条 16 字节。
+    fn record_position(bytes: &[u8], tag: &[u8; 4]) -> usize {
+        let mut cursor = Cursor::new(bytes);
+        let font = Font::read(&mut cursor).unwrap();
+        let index = font
+            .offsets
+            .records
+            .iter()
+            .position(|record| record.tag.0 == *tag)
+            .expect("测试字体必须包含该表");
+        12 + index * 16
+    }
+
+    fn table_offset(bytes: &[u8], tag: &[u8; 4]) -> usize {
+        let position = record_position(bytes, tag);
+        u32::from_be_bytes(
+            bytes[position + 8..position + 12].try_into().unwrap(),
+        ) as usize
+    }
+
+    /// 把目录条目的 tag 改掉，等价于「字体没有这张表」。
+    fn hide_table(bytes: &mut [u8], tag: &[u8; 4]) {
+        let position = record_position(bytes, tag);
+        bytes[position..position + 4].copy_from_slice(b"ZZZZ");
+    }
+
+    /// 把表指向文件末尾且长度为 0：目录里存在但没有任何字节可读。
+    fn empty_table(bytes: &mut [u8], tag: &[u8; 4]) {
+        let position = record_position(bytes, tag);
+        let eof = bytes.len() as u32;
+        bytes[position + 4..position + 8].copy_from_slice(&0_u32.to_be_bytes());
+        bytes[position + 8..position + 12].copy_from_slice(&eof.to_be_bytes());
+        bytes[position + 12..position + 16]
+            .copy_from_slice(&0_u32.to_be_bytes());
+    }
+
+    fn font(bytes: &[u8]) -> Font {
+        let mut cursor = Cursor::new(bytes);
+        Font::read(&mut cursor).unwrap()
+    }
+
+    #[test]
+    fn missing_gsub_returns_error_and_empty_fallback() {
+        let mut bytes = load();
+        hide_table(&mut bytes, b"GSUB");
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(&bytes[..]);
+
+        let error = analyze_gsub(&font, &mut cursor).unwrap_err();
+        let message = error.to_string();
+        assert!(message.contains("GSUB"), "{message}");
+        assert!(message.contains("缺少"), "{message}");
+
+        let mut cursor = Cursor::new(&bytes[..]);
+        assert_eq!(
+            gsub_relations_or_empty(&font, &mut cursor),
+            vec![Vec::<u16>::new()]
+        );
+    }
+
+    #[test]
+    fn empty_gsub_table_returns_error_with_offset_and_length() {
+        let mut bytes = load();
+        empty_table(&mut bytes, b"GSUB");
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(&bytes[..]);
+
+        let error = analyze_gsub(&font, &mut cursor).unwrap_err();
+        let message = error.to_string();
+        assert!(message.contains("GSUB"), "{message}");
+        assert!(message.contains("offset="), "{message}");
+        assert!(message.contains("size=0"), "{message}");
+    }
+
+    #[test]
+    fn truncated_gpos_returns_error_and_empty_fallback() {
+        let bytes = load();
+        let gpos = table_offset(&bytes, b"GPOS");
+        // 只保留 GPOS 表头的前两个字节，读取必然失败。
+        let truncated = &bytes[..gpos + 2];
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(truncated);
+
+        let error = analyze_gpos(&font, &mut cursor).unwrap_err();
+        assert!(error.to_string().contains("GPOS"), "{error}");
+
+        let mut cursor = Cursor::new(truncated);
+        assert!(gpos_relations_or_empty(&font, &mut cursor).is_empty());
+    }
+
+    #[test]
+    fn truncated_cmap_returns_error_and_empty_fallback() {
+        let bytes = load();
+        let cmap = table_offset(&bytes, b"cmap");
+        let truncated = &bytes[..cmap + 2];
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(truncated);
+
+        let error = analyze_cmap(&font, &mut cursor).unwrap_err();
+        assert!(error.to_string().contains("cmap"), "{error}");
+
+        let mut cursor = Cursor::new(truncated);
+        assert!(cmap_or_empty(&font, &mut cursor).is_empty());
+    }
+
+    /// 空表同样不能 panic：cmap 的目录长度被改写为 0 后沿用空表回退。
+    #[test]
+    fn empty_cmap_returns_error_and_empty_fallback() {
+        let mut bytes = load();
+        empty_table(&mut bytes, b"cmap");
+        let font = font(&bytes);
+        let mut cursor = Cursor::new(&bytes[..]);
+        assert!(analyze_cmap(&font, &mut cursor).is_err());
+
+        let mut cursor = Cursor::new(&bytes[..]);
+        assert!(cmap_or_empty(&font, &mut cursor).is_empty());
+    }
 }
 
 #[cfg(test)]

@@ -3,20 +3,36 @@ use cn_font_split::font_split;
 use cn_font_utils::read_binary_file;
 use prost::Message;
 
+/// WASI 命令入口。
+///
+/// 失败只写 stderr 并返回：wasm 里 panic 是不可恢复的 trap，错误返回至少
+/// 能让宿主看到原因。`no_mangle` 的签名保持不变（仍是 `fn()`）。
 #[unsafe(no_mangle)]
 pub fn main() {
     env_logger::init();
-    let args: Vec<String> = std::env::args().collect();
-    let target = "/tmp/fonts/".to_owned() + &args[0];
-    let input = read_binary_file(&target).expect("Failed to read input file");
-    let config =
-        InputTemplate::decode(&input[..]).expect("Failed to decode input");
-    let _ = font_split(config, |x| {
-        if EventName::try_from(x.event) == Ok(EventName::OutputData) {
-            let path = "/tmp/".to_owned() + &args[0] + "/" + &x.message;
-            std::fs::write(path, x.data.unwrap()).unwrap();
+    if let Err(error) = run() {
+        eprintln!("wasm-edge: {error}");
+    }
+}
+
+fn run() -> Result<(), String> {
+    let name = std::env::args().next().ok_or("缺少 argv[0]")?;
+    let input_name = format!("/tmp/fonts/{name}");
+    let input = read_binary_file(&input_name)
+        .map_err(|e| format!("读取 {input_name} 失败: {e}"))?;
+    let config = InputTemplate::decode(&input[..])
+        .map_err(|e| format!("解码 InputTemplate 失败: {e}"))?;
+    font_split(config, |x| {
+        if EventName::try_from(x.event) != Ok(EventName::OutputData) {
+            return;
         }
-    });
+        let Some(data) = x.data else { return };
+        let path = format!("/tmp/{name}/{}", x.message);
+        if let Err(e) = std::fs::write(&path, data) {
+            eprintln!("写入 {path} 失败: {e}");
+        }
+    })
+    .map_err(|e| format!("font_split 失败: {e}"))
 }
 
 #[unsafe(no_mangle)]

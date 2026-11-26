@@ -7,7 +7,8 @@ static HANGUL_SYL_SOURCE: &[u8] = include_bytes!("../data/hangul-syl.dat");
 static CN_CHAR_RANK: &[u8] = include_bytes!("../data/cn_char_rank.dat");
 
 fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
-    let data = u8_array_to_u16_array(CN_CHAR_RANK);
+    // 内置数据长度是编译期常量；万一不满足对齐要求，这里按「没有这一段」处理。
+    let data = u8_array_to_u16_array(CN_CHAR_RANK).ok()?;
     let mut last_index = 0;
     let mut part_no = part_no as isize;
 
@@ -34,14 +35,18 @@ fn get_part_from_cn_pkg(part_no: u8) -> Option<Vec<u32>> {
     None
 }
 
-pub static ZH_SYMBOL: LazyLock<Vec<u32>> =
-    LazyLock::new(|| get_part_from_cn_pkg(0).unwrap());
-pub static ZH_SC: LazyLock<Vec<u32>> =
-    LazyLock::new(|| get_part_from_cn_pkg(1).unwrap());
-pub static ZH_TC: LazyLock<Vec<u32>> =
-    LazyLock::new(|| get_part_from_cn_pkg(2).unwrap());
+pub static ZH_SYMBOL: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    get_part_from_cn_pkg(0).expect("内置 cn_char_rank.dat 缺少第 0 段")
+});
+pub static ZH_SC: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    get_part_from_cn_pkg(1).expect("内置 cn_char_rank.dat 缺少第 1 段")
+});
+pub static ZH_TC: LazyLock<Vec<u32>> = LazyLock::new(|| {
+    get_part_from_cn_pkg(2).expect("内置 cn_char_rank.dat 缺少第 2 段")
+});
 pub static HANGUL_SYL: LazyLock<Vec<u32>> = LazyLock::new(|| {
     u8_array_to_u16_array(HANGUL_SYL_SOURCE)
+        .expect("内置 hangul-syl.dat 长度必须是 2 的倍数")
         .into_iter()
         .map(|x| x as u32)
         .collect()

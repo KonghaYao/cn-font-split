@@ -1,12 +1,14 @@
 use crate::config::Config;
-use crate::error::{FontSplitError, Result};
-use crate::link_subset::name_template::name_template;
-use crate::runner::{FontSource, PreSubsetOutput, RunSubsetOutput};
+use crate::contract::{
+    FontSource, PreSubsetOutput, RunSubsetOutput, RunSubsetResult,
+};
+use crate::error::Result;
+use crate::naming::name_template;
+use crate::pack::build_single_subset;
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
 };
 use cn_font_utils::u8_size_in_kb;
-use harfbuzz_rs_now::subset::Subset;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
 use log::{debug, warn};
@@ -14,27 +16,6 @@ use rayon::iter::{
     IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator,
 };
 use std::time::Instant;
-use woff::version2::compress;
-
-/// 构建单个分包为字体文件
-pub fn build_single_subset(
-    face: &Owned<Face>,
-    subset: &[u32],
-) -> Result<Vec<u8>> {
-    let subset_runner = Subset::new();
-    subset_runner.clear_drop_table();
-    subset_runner.adjust_layout();
-    subset_runner.add_chars(subset);
-    let new_face = subset_runner.run_subset(face).face_data();
-    let ttf_binary = new_face.get_data();
-    // woff 0.4.0 的 compress 以 Option 表示失败（上游 woff2 编码失败）。
-    compress(ttf_binary, String::from(""), 1, true).ok_or_else(|| {
-        FontSplitError::Internal(format!(
-            "WOFF2 压缩失败（{} 个字符）",
-            subset.len()
-        ))
-    })
-}
 
 struct ThreadResult {
     pub subset_result: RunSubsetResult,
@@ -70,7 +51,6 @@ fn build_one(
         .unwrap_or_else(|| format!("{}.woff2", hash_string));
     Ok(ThreadResult {
         subset_result: RunSubsetResult {
-            hash: hash_string.clone(),
             unicodes: subset.to_vec(),
             file_name: file_name.clone(),
         },
@@ -97,8 +77,8 @@ pub fn run_subset(
 ) -> Result<RunSubsetOutput> {
     // 与拆分前一致：报告里的原始字节数是输入字节数，而不是解码后的字体长度。
     let origin_bytes = config.input.len() as u32;
-    let all_chars: IndexSet<u32> =
-        source.face.collect_unicodes().iter().cloned().collect();
+    // 字符全集由 pre 阶段给出（同一 face 不再重复 collect_unicodes）。
+    let all_chars: IndexSet<u32> = pre.all_unicodes.iter().copied().collect();
     let origin_size = all_chars.len() as u32;
     let file_name_template = config.rename_output_font.as_deref();
     debug!("font subset result log");
@@ -167,11 +147,4 @@ pub fn run_subset(
         files,
         details,
     })
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct RunSubsetResult {
-    pub hash: String,
-    pub unicodes: Vec<u32>,
-    pub file_name: String,
 }

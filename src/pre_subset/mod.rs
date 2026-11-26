@@ -1,17 +1,15 @@
 pub mod features;
-pub mod fvar;
 pub mod gen_svg;
-pub mod name_table;
 pub mod plugin;
 mod plugin_auto_subset;
 
 use crate::config::Config;
+use crate::contract::{FontSource, PreSubsetOutput};
 use crate::error::{FontSplitError, Result};
-use crate::runner::{FontSource, PreSubsetOutput};
+use crate::tables::{fvar::analyze_fvar_table, name_table::analyze_name_table};
 mod plugin_add_user_subset;
 use cn_font_utils::u8_array_to_u32_array;
 use features::FontFeatures;
-use fvar::analyze_fvar_table;
 use gen_svg::gen_svg_extra_files;
 use harfbuzz_rs_now::{Face, Owned};
 use indexmap::IndexSet;
@@ -57,6 +55,12 @@ where
     font: &'a opentype::Font,
     font_file: &'a mut Cursor<&'c [u8]>,
     subsets: &'c Vec<Vec<u32>>,
+    /// 语言区域标签，key 是 `create_default_unicode_area` 的区域序号。
+    ///
+    /// 该状态**不是死代码**：`AutoSubset` 按它选择切分系数（`ZH_TC` 用 0.5、
+    /// 其余已记录区域用 1.0、没有记录的下标用 0.7）。把区域序号当分包下标
+    /// 使用是历史遗留语义，删除或「修正」都会改变分包结果（实测 NotoSerifSC
+    /// 203 → 215 个 face），因此保持原样。
     used_languages: HashMap<usize, String>,
 }
 
@@ -67,13 +71,12 @@ fn decode_user_subsets(subsets: &[Vec<u8>]) -> Result<Vec<Vec<u32>>> {
         .iter()
         .enumerate()
         .map(|(index, subset)| {
-            if subset.len() % 4 != 0 {
-                return Err(FontSplitError::InvalidSubsets(format!(
-                    "subsets[{index}] 的字节长度 {} 不是 4 的倍数",
-                    subset.len()
-                )));
-            }
-            Ok(u8_array_to_u32_array(subset))
+            u8_array_to_u32_array(subset).map_err(|error| {
+                FontSplitError::InvalidSubsets(format!(
+                    "subsets[{index}] 的字节长度 {} 不是 {} 的倍数",
+                    error.length, error.unit
+                ))
+            })
         })
         .collect()
 }
@@ -103,6 +106,8 @@ pub fn pre_subset(
 
     // 初始化预处理上下文
     let subsets: Vec<IndexSet<u32>> = vec![];
+    // 字符全集在交给插件消费前先留一份升序快照，供 run_subset 复用。
+    let all_unicodes_vec: Vec<u32> = all_unicodes.iter().copied().collect();
     let mut context = PreSubsetContext {
         all_unicodes: all_unicodes.clone(),
         face: &mut source.face,
@@ -130,11 +135,17 @@ pub fn pre_subset(
         .map(|v| v.iter().copied().collect::<Vec<u32>>())
         .collect();
     // `draft` 到此不再使用，`context` 的可变借用于此结束。
-    let languages = context.used_languages;
+    // `context.used_languages` 只服务于 `AutoSubset`（见字段注释），不随产物上抛。
 
     // 分析名称表
-    let name_table = name_table::analyze_name_table(&font, &mut font_file);
-    Ok(PreSubsetOutput { subsets, name_table, fvar, languages, extra_files })
+    let name_table = analyze_name_table(&font, &mut font_file);
+    Ok(PreSubsetOutput {
+        subsets,
+        all_unicodes: all_unicodes_vec,
+        name_table,
+        fvar,
+        extra_files,
+    })
 }
 
 #[cfg(test)]

@@ -12,8 +12,8 @@
     },
     "scripts": {
         "build": "tsc",
-        "prepublish": "pnpm build",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "prepack": "pnpm build",
+        "test": "tsc --noEmit"
     },
     "keywords": [
         "font",

@@ -6,17 +6,10 @@ pub fn gen_svg(face: &Owned<Face<'_>>, text: &str) -> String {
     font.render_svg_text(text, &[])
 }
 
-/// 直接从字体文件创建 svg 字符串
-pub fn gen_svg_from_font_file(file: &[u8], text: &str) -> String {
-    let face = Face::from_bytes(file, 0);
-    let mut font = Font::new(face);
-    font.render_svg_text(text, &[])
-}
-
 /// 生成 `previewImage` 对应的 SVG 附加文件，返回 `(文件名, 内容)`。
 ///
 /// 未配置 `previewImage` 时返回空列表。文件仍由 pre 阶段产生，
-/// 只是 emit 上移到 [`crate::runner::font_split`]，事件顺序不变。
+/// 只是 emit 上移到 [`crate::font_split`]，事件顺序不变。
 pub fn gen_svg_extra_files(
     config: &Config,
     face: &Owned<Face<'_>>,

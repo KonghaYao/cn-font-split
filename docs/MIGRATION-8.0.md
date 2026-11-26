@@ -125,13 +125,15 @@ if let Err(FontSplitError::InvalidConfig(msg)) = result {
 `callback` 的可变上下文：
 
 -   `runner::Context` 与 `runner::create_context` **已删除**，不保留兼容别名；
--   替代类型：`runner::FontSource<'a>`（输入）、`runner::PreSubsetOutput`、
-    `runner::RunSubsetOutput`、`runner::LinkSubsetOutput`（三段产物）；
+-   阶段之间改为共享 `FontSource` / `PreSubsetOutput` / `RunSubsetOutput` /
+    `LinkSubsetOutput`（crate 私有的 `contract` 模块，不再对外导出）；
 -   三段签名为 `pre_subset(&mut FontSource, &Config)`、
     `run_subset(&FontSource, &Config, &PreSubsetOutput)`、
     `link_subset(&Config, &PreSubsetOutput, &RunSubsetOutput)`，各自返回对应产物；
 -   `gen_svg_from_ctx` 改为 `gen_svg_extra_files(&Config, &Face)`，只返回待输出的
-    `(文件名, 内容)` 列表，不再自行 emit。
+    `(文件名, 内容)` 列表，不再自行 emit；
+-   对外只导出 `font_split`、`EventFactory`、`FontSplitError` / `Result` 与
+    `config`（`Config`、`BuildMode` 等），其余模块均为 crate 私有。
 
 Rust 使用者不应再构造上下文或手工串联三段，改为消费 `font_split` 的事件流：
 
