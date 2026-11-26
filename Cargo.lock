@@ -347,7 +347,6 @@ dependencies = [
  "opentype",
  "prost",
  "rayon",
- "regex",
  "thiserror",
  "unicode-range",
  "woff",
