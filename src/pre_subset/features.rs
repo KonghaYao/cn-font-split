@@ -10,6 +10,7 @@ use crate::error::Result;
 pub mod cmap;
 pub mod gpos;
 pub mod gsub;
+pub(crate) mod opentype;
 
 /// 把 GSUB/GPOS 特性涉及的字符并回首个相交的分包。
 pub struct FontFeatures;

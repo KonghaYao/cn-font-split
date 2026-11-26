@@ -1,72 +1,37 @@
-use log::error;
 use opentype::Font;
-use opentype::layout::Class;
-use opentype::tables::glyph_positioning::Type;
-use opentype::tables::{GlyphPositioning, glyph_positioning};
-use opentype::tape::Read as _;
-use std::io::{Cursor, Seek, SeekFrom};
+use opentype::tables::GlyphPositioning;
+use opentype::tables::glyph_positioning::{self, Type};
+use std::io::Cursor;
 
-use crate::pre_subset::features::gsub::collect_glyph_id_from_format_1_and_2;
+use super::opentype::{
+    collect_glyph_id_from_class, collect_glyph_id_from_format_1_and_2,
+    expand_extension, subtables_with_positions,
+};
 
 pub fn analyze_gpos(
     font: &Font,
     font_file: &mut Cursor<&[u8]>,
 ) -> Vec<Vec<u16>> {
-    // GPOS table
-    let data: Option<GlyphPositioning> =
-        font.take(font_file).ok().and_then(|nested_option| nested_option);
-    // 无 GPOS 表（或解析失败）时跳过字距特性分析。
+    // GPOS table；解析失败按无 GPOS 表处理，跳过字距特性分析。
+    let data: Option<GlyphPositioning> = font.take(font_file).ok().flatten();
     let Some(data) = data else {
         return vec![];
     };
 
-    // let headers: Vec<Header> = data.features.headers;
-    // let feature_tags: Vec<&str> =
-    //     headers.iter().map(|h| h.tag.as_str().expect("Invalid tag")).collect();
-    // println!("{:?}", feature_tags);
-
-    // data.scripts
-    //     .records
-    //     .iter()
-    //     .map(|x| x.default_language.unwrap())
-    //     .filter(|x| x.feature_index_count > 1)
-    //     .collect();
-
-    // GPOS 表的文件绝对位置，用于把 Extension 子表的相对 offset 换算成绝对位置。
-    let gpos_position = font
-        .offsets
-        .records
-        .iter()
-        .find(|record| record.tag.0 == *b"GPOS")
-        .map(|record| record.offset as u64);
-
     let mut relation_list: Vec<Vec<u16>> = vec![];
-    for (lookup_index, lookup) in data.lookups.records.iter().enumerate() {
-        // Lookup 表位置 = GPOS 起点 + lookupListOffset + lookupOffsets[i]
-        let lookup_position = gpos_position.map(|position| {
-            position
-                + data.lookup_offset as u64
-                + data.lookups.offsets.get(lookup_index).copied().unwrap_or(0)
-                    as u64
-        });
-        for (table_index, table) in lookup.tables.iter().enumerate() {
-            // 子表位置 = Lookup 起点 + subTableOffsets[j]
-            let table_position = lookup_position.map(|position| {
-                position
-                    + lookup
-                        .table_offsets
-                        .get(table_index)
-                        .copied()
-                        .unwrap_or(0) as u64
-            });
-            collect_gpos_relations(
-                table,
-                table_position,
-                font_file,
-                &mut relation_list,
-                0,
-            );
-        }
+    for (table, position) in subtables_with_positions(
+        font,
+        b"GPOS",
+        data.lookup_offset,
+        &data.lookups,
+    ) {
+        collect_gpos_relations(
+            table,
+            position,
+            font_file,
+            &mut relation_list,
+            0,
+        );
     }
     relation_list
 }
@@ -82,9 +47,6 @@ fn collect_gpos_relations(
     relation_list: &mut Vec<Vec<u16>>,
     depth: usize,
 ) {
-    // 防止畸形字体里的 Extension 反复嵌套导致无限递归
-    const MAX_EXTENSION_DEPTH: usize = 8;
-
     match table {
         Type::SingleAdjustment(_single_adjustment) => (),
         Type::PairAdjustment(pair_adjustment) => {
@@ -133,42 +95,27 @@ fn collect_gpos_relations(
             );
             relation_list.push(linked_pairs);
         }
-        Type::ContextualPositioning(context) => match context {
-            opentype::layout::Context::Format1(_context1) => (),
-            opentype::layout::Context::Format2(_context2) => (),
-            opentype::layout::Context::Format3(_context3) => (),
-        },
-        Type::ChainedContextualPositioning(_chained_context) => {
-            // println!("context {:#?}", chained_context);
-        }
+        // 上下文定位的 format 1/2/3 与链式上下文定位暂不展开（旧行为）。
+        Type::ContextualPositioning(_) => (),
+        Type::ChainedContextualPositioning(_) => (),
         Type::ExtensionPositioning(extension_positioning) => {
-            if depth >= MAX_EXTENSION_DEPTH {
-                error!("GPOS extension positioning nested too deeply");
-                return;
-            }
-            let Some(position) = position else {
-                error!(
-                    "GPOS extension positioning without a subtable position"
-                );
-                return;
-            };
-            let inner_position = position + extension_positioning.offset as u64;
-            if let Err(e) = font_file.seek(SeekFrom::Start(inner_position)) {
-                error!("failed to seek to the GPOS extension subtable: {}", e);
-                return;
-            }
-            match font_file.take_given::<Type>(extension_positioning.r#type) {
-                Ok(inner) => collect_gpos_relations(
+            let inner = expand_extension::<Type>(
+                font_file,
+                position,
+                extension_positioning.offset,
+                extension_positioning.r#type,
+                depth,
+                "GPOS",
+                "extension positioning",
+            );
+            if let Some((inner, inner_position)) = inner {
+                collect_gpos_relations(
                     &inner,
                     Some(inner_position),
                     font_file,
                     relation_list,
                     depth + 1,
-                ),
-                Err(e) => error!(
-                    "failed to read the GPOS extension subtable (lookup type {}): {}",
-                    extension_positioning.r#type, e
-                ),
+                );
             }
         }
     }
@@ -204,25 +151,6 @@ fn collect_pair_adjustment_glyphs(
     }
 }
 
-/// 收集 ClassDef 里显式声明的全部字形（class 0 不写入表，天然被排除）。
-fn collect_glyph_id_from_class(class: &Class, result: &mut Vec<u16>) {
-    match class {
-        Class::Format1(class1) => {
-            let end = class1.start_glyph_id.saturating_add(class1.glyph_count);
-            for glyph_id in class1.start_glyph_id..end {
-                result.push(glyph_id);
-            }
-        }
-        Class::Format2(class2) => {
-            for record in class2.records.iter() {
-                for glyph_id in record.start_glyph_id..=record.end_glyph_id {
-                    result.push(glyph_id);
-                }
-            }
-        }
-    }
-}
-
 #[test]
 fn test_gpos() {
     use cn_font_utils::read_binary_file;
@@ -233,11 +161,11 @@ fn test_gpos() {
     let mut font_file = Cursor::new(&*font_file);
     let font = Font::read(&mut font_file).unwrap();
     let _result = analyze_gpos(&font, &mut font_file);
-    // println!("{:?}", result);
 }
 
 #[test]
 fn test_pair_adjustment_collects_both_sides() {
+    use opentype::layout::Class;
     use opentype::layout::Coverage;
     use opentype::layout::class::Class1;
     use opentype::layout::coverage::Coverage1;
@@ -308,6 +236,7 @@ fn test_pair_adjustment_collects_both_sides() {
 
 #[test]
 fn test_collect_glyph_id_from_class_format2() {
+    use opentype::layout::Class;
     use opentype::layout::class::{Class2, Record};
 
     let class = Class::Format2(Class2 {
@@ -340,12 +269,9 @@ fn test_gpos_extension_positioning_expands_kerning() {
 
     // 探针样本 "eo va ey vo"：左右两侧字形必须落在同一个关系集里
     let has_kerning_pair = relations.iter().any(|set| {
-        let unicode: Vec<u32> =
-            set.iter().filter_map(|g| cmap.get(g).copied()).collect();
-        unicode.contains(&97)      // a
-            && unicode.contains(&101) // e
-            && unicode.contains(&111) // o
-            && unicode.contains(&118) // v
+        let glyphs: Vec<u32> =
+            set.iter().map(|gid| *cmap.get(gid).unwrap_or(&0)).collect();
+        glyphs.contains(&0x0065) && glyphs.contains(&0x006F)
     });
-    assert!(has_kerning_pair, "GPOS Extension Positioning 未被展开");
+    assert!(has_kerning_pair, "GPOS kerning 关系集缺失");
 }
