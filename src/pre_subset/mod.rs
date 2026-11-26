@@ -73,13 +73,12 @@ fn decode_user_subsets(subsets: &[Vec<u8>]) -> Result<Vec<Vec<u32>>> {
         .iter()
         .enumerate()
         .map(|(index, subset)| {
-            if subset.len() % 4 != 0 {
-                return Err(FontSplitError::InvalidSubsets(format!(
-                    "subsets[{index}] 的字节长度 {} 不是 4 的倍数",
-                    subset.len()
-                )));
-            }
-            Ok(u8_array_to_u32_array(subset))
+            u8_array_to_u32_array(subset).map_err(|error| {
+                FontSplitError::InvalidSubsets(format!(
+                    "subsets[{index}] 的字节长度 {} 不是 {} 的倍数",
+                    error.length, error.unit
+                ))
+            })
         })
         .collect()
 }
