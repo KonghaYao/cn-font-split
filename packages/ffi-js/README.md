@@ -178,7 +178,7 @@ pnpm i @cn-font-split/wasm32-wasip1
 ```
 
 ```ts
-import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.js';
+import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.mjs';
 import wasmBuffer from '@cn-font-split/wasm32-wasip1/libffi-wasm32-wasip1.wasm?url';
 // 你的字体
 const input = await fetch(

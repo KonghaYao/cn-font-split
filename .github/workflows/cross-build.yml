@@ -44,7 +44,9 @@ jobs:
                       cross: false
 
                     - os-name: macOS-x86_64
-                      runs-on: macos-13
+                      # GitHub 正在淘汰 macos-13：这里在 arm64 runner 上交叉编译
+                      # x86_64-apple-darwin（target 与构建命令不变，只是换了 runner）。
+                      runs-on: macos-14
                       target: x86_64-apple-darwin
                       ext: dylib
                       cross: false

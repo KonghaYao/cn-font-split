@@ -68,7 +68,7 @@ CN_FONT_SPLIT_BIN=/abs/path/libffi.dylib cn-font-split -i font.ttf -o dist
 ```
 
 解析顺序：`CN_FONT_SPLIT_BIN` → `@cn-font-split/<platform>` 平台包 → 仓库内
-`target/release/libffi.*`（仅本地开发）。
+`dist/libffi-<target>.<ext>`（仅本地开发）。
 
 ## CLI
 
