@@ -82,57 +82,94 @@ fn normalize_reporter(bytes: &[u8]) -> Vec<u8> {
     report.encode_to_vec()
 }
 
+fn report(font_path: &str, template: InputTemplate) {
+    let collected = std::cell::RefCell::new(Vec::new());
+    font_split(template, |msg: EventMessage| {
+        if msg.event != EventName::OutputData as i32 {
+            return;
+        }
+        let Some(data) = msg.data else { return };
+        collected.borrow_mut().push((msg.message, data));
+    })
+    .unwrap_or_else(|err| panic!("{font_path} 构建失败: {err}"));
+    let mut outputs = collected.into_inner();
+
+    for (name, data) in outputs.iter_mut() {
+        if name == "reporter.bin" {
+            *data = normalize_reporter(data);
+        }
+    }
+    outputs.sort_by(|a, b| a.0.cmp(&b.0));
+
+    let face_count =
+        outputs.iter().filter(|(name, _)| name.ends_with(".woff2")).count();
+    let sum = |pred: &dyn Fn(&str) -> bool| -> usize {
+        outputs
+            .iter()
+            .filter(|(name, _)| pred(name))
+            .map(|(_, data)| data.len())
+            .sum()
+    };
+    let woff2_bytes = sum(&|name| name.ends_with(".woff2"));
+    let css_bytes = sum(&|name| name.ends_with(".css"));
+    let html_bytes = sum(&|name| name.ends_with(".html"));
+    let proto_bytes = sum(&|name| name.ends_with(".proto"));
+    let svg_bytes = sum(&|name| name.ends_with(".svg"));
+    let reporter_bytes = sum(&|name| name == "reporter.bin");
+    let total_bytes = sum(&|_| true);
+
+    println!("== {font_path} ==");
+    println!("face_count {face_count}");
+    println!("woff2_bytes {woff2_bytes}");
+    println!("css_bytes {css_bytes}");
+    println!("html_bytes {html_bytes}");
+    println!("proto_bytes {proto_bytes}");
+    println!("svg_bytes {svg_bytes}");
+    println!("reporter_bytes {reporter_bytes}");
+    println!("total_bytes {total_bytes}");
+    for (name, data) in &outputs {
+        let hash = blake3::hash(data).to_hex();
+        println!("{name} {} {hash}", data.len());
+    }
+    println!();
+}
+
 #[test]
 #[ignore = "等价性哈希基线，手动运行：cargo test --release --test arch_hashcheck -- --ignored --nocapture"]
 fn arch_hash_snapshot() {
     for font_path in FONTS {
         let binary = fs::read(font_path).expect("读取字体夹具失败");
-        let collected = std::cell::RefCell::new(Vec::new());
-        font_split(fixed_template(&binary), |msg: EventMessage| {
-            if msg.event != EventName::OutputData as i32 {
-                return;
-            }
-            let Some(data) = msg.data else { return };
-            collected.borrow_mut().push((msg.message, data));
-        })
-        .unwrap_or_else(|err| panic!("{font_path} 构建失败: {err}"));
-        let mut outputs = collected.into_inner();
+        report(font_path, fixed_template(&binary));
+    }
+}
 
-        for (name, data) in outputs.iter_mut() {
-            if name == "reporter.bin" {
-                *data = normalize_reporter(data);
-            }
-        }
-        outputs.sort_by(|a, b| a.0.cmp(&b.0));
+/// 覆盖基线之外的分支：name_template 重命名、preview SVG、reduce_min、
+/// 多线程路径与另一个 chunk_size。
+#[test]
+#[ignore = "等价性哈希基线，手动运行：cargo test --release --test arch_hashcheck -- --ignored --nocapture"]
+fn arch_hash_variants() {
+    for font_path in FONTS {
+        let binary = fs::read(font_path).expect("读取字体夹具失败");
 
-        let face_count =
-            outputs.iter().filter(|(name, _)| name.ends_with(".woff2")).count();
-        let sum = |pred: &dyn Fn(&str) -> bool| -> usize {
-            outputs
-                .iter()
-                .filter(|(name, _)| pred(name))
-                .map(|(_, data)| data.len())
-                .sum()
-        };
-        let woff2_bytes = sum(&|name| name.ends_with(".woff2"));
-        let css_bytes = sum(&|name| name.ends_with(".css"));
-        let html_bytes = sum(&|name| name.ends_with(".html"));
-        let proto_bytes = sum(&|name| name.ends_with(".proto"));
-        let reporter_bytes = sum(&|name| name == "reporter.bin");
-        let total_bytes = sum(&|_| true);
+        let mut rename = fixed_template(&binary);
+        rename.rename_output_font =
+            Some("[hash:8]-[index]-[ext].font".to_string());
+        rename.preview_image =
+            Some(cn_font_proto::api_interface::input_template::PreviewImage {
+                text: "永 Hello 123".to_string(),
+                name: "preview".to_string(),
+            });
+        rename.multi_threads = Some(true);
+        report(&format!("rename {font_path}"), rename);
 
-        println!("== {font_path} ==");
-        println!("face_count {face_count}");
-        println!("woff2_bytes {woff2_bytes}");
-        println!("css_bytes {css_bytes}");
-        println!("html_bytes {html_bytes}");
-        println!("proto_bytes {proto_bytes}");
-        println!("reporter_bytes {reporter_bytes}");
-        println!("total_bytes {total_bytes}");
-        for (name, data) in &outputs {
-            let hash = blake3::hash(data).to_hex();
-            println!("{name} {} {hash}", data.len());
-        }
-        println!();
+        let mut chunk = fixed_template(&binary);
+        chunk.chunk_size = Some(48 * 1024);
+        report(&format!("chunk48k {font_path}"), chunk);
+
+        let mut reduce = fixed_template(&binary);
+        reduce.reduce_mins = Some(true);
+        reduce.test_html = Some(false);
+        reduce.reporter = Some(false);
+        report(&format!("reduce_min {font_path}"), reduce);
     }
 }
