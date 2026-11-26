@@ -1,0 +1,260 @@
+{
+  "label": "v8",
+  "commit": "c2ca413",
+  "node": "v24.21.0",
+  "platform": "darwin-arm64",
+  "bin": "target/release/libffi.dylib",
+  "font": "packages/demo/public/NotoSerifSC-Regular.ttf",
+  "config": {
+    "fontFeature": false,
+    "reporter": false,
+    "testHtml": true
+  },
+  "rounds": 5,
+  "warmup": 1,
+  "timestamp": "2026-11-26T02:10:33.646Z",
+  "cases": [
+    {
+      "case": "default",
+      "chunkSize": null,
+      "consistent": true,
+      "overheadMsMedian": 20.164,
+      "overheadPctMedian": 4.05,
+      "modes": {
+        "memory": {
+          "computeMsMedian": 491.862,
+          "writeMsMedian": 0.241,
+          "totalMsMedian": 492.099,
+          "totalMsMin": 481.955,
+          "totalMsMax": 497.868,
+          "fileCount": 213,
+          "bytes": 8801396,
+          "rounds": [
+            {
+              "mode": "memory",
+              "round": 0,
+              "computeMs": 481.696,
+              "writeMs": 0.259,
+              "totalMs": 481.955,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "memory",
+              "round": 1,
+              "computeMs": 497.6,
+              "writeMs": 0.268,
+              "totalMs": 497.868,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "memory",
+              "round": 2,
+              "computeMs": 491.862,
+              "writeMs": 0.237,
+              "totalMs": 492.099,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "memory",
+              "round": 3,
+              "computeMs": 496.179,
+              "writeMs": 0.241,
+              "totalMs": 496.421,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "memory",
+              "round": 4,
+              "computeMs": 489.006,
+              "writeMs": 0.229,
+              "totalMs": 489.235,
+              "fileCount": 213,
+              "bytes": 8801396
+            }
+          ]
+        },
+        "disk": {
+          "computeMsMedian": 503.694,
+          "writeMsMedian": 9.023,
+          "totalMsMedian": 512.552,
+          "totalMsMin": 493.69,
+          "totalMsMax": 529.407,
+          "fileCount": 213,
+          "bytes": 8801396,
+          "rounds": [
+            {
+              "mode": "disk",
+              "round": 0,
+              "computeMs": 503.694,
+              "writeMs": 8.858,
+              "totalMs": 512.552,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "disk",
+              "round": 1,
+              "computeMs": 509.009,
+              "writeMs": 9.023,
+              "totalMs": 518.032,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "disk",
+              "round": 2,
+              "computeMs": 501.317,
+              "writeMs": 8.843,
+              "totalMs": 510.159,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "disk",
+              "round": 3,
+              "computeMs": 483.527,
+              "writeMs": 10.163,
+              "totalMs": 493.69,
+              "fileCount": 213,
+              "bytes": 8801396
+            },
+            {
+              "mode": "disk",
+              "round": 4,
+              "computeMs": 520.204,
+              "writeMs": 9.203,
+              "totalMs": 529.407,
+              "fileCount": 213,
+              "bytes": 8801396
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "chunk-48k",
+      "chunkSize": 49152,
+      "consistent": true,
+      "overheadMsMedian": 16.613,
+      "overheadPctMedian": 3.304,
+      "modes": {
+        "memory": {
+          "computeMsMedian": 503.956,
+          "writeMsMedian": 0.236,
+          "totalMsMedian": 504.203,
+          "totalMsMin": 497.119,
+          "totalMsMax": 508.063,
+          "fileCount": 284,
+          "bytes": 8958309,
+          "rounds": [
+            {
+              "mode": "memory",
+              "round": 0,
+              "computeMs": 506.549,
+              "writeMs": 0.252,
+              "totalMs": 506.801,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "memory",
+              "round": 1,
+              "computeMs": 496.883,
+              "writeMs": 0.236,
+              "totalMs": 497.119,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "memory",
+              "round": 2,
+              "computeMs": 503.956,
+              "writeMs": 0.246,
+              "totalMs": 504.203,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "memory",
+              "round": 3,
+              "computeMs": 507.827,
+              "writeMs": 0.236,
+              "totalMs": 508.063,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "memory",
+              "round": 4,
+              "computeMs": 502.581,
+              "writeMs": 0.233,
+              "totalMs": 502.814,
+              "fileCount": 284,
+              "bytes": 8958309
+            }
+          ]
+        },
+        "disk": {
+          "computeMsMedian": 503.594,
+          "writeMsMedian": 11.696,
+          "totalMsMedian": 518.617,
+          "totalMsMin": 510.578,
+          "totalMsMax": 528.315,
+          "fileCount": 284,
+          "bytes": 8958309,
+          "rounds": [
+            {
+              "mode": "disk",
+              "round": 0,
+              "computeMs": 516.619,
+              "writeMs": 11.696,
+              "totalMs": 528.315,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "disk",
+              "round": 1,
+              "computeMs": 502.404,
+              "writeMs": 16.212,
+              "totalMs": 518.617,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "disk",
+              "round": 2,
+              "computeMs": 498.804,
+              "writeMs": 11.774,
+              "totalMs": 510.578,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "disk",
+              "round": 3,
+              "computeMs": 503.594,
+              "writeMs": 10.76,
+              "totalMs": 514.355,
+              "fileCount": 284,
+              "bytes": 8958309
+            },
+            {
+              "mode": "disk",
+              "round": 4,
+              "computeMs": 507.852,
+              "writeMs": 11.576,
+              "totalMs": 519.427,
+              "fileCount": 284,
+              "bytes": 8958309
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
