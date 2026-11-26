@@ -181,6 +181,163 @@ pub fn turn_indics_to_unicode_set(
 }
 
 #[cfg(test)]
+mod open_type_snapshots {
+    //! 统一 GSUB/GPOS 遍历前的输出快照。
+    //!
+    //! `analyze_gsub` / `analyze_gpos` 的返回值决定「哪些字符被并回同一个
+    //! 分包」，一旦顺序或内容变化，最终 woff2 字节就会变。这里对三份字体
+    //! 固定「关系集数量 + 字形总数 + 序列化摘要」，重构前后必须完全一致。
+
+    use super::cmap::analyze_cmap;
+    use super::gpos::analyze_gpos;
+    use super::gsub::analyze_gsub;
+    use opentype::Font;
+    use std::io::Cursor;
+
+    /// 关系集数量、字形总数、以及按顺序序列化后的 blake3。
+    #[derive(Debug)]
+    struct Snapshot {
+        sets: usize,
+        glyphs: usize,
+        digest: String,
+    }
+
+    /// 基线值：重构前的 `analyze_gsub` / `analyze_gpos` 输出。
+    struct Expected {
+        sets: usize,
+        glyphs: usize,
+        digest: &'static str,
+    }
+
+    fn snapshot(sets: &[Vec<u16>]) -> Snapshot {
+        let mut buffer: Vec<u8> = Vec::new();
+        for set in sets {
+            buffer.extend_from_slice(&(set.len() as u32).to_le_bytes());
+            for glyph in set {
+                buffer.extend_from_slice(&glyph.to_le_bytes());
+            }
+        }
+        Snapshot {
+            sets: sets.len(),
+            glyphs: sets.iter().map(|set| set.len()).sum(),
+            digest: blake3::hash(&buffer).to_hex().to_string(),
+        }
+    }
+
+    fn assert_snapshot(actual: Snapshot, expected: &Expected, path: &str) {
+        assert_eq!(actual.sets, expected.sets, "{path} 关系集数量");
+        assert_eq!(actual.glyphs, expected.glyphs, "{path} 字形总数");
+        assert_eq!(actual.digest, expected.digest, "{path} 序列化摘要");
+    }
+
+    /// (字体, GSUB 快照, GPOS 快照, cmap 条目数, cmap 摘要)
+    const FIXTURES: &[(&str, Expected, Expected, usize, &str)] = &[
+        (
+            "./packages/demo/public/NotoSerifSC-Regular.ttf",
+            Expected {
+                sets: 329,
+                glyphs: 893,
+                digest: "8a1ce836421945ede3b85f7f1491aa2362726ba95de35d7b984805e50b30356c",
+            },
+            Expected {
+                sets: 8,
+                glyphs: 3138,
+                digest: "f1645095058dc4d27e33cb692425202b0f5d07aa890db1aba4b4841023973125",
+            },
+            30424,
+            "d32bf7987793b29e814b3c595f3ff93a10704f882acf7603b37eef8f1815e3bc",
+        ),
+        (
+            "./packages/demo/public/WorkSans-VariableFont_wght.ttf",
+            Expected {
+                sets: 58,
+                glyphs: 163,
+                digest: "3c9bdae068d520ef520ce58d2a893ac5bc556defec312dff49526c038bf1fe74",
+            },
+            Expected {
+                sets: 8,
+                glyphs: 25286,
+                digest: "39f207cdaae60d2181ed90b97e928709b8dbe7f7dd12e53706be64e1f256aff3",
+            },
+            754,
+            "9ff815c5386f4d7af4d17af5a59f8e349399f3a5aa227cdc36b341057b75a2e6",
+        ),
+        (
+            "./packages/demo/public/SmileySans-Oblique.ttf",
+            Expected {
+                sets: 8,
+                glyphs: 24,
+                digest: "3d84354c72e7f099b42c0bfc9c2ab063068f84e484ab805981a1ee7df59c016c",
+            },
+            Expected {
+                sets: 2,
+                glyphs: 1458,
+                digest: "4597812d4b0fecaa4915074fb03bd6bbda4ee61562b4fcf24837883453f3dd30",
+            },
+            7866,
+            "de860693ebb245eca2be999f1ecfdcd2edb17254142aa2022ac837f846b9d4ae",
+        ),
+    ];
+
+    fn load(path: &str) -> (Vec<u8>, Font) {
+        let binary = cn_font_utils::read_binary_file(path).unwrap();
+        let mut cursor = Cursor::new(&*binary);
+        let font = Font::read(&mut cursor).unwrap();
+        (binary, font)
+    }
+
+    #[test]
+    fn gsub_relations_snapshot() {
+        for (path, gsub, _, _, _) in FIXTURES {
+            let (binary, font) = load(path);
+            let mut cursor = Cursor::new(&*binary);
+            assert_snapshot(
+                snapshot(&analyze_gsub(&font, &mut cursor)),
+                gsub,
+                path,
+            );
+        }
+    }
+
+    #[test]
+    fn gpos_relations_snapshot() {
+        for (path, _, gpos, _, _) in FIXTURES {
+            let (binary, font) = load(path);
+            let mut cursor = Cursor::new(&*binary);
+            assert_snapshot(
+                snapshot(&analyze_gpos(&font, &mut cursor)),
+                gpos,
+                path,
+            );
+        }
+    }
+
+    /// cmap 反查表规模快照：GSUB/GPOS 的 gid→unicode 转换依赖它。
+    #[test]
+    fn cmap_snapshot() {
+        for (path, _, _, expected_len, expected_digest) in FIXTURES {
+            let (binary, font) = load(path);
+            let mut cursor = Cursor::new(&*binary);
+            let cmap = analyze_cmap(&font, &mut cursor);
+            let mut entries: Vec<(u16, u32)> =
+                cmap.iter().map(|(gid, uni)| (*gid, *uni)).collect();
+            entries.sort_unstable();
+            let mut buffer: Vec<u8> = Vec::new();
+            for (gid, unicode) in &entries {
+                buffer.extend_from_slice(&gid.to_le_bytes());
+                buffer.extend_from_slice(&unicode.to_le_bytes());
+            }
+            assert_eq!(entries.len(), *expected_len, "{path}");
+            assert_eq!(
+                blake3::hash(&buffer).to_hex().as_str(),
+                *expected_digest,
+                "{path}"
+            );
+        }
+    }
+}
+
+#[cfg(test)]
 mod mark_fallback_tests {
     use super::*;
 
