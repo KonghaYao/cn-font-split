@@ -34,13 +34,19 @@ pub trait PreSubsetPlugin: Sync {
 
 /// 一个待处理的分包：字符集合 + 该分包携带的语言区域标签。
 ///
-/// 标签随分包对象移动，不再有「下标 -> 标签」的旁路表：`LanguageArea`
-/// 创建分包时把旧实现按下标读到的区域标签物化到对象上（规则见其 `apply`），
+/// 标签随分包对象移动，不再有「下标 -> 标签」的旁路表：创建者在分包入列时
+/// 就把旧实现按下标查到的结果物化到对象上（规则见 [`LanguageArea::apply`]），
 /// `AutoSubset` 读取它选择切分系数，拆分出的每个新分包继承同一标签。
-/// 其它插件创建的分包标签为 `None`，且 `AutoSubset` 之后没有读取方。
+///
+/// 因此标签的取值含义是「**旧实现的按位置查表结果**」，而不是「这个分包属于
+/// 哪个语言区域」：用户分包与余数包同样可能带标签。这是必须保留的历史语义，
+/// 不能「修正」成只给语言区域分包打标签——那会改变 `AutoSubset` 的切分系数，
+/// 进而改变分包数与产物字节。
+///
+/// `AutoSubset` 之后没有读取方；`ReduceMin` 产生的新包标签为 `None`。
 pub struct Subset {
     pub chars: IndexSet<u32>,
-    /// 分包携带的区域标签；只有 `AutoSubset` 读取它选择切分系数。
+    /// 旧实现按位置查表得到的区域标签；只有 `AutoSubset` 读取它。
     pub language: Option<String>,
 }
 
@@ -58,6 +64,17 @@ where
 /// 按语言区域把剩余字符拆成独立分包。
 pub struct LanguageArea;
 
+/// 旧实现的按位置查表：`position` 是分包在 `draft.subsets` 中的**绝对下标**
+/// （用户分包 → 语言区域分包 → 余数包），不是区域下标。
+///
+/// 返回 `None` 表示旧实现查到「空」（越界，或该区域为空）。
+fn legacy_language_at(
+    area_tags: &[Option<String>],
+    position: usize,
+) -> Option<String> {
+    area_tags.get(position).cloned().flatten()
+}
+
 impl PreSubsetPlugin for LanguageArea {
     fn name(&self) -> &'static str {
         "language_area"
@@ -71,7 +88,7 @@ impl PreSubsetPlugin for LanguageArea {
         let language_area = create_default_unicode_area();
         let language_area_tag = create_default_unicode_area_tag();
         // 先按区域抽出字符：顺序与「从 remaining 里摘字符」的副作用都与旧实现
-        // 完全一致，只是不再把区域序号写进旁路表。
+        // 完全一致。
         let mut extracted: Vec<(usize, IndexSet<u32>)> = Vec::new();
         for (index, area) in language_area.iter().enumerate() {
             let set = IndexSet::from_iter(
@@ -89,27 +106,41 @@ impl PreSubsetPlugin for LanguageArea {
             }
         }
 
-        // 历史语义（**不能「修正」**）：旧实现把区域序号写进
-        // `used_languages`，`AutoSubset` 却按分包下标去读，于是第 j 个语言
-        // 分包（位置 `base + j`，`base` 是 `LanguageArea` 之前已有的分包数，
-        // 通常来自用户分包）实际读到的是「区域 `base + j`」的标签：区域为空
-        // 时错位，标签也可能属于另一个区域（NotoSerifSC 实测 ZH_SYMBOL 分包
-        // 读到 ZH_TC、拿到 0.5 系数）。按「自己的区域标签」绑定会把该字体的
-        // face 数从 179 改到 184，因此这里把旧下标查找的结果物化到分包对象上。
+        // 区域下标 -> 标签，只含非空区域；与旧实现 `used_languages` 的 key
+        // 集合完全一致。
+        let mut area_tags: Vec<Option<String>> =
+            vec![None; language_area_tag.len()];
+        for (index, _) in &extracted {
+            if let Some(tag) = language_area_tag.get(*index) {
+                area_tags[*index] = Some(tag.to_string());
+            }
+        }
+
+        // 历史语义（**不能「修正」**）：旧实现按下标写
+        // `used_languages[区域下标] = 标签`（只写非空区域），`AutoSubset` 却按
+        // **分包在 `draft.subsets` 中的位置**去读。流水线保证
+        // `AddUserSubset → LanguageArea → AddRemainChars → AutoSubset` 之间没有
+        // 分包被删除（空包保留到最后），所以「创建时的位置」就是
+        // 「`AutoSubset` 时的位置」，可以在此一次性物化：
+        //
+        // - 位置 `p` 命中非空区域的标签 ⇔ 该位置恰好是一个非空区域下标；
+        // - 于是用户分包（位置 `0..base`）和余数包（位置 `base + L`）都可能
+        //   意外命中某个区域标签，未命中才落到 `AutoSubset` 的 0.7 分支。
+        //
+        // 按「自己的区域标签」绑定会让标签与位置错位，改变切分系数与包数，
+        // 产物不再逐字节等价。因此这里完整复刻按位置查表。
         let base = draft.subsets.len();
-        let occupied_areas: BTreeSet<usize> =
-            extracted.iter().map(|(index, _)| *index).collect();
+        // 已存在的分包（此时只有用户分包）也按绝对位置取标签。旧实现会把它们
+        // 一并查表，所以它们同样可能命中。
+        for (position, subset) in draft.subsets.iter_mut().enumerate() {
+            subset.language = legacy_language_at(&area_tags, position);
+        }
         for (ordinal, (_, chars)) in extracted.into_iter().enumerate() {
-            // 旧实现读取 `used_languages[base + ordinal]`：只有该位置恰好是
-            // 非空区域下标时才有标签。
-            let legacy_position = base + ordinal;
-            let language = if occupied_areas.contains(&legacy_position) {
-                Some(language_area_tag[legacy_position].to_string())
-            } else {
-                None
-            };
+            let language = legacy_language_at(&area_tags, base + ordinal);
             draft.subsets.push(Subset { chars, language });
         }
+        // 余数包在 `AddRemainChars` 里创建，把表交给它。
+        draft.ctx.area_tags = area_tags;
         Ok(())
     }
 }
@@ -130,10 +161,13 @@ impl PreSubsetPlugin for AddRemainChars {
         info!("{} 个剩余字符被处理", draft.remaining.len());
         let mut v: Vec<u32> = draft.remaining.iter().cloned().collect();
         v.sort();
-        draft.subsets.push(Subset {
-            chars: v.iter().cloned().collect(),
-            language: None,
-        });
+        // 余数包同样按绝对位置查旧表：旧实现没有给它开例外，位置恰好是某个
+        // 非空区域下标时就会命中该区域的标签（见 `LanguageArea::apply`）。
+        let position = draft.subsets.len();
+        let language = legacy_language_at(&draft.ctx.area_tags, position);
+        draft
+            .subsets
+            .push(Subset { chars: v.iter().cloned().collect(), language });
         draft.remaining.clear();
         Ok(())
     }
@@ -196,6 +230,20 @@ mod tests {
 
     fn subset(range: std::ops::Range<u32>) -> Subset {
         Subset { chars: set(range), language: None }
+    }
+
+    /// 按位置查表：命中、表内 `None`、越界、空表四种情况。
+    #[test]
+    fn legacy_language_lookup_is_positional() {
+        let tags = vec![None, Some("ZH_TC".to_string())];
+        assert_eq!(
+            legacy_language_at(&tags, 1),
+            Some("ZH_TC".to_string()),
+            "命中非空区域下标"
+        );
+        assert_eq!(legacy_language_at(&tags, 0), None, "表内 None");
+        assert_eq!(legacy_language_at(&tags, 2), None, "越界");
+        assert_eq!(legacy_language_at(&[], 0), None, "language_areas 关闭");
     }
 
     /// 小包合并后字符集合不变、且没有重复字符。

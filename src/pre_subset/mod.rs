@@ -52,6 +52,12 @@ where
     font: &'a opentype::Font,
     font_file: &'a mut Cursor<&'c [u8]>,
     subsets: &'c Vec<Vec<u32>>,
+    /// 区域下标 → 语言标签，只含非空区域（空区域为 `None`）。
+    ///
+    /// 旧实现把「区域下标 → 标签」存在这里，却在 `AutoSubset` 里按**分包
+    /// 在 `draft.subsets` 中的位置**去查；`LanguageArea` 与 `AddRemainChars`
+    /// 用它把旧查表结果物化到 `Subset::language`，保证逐字节等价。
+    pub area_tags: Vec<Option<String>>,
 }
 
 /// 用户传入的 subsets 使用每字符 4 字节的小端编码；
@@ -106,6 +112,8 @@ pub fn pre_subset(
         font: &font,
         subsets: &user_subsets,
         font_file: &mut font_file,
+        // `LanguageArea` 在执行时填充；关闭 `language_areas` 时保持为空。
+        area_tags: Vec::new(),
     };
 
     // 执行 PIPELINE 中所有启用的插件，顺序见文件顶部的顺序约束说明。
