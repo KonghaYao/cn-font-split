@@ -1,0 +1,124 @@
+name: release-cn-font-split
+
+# 主包 cn-font-split 的发布流水线。
+#
+# 默认 dry-run：inputs.publish=false 时只做版本校验 + 构建 + `pnpm pack --dry-run`，
+# 不访问 registry 的写入接口。只有显式 publish=true 才会依次发布
+# 平台包（`@cn-font-split/*`，必须先发）与主包。
+#
+# 平台包目录 `dist-platforms/<platform>/` 由 `scripts/build-platforms.mjs` 从
+# cross-build.yml 的 `bindings-*` 产物生成，不入库（见 .gitignore）。本 workflow
+# 不猜测产物位置：目录缺失时直接失败并打印缺失列表与获取方式。
+on:
+    workflow_dispatch:
+        inputs:
+            publish:
+                description: "真实发布到 npm（默认 false，只 dry-run）"
+                type: boolean
+                default: false
+
+permissions:
+    contents: read
+
+env:
+    # woff 0.4.0 在 GCC 13+ 需要补 <cstdint>，原因见 ci.yml。
+    CXXFLAGS: -include cstdint
+    HARFBUZZ_SYS_NO_PKG_CONFIG: "True"
+
+jobs:
+    release:
+        name: 版本校验 / 构建 / 打包（publish=${{ inputs.publish }}）
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+                  registry-url: 'https://registry.npmjs.org'
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: 版本一致性（Cargo.toml 为唯一真源）
+              # 同时校验顶层 version 与 optionalDependencies 中的 @cn-font-split/*。
+              run: pnpm sync-version:check
+
+            - name: 构建主包 packages/ffi-js
+              run: pnpm -C packages/ffi-js build
+
+            - name: 打包内容预览（pnpm pack --dry-run）
+              # 走 prepack（pnpm build），因此这里同时复核了一次构建可重复性。
+              working-directory: packages/ffi-js
+              run: pnpm pack --dry-run
+
+            - name: 平台包目录检查（仅 publish=true）
+              if: ${{ inputs.publish }}
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  platforms=(
+                      darwin-arm64
+                      darwin-x64
+                      win32-x64-msvc
+                      win32-arm64-msvc
+                      linux-x64-gnu
+                      linux-arm64-gnu
+                      wasm32-wasip1
+                      wasm32-wasip2
+                  )
+                  missing=()
+                  for platform in "${platforms[@]}"; do
+                      [ -f "dist-platforms/${platform}/package.json" ] || missing+=("dist-platforms/${platform}")
+                  done
+                  if [ ${#missing[@]} -ne 0 ]; then
+                      {
+                          echo "::error::缺少平台包目录（${#missing[@]}/${#platforms[@]}）：${missing[*]}"
+                          echo "平台包目录不入库，需要先生成："
+                          echo "  1. 运行 .github/workflows/cross-build.yml，下载 bindings-* artifacts；"
+                          echo "  2. 把每个 libffi-<triple>.<ext> 放到 target/<triple>/release/；"
+                          echo "  3. node scripts/build-platforms.mjs --all   # 产出 dist-platforms/<platform>/"
+                          echo "详见 scripts/build-platforms.mjs 顶部注释。"
+                      } >&2
+                      exit 1
+                  fi
+
+            - name: 平台包版本校验（仅 publish=true）
+              if: ${{ inputs.publish }}
+              run: |
+                  node -e '
+                    const fs = require("node:fs");
+                    const cargo = fs.readFileSync("Cargo.toml", "utf8");
+                    const version = cargo.match(/\[workspace\.package\][^[]*?^\s*version\s*=\s*"([^"]+)"/m)[1];
+                    const dirs = fs.readdirSync("dist-platforms").filter((name) =>
+                        fs.existsSync(`dist-platforms/${name}/package.json`),
+                    );
+                    const problems = dirs
+                        .map((dir) => [dir, JSON.parse(fs.readFileSync(`dist-platforms/${dir}/package.json`, "utf8"))])
+                        .filter(([, manifest]) => manifest.version !== version)
+                        .map(([dir, manifest]) => `${dir}: ${manifest.version} -> ${version}`);
+                    if (problems.length > 0) {
+                        console.error("平台包版本与 Cargo.toml 不一致：\n  " + problems.join("\n  "));
+                        process.exit(1);
+                    }
+                    console.log(`平台包版本均为 ${version}（${dirs.length} 个）`);
+                  '
+
+            - name: 发布平台包（先）
+              if: ${{ inputs.publish }}
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  for dir in dist-platforms/*/; do
+                      [ -f "${dir}package.json" ] || continue
+                      pnpm publish "${dir}" --access public --no-git-checks
+                  done
+
+            - name: 发布主包（后）
+              if: ${{ inputs.publish }}
+              working-directory: packages/ffi-js
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: pnpm publish --access public --no-git-checks

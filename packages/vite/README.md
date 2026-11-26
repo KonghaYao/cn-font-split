@@ -1,4 +1,6 @@
-# 🔠 vite-plugin-font 5.0 ⚡
+# 🔠 vite-plugin-font 8.0 ⚡
+
+> Package version `vite-plugin-font` 8.0.0, released in lockstep with `cn-font-split` 8.0.0 (the single version source is the root `Cargo.toml`).
 
 [中文](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README_zh.md) | [English](https://github.com/KonghaYao/cn-font-split/blob/release/packages/vite/README.md)
 

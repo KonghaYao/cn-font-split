@@ -3,6 +3,9 @@ name = "server"
 version = "0.1.0"
 edition = "2021"
 
+# 8.0 冻结：本包被根 Cargo.toml 的 exclude 排除，不进入 workspace 构建与 CI。
+# 依赖固定在 crates.io 的 7.4 时代版本（cn-font-split 7.4.0 / cn-font-proto 0.1.2 /
+# cn-font-utils 0.2.0），升级计划见 ./README.md 的「冻结说明（8.0）」。
 [dependencies]
 cn-font-split = { version = "7.4.0", default-features = false }
 axum = { version = "0.8.1", features = [] }
