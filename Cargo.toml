@@ -50,6 +50,8 @@ members = [
     "packages/grpc",
     "packages/wasm-edge",
 ]
+# packages/server 是独立部署的服务，自带 [workspace] 与 Cargo.lock，单独构建。
+exclude = ["packages/server"]
 
 [workspace.package]
 version = "8.0.0"
