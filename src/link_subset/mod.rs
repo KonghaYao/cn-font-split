@@ -1,9 +1,8 @@
 mod css;
-pub(crate) mod name_template;
 mod output_css;
 use crate::config::Config;
+use crate::contract::{LinkSubsetOutput, PreSubsetOutput, RunSubsetOutput};
 use crate::error::Result;
-use crate::runner::{LinkSubsetOutput, PreSubsetOutput, RunSubsetOutput};
 use cn_font_proto::INDEX_PROTO;
 const HTML_TEMPLATE: &[u8] = include_bytes!("./index.html");
 

@@ -42,10 +42,7 @@ fn encode_subsets() -> Vec<Vec<u8>> {
     USER_SUBSETS
         .iter()
         .map(|chars| {
-            chars
-                .iter()
-                .flat_map(|c| c.to_le_bytes())
-                .collect::<Vec<u8>>()
+            chars.iter().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>()
         })
         .collect()
 }
@@ -77,7 +74,8 @@ fn fixed_template(font: &[u8]) -> InputTemplate {
 
 /// 把 reporter.bin 的 `duration` 清零后重新编码，其余字段保持不变。
 fn normalize_reporter(bytes: &[u8]) -> Vec<u8> {
-    let mut report = OutputReport::decode(bytes).expect("reporter.bin 必须可解码");
+    let mut report =
+        OutputReport::decode(bytes).expect("reporter.bin 必须可解码");
     for detail in report.subset_detail.iter_mut() {
         detail.duration = 0;
     }
@@ -107,10 +105,8 @@ fn arch_hash_snapshot() {
         }
         outputs.sort_by(|a, b| a.0.cmp(&b.0));
 
-        let face_count = outputs
-            .iter()
-            .filter(|(name, _)| name.ends_with(".woff2"))
-            .count();
+        let face_count =
+            outputs.iter().filter(|(name, _)| name.ends_with(".woff2")).count();
         let sum = |pred: &dyn Fn(&str) -> bool| -> usize {
             outputs
                 .iter()

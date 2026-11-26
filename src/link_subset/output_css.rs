@@ -1,7 +1,7 @@
 use crate::config::{CssConfig, DEFAULT_FONT_FAMILY};
+use crate::contract::RunSubsetResult;
 use crate::pre_subset::fvar::FvarTable;
 use crate::pre_subset::name_table::NameTableSets;
-use crate::run_subset::RunSubsetResult;
 use cn_font_proto::api_interface::output_report::{self};
 use cn_font_utils::vec_u32_to_string;
 
@@ -139,7 +139,7 @@ fn is_italic(str: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::run_subset::RunSubsetResult;
+    use crate::contract::RunSubsetResult;
     use cn_font_proto::api_interface::input_template::PolyfillType;
 
     /// 只渲染 CSS：name 表与 fvar 固定为空，CSS 配置与分包结果由调用方给出。
@@ -161,7 +161,6 @@ mod tests {
         render_results(
             css,
             vec![RunSubsetResult {
-                hash: "test_hash".to_string(),
                 unicodes,
                 file_name: "test_subset.woff2".to_string(),
             }],
@@ -319,12 +318,10 @@ mod tests {
         };
         let results = vec![
             RunSubsetResult {
-                hash: "hash_a".to_string(),
                 unicodes: vec![0x4E00],
                 file_name: "a.woff2".to_string(),
             },
             RunSubsetResult {
-                hash: "hash_b".to_string(),
                 unicodes: vec![0x4E01],
                 file_name: "b.woff2".to_string(),
             },

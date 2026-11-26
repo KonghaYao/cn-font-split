@@ -6,8 +6,8 @@ pub mod plugin;
 mod plugin_auto_subset;
 
 use crate::config::Config;
+use crate::contract::{FontSource, PreSubsetOutput};
 use crate::error::{FontSplitError, Result};
-use crate::runner::{FontSource, PreSubsetOutput};
 mod plugin_add_user_subset;
 use cn_font_utils::u8_array_to_u32_array;
 use features::FontFeatures;
@@ -130,11 +130,12 @@ pub fn pre_subset(
         .map(|v| v.iter().copied().collect::<Vec<u32>>())
         .collect();
     // `draft` 到此不再使用，`context` 的可变借用于此结束。
-    let languages = context.used_languages;
+    // 注意：`context.used_languages` 仍是 `AutoSubset` 的输入（语言区域缩放
+    // 因子），这里只丢弃对外字段，不再随 `PreSubsetOutput` 上抛。
 
     // 分析名称表
     let name_table = name_table::analyze_name_table(&font, &mut font_file);
-    Ok(PreSubsetOutput { subsets, name_table, fvar, languages, extra_files })
+    Ok(PreSubsetOutput { subsets, name_table, fvar, extra_files })
 }
 
 #[cfg(test)]

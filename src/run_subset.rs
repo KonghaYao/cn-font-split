@@ -1,7 +1,9 @@
 use crate::config::Config;
+use crate::contract::{
+    FontSource, PreSubsetOutput, RunSubsetOutput, RunSubsetResult,
+};
 use crate::error::{FontSplitError, Result};
-use crate::link_subset::name_template::name_template;
-use crate::runner::{FontSource, PreSubsetOutput, RunSubsetOutput};
+use crate::naming::name_template;
 use cn_font_proto::api_interface::output_report::{
     BundleMessage, SubsetDetail,
 };
@@ -70,7 +72,6 @@ fn build_one(
         .unwrap_or_else(|| format!("{}.woff2", hash_string));
     Ok(ThreadResult {
         subset_result: RunSubsetResult {
-            hash: hash_string.clone(),
             unicodes: subset.to_vec(),
             file_name: file_name.clone(),
         },
@@ -167,11 +168,4 @@ pub fn run_subset(
         files,
         details,
     })
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct RunSubsetResult {
-    pub hash: String,
-    pub unicodes: Vec<u32>,
-    pub file_name: String,
 }

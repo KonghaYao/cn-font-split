@@ -19,6 +19,10 @@ use crate::error::Result;
 /// `Sync` 是 `PIPELINE` 能声明为 `static` 的前提，unit struct 天然满足。
 pub trait PreSubsetPlugin: Sync {
     /// 稳定名称，用于顺序断言与日志定位。
+    ///
+    /// 生产路径不读取名称（`PIPELINE` 的顺序由代码书写顺序保证），
+    /// 只有 `pipeline_order_is_stable` 用它做顺序快照断言。
+    #[allow(dead_code)]
     fn name(&self) -> &'static str;
 
     /// 是否启用本插件。
