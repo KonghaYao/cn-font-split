@@ -210,6 +210,33 @@ export default defineConfig({
 }
 ```
 
+## 体积与 `assetsInlineLimit`
+
+Vite 的 `build.assetsInlineLimit` 默认是 `4096`：小于 4 KiB 的产物会被 base64 内联进 CSS 的 `data:` URI。中文字体切分成几十个小 woff2 块后很容易命中该阈值，实测会悄悄改变你量到的数字——一次 8.0 构建里 42 块中有 7 块（共 20,688 B）被内联，导致 `dist` 的文件数少于分块数、按文件统计的体积失真。
+
+测体积时请先把阈值设为 `0`：
+
+```js
+// vite.config.js
+export default {
+    build: { assetsInlineLimit: 0 },
+};
+```
+
+字体体积本身建议以 `cn-font-split` 上报的 `bundledBytes` 为准，而不是累加 `dist` 下的文件：它不受内联影响，也不受打包器统计口径影响。
+
 ## 输入参数
 
-输入参数请见 [cn-font-split](https://www.npmjs.com/package/cn-font-split) 使用说明，大部分参数都是通用的。
+以下是插件自身选项（全部可选）。其余字段会透传给 `cn-font-split` 的 `InputTemplate`，请见 [cn-font-split](https://www.npmjs.com/package/cn-font-split) 使用说明，大部分参数都是通用的。
+
+| 选项              | 类型                                                                   | 默认值                                                                          | 说明                                                                                                 |
+| ----------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `scanFiles`       | `string \| string[] \| Record<string, string \| string[]>`              | 未设置                                                                          | 扫描哪些源码文件来收集要保留的字符（极小量级优化）。对象形式按 key 分区，通过 `?subsets&key=<key>` 选择。 |
+| `whiteList`       | `string \| string[]`                                                   | `[]`                                                                            | 无论 `scanFiles` 结果如何都保留的字符。                                                               |
+| `ignore`          | `string \| string[]`                                                   | `['node_modules/**']`                                                           | 与 `scanFiles` 一起使用的 glob 忽略列表。                                                             |
+| `cacheDir`        | `string`                                                               | Vite 下为 Vite 的 `cacheDir`（`node_modules/.vite`），其它打包器为 `node_modules/.cache/.font` | 分块产物与子集缓存的目录（子集缓存在 `<cacheDir>/.subsets`）。                    |
+| `emptyCacheDir`   | `boolean`                                                              | `false`                                                                         | 为 `true` 时在构建前清空 `<cacheDir>/.subsets`。                                                      |
+| `server`          | `boolean`                                                              | `true`                                                                          | 缓存缺失时预构建字体。设为 `false` 时只使用已有缓存。                                                 |
+| `subsetChunkSize` | `number`                                                               | `500`                                                                           | 切分 `?subsets` 字符集时每块包含的码点数。                                                            |
+| `include`         | `RegExp[]`                                                             | `[/\.otf/, /\.ttf/]`                                                            | 由插件处理的模块 id。                                                                                 |
+| `exclude`         | `RegExp[]`                                                             | `[/\/node_modules\//]`                                                          | 跳过的模块 id。                                                                                       |

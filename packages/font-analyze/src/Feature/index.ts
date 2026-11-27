@@ -1,5 +1,6 @@
-import { Font } from '@konghayao/opentype.js';
-import { FeatureList } from './FeatureList';
+// 仅用于类型标注，写成 type-only import，避免在 ESM 产物里残留对上游入口的导入。
+import type { Font } from '@konghayao/opentype.js';
+import { FeatureList } from './FeatureList.js';
 
 /** Opentype 的 feature 报告 */
 export const getFeatureReport = (font: Font, unicodeSet: Set<number>) => {
