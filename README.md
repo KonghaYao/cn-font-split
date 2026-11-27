@@ -81,7 +81,13 @@ cn-font-split run -h   # 查看完整参数（与 Node 配置一一对应）
 ## 浏览器 / WASM
 
 平台包 `@cn-font-split/wasm32-wasip1` 提供 WASI 版二进制，在浏览器里用
-`memfs` + WASI 运行，产物以 `{ name, data }[]` 返回：
+`memfs` + WASI 运行，产物以 `{ name, data }[]` 返回。
+
+两个 wasm 平台包不随主包传递安装，使用前需显式安装：
+
+```sh
+npm i @cn-font-split/wasm32-wasip1   # 或 @cn-font-split/wasm32-wasip2
+```
 
 ```ts
 import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.mjs';
@@ -101,7 +107,7 @@ for (const file of files) {
 ```
 
 > WASM 产物需要在浏览器中提供 `wasi_snapshot_preview1` 与共享内存支持。
-> 8.0 的 WASM 包尚未纳入发布验收，属于 best-effort。
+> 两个 wasm 平台包（`wasm32-wasip1` / `wasm32-wasip2`）已随 8.0.0 发布；不随主包安装；未做运行时冒烟。
 
 ## Rust API
 
@@ -152,7 +158,8 @@ match result {
 | Windows arm64 MSVC | `@cn-font-split/win32-arm64-msvc` | 交叉构建配置                     |
 | Linux x64 glibc    | `@cn-font-split/linux-x64-gnu`    | CI（Node 冒烟 / Linux 视觉冒烟） |
 | Linux arm64 glibc  | `@cn-font-split/linux-arm64-gnu`  | 交叉构建配置                     |
-| WASI               | `@cn-font-split/wasm32-wasip1/p2` | 构建链路存在，未实测发布         |
+| WASI preview1      | `@cn-font-split/wasm32-wasip1`    | 已随 8.0.0 发布；不随主包安装；未做运行时冒烟 |
+| WASI preview2      | `@cn-font-split/wasm32-wasip2`    | 已随 8.0.0 发布；不随主包安装；未做运行时冒烟 |
 
 musl、BSD、32 位等没有预编译包的平台请设置 `CN_FONT_SPLIT_BIN`。
 Bun / Deno 走各自的加载入口，属 best-effort，未纳入 8.0 发布验收。

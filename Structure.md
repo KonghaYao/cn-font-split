@@ -47,7 +47,7 @@ wrapper 是对外接口，按部署形态各有一个包：
 - ✅ gRPC Wrapper（`packages/grpc`）：基于 HTTP/2 的独立构建服务。
 - ✅ FFI Wrapper（`packages/ffi`）：C ABI 动态库（cdylib），跨语言用 protobuf 交换二进制。
 - ✅ CLI Wrapper（`src/main.rs`，`cn-font-split` 可执行文件）：纯 Rust 命令行。
-- ✅ WASI Wrapper（`packages/wasm-edge`）：`wasm32-wasip1/p2` 产物。
+- ✅ WASI Wrapper（`packages/wasm-edge`）：`wasm32-wasip1` / `wasm32-wasip2` 产物。
   - 浏览器通过 `@tybys/wasm-util` 接入（`packages/ffi-js/src/wasm`）。
 - ✅ Node / Bun / Deno / 浏览器（`packages/ffi-js`）：主 npm 包 `cn-font-split`。
 - ⚠️ Python（`packages/ffi-py`）：best-effort，不阻塞发布。
@@ -67,7 +67,7 @@ wrapper 是对外接口，按部署形态各有一个包：
 | `packages/grpc` | Rust bin | gRPC 服务 |
 | `packages/wasm-edge` | Rust cdylib | WASI（wasm32-wasip1 / wasip2） |
 | `packages/wasmer` | Rust bin | `cli` crate，WASM 侧的入口程序 |
-| `packages/ffi-js` | npm 主包 | `cn-font-split`：Node/Bun/Deno/浏览器/CLI；通过 `optionalDependencies` 分发 8 个 `@cn-font-split/<platform>` 平台包 |
+| `packages/ffi-js` | npm 主包 | `cn-font-split`：Node/Bun/Deno/浏览器/CLI；通过 `optionalDependencies` 分发 6 个原生平台包，两个 wasm 平台包独立发布、不随主包安装 |
 | `packages/ffi-py` | Python | `cn_font_split`（best-effort，不发布 PyPI） |
 | `packages/proto-to-cli` | npm | proto → TS 类型/CLI 生成工具，构建期依赖 |
 | `packages/metrics` | npm | `cn-font-metrics`：字体度量与中文 fallback |

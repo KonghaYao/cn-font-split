@@ -1,10 +1,6 @@
 # cn-font-split Python Version Beta
 
 ```sh
-# 国内请设置环境变量, windows 用 set
-export CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github
-# set CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github # windows
-cn-font-split-py i default 
 cn-font-split-py -i ../demo/public/SmileySans-Oblique.ttf -o dist
 ```
 
@@ -30,7 +26,7 @@ cn-font-split-py -i ../demo/public/SmileySans-Oblique.ttf -o dist
 `cn-font-split-py i <platform@version>` 会转调 `cn_font_split/gen/init.sh`
 （Windows 为 `init.ps1`）。这两个脚本在本仓库已不存在（8.0 的二进制改由
 平台包分发），`build.sh` 也不会再生成它们；该子命令在当前版本属于 best-effort，
-失败时由 `cli.py` 捕获并打印错误。
+失败时由 `cli.py` 捕获并打印错误。因此首屏示例只保留 `-i` / `-o` 用法。
 
 ## Dev
 
