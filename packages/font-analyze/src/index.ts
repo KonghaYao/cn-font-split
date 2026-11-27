@@ -1,4 +1,12 @@
-import { RenderOptions, parse } from '@konghayao/opentype.js';
+// 直接引用真实模块文件：上游 @konghayao/opentype.js 的 package.json 把 `main`
+// 写成绝对路径 `/dist/opentype.module.js`，Node 原生 ESM 对没有 `exports` 的包
+// 会回退到 `main`，于是报 ERR_MODULE_NOT_FOUND: Cannot find package
+// '/dist/opentype.module.js'。`module` 字段是正确的，所以打包器路径不受影响。
+// 类型由 src/env.d.ts 的 ambient 声明沿用 @types/opentype.js。
+import {
+    RenderOptions,
+    parse,
+} from '@konghayao/opentype.js/dist/opentype.module.js';
 import { getCharsetReport } from './Charset/getCharsetReport.js';
 import {
     defaultCharsetLoader,
