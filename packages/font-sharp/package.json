@@ -14,9 +14,17 @@
     "engines": {
         "node": ">=22"
     },
+    "files": [
+        "dist"
+    ],
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
     "repository": {
         "type": "git",
-        "url": "https://github.com/KonghaYao/cn-font-split/tree/ts/packages/font-sharp"
+        "url": "git+https://github.com/KonghaYao/cn-font-split.git",
+        "directory": "packages/font-sharp"
     },
     "scripts": {
         "build": "tsc",

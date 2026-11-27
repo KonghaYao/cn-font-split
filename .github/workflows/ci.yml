@@ -108,6 +108,10 @@ jobs:
               # 根 build 按 workspace 依赖顺序执行：proto-to-cli → ffi-js → metrics → vite。
               run: pnpm build
 
+            - name: 可发布性检查
+              # 清单（files/main/types/bin）与构建产物必须足以直接发给 npm。
+              run: node ./script/check-publishable.mjs
+
             - name: Vite 插件集成测试
               # 使用上面构建的 target/release/libffi.so，验证缓存布局与产物。
               run: pnpm -C packages/vite test

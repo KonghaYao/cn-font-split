@@ -173,8 +173,8 @@ await fontSplit({
 虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](./test/deno-wasm.mjs)。
 
 ```sh
-# 平台包随主包安装（optionalDependencies），也可以单独安装：
-pnpm i @cn-font-split/wasm32-wasip1
+# 8.0 起两个 wasm 平台包不再随主包传递安装；在 edge / WASI 环境使用时需显式安装：
+npm i @cn-font-split/wasm32-wasip1 # 或 @cn-font-split/wasm32-wasip2
 ```
 
 ```ts

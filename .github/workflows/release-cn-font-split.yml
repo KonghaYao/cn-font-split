@@ -1,6 +1,8 @@
 name: release-cn-font-split
 
-# 主包 cn-font-split 的发布流水线。
+# 8.0.0 全部 npm 包的发布流水线：8 个平台包 + 主包 cn-font-split +
+# 其余 6 个包（cn-font-metrics / proto-to-cli / cn-font-replacer / font-sharp /
+# font-analyze / vite-plugin-font）。
 #
 # 默认 dry-run：inputs.publish=false 时不访问 registry 的写入接口，但会完整走一遍
 # 「下载 cross-build 产物 → 生成 8 个平台包目录 → 目录/命名/版本/大小校验」，
@@ -70,6 +72,16 @@ jobs:
               # 走 prepack（pnpm build），因此这里同时复核了一次构建可重复性。
               working-directory: packages/ffi-js
               run: pnpm pack --dry-run
+
+            - name: 构建其余 npm 包
+              # 根脚本 = pnpm -r --filter '!./packages/test' build，执行顺序由 pnpm
+              # 的 workspace 拓扑保证（proto-to-cli → … → vite），无需手工排序。
+              # ffi-js 在上一步 prepack 里已构建过，这里会再重建一次，可接受。
+              run: pnpm build
+
+            - name: 可发布性检查
+              # 清单（files/main/types/bin）与构建产物必须足以直接发给 npm。
+              run: node ./script/check-publishable.mjs
 
             - name: 解析 cross-build 运行 ID
               id: cross_build
@@ -328,3 +340,77 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: pnpm publish --access public --no-git-checks
+
+            - name: 发布其余 npm 包
+              # 固定顺序，不要并发或重排：
+              #   metrics 先发，vite-plugin-font 依赖它的已发布版本；
+              #   proto-to-cli 供 ffi-js 生成代码，先于其余包；
+              #   vite-plugin-font 必须最后——它同时依赖 cn-font-metrics 与
+              #   cn-font-split 的已发布版本（pnpm publish 会把 workspace:^ 改写成
+              #   实际版本号），两个依赖都可见后它才能被正常安装。
+              if: ${{ inputs.publish }}
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  for dir in \
+                      packages/metrics \
+                      packages/proto-to-cli \
+                      packages/font-replacer \
+                      packages/font-sharp \
+                      packages/font-analyze \
+                      packages/vite; do
+                      echo "--- 发布 ${dir} ---"
+                      pnpm publish "${dir}" --access public --no-git-checks
+                  done
+
+            - name: 发布后可见性总检查
+              # 15 个包（8 个平台包 + 主包 + 6 个其余包）必须都能解析到本次版本。
+              # 每个包最多 12 次、间隔 5s，仍不可见则失败并指出具体包。
+              if: ${{ inputs.publish }}
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  version="$(node -p "require('./packages/metrics/package.json').version")"
+                  packages=(
+                      @cn-font-split/darwin-arm64
+                      @cn-font-split/darwin-x64
+                      @cn-font-split/win32-x64-msvc
+                      @cn-font-split/win32-arm64-msvc
+                      @cn-font-split/linux-x64-gnu
+                      @cn-font-split/linux-arm64-gnu
+                      @cn-font-split/wasm32-wasip1
+                      @cn-font-split/wasm32-wasip2
+                      cn-font-split
+                      cn-font-metrics
+                      proto-to-cli
+                      cn-font-replacer
+                      font-sharp
+                      font-analyze
+                      vite-plugin-font
+                  )
+                  for package in "${packages[@]}"; do
+                      visible=0
+                      for attempt in $(seq 1 12); do
+                          if npm view "${package}@${version}" version \
+                              --registry https://registry.npmjs.org/ >/dev/null 2>&1; then
+                              echo "[ok] ${package}@${version} 已可见"
+                              visible=1
+                              break
+                          fi
+                          echo "[wait] ${package}@${version} 暂不可见（${attempt}/12）"
+                          if [ "${attempt}" -lt 12 ]; then
+                              sleep 5
+                          fi
+                      done
+                      if [ "${visible}" -ne 1 ]; then
+                          {
+                              echo "::error::${package}@${version} 在 12 次重试后仍不可见"
+                              echo "先确认该包 publish 成功（见上一步日志），再手工补齐："
+                              echo "  pnpm publish <该包的 packages/ 目录> --access public --no-git-checks"
+                          } >&2
+                          exit 1
+                      fi
+                  done
+                  echo "15 个包（8 平台 + 主包 + 6 其余）在 registry 均可见。"
+

@@ -10,15 +10,23 @@
     "bin": {
         "proto-to-cli": "dist/cli.js"
     },
+    "files": [
+        "dist"
+    ],
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
         "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KonghaYao/cn-font-split.git",
+        "directory": "packages/proto-to-cli"
     },
     "scripts": {
         "build": "vite build",
         "test:ts": "./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ./dist/gen/proto.ts",
         "test:rust": "pnpm ./dist/cli.js -i ../../crates/proto/src/index.proto -m InputTemplate -o ../cli/src/proto.rs -t clap",
-        "prepublish": "pnpm vite build"
+        "prepack": "pnpm vite build"
     },
     "keywords": [
         "protobuf",

@@ -89,6 +89,10 @@ jobs:
                   npm i unzipper cn-font-split
                   node index.mjs
 
+            - name: Install wasm platform package
+              if: ${{ matrix.platform.target == 'wasm32-wasip1' }}
+              run: npm i @cn-font-split/wasm32-wasip1@8.0.0
+
             - name: build
               if: ${{ matrix.platform.target !=  'wasm32-wasip1' }}
               run: |

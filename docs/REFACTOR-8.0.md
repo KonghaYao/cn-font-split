@@ -98,7 +98,7 @@
 
 - [x] 更新 README（版本、Node 要求、安装方式）；`Developer.md` 删除 cmake/protoc 要求；新增 `MIGRATION-8.0.md`。
 - [x] 平台包：`@cn-font-split/{darwin-arm64, darwin-x64, win32-x64-msvc, win32-arm64-msvc, linux-x64-gnu, linux-arm64-gnu, wasm32-wasip1, wasm32-wasip2}`。
-- [x] 主包使用 `optionalDependencies` + `os/cpu` 解析，保留 `CN_FONT_SPLIT_BIN` 覆盖。
+- [x] 主包使用 `optionalDependencies`（6 个原生平台包）+ `os/cpu` 解析，保留 `CN_FONT_SPLIT_BIN` 覆盖；两个 wasm 包独立发布，不随主包安装。
 - [ ] dry-run 产出 artifacts，成功但不发布。
 
 ### 5.7 仓库整理

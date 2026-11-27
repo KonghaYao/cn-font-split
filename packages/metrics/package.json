@@ -1,7 +1,7 @@
 {
     "name": "cn-font-metrics",
     "version": "8.0.0",
-    "description": "",
+    "description": "中文字体度量与跨平台回退字体 CSS：内置苹方、Noto Serif/Sans CJK SC 与微软雅黑各字重的字体度量，配合 fontaine 读取字体文件生成 fallback @font-face，减少中文网络字体的 CLS。",
     "main": "dist/cn-font-metrics.js",
     "module": "dist/cn-font-metrics.mjs",
     "types": "./dist/index.d.ts",
@@ -15,10 +15,15 @@
         "registry": "https://registry.npmjs.org/",
         "access": "public"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KonghaYao/cn-font-split.git",
+        "directory": "packages/metrics"
+    },
     "scripts": {
         "build:font": "node ./fontaine.mjs ",
         "build": " vite build&&tsc",
-        "prepublish": "pnpm build"
+        "prepack": "pnpm build"
     },
     "keywords": [],
     "author": "",
