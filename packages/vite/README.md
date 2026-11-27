@@ -83,6 +83,8 @@ const nextConfig = {
 export default nextConfig;
 ```
 
+> Next.js 15 enables Turbopack by default, and Turbopack bypasses the webpack configuration above, so `vite-plugin-font` does not take effect. When a font file is imported, you may see an `Unknown module type` error. To use this plugin, run `next dev` / `next build` with webpack instead: do not pass `--turbopack`, and remove the flag from your `package.json` scripts if it is already there. Turbopack is not supported.
+
 ### Webpack
 
 ```js
