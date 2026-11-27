@@ -83,6 +83,8 @@ const nextConfig = {
 export default nextConfig;
 ```
 
+> Next.js 15 默认启用 Turbopack，而 Turbopack 会绕过上面的 webpack 配置，导致 `vite-plugin-font` 不生效，导入字体文件时可能报 `Unknown module type` 错误。要使用本插件，请改用 webpack 运行 `next dev` / `next build`：不要加 `--turbopack`，如果 `package.json` 的 scripts 中已经写了该 flag，需要去掉。Turbopack 目前不受支持。
+
 ### Webpack
 
 ```js
