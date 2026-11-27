@@ -25,7 +25,7 @@
     },
     "scripts": {
         "build": "pnpm -C ../metrics build && vite build && node ./scripts/fix_cjs.mjs && tsc",
-        "test": "node test/build.test.mjs",
+        "test": "node test/build.test.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types --test test/config-hash.test.mjs",
         "dev": "vite -c vite.config.test.mts",
         "prepack": "pnpm build"
     },
