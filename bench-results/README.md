@@ -9,7 +9,7 @@
 | [v7-baseline](./v7-baseline/) | `1650af1` | 8.0 开发起点（7.x 基线）在 macos-aarch64 上的基准。 |
 | [v8-pre-perf](./v8-pre-perf/) | `ea9255e` | 8.0 性能优化**前**的基准，作为 v8-perf 的对照。 |
 | [v8-perf](./v8-perf/) | `d6e5d2b` | 8.0 性能优化**后**的基准。 |
-| [v8-deps](./v8-deps/) | `99e4cc9` | 依赖更新后的基准，用于确认依赖变更没有带来性能回退。 |
+| [v8-deps](./v8-deps/) | `99e4cc9` | 8.0 开发期基准，结果与 v7-baseline 接近；目录名指向依赖更新阶段，仓库内无进一步说明。 |
 | [e2e-v8](./e2e-v8/) | `c2ca413` | 端到端基准：含真实写盘（node v24.21.0，darwin-arm64）。 |
 
 `v7-baseline`、`v8-pre-perf`、`v8-perf`、`v8-deps` 均由 8.0 开发期脚本生成，脚本未入库。
