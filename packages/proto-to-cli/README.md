@@ -7,6 +7,7 @@
 目前，proto-to-cli 支持以下目标适配器：
 
 1. [commander](https://www.npmjs.com/package/commander): 生成基于 commander 库的 CLI 工具。
+2. [clap](https://crates.io/crates/clap): 生成 Rust clap 的参数定义（`-t clap`，产物示例见 `packages/wasmer/src/proto.rs`）。
 
 ## 安装
 
@@ -28,10 +29,10 @@ proto-to-cli -i <proto文件路径> -t commander -m <消息名称> -o <输出文
 
 参数说明
 
--   -i, --input <path>: 指定输入的 .proto 文件路径。
--   -t, --target <target_name>: 指定目标适配器，默认值为 commander。
--   -m, --message_name <name>: 指定 .proto 文件中的消息名称。
--   -o, --output <path>: 指定生成的文件保存路径。
+-   -i, --input <path>: 指定输入的 .proto 文件路径（必填）。
+-   -t, --target <target_name>: 指定目标适配器，默认值为 commander（可省略），也可传 clap。
+-   -m, --message_name <name>: 指定 .proto 文件中的消息名称（必填）。
+-   -o, --output <path>: 指定生成的文件保存路径（单个文件；父目录不存在时会自动创建）。
 
 ### 示例
 
@@ -46,6 +47,15 @@ proto-to-cli -i example.proto -t commander -m MyMessage -o my-cli.ts
 ```ts
 import { getCliParams } from 'my-cli.ts';
 getCliParams(process.argv);
+```
+
+### 本仓库的用法
+
+`packages/ffi-js` 在构建期用本工具生成 `src/gen/proto.ts`（见
+`packages/ffi-js/package.json` 的 `gen:proto`，省略 `-t` 即 commander）：
+
+```bash
+proto-to-cli -i ../../crates/proto/src/index.proto -m InputTemplate -o ./src/gen/proto.ts
 ```
 
 如果你有其他需求，欢迎提交 issue 或 pull request！

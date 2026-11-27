@@ -2,9 +2,9 @@
 
 ![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
-![NPM License](https://img.shields.io/npm/v/cn-font-split)
+![NPM Version](https://img.shields.io/npm/v/cn-font-split)
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
-![NPM License](https://img.shields.io/npm/dm/cn-font-split)
+![NPM Downloads](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
 
 | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/zh-cn/online-split/) |
@@ -48,16 +48,16 @@ await fontSplit({
 
 常用配置：
 
-| 字段                                     | 说明                          |
-| ---------------------------------------- | ----------------------------- |
-| `input`                                  | 字体路径或 `Uint8Array`       |
-| `outDir`                                 | 产物目录（必填）              |
-| `chunkSize`                              | 单包目标字节数，默认 70KB     |
-| `subsets`                                | 手动子集 `number[][]`         |
-| `css.fontFamily` / `css.fontWeight`      | 生成的 `@font-face` 属性      |
-| `renameOutputFont`                       | 输出模板，默认 `[hash].[ext]` |
-| `reporter` / `testHtml` / `previewImage` | 报告、测试页、预览图          |
-| `silent`                                 | 关闭逐文件日志                |
+| 字段                                     | 说明                                                   |
+| ---------------------------------------- | ------------------------------------------------------ |
+| `input`                                  | 字体路径或 `Uint8Array`                                |
+| `outDir`                                 | 产物目录（必填）                                       |
+| `chunkSize`                              | 单包目标字节数，默认 70KB                              |
+| `subsets`                                | 手动子集 `number[][]`                                  |
+| `css.fontFamily` / `css.fontWeight`      | 生成的 `@font-face` 属性                               |
+| `renameOutputFont`                       | 输出模板，默认 `<blake3>.woff2`（等价 `[hash].[ext]`） |
+| `reporter` / `testHtml` / `previewImage` | 报告、测试页、预览图                                   |
+| `silent`                                 | 关闭逐文件日志                                         |
 
 构建失败时 Promise 会 reject，错误文本来自核心的结构化错误事件；进程不会崩溃。
 

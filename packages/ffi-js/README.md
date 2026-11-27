@@ -6,7 +6,7 @@
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
 ![NPM License](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![updateTime](https://img.shields.io/badge/更新时间-2025/12/20-green)
+![updateTime](https://img.shields.io/badge/更新时间-2026/11/27-green)
 
 | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/zh-cn/online-split/) |
 | ------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
@@ -228,12 +228,7 @@ console.log(data);
 
 ## v6 迁移指南
 
-1. 部分函数入参改变，具体参照 Typescript 类型提示修正即可
-    1. 比如 css 中的 comment 表示方法均被拍平了
-    2. 部分分包的细节控制入参失效
-2. 性能原因，不支持直接输入 woff2 文件进行分包
-    1. 但是可以使用 wawoff2 等工具，将 woff2 转为 ttf Uint8Array，再进行分包
-3. log 暂无输出方式，不影响主功能流程
+6.x 的入参、woff2 输入与 log 输出变更早已不适用（8.0 已支持 woff2 直接入参），升级请直接阅读 [8.0 迁移指南](https://github.com/KonghaYao/cn-font-split/blob/release/docs/MIGRATION-8.0.md)。
 
 ## 开源许可证
 

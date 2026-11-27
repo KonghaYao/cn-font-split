@@ -16,3 +16,9 @@ fn main() {
     println!("{}", stringified);
 }
 ```
+
+## 开发
+
+-   MSRV：Rust 1.85（见仓库根 `rust-toolchain.toml` 与 `Cargo.toml` 的 `rust-version`）。
+-   测试：`cargo test -p unicode-range`。
+-   许可证：Apache-2.0（继承根 workspace 的 `license`）。
