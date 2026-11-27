@@ -61,9 +61,7 @@
         "@cn-font-split/win32-x64-msvc": "8.0.0",
         "@cn-font-split/win32-arm64-msvc": "8.0.0",
         "@cn-font-split/linux-x64-gnu": "8.0.0",
-        "@cn-font-split/linux-arm64-gnu": "8.0.0",
-        "@cn-font-split/wasm32-wasip1": "8.0.0",
-        "@cn-font-split/wasm32-wasip2": "8.0.0"
+        "@cn-font-split/linux-arm64-gnu": "8.0.0"
     },
     "devDependencies": {
         "@bufbuild/protoc-gen-es": "2.17.0",

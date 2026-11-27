@@ -8,7 +8,7 @@
 
 | 包 | 版本 | 说明 |
 | --- | --- | --- |
-| `cn-font-split` | 8.0.0 | 主包，`packages/ffi-js`，`optionalDependencies` 指向 8 个平台包 |
+| `cn-font-split` | 8.0.0 | 主包，`packages/ffi-js`，`optionalDependencies` 指向 6 个原生平台包（两个 wasm 包独立发布，不随主包安装） |
 | `@cn-font-split/darwin-arm64` | 8.0.0 | `aarch64-apple-darwin` |
 | `@cn-font-split/darwin-x64` | 8.0.0 | `x86_64-apple-darwin` |
 | `@cn-font-split/win32-x64-msvc` | 8.0.0 | `x86_64-pc-windows-msvc` |
@@ -245,14 +245,15 @@ npm 的版本删除窗口很短：
     `pnpm@12.6.0` 的 `pnpm publish` 仍会执行 `prepublish`（`prepack`、`prepare`、
     `prepublish` 都会跑），用 pnpm 发布不会缺 `dist`，走 workflow 的 pnpm 也不受影响。
     若以后要独立发布这三个包，建议统一改成 `prepack`，不要依赖 pnpm 与 npm 的生命周期差异。
-2.  **wasm 平台包的 `os` / `cpu`**：两个 wasm 包声明的是
-    `os: [darwin, linux, win32]` + `cpu: [x64, arm64]`，所以每个桌面用户安装主包时都会
-    多装两个 wasm 包（单个 wasm 二进制的实际体积本轮未测，发布后可用
-    `npm view @cn-font-split/wasm32-wasip1 dist.unpackedSize` 核对）。
-    `src/load.ts` 的 `getPlatformPackageName()` 从不解析 wasm 包，`matchPlatform()`
-    只是把不支持的平台映射成 `wasm32-wasip1` 这个 triple 然后报错。是否在本轮之后把
-    wasm 从 `optionalDependencies` 移除，需要用户决定：移除会改变 edge 用户的可传递
-    安装行为，且 `test-cross-use.yml` 的 wasm 作业依赖它被传递安装。
+2.  **wasm 平台包不随主包安装（已决定）**：`@cn-font-split/wasm32-wasip1` /
+    `@cn-font-split/wasm32-wasip2` 仍照常发布，但已从主包 `optionalDependencies`
+    移除；主包安装只会拉取当前平台的原生包，桌面用户不再多装两个 wasm 包。
+    edge / WASI 用户需显式安装（见 `packages/ffi-js/README.md` 的 WASM 一节）：
+    `npm i @cn-font-split/wasm32-wasip1` 或 `npm i @cn-font-split/wasm32-wasip2`。
+    `.github/workflows/test-cross-use.yml` 的 wasm 作业已改为先显式安装
+    `@cn-font-split/wasm32-wasip1@8.0.0` 再跑测试。`src/load.ts` 的
+    `getPlatformPackageName()` 从不解析 wasm 包，`matchPlatform()` 只是把不支持的
+    平台映射成 `wasm32-wasip1` 这个 triple 用于报错，因此移除不影响解析逻辑。
 3.  **产物保留期**：cross-build 的 artifacts 只有 14 天。超过后必须重跑 cross-build
     才能再次发布；`cross_build_run_id` 与 `release-cn-font-split` 必须在同一 commit。
 4.  **macos-13 → macos-14**：`cross-build.yml` 的 `x86_64-apple-darwin` 条目已改到
