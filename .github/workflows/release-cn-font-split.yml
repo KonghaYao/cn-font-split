@@ -16,6 +16,11 @@ name: release-cn-font-split
 # 缺失列表与获取方式。
 #
 # 发布顺序固定：先平台包（@cn-font-split/*），确认 registry 可见后再发主包。
+#
+# 发布与门禁步骤都是幂等的：publish 前用 script/registry-published.sh 判断版本
+# 是否已存在（存在则 `[skip]` 跳过），可见性门禁直连 registry.npmjs.org 而不是
+# `npm view`（后者读端缓存会把刚发布的版本固定成 404）。因此整条 workflow 可以
+# 安全重跑。
 on:
     workflow_dispatch:
         inputs:
@@ -280,24 +285,36 @@ jobs:
                   '
 
             - name: 发布平台包（先）
-              if: ${{ inputs.publish }}
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: |
-                  for dir in dist-platforms/*/; do
-                      [ -f "${dir}package.json" ] || continue
-                      pnpm publish "${dir}" --access public --no-git-checks
-                  done
-
-            - name: 等待平台包在 registry 可见
-              # npm 的读取端有缓存/复制延迟：主包一旦可见就会被安装，必须先确认
-              # 8 个平台包都能解析到 8.0.0，否则用户会装到「找不到可用的动态库」的主包。
+              # 幂等：已存在的版本直接跳过，整条 workflow 可以重跑（8.0.0 首次发布
+              # 时就因为重跑会对已发布版本执行 pnpm publish 而整体失败）。
               if: ${{ inputs.publish }}
               shell: bash
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   set -euo pipefail
+                  source script/registry-published.sh
+                  for dir in dist-platforms/*/; do
+                      [ -f "${dir}package.json" ] || continue
+                      name="$(node -p "require('./${dir}package.json').name")"
+                      version="$(node -p "require('./${dir}package.json').version")"
+                      if published "${name}" "${version}"; then
+                          echo "[skip] ${name}@${version} 已存在"
+                          continue
+                      fi
+                      pnpm publish "${dir}" --access public --no-git-checks
+                  done
+
+            - name: 等待平台包在 registry 可见
+              # npm 的读取端有缓存/复制延迟：主包一旦可见就会被安装，必须先确认
+              # 8 个平台包都能解析到 8.0.0，否则用户会装到「找不到可用的动态库」的主包。
+              # 用直连 registry 的 wait_for_visible（不用 npm view：读取端缓存会把
+              # 刚发布的版本固定成 404）；48 次 × 5s = 4 分钟。
+              if: ${{ inputs.publish }}
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  source script/registry-published.sh
                   version="$(node -p "require('./dist-platforms/darwin-arm64/package.json').version")"
                   packages=(
                       darwin-arm64
@@ -309,37 +326,34 @@ jobs:
                       wasm32-wasip1
                       wasm32-wasip2
                   )
+                  items=()
                   for package in "${packages[@]}"; do
-                      visible=0
-                      for attempt in $(seq 1 12); do
-                          if npm view "@cn-font-split/${package}@${version}" version \
-                              --registry https://registry.npmjs.org/ >/dev/null 2>&1; then
-                              echo "[ok] @cn-font-split/${package}@${version} 已可见"
-                              visible=1
-                              break
-                          fi
-                          echo "[wait] @cn-font-split/${package}@${version} 暂不可见（${attempt}/12）"
-                          if [ "${attempt}" -lt 12 ]; then
-                              sleep 5
-                          fi
-                      done
-                      if [ "${visible}" -ne 1 ]; then
-                          {
-                              echo "::error::@cn-font-split/${package}@${version} 在 12 次重试后仍不可见"
-                              echo "不要继续发布主包：先确认该包已 publish 成功（见上一步日志），"
-                              echo "必要时手动 npm publish dist-platforms/${package} --access public 补齐。"
-                          } >&2
-                          exit 1
-                      fi
+                      items+=("@cn-font-split/${package}@${version}")
                   done
+                  if ! wait_for_visible 48 "${items[@]}"; then
+                      echo "不要继续发布主包：先确认该包已 publish 成功（见上一步日志），" >&2
+                      echo "必要时手动 npm publish dist-platforms/<平台> --access public 补齐。" >&2
+                      exit 1
+                  fi
                   echo "8 个平台包在 registry 均可见，可以发布主包。"
 
             - name: 发布主包（后）
+              # 幂等：主包版本已存在时跳过，避免重跑时 pnpm publish 失败。
               if: ${{ inputs.publish }}
+              shell: bash
               working-directory: packages/ffi-js
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: pnpm publish --access public --no-git-checks
+              run: |
+                  set -euo pipefail
+                  source ../../script/registry-published.sh
+                  name="$(node -p "require('./package.json').name")"
+                  version="$(node -p "require('./package.json').version")"
+                  if published "${name}" "${version}"; then
+                      echo "[skip] ${name}@${version} 已存在"
+                  else
+                      pnpm publish --access public --no-git-checks
+                  fi
 
             - name: 发布其余 npm 包
               # 固定顺序，不要并发或重排：
@@ -349,10 +363,12 @@ jobs:
               #   cn-font-split 的已发布版本（pnpm publish 会把 workspace:^ 改写成
               #   实际版本号），两个依赖都可见后它才能被正常安装。
               if: ${{ inputs.publish }}
+              shell: bash
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   set -euo pipefail
+                  source script/registry-published.sh
                   for dir in \
                       packages/metrics \
                       packages/proto-to-cli \
@@ -360,17 +376,26 @@ jobs:
                       packages/font-sharp \
                       packages/font-analyze \
                       packages/vite; do
-                      echo "--- 发布 ${dir} ---"
+                      name="$(node -p "require('./${dir}/package.json').name")"
+                      version="$(node -p "require('./${dir}/package.json').version")"
+                      # 幂等：已存在的版本跳过，workflow 可重跑。
+                      if published "${name}" "${version}"; then
+                          echo "[skip] ${name}@${version} 已存在"
+                          continue
+                      fi
+                      echo "--- 发布 ${dir}（${name}@${version}）---"
                       pnpm publish "${dir}" --access public --no-git-checks
                   done
 
             - name: 发布后可见性总检查
               # 15 个包（8 个平台包 + 主包 + 6 个其余包）必须都能解析到本次版本。
-              # 每个包最多 12 次、间隔 5s，仍不可见则失败并指出具体包。
+              # 用直连 registry 的 wait_for_visible；60 次 × 5s = 5 分钟
+              # （8.0.0 主包实测 publish 到可见约 2 分 10 秒）。
               if: ${{ inputs.publish }}
               shell: bash
               run: |
                   set -euo pipefail
+                  source script/registry-published.sh
                   version="$(node -p "require('./packages/metrics/package.json').version")"
                   packages=(
                       @cn-font-split/darwin-arm64
@@ -389,28 +414,20 @@ jobs:
                       font-analyze
                       vite-plugin-font
                   )
+                  items=()
                   for package in "${packages[@]}"; do
-                      visible=0
-                      for attempt in $(seq 1 12); do
-                          if npm view "${package}@${version}" version \
-                              --registry https://registry.npmjs.org/ >/dev/null 2>&1; then
-                              echo "[ok] ${package}@${version} 已可见"
-                              visible=1
-                              break
-                          fi
-                          echo "[wait] ${package}@${version} 暂不可见（${attempt}/12）"
-                          if [ "${attempt}" -lt 12 ]; then
-                              sleep 5
-                          fi
-                      done
-                      if [ "${visible}" -ne 1 ]; then
-                          {
-                              echo "::error::${package}@${version} 在 12 次重试后仍不可见"
-                              echo "先确认该包 publish 成功（见上一步日志），再手工补齐："
-                              echo "  pnpm publish <该包的 packages/ 目录> --access public --no-git-checks"
-                          } >&2
-                          exit 1
-                      fi
+                      items+=("${package}@${version}")
                   done
+                  if ! wait_for_visible 60 "${items[@]}"; then
+                      echo "先确认该包 publish 成功（见上一步日志），再手工补齐：" >&2
+                      echo "  pnpm publish <该包的 packages/ 目录> --access public --no-git-checks" >&2
+                      exit 1
+                  fi
                   echo "15 个包（8 平台 + 主包 + 6 其余）在 registry 均可见。"
+                  # 非致命告警：主包已发布，但 dist-tags.latest 仍指向旧版本
+                  # （常见于补发旧版本，或 publish 时显式带了 --tag）。只提示，不失败。
+                  latest="$(latest_tag cn-font-split || echo "unknown")"
+                  if [ "${latest}" != "${version}" ]; then
+                      echo "::warning::cn-font-split 的 dist-tags.latest = ${latest}，与本次发布的 ${version} 不一致，请人工确认"
+                  fi
 
