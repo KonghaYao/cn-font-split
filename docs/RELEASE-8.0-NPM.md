@@ -7,9 +7,10 @@
 ## 1. 发布目标
 
 8.0.0 **全部 npm 包一起发布**（用户决定）：8 个平台包 + 主包 + 其余 6 个包，共 15 个。
-下表按 workflow 的发布顺序排列。
+8 个平台包之间按 `dist-platforms/*` 的 glob 字母序发布，彼此无依赖；真正有硬顺序的
+是「平台包 → 主包 → 其余 6 包」。下表按这个分组列出，前 8 行的编号只是清单序号。
 
-| 发布顺序 | 包 | 版本 | 说明 |
+| 序号 | 包 | 版本 | 说明 |
 | --- | --- | --- | --- |
 | 1 | `@cn-font-split/darwin-arm64` | 8.0.0 | `aarch64-apple-darwin` |
 | 2 | `@cn-font-split/darwin-x64` | 8.0.0 | `x86_64-apple-darwin` |
@@ -288,3 +289,12 @@ npm 的版本删除窗口很短：
     `cargo publish --dry-run`，传 `--publish` 会对 `crates/*` 逐个真实
     `cargo publish`。本轮 crates.io 不是发布目标，发版当天不要运行它；npm 发布只走
     本手册/workflow。
+8.  **`font-analyze` 在 Node 原生 ESM 下无法 `import`（既有问题，本轮不修）**：
+    `font-analyze` 依赖 `@konghayao/opentype.js`（`^2023.11.20`），该依赖的
+    `package.json` 把 `main` 写成绝对路径 `/dist/opentype.module.js`。Node 22/24 的
+    原生 ESM 直接按 `main` 解析，`import { FontAnalyze } from 'font-analyze'` 会报
+    `ERR_MODULE_NOT_FOUND: Cannot find package '/dist/opentype.module.js'`；该依赖的
+    `module` 字段是正确的，所以 Vite / webpack 等打包器可用。问题自线上
+    `font-analyze@1.4.2` 起就存在，依赖最新版 `2024.5.25` 的 `main` 也未修正，无法靠
+    升级依赖解决；8.0.0 照旧发布，建议在 release notes 注明「Node 原生 ESM 暂不可用」
+    （见 `packages/font-analyze/README.md`）。
