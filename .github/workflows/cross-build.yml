@@ -38,15 +38,17 @@ jobs:
             matrix:
                 include:
                     - os-name: macOS-aarch64
-                      runs-on: macos-14
+                      runs-on: macos-latest
                       target: aarch64-apple-darwin
                       ext: dylib
                       cross: false
 
                     - os-name: macOS-x86_64
-                      # GitHub 正在淘汰 macos-13：这里在 arm64 runner 上交叉编译
-                      # x86_64-apple-darwin（target 与构建命令不变，只是换了 runner）。
-                      runs-on: macos-14
+                      # macos-14 在本仓库不可用：2026-11-27 实测该 job 启动即被取消，
+                      # 注解为 `The configuration 'macos-14-arm64-us-default' is not supported`。
+                      # 这里改用 macos-latest（CI 视觉回归作业实测可用），在 arm64 runner 上
+                      # 交叉编译 x86_64-apple-darwin（target 与构建命令不变，只是换了 runner）。
+                      runs-on: macos-latest
                       target: x86_64-apple-darwin
                       ext: dylib
                       cross: false
@@ -183,6 +185,13 @@ jobs:
                   export WASI_SYSROOT="/opt/wasi-sdk/wasi-sdk-27.0-x86_64-linux/share/wasi-sysroot/"
                   export PATH=$PATH:/opt/binaryen/binaryen-version_124/bin
                   export WASI_SDK_PATH="/opt/wasi-sdk/wasi-sdk-27.0-x86_64-linux/"
+                  # wasip2 的组件链接器无法把 C++ 异常符号映射进 WASI world，实测报错
+                  # `failed to resolve import 'env::__cxa_allocate_exception'`（源自
+                  # harfbuzz_rs_now 的 build.rs 用 cc 编译 harfbuzz-output.cc）。wasip1
+                  # 不经过组件编码器，无需处理。
+                  if [ "${{ matrix.wasm-target }}" = "wasm32-wasip2" ]; then
+                      export CXXFLAGS="-fno-exceptions"
+                  fi
                   cargo build --target ${{ matrix.wasm-target }} --release --locked
 
             - name: Optimize WASM
