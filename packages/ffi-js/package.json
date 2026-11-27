@@ -27,7 +27,8 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/KonghaYao/cn-font-split.git#ts"
+        "url": "git+https://github.com/KonghaYao/cn-font-split.git",
+        "directory": "packages/ffi-js"
     },
     "homepage": "https://chinese-font.netlify.app/",
     "keywords": [

@@ -3,13 +3,27 @@
     "version": "8.0.0",
     "description": "a font analyze tool for Chinese Charset Check",
     "main": "dist/index.js",
+    "types": "./dist/index.d.ts",
     "type": "module",
     "engines": {
         "node": ">=22"
     },
+    "files": [
+        "dist",
+        "data"
+    ],
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KonghaYao/cn-font-split.git",
+        "directory": "packages/font-analyze"
+    },
     "scripts": {
         "build": "tsc",
-        "prepublish": "pnpm build && node script/build.mjs",
+        "prepack": "pnpm build && node script/build.mjs",
         "test": "node ./test/index.mjs"
     },
     "keywords": [

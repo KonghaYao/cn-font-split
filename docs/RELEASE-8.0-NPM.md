@@ -6,24 +6,33 @@
 
 ## 1. 发布目标
 
-| 包 | 版本 | 说明 |
-| --- | --- | --- |
-| `cn-font-split` | 8.0.0 | 主包，`packages/ffi-js`，`optionalDependencies` 指向 6 个原生平台包（两个 wasm 包独立发布，不随主包安装） |
-| `@cn-font-split/darwin-arm64` | 8.0.0 | `aarch64-apple-darwin` |
-| `@cn-font-split/darwin-x64` | 8.0.0 | `x86_64-apple-darwin` |
-| `@cn-font-split/win32-x64-msvc` | 8.0.0 | `x86_64-pc-windows-msvc` |
-| `@cn-font-split/win32-arm64-msvc` | 8.0.0 | `aarch64-pc-windows-msvc` |
-| `@cn-font-split/linux-x64-gnu` | 8.0.0 | `x86_64-unknown-linux-gnu` |
-| `@cn-font-split/linux-arm64-gnu` | 8.0.0 | `aarch64-unknown-linux-gnu` |
-| `@cn-font-split/wasm32-wasip1` | 8.0.0 | `wasm32-wasip1`（`wasm-opt -Oz`） |
-| `@cn-font-split/wasm32-wasip2` | 8.0.0 | `wasm32-wasip2` |
+8.0.0 **全部 npm 包一起发布**（用户决定）：8 个平台包 + 主包 + 其余 6 个包，共 15 个。
+下表按 workflow 的发布顺序排列。
+
+| 发布顺序 | 包 | 版本 | 说明 |
+| --- | --- | --- | --- |
+| 1 | `@cn-font-split/darwin-arm64` | 8.0.0 | `aarch64-apple-darwin` |
+| 2 | `@cn-font-split/darwin-x64` | 8.0.0 | `x86_64-apple-darwin` |
+| 3 | `@cn-font-split/win32-x64-msvc` | 8.0.0 | `x86_64-pc-windows-msvc` |
+| 4 | `@cn-font-split/win32-arm64-msvc` | 8.0.0 | `aarch64-pc-windows-msvc` |
+| 5 | `@cn-font-split/linux-x64-gnu` | 8.0.0 | `x86_64-unknown-linux-gnu` |
+| 6 | `@cn-font-split/linux-arm64-gnu` | 8.0.0 | `aarch64-unknown-linux-gnu` |
+| 7 | `@cn-font-split/wasm32-wasip1` | 8.0.0 | `wasm32-wasip1`（`wasm-opt -Oz`） |
+| 8 | `@cn-font-split/wasm32-wasip2` | 8.0.0 | `wasm32-wasip2` |
+| 9 | `cn-font-split` | 8.0.0 | 主包，`packages/ffi-js`，`optionalDependencies` 只指向 6 个原生平台包 |
+| 10 | `cn-font-metrics` | 8.0.0 | `packages/metrics`，中文字体度量与跨平台 fallback CSS |
+| 11 | `proto-to-cli` | 8.0.0 | `packages/proto-to-cli`，ffi-js 的代码生成依赖 |
+| 12 | `cn-font-replacer` | 8.0.0 | `packages/font-replacer` |
+| 13 | `font-sharp` | 8.0.0 | `packages/font-sharp` |
+| 14 | `font-analyze` | 8.0.0 | `packages/font-analyze`，`files` 必须同时包含 `dist` 与 `data` |
+| 15 | `vite-plugin-font` | 8.0.0 | `packages/vite`，依赖 `cn-font-metrics` 与 `cn-font-split` 的已发布版本，必须最后发 |
 
 -   **只有 npm**：crates.io 与 PyPI 本轮不发布（用户决定）。
 -   8 个平台包在 npm 上目前全部 404，这是**首次发布**。
 -   线上 `cn-font-split` 的 latest 仍是 7.4.3；本次发布会把 latest 推到 8.0.0。
--   `font-analyze` / `font-sharp` / `proto-to-cli` / `cn-font-metrics` /
-    `vite-plugin-font` 是否随 8.0.0 一起发属于用户决定；本手册的 workflow 只覆盖
-    主包 + 8 个平台包。
+-   两个 wasm 包（`@cn-font-split/wasm32-wasip1` / `wasm32-wasip2`）独立发布，
+    **不再**出现在主包 `optionalDependencies` 里、不随主包传递安装；主包安装只拉取
+    当前平台的原生包，edge / WASI 用户需显式安装（见 `packages/ffi-js/README.md`）。
 
 ## 2. 前置检查
 
@@ -140,7 +149,9 @@ gh workflow run release-cn-font-split.yml --ref release \
 
 dry-run 不再只是 `pnpm pack --dry-run`：它会真实下载 `bindings-*`、生成 8 个
 `dist-platforms/<platform>/`，并校验目录存在、`package.json` 的 `name` /
-`version`、每个目录存在 `LICENSE`、以及每个二进制 > 64KB。任何一项失败都不要进入 3.3。
+`version`、每个目录存在 `LICENSE`、以及每个二进制 > 64KB。此外还会 `pnpm build`
+构建全部 npm 包并执行 `node ./script/check-publishable.mjs`（清单 `files` /
+入口文件 / 无 `prepublish` / `font-analyze` 的 `data`）。任何一项失败都不要进入 3.3。
 
 ### 3.3 正式发布（`publish=true`）
 
@@ -154,22 +165,32 @@ workflow 内部顺序：
 1. 发布 8 个平台包：`pnpm publish dist-platforms/<p> --access public --no-git-checks`；
 2. 等待 8 个 `@cn-font-split/<p>@8.0.0` 在 `registry.npmjs.org` 可见
    （每个最多 12 次、间隔 5s，仍不可见则失败且**不**发布主包）；
-3. 发布主包：`pnpm -C packages/ffi-js publish --access public --no-git-checks`。
+3. 发布主包：`pnpm -C packages/ffi-js publish --access public --no-git-checks`；
+4. 主包之后依次发布其余 6 个包，顺序固定：
+   `packages/metrics`（`cn-font-metrics`）→ `packages/proto-to-cli` →
+   `packages/font-replacer` → `packages/font-sharp` → `packages/font-analyze` →
+   `packages/vite`（`vite-plugin-font`）。**vite-plugin-font 必须最后**：它依赖
+   `cn-font-metrics` 与 `cn-font-split` 的已发布版本，`pnpm publish` 会把
+   `workspace:^` 改写成实际版本号，依赖未上线时发出会导致用户安装失败。
+   `proto-to-cli` 排在前面是因为 ffi-js 的代码生成用它，保持与构建顺序一致；
+5. 发布后可见性总检查：15 个包（8 平台 + 主包 + 6 其余）逐个
+   `npm view "<pkg>@<version>" version`，每个最多 12 次、间隔 5s，全部可见才成功。
 
 `concurrency` 固定为 `release-cn-font-split-${{ github.ref }}` 且不取消进行中的运行，
 两次派发不会交错。
 
 ## 4. 发布后验证
 
-### 4.1 9 个包都能读到 8.0.0
+### 4.1 15 个包都能读到 8.0.0
 
 ```sh
 for p in \
-  cn-font-split \
   @cn-font-split/darwin-arm64 @cn-font-split/darwin-x64 \
   @cn-font-split/win32-x64-msvc @cn-font-split/win32-arm64-msvc \
   @cn-font-split/linux-x64-gnu @cn-font-split/linux-arm64-gnu \
-  @cn-font-split/wasm32-wasip1 @cn-font-split/wasm32-wasip2; do
+  @cn-font-split/wasm32-wasip1 @cn-font-split/wasm32-wasip2 \
+  cn-font-split cn-font-metrics proto-to-cli cn-font-replacer \
+  font-sharp font-analyze vite-plugin-font; do
   printf '%-40s ' "$p"
   npm view "$p@8.0.0" version --registry https://registry.npmjs.org/ || echo MISSING
 done
@@ -236,15 +257,13 @@ npm 的版本删除窗口很短：
     `cn-font-split@8.0.0` 的项目无法重新安装（只能退回 7.x）。
 -   8.0 与 7.x 的产物指纹算法不同，回滚到 7.x 时不要混用两代产物与缓存键。
 
-## 6. 已知风险 / 待决（本轮不改）
+## 6. 已知风险 / 剩余限制
 
-1.  **`prepublish` ≠ `prepack`**：`packages/metrics`、`packages/proto-to-cli`、
-    `packages/font-analyze` 用的是 `prepublish`。实测 `npm pack` / `npm publish`
-    （npm 11）与 `pnpm pack`（pnpm 12.6.0）都不执行 `prepublish`，所以用
-    `npm publish`（或 `pnpm pack` 后再 `npm publish`）发出的是空 `dist`。但项目锁定的
-    `pnpm@12.6.0` 的 `pnpm publish` 仍会执行 `prepublish`（`prepack`、`prepare`、
-    `prepublish` 都会跑），用 pnpm 发布不会缺 `dist`，走 workflow 的 pnpm 也不受影响。
-    若以后要独立发布这三个包，建议统一改成 `prepack`，不要依赖 pnpm 与 npm 的生命周期差异。
+1.  **生命周期脚本已统一为 `prepack`**：`packages/metrics`、`packages/proto-to-cli`、
+    `packages/font-analyze` 原先用 `prepublish`（`npm pack` / `npm publish` 不执行它，
+    会发出空 `dist`），现已全部改成 `prepack`；`node ./script/check-publishable.mjs`
+    会断言不再出现 `scripts.prepublish`，该检查在 CI 与发布 workflow 的 dry-run 路径
+    都会执行。
 2.  **wasm 平台包不随主包安装（已决定）**：`@cn-font-split/wasm32-wasip1` /
     `@cn-font-split/wasm32-wasip2` 仍照常发布，但已从主包 `optionalDependencies`
     移除；主包安装只会拉取当前平台的原生包，桌面用户不再多装两个 wasm 包。
@@ -263,11 +282,9 @@ npm 的版本删除窗口很短：
     macOS runner——需确认 runner 标签对应的架构），不要跳过 `darwin-x64` 平台包。
 5.  **仓库无 CHANGELOG、无 8.0 tag**；`arch_hashcheck` 的两个测试是 `#[ignore]`，
     不在 CI 内。发布说明需要手工整理。
-6.  **其他 npm 包的发布范围**（`font-analyze` / `font-sharp` / `proto-to-cli` /
-    `cn-font-metrics` / `vite-plugin-font`）属于用户决定；workflow 不覆盖。
-7.  **`@cn-font-split` scope 写权限**未在发布前被证明（见 2.3），这是本轮最大的
+6.  **`@cn-font-split` scope 写权限**未在发布前被证明（见 2.3），这是本轮最大的
     单点风险。
-8.  **根目录 `publish-all.sh` 是 crates.io 发布脚本**：默认只做
+7.  **根目录 `publish-all.sh` 是 crates.io 发布脚本**：默认只做
     `cargo publish --dry-run`，传 `--publish` 会对 `crates/*` 逐个真实
     `cargo publish`。本轮 crates.io 不是发布目标，发版当天不要运行它；npm 发布只走
     本手册/workflow。
