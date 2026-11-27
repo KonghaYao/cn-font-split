@@ -168,10 +168,11 @@ Bun / Deno 走各自的加载入口，属 best-effort，未纳入 8.0 发布验�
 
 ## 更多文档
 
+-   [文档索引](./docs/README.md)
 -   [8.0 迁移指南](./docs/MIGRATION-8.0.md)
 -   [配置说明](./docs/CONFIG.md)
 -   [开发者文档](./Developer.md)
--   [8.0 重构计划与交付状态](./docs/REFACTOR-8.0.md)
+-   [8.0 重构记录（历史计划）](./docs/REFACTOR-8.0.md)
 -   [8.0 npm 发布记录](./docs/RELEASE-8.0-NPM.md)
 -   [JavaScript 包文档](./packages/ffi-js/)
 -   [OpenType Feature 支持情况](./packages/test/SUPPORT_FEATURE.md)

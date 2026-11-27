@@ -2,9 +2,9 @@
 
 ![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
-![NPM License](https://img.shields.io/npm/v/cn-font-split)
+![NPM Version](https://img.shields.io/npm/v/cn-font-split)
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
-![NPM License](https://img.shields.io/npm/dm/cn-font-split)
+![NPM Downloads](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
 ![updateTime](https://img.shields.io/badge/更新时间-2026/11/27-green)
 

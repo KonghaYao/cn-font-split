@@ -2,6 +2,8 @@
 
 使用 fontaine 库测量常用中文字体的字体度量，方便中文网络字体减少 CLS 问题。
 
+要求 Node.js >= 22（见 `package.json` 的 `engines`）。
+
 ## 字体来源
 
 苹方 SC https://github.com/refinec/PingFangSC
