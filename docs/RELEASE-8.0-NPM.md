@@ -276,11 +276,18 @@ npm 的版本删除窗口很短：
     平台映射成 `wasm32-wasip1` 这个 triple 用于报错，因此移除不影响解析逻辑。
 3.  **产物保留期**：cross-build 的 artifacts 只有 14 天。超过后必须重跑 cross-build
     才能再次发布；`cross_build_run_id` 与 `release-cn-font-split` 必须在同一 commit。
-4.  **macos-13 → macos-14**：`cross-build.yml` 的 `x86_64-apple-darwin` 条目已改到
-    macos-14（arm64 runner）上交叉编译，因为 GitHub 正在淘汰 macos-13。该 workflow
-    从未运行过，第一次 cross-build 才能验证 `libffi-x86_64-apple-darwin.dylib` 是否
-    正常产出；如果失败，需要在发布前换方案（例如临时保留 `macos-13`，或改用 Intel
-    macOS runner——需确认 runner 标签对应的架构），不要跳过 `darwin-x64` 平台包。
+4.  **cross-build 首次实跑结果（2026-11-27，run `45923211383`，ref `release` @ `9baf900`）**：
+    Linux×4（x86_64 / aarch64 / riscv64 / s390x）、Windows×2、WASM `wasm32-wasip1`
+    共 7 个 job 成功。两个失败已定位并修复，**尚未重跑验证**：
+    -   `macOS-aarch64` / `macOS-x86_64` 启动即被取消，注解为
+        `The configuration 'macos-14-arm64-us-default' is not supported`——本仓库不可用
+        `macos-14`，已改用 `macos-latest`（与 CI 视觉回归作业一致，实测可用）；x86_64 仍在
+        arm64 runner 上交叉编译，`target` 与构建命令不变。
+    -   `wasm32-wasip2` 编译失败，报 `linking with wasm-component-ld failed` /
+        `failed to resolve import 'env::__cxa_allocate_exception'`：依赖 `harfbuzz_rs_now`
+        的 `build.rs` 用 `cc` 以 C++ 编译 `harfbuzz-output.cc` 且未关闭异常，wasip2 的组件
+        链接器无法把 `__cxa_*` 映射进 WASI world（wasip1 不经过组件编码器，不受影响）。
+        现仅在 wasip2 构建时导出 `CXXFLAGS="-fno-exceptions"`，效果需重跑确认。
 5.  **仓库无 CHANGELOG、无 8.0 tag**；`arch_hashcheck` 的两个测试是 `#[ignore]`，
     不在 CI 内。发布说明需要手工整理。
 6.  **`@cn-font-split` scope 写权限**未在发布前被证明（见 2.3），这是本轮最大的
