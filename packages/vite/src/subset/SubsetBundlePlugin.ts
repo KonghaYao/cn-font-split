@@ -42,19 +42,27 @@ export class SubsetBundlePlugin extends BundlePlugin {
         const { isSubset, idString } = this.isSubsetLink(p);
         return path.resolve(
             isSubset ? this.subsetCacheDir : this.config.cacheDir!,
-            getFileName(idString),
+            isSubset ? getFileName(idString) : this.getCacheDirName(idString),
         );
     }
     isSubsetLink = SubsetUtils.isSubsetLink;
     async createSubsetsHash() {
         if (!this.subsetConfig.scanFiles) return;
-        this.getWhiteListSubsets();
-        await this.updateScanFiles();
-        const subsetsArr = [...this.usedSubsets].sort((a, b) => a - b);
+        // 每轮都用新的集合重新统计：watch 模式下同一个实例会被多次调用，
+        // 复用旧集合会让已删除文件里的码点一直累积在码点哈希中。
+        const usedSubsets = new Set<number>();
+        this.getWhiteListSubsets(usedSubsets);
+        await this.updateScanFiles(usedSubsets);
+        this.usedSubsets = usedSubsets;
+        const subsetsArr = [...usedSubsets].sort((a, b) => a - b);
         this.subsets = [subsetsArr];
         const hash = crypto
             .createHash('md5')
             .update(String.fromCodePoint(...subsetsArr))
+            // 码点相同但配置不同（如 css.fontDisplay）时必须换缓存目录，
+            // 否则会命中上一份配置生成的 result.css。
+            .update('\u0000')
+            .update(this.configHash)
             .digest('hex');
         // 修改缓存地址，达到缓存
         this.subsetCacheDir = path.resolve(
@@ -85,7 +93,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
             return this.subsetConfig.scanFiles;
         }
     }
-    private async updateScanFiles() {
+    private async updateScanFiles(usedSubsets: Set<number>) {
         const globStr = this.getGlobArea();
         if (!globStr) return;
         const files = await glob(globStr!, {
@@ -101,7 +109,7 @@ export class SubsetBundlePlugin extends BundlePlugin {
                     });
                     stream.on('data', (i) => {
                         [...(i as string)].forEach((char) =>
-                            this.usedSubsets.add(char.codePointAt(0)!),
+                            usedSubsets.add(char.codePointAt(0)!),
                         );
                     });
                     stream.on('end', () => {
@@ -114,12 +122,11 @@ export class SubsetBundlePlugin extends BundlePlugin {
             }),
         );
     }
-    private getWhiteListSubsets() {
+    private getWhiteListSubsets(set: Set<number>) {
         let whiteList = this.subsetConfig.whiteList ?? [];
         if (!(whiteList instanceof Array)) {
             whiteList = [whiteList];
         }
-        const set = this.usedSubsets;
         whiteList.forEach((str) =>
             [...str].forEach((char) => set.add(char.codePointAt(0)!)),
         );

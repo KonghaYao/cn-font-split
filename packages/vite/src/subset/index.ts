@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import url from 'url';
 import crypto from 'crypto';
 import { createChineseCrossPlatformFallbackCss } from 'cn-font-metrics';
+import { hashBundleConfig } from '../utils/configHash.js';
 export function getFileName(id: string) {
     return path.basename(id).replace(/\./g, '_');
 }
@@ -28,14 +29,22 @@ export type BundlePluginConfig = Omit<Partial<proto.InputTemplate>, 'input' | 's
 
 export class BundlePlugin {
     public subsets: number[][] | undefined = undefined;
+    /** 影响产物的配置哈希，用于隔离不同配置的缓存目录 */
+    readonly configHash: string;
     constructor(
         public config: BundlePluginConfig,
         public key = 'default',
-    ) {}
+    ) {
+        this.configHash = hashBundleConfig(config);
+    }
 
+    /** 全量模式的缓存目录名：`<字体文件名>-<配置哈希>` */
+    getCacheDirName(p: string) {
+        return `${getFileName(p)}-${this.configHash}`;
+    }
     /** 获取正确的缓存文件夹的位置 */
     getCachedPath(p: string) {
-        return path.resolve(this.config.cacheDir!, getFileName(p));
+        return path.resolve(this.config.cacheDir!, this.getCacheDirName(p));
     }
     /** 创建 CSS 封装层源代码 */
     async createSourceCode(p: string) {
