@@ -1,10 +1,10 @@
 # 中文 Web Font 切割工具 8.0 —— Rust Speed
 
-![中文网字计划](/assets/chinese-fonts.png)
+![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
-![NPM License](https://img.shields.io/npm/v/cn-font-split)
+![NPM Version](https://img.shields.io/npm/v/cn-font-split)
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
-![NPM License](https://img.shields.io/npm/dm/cn-font-split)
+![NPM Downloads](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
 
 | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/zh-cn/online-split/) |
@@ -48,16 +48,16 @@ await fontSplit({
 
 常用配置：
 
-| 字段                                     | 说明                          |
-| ---------------------------------------- | ----------------------------- |
-| `input`                                  | 字体路径或 `Uint8Array`       |
-| `outDir`                                 | 产物目录（必填）              |
-| `chunkSize`                              | 单包目标字节数，默认 70KB     |
-| `subsets`                                | 手动子集 `number[][]`         |
-| `css.fontFamily` / `css.fontWeight`      | 生成的 `@font-face` 属性      |
-| `renameOutputFont`                       | 输出模板，默认 `[hash].[ext]` |
-| `reporter` / `testHtml` / `previewImage` | 报告、测试页、预览图          |
-| `silent`                                 | 关闭逐文件日志                |
+| 字段                                     | 说明                                                   |
+| ---------------------------------------- | ------------------------------------------------------ |
+| `input`                                  | 字体路径或 `Uint8Array`                                |
+| `outDir`                                 | 产物目录（必填）                                       |
+| `chunkSize`                              | 单包目标字节数，默认 70KB                              |
+| `subsets`                                | 手动子集 `number[][]`                                  |
+| `css.fontFamily` / `css.fontWeight`      | 生成的 `@font-face` 属性                               |
+| `renameOutputFont`                       | 输出模板，默认 `<blake3>.woff2`（等价 `[hash].[ext]`） |
+| `reporter` / `testHtml` / `previewImage` | 报告、测试页、预览图                                   |
+| `silent`                                 | 关闭逐文件日志                                         |
 
 构建失败时 Promise 会 reject，错误文本来自核心的结构化错误事件；进程不会崩溃。
 
@@ -81,7 +81,13 @@ cn-font-split run -h   # 查看完整参数（与 Node 配置一一对应）
 ## 浏览器 / WASM
 
 平台包 `@cn-font-split/wasm32-wasip1` 提供 WASI 版二进制，在浏览器里用
-`memfs` + WASI 运行，产物以 `{ name, data }[]` 返回：
+`memfs` + WASI 运行，产物以 `{ name, data }[]` 返回。
+
+两个 wasm 平台包不随主包传递安装，使用前需显式安装：
+
+```sh
+npm i @cn-font-split/wasm32-wasip1   # 或 @cn-font-split/wasm32-wasip2
+```
 
 ```ts
 import { fontSplit, StaticWasm } from 'cn-font-split/dist/wasm/index.mjs';
@@ -101,7 +107,7 @@ for (const file of files) {
 ```
 
 > WASM 产物需要在浏览器中提供 `wasi_snapshot_preview1` 与共享内存支持。
-> 8.0 的 WASM 包尚未纳入发布验收，属于 best-effort。
+> 两个 wasm 平台包（`wasm32-wasip1` / `wasm32-wasip2`）已随 8.0.0 发布；不随主包安装；未做运行时冒烟。
 
 ## Rust API
 
@@ -144,26 +150,33 @@ match result {
 
 ## 平台支持
 
-| 平台               | 平台包                            | 状态                             |
-| ------------------ | --------------------------------- | -------------------------------- |
-| macOS arm64        | `@cn-font-split/darwin-arm64`     | 本地验证 + CI                    |
-| macOS x64          | `@cn-font-split/darwin-x64`       | 交叉构建配置                     |
-| Windows x64 MSVC   | `@cn-font-split/win32-x64-msvc`   | 交叉构建配置                     |
-| Windows arm64 MSVC | `@cn-font-split/win32-arm64-msvc` | 交叉构建配置                     |
-| Linux x64 glibc    | `@cn-font-split/linux-x64-gnu`    | CI（Node 冒烟 / Linux 视觉冒烟） |
-| Linux arm64 glibc  | `@cn-font-split/linux-arm64-gnu`  | 交叉构建配置                     |
-| WASI               | `@cn-font-split/wasm32-wasip1/p2` | 构建链路存在，未实测发布         |
+| 平台                | 平台包                            | 状态                                         |
+| ------------------- | --------------------------------- | -------------------------------------------- |
+| macOS arm64         | `@cn-font-split/darwin-arm64`     | 已发布 8.0.0                                 |
+| macOS x64           | `@cn-font-split/darwin-x64`       | 已发布 8.0.0                                 |
+| Windows x64 MSVC    | `@cn-font-split/win32-x64-msvc`   | 已发布 8.0.0                                 |
+| Windows arm64 MSVC  | `@cn-font-split/win32-arm64-msvc` | 已发布 8.0.0                                 |
+| Linux x64 glibc     | `@cn-font-split/linux-x64-gnu`    | 已发布 8.0.0                                 |
+| Linux arm64 glibc   | `@cn-font-split/linux-arm64-gnu`  | 已发布 8.0.0                                 |
+| WASI preview1       | `@cn-font-split/wasm32-wasip1`    | 已发布 8.0.0（不随主包安装；未做运行时冒烟） |
+| WASI preview2       | `@cn-font-split/wasm32-wasip2`    | 已发布 8.0.0（不随主包安装；未做运行时冒烟） |
+| Linux riscv64 glibc | —                                 | 仅 artifact（无 npm 包）                     |
+| Linux s390x glibc   | —                                 | 仅 artifact（无 npm 包）                     |
 
 musl、BSD、32 位等没有预编译包的平台请设置 `CN_FONT_SPLIT_BIN`。
 Bun / Deno 走各自的加载入口，属 best-effort，未纳入 8.0 发布验收。
 
 ## 更多文档
 
+-   [文档索引](./docs/README.md)
 -   [8.0 迁移指南](./docs/MIGRATION-8.0.md)
+-   [配置说明](./docs/CONFIG.md)
 -   [开发者文档](./Developer.md)
--   [8.0 重构计划与交付状态](./docs/REFACTOR-8.0.md)
+-   [8.0 重构记录（历史计划）](./docs/REFACTOR-8.0.md)
+-   [8.0 npm 发布记录](./docs/RELEASE-8.0-NPM.md)
 -   [JavaScript 包文档](./packages/ffi-js/)
 -   [OpenType Feature 支持情况](./packages/test/SUPPORT_FEATURE.md)
+-   [性能基准结果](./bench-results/)
 
 ## 感谢
 

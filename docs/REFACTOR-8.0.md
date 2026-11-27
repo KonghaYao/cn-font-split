@@ -1,6 +1,6 @@
 # cn-font-split 8.0 维护翻新与重构计划
 
-> 状态：已执行（8.0 交付，遗留项见 §12）
+> 状态：**历史计划**（8.0 已交付并于 2026-11-27 发布，本文是计划与验收记录，遗留项见 §12）
 > 基线：`release` 分支 HEAD（`1650af1`，2026-06-12）
 > 目标版本：`8.0.0`
 > 记录时间：2026-11-25
@@ -320,7 +320,7 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 | `woff 0.6.x` | 延后 | 仍为 `woff 0.4.0`；0.5+ 在解码失败时执行 `debug_assert`，会破坏 `truncated_woff2` 的错误返回。0.4.0 的 woff2 C++ 源码缺 `#include <cstdint>`，GCC 13+ 需用 `CXXFLAGS=-include cstdint` 编译（CI 已设置） |
 | `prost` / `tonic 0.14` | 延后 | 仍为 `prost 0.13.5`；0.14 的 MSRV 为 1.88，高于本项目 1.85 |
 | Bun / Deno 平台包解析 | 已完成 | `resolveBinPath` 抽到 `load.ts`，node / bun / deno 共用：env → `createRequire` 解析 `@cn-font-split/<platform>` → 本地 `dist` 回退 → 报错列出尝试项（`8216776`） |
-| wasm 平台包 | 未实测 | `wasm32-wasip1/p2` 有构建 workflow 与加载入口，但本轮未做发布验收 |
+| wasm 平台包 | 未实测 | `wasm32-wasip1` / `wasm32-wasip2` 有构建 workflow 与加载入口，但本轮未做发布验收 |
 | `packages/server` 独立 workspace | 延后 | 仍带独立 `Cargo.toml` / `Cargo.lock`，未收编或显式排除 |
 | 端到端（含写盘）benchmark | 已完成 | `packages/ffi-js/scripts/bench-e2e.mjs`：内存 sink 与真实写盘各跑一轮，产物逐字节一致；结果入库 `bench-results/e2e-v8/`（`5c321e8`） |
 | Feature 矩阵（远程字体） | 延后 | 旧 `FeatureConfig` 依赖远程 CDN 字体，已从 CI 移除；`test-font-feature` 改为本地字体 Chromium 冒烟 |
@@ -360,13 +360,14 @@ A 组（被否定的字面公式，单轮，仅供对照）：NotoSerifSC 分包
 - 发布包：`@cn-font-split/darwin-arm64` tarball + `cn-font-split` tarball 在 /tmp
   空项目安装后真实构建，47 个 woff2、退出码 0；`font-sharp` tarball 消费端
   `font2svg` 返回非空 SVG。
-- 版本：workspace 与 8 个对外包 8.0.0，`test` 0.0.0，`performance` private；
+- 版本：workspace 与 8 个清单 8.0.0（发布时共 15 个 npm 包 = 7 个仓库内包 + 8 个
+  平台包），`test` 0.0.0，`performance` private；
   `harfbuzz_rs_now` 保持 2.3.2。
 - 性能（`v8-perf`，5 轮中位数 vs `v8-pre-perf`）：总耗时 −61.2%，woff2 总字节
   −0.25%，分包数 −2.7%；CJK 三组 −68% ~ −70%。
 
-**未执行**：分支未 push、未合并 `release`、未发布任何包（发布工作流默认
-`publish=false`，走 dry-run）。延后项见 §12。
+**已执行**：分支已合并进 `release`（当前 `release` 含 8.0 交付），15 个 npm 包已于
+2026-11-27 全部以 8.0.0 发布（见 `docs/RELEASE-8.0-NPM.md` §6）。延后项见 §12。
 
 ## 附录 A：现状证据索引
 

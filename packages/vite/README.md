@@ -30,9 +30,7 @@ We provide an [Extremely lightweight optimization](#extremely-lightweight-optimi
 ## 📦 Install
 
 ```sh
-# 国内请设置环境变量, windows 用 set
-export CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github
-# set CN_FONT_SPLIT_GH_HOST=https://ik.imagekit.io/github # windows
+# 要求 Node.js >= 22；8.0 二进制通过 optionalDependencies 安装，无需联网下载
 npm i -D vite-plugin-font
 ```
 

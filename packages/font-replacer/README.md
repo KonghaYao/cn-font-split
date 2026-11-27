@@ -1,4 +1,4 @@
-![中文网字计划](/assets/chinese-fonts.png)
+![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
 # cn-font-replacer
 

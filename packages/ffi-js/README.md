@@ -1,12 +1,12 @@
 # 中文 Web Font 切割工具 8.0 —— Rust Speed
 
-![中文网字计划](/assets/chinese-fonts.png)
+![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
-![NPM License](https://img.shields.io/npm/v/cn-font-split)
+![NPM Version](https://img.shields.io/npm/v/cn-font-split)
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
-![NPM License](https://img.shields.io/npm/dm/cn-font-split)
+![NPM Downloads](https://img.shields.io/npm/dm/cn-font-split)
 ![author](https://img.shields.io/badge/author-江夏尧-green)
-![updateTime](https://img.shields.io/badge/更新时间-2025/12/20-green)
+![updateTime](https://img.shields.io/badge/更新时间-2026/11/27-green)
 
 | [中文网字计划](https://chinese-font.netlify.app/) | [Github](https://github.com/KonghaYao/cn-font-split) | [在线使用](https://chinese-font.netlify.app/zh-cn/online-split/) |
 | ------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- |
@@ -24,9 +24,9 @@
 -   ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
 -   🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
-> 8.0 是 breaking release，请阅读 [8.0 迁移指南](../../docs/MIGRATION-8.0.md)。
+> 8.0 是 breaking release，请阅读 [8.0 迁移指南](https://github.com/KonghaYao/cn-font-split/blob/release/docs/MIGRATION-8.0.md)。
 >
-> [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
+> [Opentype Feature 支持情况](https://github.com/KonghaYao/cn-font-split/blob/release/packages/test/SUPPORT_FEATURE.md) 支持 97 ｜ 部分支持 9｜ 未测试 18
 
 ## 使用方式
 
@@ -170,7 +170,7 @@ await fontSplit({
 
 ## cn-font-split 性能爆表 Wasm 版本
 
-虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](./test/deno-wasm.mjs)。
+虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](https://github.com/KonghaYao/cn-font-split/blob/release/packages/ffi-js/test/deno-wasm.mjs)。
 
 ```sh
 # 8.0 起两个 wasm 平台包不再随主包传递安装；在 edge / WASI 环境使用时需显式安装：
@@ -228,12 +228,7 @@ console.log(data);
 
 ## v6 迁移指南
 
-1. 部分函数入参改变，具体参照 Typescript 类型提示修正即可
-    1. 比如 css 中的 comment 表示方法均被拍平了
-    2. 部分分包的细节控制入参失效
-2. 性能原因，不支持直接输入 woff2 文件进行分包
-    1. 但是可以使用 wawoff2 等工具，将 woff2 转为 ttf Uint8Array，再进行分包
-3. log 暂无输出方式，不影响主功能流程
+6.x 的入参、woff2 输入与 log 输出变更早已不适用（8.0 已支持 woff2 直接入参），升级请直接阅读 [8.0 迁移指南](https://github.com/KonghaYao/cn-font-split/blob/release/docs/MIGRATION-8.0.md)。
 
 ## 开源许可证
 

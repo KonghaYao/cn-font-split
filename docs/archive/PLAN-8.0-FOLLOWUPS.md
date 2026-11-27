@@ -1,5 +1,7 @@
 # 8.0 延后项跟进计划
 
+> 归档：2026-11-27 从 `docs/` 移入；内容为 8.0 计划期快照，不再随代码更新。
+
 > 来源：`docs/REFACTOR-8.0.md` §12。以下方案由只读调研产出，按「无产物变化的本地重构 → 设计类 → 算法」排序。
 
 ## 状态
@@ -29,6 +31,8 @@
 ### 1. Context 拆分与阶段产物
 
 **现状**：`src/runner.rs:14` 单个 `Context<'a,'b,'c>`（9 字段）被三段共用 `&mut face`/`&mut reporter`/`callback`；CSS 层（`output_css.rs:104` 等）也直接吃它，且经 `pub mod runner` 对外暴露。
+
+> 计划期快照：8.0 已删除 `src/runner.rs` 的单个 `Context`（改为 `FontSource` / `PreSubsetOutput` / `RunSubsetOutput` / `LinkSubsetOutput` 分段类型），以下行号与类型名仅用于对照当时的实现。
 
 **方案**：`FontSource<'a>{binary:&'a [u8], face:Owned<Face<'a>>}`；`PreSubsetOutput{subsets:Vec<Vec<u32>>, name_table, fvar, languages}`；`RunSubsetOutput{items:Vec<RunSubsetResult>, bundle:BundleMessage}`；`LinkSubsetOutput{css:String, extra_files:Vec<(String,Vec<u8>)>}`。签名改为 `pre_subset(&mut FontSource,&Config)->Result<PreSubsetOutput>`、`run_subset(&FontSource,&Config,&Pre)->Result<Run>`、`link_subset(&Config,&Pre,&Run)->Result<Link>`。emit、`OutputReport` 组装、`version/platform` 上移到 `font_split_inner`；`gen_svg_from_ctx` 改为返回 `extra_files`。
 

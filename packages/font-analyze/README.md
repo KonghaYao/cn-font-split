@@ -12,7 +12,7 @@ npm i font-analyze
 > `/dist/opentype.module.js`（Node 对没有 `exports` 的包回退到 `main` 解析，会报
 > `ERR_MODULE_NOT_FOUND`）；现在包内直接引用该依赖 `module` 字段指向的真实文件
 > `@konghayao/opentype.js/dist/opentype.module.js` 规避，依赖版本与字段均未改动。
-> 背景见 `../../docs/RELEASE-8.0-NPM.md` §6 第 8 条。
+> 背景见 [`docs/RELEASE-8.0-NPM.md` §6 第 8 条](https://github.com/KonghaYao/cn-font-split/blob/release/docs/RELEASE-8.0-NPM.md)。
 
 ```js
 import { FontAnalyze } from 'font-analyze';
