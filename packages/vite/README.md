@@ -210,6 +210,33 @@ The source code includes the `src/font.d.ts` file, you can add it to tsconfig.js
 }
 ```
 
+## Bundle Size and `assetsInlineLimit`
+
+Vite's `build.assetsInlineLimit` defaults to `4096`: any emitted asset smaller than 4 KiB is inlined into the CSS as a base64 `data:` URI. Chinese fonts split into dozens of small woff2 chunks hit that limit often, which silently distorts what you measure — in one 8.0 build, 7 of 42 chunks (20,688 B in total) were inlined, so `dist` contained fewer files than chunks and per-file size statistics no longer matched the real split output.
+
+When you measure bundle size, set the limit to `0` first:
+
+```js
+// vite.config.js
+export default {
+    build: { assetsInlineLimit: 0 },
+};
+```
+
+For the font size itself, treat the report from `cn-font-split` (`bundledBytes`) as the source of truth instead of summing files under `dist`: it is unaffected by inlining and by how the bundler reports asset sizes.
+
 ## Input Parameters
 
-For input parameters, please refer to the usage instructions of [cn-font-split](https://www.npmjs.com/package/cn-font-split). Most parameters are universal.
+Options of the plugin itself (all optional). Everything else is passed through to `cn-font-split`'s `InputTemplate` — see the [cn-font-split](https://www.npmjs.com/package/cn-font-split) docs, most parameters are universal.
+
+| Option             | Type                                                                   | Default                                     | Description                                                                                                              |
+| ------------------ | ---------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `scanFiles`        | `string \| string[] \| Record<string, string \| string[]>`              | unset                                       | Glob of source files scanned for the characters to keep (extremely lightweight optimization). Object form partitions by key, selected via `?subsets&key=<key>`. |
+| `whiteList`        | `string \| string[]`                                                   | `[]`                                        | Characters that are always kept, regardless of `scanFiles`.                                                              |
+| `ignore`           | `string \| string[]`                                                   | `['node_modules/**']`                       | Glob ignore list used together with `scanFiles`.                                                                         |
+| `cacheDir`         | `string`                                                               | Vite's `cacheDir` (`node_modules/.vite`); other bundlers `node_modules/.cache/.font` | Directory for the generated chunks and the subset cache (`<cacheDir>/.subsets`).           |
+| `emptyCacheDir`    | `boolean`                                                              | `false`                                     | When `true`, empty `<cacheDir>/.subsets` before the build.                                                               |
+| `server`           | `boolean`                                                              | `true`                                      | Pre-build fonts that are missing from the cache. When `false`, only cached results are used.                              |
+| `subsetChunkSize`  | `number`                                                               | `500`                                       | Number of code points per chunk when splitting the `?subsets` character set.                                             |
+| `include`          | `RegExp[]`                                                             | `[/\.otf/, /\.ttf/]`                        | Which module ids are handled by the plugin.                                                                              |
+| `exclude`          | `RegExp[]`                                                             | `[/\/node_modules\//]`                      | Module ids that are skipped.                                                                                             |

@@ -1,7 +1,8 @@
 # cn-font-split 8.0 npm 发布手册
 
-> 状态：**已准备、未执行**。本手册只覆盖 npm；crates.io 与 PyPI 本轮不发布
-> （用户决定）。发布动作全部由 `.github/workflows/release-cn-font-split.yml`
+> 状态：**8.0.0 已发布（2026-11-27，15 个包全部 8.0.0）**。本手册保留发布前的检查
+> 清单与发布后的验证步骤，实际结果与遗留项见 §6。手册只覆盖 npm；crates.io 与 PyPI
+> 本轮不发布（用户决定）。发布动作全部由 `.github/workflows/release-cn-font-split.yml`
 > 完成，手工命令只用于发布前检查与发布后验证。
 
 ## 1. 发布目标
@@ -165,7 +166,8 @@ workflow 内部顺序：
 
 1. 发布 8 个平台包：`pnpm publish dist-platforms/<p> --access public --no-git-checks`；
 2. 等待 8 个 `@cn-font-split/<p>@8.0.0` 在 `registry.npmjs.org` 可见
-   （每个最多 12 次、间隔 5s，仍不可见则失败且**不**发布主包）；
+   （`script/registry-published.sh` 直连 registry，每个最多 48 次、间隔 5s = 4 分钟，
+   仍不可见则失败且**不**发布主包）；
 3. 发布主包：`pnpm -C packages/ffi-js publish --access public --no-git-checks`；
 4. 主包之后依次发布其余 6 个包，顺序固定：
    `packages/metrics`（`cn-font-metrics`）→ `packages/proto-to-cli` →
@@ -174,8 +176,15 @@ workflow 内部顺序：
    `cn-font-metrics` 与 `cn-font-split` 的已发布版本，`pnpm publish` 会把
    `workspace:^` 改写成实际版本号，依赖未上线时发出会导致用户安装失败。
    `proto-to-cli` 排在前面是因为 ffi-js 的代码生成用它，保持与构建顺序一致；
-5. 发布后可见性总检查：15 个包（8 平台 + 主包 + 6 其余）逐个
-   `npm view "<pkg>@<version>" version`，每个最多 12 次、间隔 5s，全部可见才成功。
+5. 发布后可见性总检查：15 个包（8 平台 + 主包 + 6 其余）同样用
+   `script/registry-published.sh` 直连 registry 逐个探测，每个最多 60 次、间隔 5s
+   = 5 分钟，全部可见才成功；随后对主包的 `dist-tags.latest` 做一次**非致命**告警
+   （不一致只输出 `::warning::`，不让 workflow 失败）。
+
+发布步骤是**幂等**的：每次 `pnpm publish` 前先用 `script/registry-published.sh published`
+判断该版本是否已存在，已存在则打印 `[skip] <name>@<version> 已存在` 并跳过，因此整条
+workflow 可以安全重跑（`publish=false` 的 dry-run 路径不会发起任何 registry 写操作，
+也不会进入可见性等待）。
 
 `concurrency` 固定为 `release-cn-font-split-${{ github.ref }}` 且不取消进行中的运行，
 两次派发不会交错。
@@ -253,8 +262,9 @@ npm 的版本删除窗口很短：
     `npm deprecate cn-font-split@8.0.0 "原因"` 会让 `npm i` 打印警告，但不会阻止安装。
 -   **主包已发布、平台包缺失**：正确做法是补齐缺失的平台包：先对 8 个包逐个
     `npm view @cn-font-split/<p>@<version> version` 确认哪些缺失，只手工发布缺失的
-    那些（`npm publish dist-platforms/<p> --access public`）；不要整体重跑 workflow，
-    它会在已发布的包上失败。**不要撤回主包**——撤回会让声明了
+    那些（`npm publish dist-platforms/<p> --access public`）。workflow 现在幂等
+    （已存在的版本会 `[skip]`），也可以整体重跑；只补缺失包时手工发布影响面更小。
+    **不要撤回主包**——撤回会让声明了
     `cn-font-split@8.0.0` 的项目无法重新安装（只能退回 7.x）。
 -   8.0 与 7.x 的产物指纹算法不同，回滚到 7.x 时不要混用两代产物与缓存键。
 
@@ -276,32 +286,45 @@ npm 的版本删除窗口很短：
     平台映射成 `wasm32-wasip1` 这个 triple 用于报错，因此移除不影响解析逻辑。
 3.  **产物保留期**：cross-build 的 artifacts 只有 14 天。超过后必须重跑 cross-build
     才能再次发布；`cross_build_run_id` 与 `release-cn-font-split` 必须在同一 commit。
-4.  **cross-build 首次实跑结果（2026-11-27，run `45923211383`，ref `release` @ `9baf900`）**：
-    Linux×4（x86_64 / aarch64 / riscv64 / s390x）、Windows×2、WASM `wasm32-wasip1`
-    共 7 个 job 成功。两个失败已定位并修复，**尚未重跑验证**：
-    -   `macOS-aarch64` / `macOS-x86_64` 启动即被取消，注解为
-        `The configuration 'macos-14-arm64-us-default' is not supported`——本仓库不可用
-        `macos-14`，已改用 `macos-latest`（与 CI 视觉回归作业一致，实测可用）；x86_64 仍在
-        arm64 runner 上交叉编译，`target` 与构建命令不变。
-    -   `wasm32-wasip2` 编译失败，报 `linking with wasm-component-ld failed` /
-        `failed to resolve import 'env::__cxa_allocate_exception'`：依赖 `harfbuzz_rs_now`
-        的 `build.rs` 用 `cc` 以 C++ 编译 `harfbuzz-output.cc` 且未关闭异常，wasip2 的组件
-        链接器无法把 `__cxa_*` 映射进 WASI world（wasip1 不经过组件编码器，不受影响）。
-        现仅在 wasip2 构建时导出 `CXXFLAGS="-fno-exceptions"`，效果需重跑确认。
+4.  **cross-build 已重跑验证（2026-11-27，run `45924097887`）**：10/10 作业全部成功，
+    两个 macOS 作业（原 `macos-14-arm64-us-default` 不被支持 → 改用 `macos-latest`）
+    与 `wasm32-wasip2`（仅在 wasip2 构建时导出 `CXXFLAGS="-fno-exceptions"`）的修复均已生效。
 5.  **仓库无 CHANGELOG、无 8.0 tag**；`arch_hashcheck` 的两个测试是 `#[ignore]`，
     不在 CI 内。发布说明需要手工整理。
-6.  **`@cn-font-split` scope 写权限**未在发布前被证明（见 2.3），这是本轮最大的
-    单点风险。
+6.  **`@cn-font-split` scope 写权限已验证**：2026-11-27 15 个包（8 平台 + 主包 +
+    其余 6 个）全部以 8.0.0 发布成功，2.3 的未知项已消除。
 7.  **根目录 `publish-all.sh` 是 crates.io 发布脚本**：默认只做
     `cargo publish --dry-run`，传 `--publish` 会对 `crates/*` 逐个真实
     `cargo publish`。本轮 crates.io 不是发布目标，发版当天不要运行它；npm 发布只走
     本手册/workflow。
-8.  **`font-analyze` 在 Node 原生 ESM 下无法 `import`（既有问题，本轮不修）**：
-    `font-analyze` 依赖 `@konghayao/opentype.js`（`^2023.11.20`），该依赖的
-    `package.json` 把 `main` 写成绝对路径 `/dist/opentype.module.js`。Node 22/24 的
-    原生 ESM 直接按 `main` 解析，`import { FontAnalyze } from 'font-analyze'` 会报
+8.  **`font-analyze` 的 Node 原生 ESM 已修复（本 PR）**：根因不变——依赖
+    `@konghayao/opentype.js`（`^2023.11.20`）的 `package.json` 把 `main` 写成绝对路径
+    `/dist/opentype.module.js`，Node 对没有 `exports` 的包回退到 `main` 解析，于是
+    `import { FontAnalyze } from 'font-analyze'` 报
     `ERR_MODULE_NOT_FOUND: Cannot find package '/dist/opentype.module.js'`；该依赖的
-    `module` 字段是正确的，所以 Vite / webpack 等打包器可用。问题自线上
-    `font-analyze@1.4.2` 起就存在，依赖最新版 `2024.5.25` 的 `main` 也未修正，无法靠
-    升级依赖解决；8.0.0 照旧发布，建议在 release notes 注明「Node 原生 ESM 暂不可用」
-    （见 `packages/font-analyze/README.md`）。
+    `module` 字段是正确的，所以打包器一直可用。修法不改依赖版本与 `main`/`module`/
+    `files`/`exports`：`packages/font-analyze/src/index.ts` 直接引用
+    `@konghayao/opentype.js/dist/opentype.module.js`（即 `module` 指向的真实文件），
+    `src/env.d.ts` 给深路径补 ambient 声明沿用 `@types/opentype.js` 的类型，并把
+    `dist/Feature/index.js` 的 `./FeatureList` 补上 `.js` 扩展名（Node ESM 不允许省略）。
+    验证：`npm pack` 后在全新目录安装，Node v24.21.0 下
+    `node -e "import('font-analyze').then(m=>console.log(Object.keys(m)))"` 输出
+    `[ 'FontAnalyze', 'defaultCharsetLoader' ]` 且退出码 0；Vite 构建（含裸
+    `@konghayao/opentype.js` 的 `module` 字段与深路径）与包自带
+    `node ./test/index.mjs` 均通过。该问题自线上 `font-analyze@1.4.2` 起就存在，
+    依赖最新版 `2024.5.25` 的 `main` 也未修正，无法靠升级依赖解决；release notes
+    无需再注明「Node 原生 ESM 暂不可用」，但 8.0.0 已发布的包本身仍是旧产物，
+    需下一个版本才能带上修复。
+9.  **发布 workflow 加固（本 PR）**：`release-cn-font-split.yml` 原先不可重跑——对已
+    存在的版本重跑 `pnpm publish` 会失败；两处可见性门禁用 `npm view`（读端缓存会把
+    刚发布的版本固定成 404）且只有 12 次 × 5s = 60s。实测 run `45925653580`：
+    `cn-font-split@8.0.0` 从 publish 到可见约 2 分 10 秒，门禁超时导致假阴性报红。
+    现已改为：新增 `script/registry-published.sh`（`published` / `wait_for_visible` /
+    `latest_tag`，用 Node `fetch` 直连 `registry.npmjs.org` 并带唯一 query 与
+    `Cache-Control: no-cache`，不引入新依赖），三个阶段发布前先判断版本是否已存在
+    （存在则 `[skip]`），平台包门禁 48 次（4 分钟）、最终 15 包门禁 60 次（5 分钟），
+    主包 `dist-tags.latest` 与本次版本不一致时只输出 `::warning::`。本地实测：
+    15 个包 `@8.0.0` 的 `published` 探测全部返回 0、整轮 15 包门禁脚本约 15.6s 完成；
+    `wait_for_visible 1 cn-font-split@99.99.99` 约 5s 后打印
+    `::error::cn-font-split@99.99.99 在 1 次重试后仍不可见` 并退出 1；重跑时主包与
+    其余 6 包全部命中 `[skip]`，没有再次执行 `pnpm publish`。
