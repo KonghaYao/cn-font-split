@@ -1,6 +1,6 @@
 # 中文 Web Font 切割工具 8.0 —— Rust Speed
 
-![中文网字计划](/assets/chinese-fonts.png)
+![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
 ![NPM License](https://img.shields.io/npm/v/cn-font-split)
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
@@ -150,16 +150,18 @@ match result {
 
 ## 平台支持
 
-| 平台               | 平台包                            | 状态                             |
-| ------------------ | --------------------------------- | -------------------------------- |
-| macOS arm64        | `@cn-font-split/darwin-arm64`     | 本地验证 + CI                    |
-| macOS x64          | `@cn-font-split/darwin-x64`       | 交叉构建配置                     |
-| Windows x64 MSVC   | `@cn-font-split/win32-x64-msvc`   | 交叉构建配置                     |
-| Windows arm64 MSVC | `@cn-font-split/win32-arm64-msvc` | 交叉构建配置                     |
-| Linux x64 glibc    | `@cn-font-split/linux-x64-gnu`    | CI（Node 冒烟 / Linux 视觉冒烟） |
-| Linux arm64 glibc  | `@cn-font-split/linux-arm64-gnu`  | 交叉构建配置                     |
-| WASI preview1      | `@cn-font-split/wasm32-wasip1`    | 已随 8.0.0 发布；不随主包安装；未做运行时冒烟 |
-| WASI preview2      | `@cn-font-split/wasm32-wasip2`    | 已随 8.0.0 发布；不随主包安装；未做运行时冒烟 |
+| 平台                | 平台包                            | 状态                                         |
+| ------------------- | --------------------------------- | -------------------------------------------- |
+| macOS arm64         | `@cn-font-split/darwin-arm64`     | 已发布 8.0.0                                 |
+| macOS x64           | `@cn-font-split/darwin-x64`       | 已发布 8.0.0                                 |
+| Windows x64 MSVC    | `@cn-font-split/win32-x64-msvc`   | 已发布 8.0.0                                 |
+| Windows arm64 MSVC  | `@cn-font-split/win32-arm64-msvc` | 已发布 8.0.0                                 |
+| Linux x64 glibc     | `@cn-font-split/linux-x64-gnu`    | 已发布 8.0.0                                 |
+| Linux arm64 glibc   | `@cn-font-split/linux-arm64-gnu`  | 已发布 8.0.0                                 |
+| WASI preview1       | `@cn-font-split/wasm32-wasip1`    | 已发布 8.0.0（不随主包安装；未做运行时冒烟） |
+| WASI preview2       | `@cn-font-split/wasm32-wasip2`    | 已发布 8.0.0（不随主包安装；未做运行时冒烟） |
+| Linux riscv64 glibc | —                                 | 仅 artifact（无 npm 包）                     |
+| Linux s390x glibc   | —                                 | 仅 artifact（无 npm 包）                     |
 
 musl、BSD、32 位等没有预编译包的平台请设置 `CN_FONT_SPLIT_BIN`。
 Bun / Deno 走各自的加载入口，属 best-effort，未纳入 8.0 发布验收。
@@ -167,10 +169,13 @@ Bun / Deno 走各自的加载入口，属 best-effort，未纳入 8.0 发布验�
 ## 更多文档
 
 -   [8.0 迁移指南](./docs/MIGRATION-8.0.md)
+-   [配置说明](./docs/CONFIG.md)
 -   [开发者文档](./Developer.md)
 -   [8.0 重构计划与交付状态](./docs/REFACTOR-8.0.md)
+-   [8.0 npm 发布记录](./docs/RELEASE-8.0-NPM.md)
 -   [JavaScript 包文档](./packages/ffi-js/)
 -   [OpenType Feature 支持情况](./packages/test/SUPPORT_FEATURE.md)
+-   [性能基准结果](./bench-results/)
 
 ## 感谢
 

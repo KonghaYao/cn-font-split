@@ -1,6 +1,6 @@
 # 中文 Web Font 切割工具 8.0 —— Rust Speed
 
-![中文网字计划](/assets/chinese-fonts.png)
+![中文网字计划](https://raw.githubusercontent.com/KonghaYao/cn-font-split/release/assets/chinese-fonts.png)
 
 ![NPM License](https://img.shields.io/npm/v/cn-font-split)
 ![NPM License](https://img.shields.io/npm/l/cn-font-split)
@@ -24,9 +24,9 @@
 -   ⛰️ 自研 Rust 工具，构建文本 SVG 引擎，独立渲染文本图像。
 -   🚄 **我们有前端编译器插件啦! —— [vite-plugin-font](https://npmjs.com/package/vite-plugin-font), 支持 Vite、Nuxt、Next、Webpack、Rspack，快速嵌入你的前端工具链。**
 
-> 8.0 是 breaking release，请阅读 [8.0 迁移指南](../../docs/MIGRATION-8.0.md)。
+> 8.0 是 breaking release，请阅读 [8.0 迁移指南](https://github.com/KonghaYao/cn-font-split/blob/release/docs/MIGRATION-8.0.md)。
 >
-> [Opentype Feature 支持情况](/packages/test/SUPPORT_FEATURE.md) 支持 95 ｜ 部分支持 9｜ 等待测试 20
+> [Opentype Feature 支持情况](https://github.com/KonghaYao/cn-font-split/blob/release/packages/test/SUPPORT_FEATURE.md) 支持 97 ｜ 部分支持 9｜ 未测试 18
 
 ## 使用方式
 
@@ -170,7 +170,7 @@ await fontSplit({
 
 ## cn-font-split 性能爆表 Wasm 版本
 
-虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](./test/deno-wasm.mjs)。
+虽然在浏览器，但是速度极快。因为是 Wasm，所以 JS 环境基本都可以运行，我们甚至有一个 [deno 版本的服务器](https://github.com/KonghaYao/cn-font-split/blob/release/packages/ffi-js/test/deno-wasm.mjs)。
 
 ```sh
 # 8.0 起两个 wasm 平台包不再随主包传递安装；在 edge / WASI 环境使用时需显式安装：
